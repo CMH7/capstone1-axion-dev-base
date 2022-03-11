@@ -14,3 +14,21 @@
 .dm-sans {
   font-family: 'DM Sans', sans-serif;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+.fredokaone {
+  font-family: 'Fredoka One', cursive;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+.quicksands {
+  font-family: 'Quicksand', sans-serif;
+}
+
+.button-centerx {
+  @media only screen and (max-width: 1023px) {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
