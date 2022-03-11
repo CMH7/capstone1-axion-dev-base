@@ -4,7 +4,7 @@
   </style>
 </svelte:head>
 
-<h1 class="is-size-1-desktop is-size-2-touch">
+<h1 class="is-size-1">
   <a href="/" class="has-text-white">
     Axion
   </a>
