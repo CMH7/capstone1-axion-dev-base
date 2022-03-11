@@ -7,6 +7,9 @@
 
   // Experimental callback for Button
   const func = () => console.log("Hello world");
+
+  // Subscribe to active in global-stores
+  import { active } from '$lib/stores/global-store';
 </script>
 
 <nav class="navbar is-primary is-spaced has-shadow">
@@ -28,12 +31,12 @@
 
   <div class="navbar-menu p-0 {menuActive?"is-active":""}">
     <div class="navbar-end dm-sans">
-      <a href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
-      <a href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">About</a>
-      <a href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Contact</a>
-      <a href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":"undisp"}">Sign Up</a>
-      <div class="navbar-item  font {menuActive?"undisp":""}">
-        <Button text="Sign In" css="is-size-5-desktop is-capitalized has-text-weight-bold" mainBg="has-background-primary"/>
+      <a on:click={()=>{active.set("Home")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
+      <a on:click={()=>{active.set("About")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">About</a>
+      <a on:click={()=>{active.set("Contact")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Contact</a>
+      <a on:click={()=>{active.set("Sign Up")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":"undisp"}">Sign Up</a>
+      <div on:click={()=>{active.set("Sign Up")}} class="navbar-item {menuActive?"undisp":""}">
+        <Button text="Sign Up" css="is-size-5-desktop is-capitalized has-text-weight-bold" mainBg="has-background-primary"/>
       </div>
     </div>
   </div>
