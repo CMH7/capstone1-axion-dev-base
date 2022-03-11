@@ -8,7 +8,8 @@
   export let type = ""
 
   // Additional CSS classes
-  export let css = "";
+  export let textcss = "";
+  export let addcss = "";
 
   // target link when pressed (optional)
   export let href = "/";
@@ -34,10 +35,10 @@
             `${type === "info"?"is-info":`${type === "link"?"is-link":
             `${type === "success"?"is-success":`${type === "danger"?"is-danger":
             `${type === "warning"?"is-warning":"has-text-black"}`}`}`}`}`}`
-          }
+          } {addcss}
           "
           >
-          <span class="{css}">{text}</span>
+          <span class="is-capitalized {textcss}">{text}</span>
         </Button>
       </a>
     </div>
