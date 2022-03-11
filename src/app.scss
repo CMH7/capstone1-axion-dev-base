@@ -25,6 +25,11 @@
   font-family: 'Quicksand', sans-serif;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+.lobster {
+  font-family: 'Lobster', cursive;
+}
+
 // Custom class for button in homepage
 .button-centerx {
   @media only screen and (max-width: 1023px) {
