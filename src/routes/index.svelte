@@ -1,5 +1,5 @@
 <script>
-  import Home from "$lib/components/Home.svelte";
+  import SignupHeader from "$lib/components/Signup-header.svelte";
 </script>
 
-<Home />
+<SignupHeader/>
