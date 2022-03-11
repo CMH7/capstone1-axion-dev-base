@@ -1,17 +1,5 @@
-<svelte:head>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-  </style>
-</svelte:head>
-
-<h1 class="is-size-1">
+<h1 class="is-size-1 fredokaone">
   <a href="/" class="has-text-white">
     Axion
   </a>
 </h1>
-
-<style>
-  h1 {
-    font-family: 'Fredoka One', cursive;
-  }
-</style>
