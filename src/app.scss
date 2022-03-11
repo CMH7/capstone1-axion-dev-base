@@ -7,3 +7,10 @@
 @import 'bulma/sass/grid/_all';
 @import 'bulma/sass/helpers/_all';
 @import 'bulma/sass/layout/_all';
+
+
+// Font imports from google fonts and based in canva system design by co-designer Hazel Anne M. Mejias
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans&display=swap');
+.dm-sans {
+  font-family: 'DM Sans', sans-serif;
+}

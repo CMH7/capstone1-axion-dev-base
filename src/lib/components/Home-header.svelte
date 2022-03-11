@@ -1,9 +1,3 @@
-<svelte:head>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans&display=swap');
-  </style>
-</svelte:head>
-
 <script>
 	import AxionText from '$lib/components/AxionText.svelte';
   import Button from '$lib/components/Button.svelte';
@@ -33,7 +27,7 @@
 
 
   <div class="navbar-menu p-0 {menuActive?"is-active":""}">
-    <div class="navbar-end">
+    <div class="navbar-end dm-sans">
       <a href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
       <a href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">About</a>
       <a href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Contact</a>
@@ -48,10 +42,6 @@
 <style>
   .navbar-menu {
     transition: all .2s ease-in;
-  }
-
-  .navbar-end {
-    font-family: 'DM Sans', sans-serif;
   }
 
   .undisp {

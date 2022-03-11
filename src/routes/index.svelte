@@ -1,5 +1,10 @@
 <script>
-  import Button from "$lib/components/Button.svelte";
+  import HomeHeader from "$lib/components/Home-header.svelte";
+  import HomeFooter from "$lib/components/Home-footer.svelte";
 </script>
 
-<Button text="Sign In"/>
+<HomeHeader />
+
+<div class="section"></div>
+
+<HomeFooter/>
