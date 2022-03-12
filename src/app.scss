@@ -38,3 +38,13 @@
     transform: translateX(-50%);
   }
 }
+
+// Basic transition for all if applicable
+.has-transition {
+  transition: all .5s ease;
+}
+
+// For some DOM changes that need to remove other element or component
+.undisp {
+  display: none;
+}
