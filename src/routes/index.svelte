@@ -1,5 +1,7 @@
 <script>
-  import SignupHeader from "$lib/components/Signup-header.svelte";
+import Signup from "../lib/components/Signup.svelte";
+
+  
 </script>
 
-<SignupHeader/>
+<Signup/>
