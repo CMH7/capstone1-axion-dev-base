@@ -8,3 +8,9 @@ export const ismini = writable(true);
 
 // This will determine the activeness of the sidebar
 export const sidebarActive = writable(true);
+
+// The current active interface
+export const currentInterface = writable("Dashboard");
+
+// This will be used for simple color designation in sidebar
+export let currentIndex = writable(0);
