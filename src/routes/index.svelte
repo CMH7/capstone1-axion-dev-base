@@ -1,8 +1,5 @@
 <script>
-import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte";
-import MainAppHeader from "$lib/components/MainAppHeader.svelte";
-
+  import Home from "./Home.svelte";
 </script>
 
-<MainAppHeader />
-<MainAppDrawerSidebar/>
+<Home />
