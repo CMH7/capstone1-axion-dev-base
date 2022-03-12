@@ -6,7 +6,7 @@
   let iconHovered = false;
   let burgerHovered = false;
 
-  import { ismini, sidebarActive } from "$lib/stores/global-store";
+  import { currentIndex, currentInterface, ismini, sidebarActive } from "$lib/stores/global-store";
   let mini;
   ismini.subscribe(value=>mini = value);
   let disabled;
@@ -15,7 +15,7 @@
 
 <div class="block mb-0">
   <MaterialApp>
-    <AppBar absolute style="width: 100%;" class=" py-1 has-background-primary" {collapsed} >
+    <AppBar fixed style="width: 100%;" class=" py-1 has-background-primary" {collapsed} >
 
       <!-- Burger -->
       <div slot="icon" on:mouseenter={()=>{burgerHovered = true}} on:mouseleave={()=>{burgerHovered = false}}>
@@ -52,7 +52,7 @@
       </div>
 
       <!-- Account Button -->
-      <div class="is-clickable {disabled?"undisp":""}" on:mouseenter={()=>{iconHovered = true}} on:mouseleave={()=>{iconHovered = false}}>
+      <div class="is-clickable is-hidden-touch {disabled?"undisp":""}" on:mouseenter={()=>{iconHovered = true; currentInterface.set("My Profile"); currentIndex.set(4)}} on:mouseleave={()=>{iconHovered = false}}>
         <Avatar class="p-5 has-transition {iconHovered?"has-background-warning":""}" size="35px">
           <Icon class="has-text-white {iconHovered?"has-text-primary":""}" path={mdiAccount}/>
         </Avatar>
