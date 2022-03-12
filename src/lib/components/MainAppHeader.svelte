@@ -15,7 +15,7 @@
 
 <div class="block mb-0">
   <MaterialApp>
-    <AppBar class=" py-1 has-background-primary" {collapsed} >
+    <AppBar absolute style="width: 100%;" class=" py-1 has-background-primary" {collapsed} >
 
       <!-- Burger -->
       <div slot="icon" on:mouseenter={()=>{burgerHovered = true}} on:mouseleave={()=>{burgerHovered = false}}>
@@ -38,7 +38,7 @@
 
       <!-- Collapsers -->
       <!-- Collapse the bar -->
-      <div class="is-clickable mr-2 rounded-circle has-transition {hovered?"has-background-grey-lighter":""} {collapsed?"undisp":""}" on:click={()=>{collapsed = true; sidebarActive.set(false)}} on:mouseenter={()=>{hovered = true}} on:mouseleave={()=>{hovered = false}}>
+      <div class="is-clickable mr-2 rounded-circle has-transition {hovered?"has-background-grey-lighter":""} {collapsed?"undisp":""}" on:click={()=>{collapsed = true; ismini.set(true); sidebarActive.set(false)}} on:mouseenter={()=>{hovered = true}} on:mouseleave={()=>{hovered = false}}>
         <Avatar class="p-5" size="25px">
           <Icon class="has-text-white {hovered?"has-text-primary":""}" path={mdiBackburger} />
         </Avatar>
