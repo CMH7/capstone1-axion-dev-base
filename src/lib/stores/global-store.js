@@ -23,3 +23,9 @@ export let currentDashboardSubInterface = writable("Subjects");
 
 // This will determine the color chosen for the specific subject
 export let subjectColor = writable("");
+
+// This will determine the if to transition or not
+export let transitionActive = writable(false);
+
+// RGB colors
+export let rgb = writable({ r: 0, g: 0, b: 0 });
