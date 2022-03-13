@@ -52,7 +52,7 @@
       </div>
 
       <!-- Account Button -->
-      <div class="is-clickable is-hidden-touch {disabled?"undisp":""}" on:mouseenter={()=>{iconHovered = true; currentInterface.set("My Profile"); currentIndex.set(4)}} on:mouseleave={()=>{iconHovered = false}}>
+      <div class="is-clickable is-hidden-touch {disabled?"undisp":""}" on:click={()=>currentInterface.set("My Profile")} on:mouseenter={()=>{iconHovered = true; currentIndex.set(4)}} on:mouseleave={()=>{iconHovered = false}}>
         <Avatar class="p-5 has-transition {iconHovered?"has-background-warning":""}" size="35px">
           <Icon class="has-text-white {iconHovered?"has-text-primary":""}" path={mdiAccount}/>
         </Avatar>
