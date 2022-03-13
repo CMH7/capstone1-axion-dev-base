@@ -20,3 +20,6 @@ export let activeSubject = writable("");
 
 // This will determine the current Dashboard's sub-interface (Active)
 export let currentDashboardSubInterface = writable("Subjects");
+
+// This will determine the color chosen for the specific subject
+export let subjectColor = writable("");
