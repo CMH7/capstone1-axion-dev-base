@@ -7,7 +7,8 @@
     ListItem,
     Icon,
     MaterialApp,
-    ListItemGroup
+    ListItemGroup,
+    Divider
   } from 'svelte-materialify';
   import { mdiViewDashboard, mdiAccountCheck, mdiStarSettings, mdiCalendar, mdiAccount } from '@mdi/js';
 
@@ -38,6 +39,9 @@
         <ListItemGroup class="has-text-{navs[curIndex].color} {navs[curIndex].color}">
 
           {#each navs as navItem}
+          {#if navItem.name === "My Profile"}
+            <Divider class="is-hidden-desktop" />
+          {/if}
           <ListItem active={curInterface === navItem.name?true:false} class="{navItem.name === "My Profile"?"is-hidden-desktop":""} is-clickable" disabled={curInterface === navItem.name?true:false} on:click={()=>{currentInterface.set(navItem.name); currentIndex.set(navItem.index)}}>
             <span slot="prepend">
               <Icon size="35px" path={navItem.icon} />
