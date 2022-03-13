@@ -20,7 +20,7 @@
 
 <div class="hero">
   <div class="hero-head px-3">
-    <p class="mb-0 quicksands is-size-1-tablet is-size-3-mobile has-text-weight-bold has-text-info">
+    <p class="mb-0 quicksands is-size-1-tablet is-size-3-mobile has-text-weight-bold has-text-info is-unselectable">
       {#if curDashSubInterface === "Subjects"}
         Subjects
       {:else if curDashSubInterface === "Workspaces"}
@@ -32,7 +32,7 @@
               </div>
             </MaterialApp>
           </div>
-        </span> <span class="has-text-{chosenSubjectColor} is-unselectable">{currentActiveSubject}</span>
+        </span> <span class="has-text-{chosenSubjectColor}">{currentActiveSubject}</span>
       {/if}
     </p>
   </div>

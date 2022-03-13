@@ -1,16 +1,16 @@
 <script>
   import { MaterialApp, AppBar, Button, Icon, Avatar } from "svelte-materialify";
-  import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger, mdiWindowClose} from '@mdi/js';
+  import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger } from '@mdi/js';
   let collapsed = false;
   let hovered = false;
   let iconHovered = false;
   let burgerHovered = false;
 
-  import { currentIndex, currentInterface, ismini, sidebarActive } from "$lib/stores/global-store";
+  import { currentIndex, currentInterface, ismini, rgb, sidebarActive, transitionActive } from "$lib/stores/global-store";
   let mini;
   ismini.subscribe(value=>mini = value);
   let disabled;
-  sidebarActive.subscribe(value => disabled = !value)
+  sidebarActive.subscribe(value => disabled = !value);
 </script>
 
 <div class="block mb-0">
@@ -27,8 +27,8 @@
       </div>
 
       <!-- Title -->
-      <span class="fredokaone is-size-3" slot="title">
-        <a href="/" class="has-text-white is-unselectable">
+      <span class="fredokaone is-size-3" slot="title" on:click={()=> {rgb.set({r: (Math.random() * 256), g: (Math.random() * 256), b: (Math.random() * 256)}); transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}}>
+        <a href="/Home" class="has-text-white is-unselectable">
           AXION
         </a>
       </span>

@@ -1,9 +1,11 @@
 <script>
   import HomeFooter from "$lib/components/Home-footer.svelte";
   import HomeHeader from "$lib/components/Home-header.svelte";
+  import TransitionOverlay from "$lib/components/TransitionOverlay.svelte";
   import Button from "../lib/components/Button.svelte";
 </script>
 
+<TransitionOverlay />
 <HomeHeader/>
 <div class="hero is-fullheight-with-navbar">
   <div class="hero-body">
@@ -29,7 +31,6 @@
       </div>
     </div>
   </div>
-
   <div class="hero-foot">
     <HomeFooter/>
   </div>
@@ -42,5 +43,9 @@
 
   .fredokaone {
     font-size: 4rem;
+  }
+
+  * {
+    overflow: hidden;
   }
 </style>
