@@ -1,7 +1,7 @@
 <div class="hero">
   <div class="hero-body">
     <p>
-      Dashboard
+      Favorites
     </p>
   </div>
 </div>
