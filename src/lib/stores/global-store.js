@@ -14,3 +14,6 @@ export const currentInterface = writable("Dashboard");
 
 // This will be used for simple color designation in sidebar
 export let currentIndex = writable(0);
+
+// This will determine the current Dashboard's sub-interface (Active)
+export let currentDashboardSubInterface = writable("Subjects");
