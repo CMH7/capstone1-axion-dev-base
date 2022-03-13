@@ -1,23 +1,22 @@
 <script>
-import SubjectBox from "$lib/components/interface-components/Subject-box.svelte";
-import subjects from "$lib/sample-case/sample-subjects/subjects";
+  import { currentDashboardSubInterface } from "$lib/stores/global-store";
+  import SubjectsInterfaces from "./sub-interfaces/Subjects-interfaces.svelte";
 
-let allSubjects = subjects.subjects;
+  let curDashSubInterface;
+  currentDashboardSubInterface.subscribe(value => curDashSubInterface = value);
 </script>
 
 <div class="hero">
   <div class="hero-head px-3">
     <p class="mb-0 quicksands is-size-1-tablet is-size-2-mobile has-text-weight-bold has-text-info">
-      Subjects
+      {#if curDashSubInterface === "Subjects"}
+        Subjects
+      {/if}
     </p>
   </div>
   <div class="hero-body">
-    <div class="columns is-multiline is-variable is-5 pl-6">
-      {#each allSubjects as subject}
-        <div class="column is-narrow">
-          <SubjectBox name={subject.name} color={subject.color} isFavorite={subject.isFavorite}/>
-        </div>
-      {/each}
-    </div>
+    {#if curDashSubInterface === "Subjects"}
+      <SubjectsInterfaces />
+    {/if}
   </div>
 </div>
