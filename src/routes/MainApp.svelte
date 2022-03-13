@@ -35,3 +35,9 @@
     <MyProfileInterface />
   {/if}
 </div>
+
+<style>
+  div {
+    overflow-x: hidden;
+  }
+</style>
