@@ -8,7 +8,7 @@ let allSubjects = subjects.subjects;
 <div class="columns is-multiline is-variable is-5 pl-6">
   {#each allSubjects as subject}
     <div class="column is-narrow">
-      <SubjectBox name={subject.name} color={subject.color} isFavorite={subject.isFavorite}/>
+      <SubjectBox name={subject.name} color={subject.color} isFavorite={subject.isFavorite} />
     </div>
   {/each}
 </div>
