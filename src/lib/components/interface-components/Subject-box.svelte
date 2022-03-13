@@ -1,4 +1,6 @@
 <script>
+import { activeSubject } from "$lib/stores/global-store";
+
   import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js";
   import { Icon, MaterialApp } from "svelte-materialify";
 
@@ -10,7 +12,7 @@
   let mouseEnterStar = false;
 </script>
 
-<div on:mouseenter={()=>mouseEnter = true} on:mouseleave={()=> mouseEnter = false} class="has-transition notification rounded-xl {mouseEnter?`has-background-${color}-dark`:""} is-{color}">
+<div on:click={()=>{activeSubject.set(`${name}`); location.href="./src/lib/interfaces/sub-interfaces/Workspaces-interface"}} on:mouseenter={()=>mouseEnter = true} on:mouseleave={()=> mouseEnter = false} class="has-transition notification rounded-xl {mouseEnter?`has-background-${color}-dark`:""} is-{color}">
   <div>
     <MaterialApp>
       {#if !isFavorite}
