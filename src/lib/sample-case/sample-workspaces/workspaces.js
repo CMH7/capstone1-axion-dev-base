@@ -1,8 +1,8 @@
 export default {
   workspaces: [
-    { name: "Papers", color: "danger", isFavorite: true},
-    { name: "Research & Development", color: "success", isFavorite: false},
-    { name: "Development", color: "dark", isFavorite: true},
-    { name: "Data Flow Diagram", color: "warning", isFavorite: false}
+    {from: "Capstone 1", name: "Papers", color: "danger", isFavorite: true},
+    {from: "Capstone 1", name: "Research & Development", color: "success", isFavorite: false},
+    {from: "Capstone 1", name: "Development", color: "dark", isFavorite: true},
+    {from: "Literacy", name: "Data Flow Diagram", color: "warning", isFavorite: false}
   ]
 }
