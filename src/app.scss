@@ -41,10 +41,15 @@
 
 // Basic transition for all if applicable
 .has-transition {
-  transition: all .5s ease;
+  transition: all .35s ease;
 }
 
 // For some DOM changes that need to remove other element or component
 .undisp {
   display: none;
+}
+
+// For custom padding of interafaces
+.pl-x {
+  padding-left: 220px;
 }
