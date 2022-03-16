@@ -25,6 +25,11 @@
   font-family: 'Quicksand', sans-serif;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+.lobster {
+  font-family: 'Lobster', cursive;
+}
+
 // Custom class for button in homepage
 .button-centerx {
   @media only screen and (max-width: 1023px) {
@@ -32,4 +37,19 @@
     left: 50%;
     transform: translateX(-50%);
   }
+}
+
+// Basic transition for all if applicable
+.has-transition {
+  transition: all .35s ease;
+}
+
+// For some DOM changes that need to remove other element or component
+.undisp {
+  display: none;
+}
+
+// For custom padding of interafaces
+.pl-x {
+  padding-left: 220px;
 }
