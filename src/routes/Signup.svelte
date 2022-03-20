@@ -2,7 +2,7 @@
   import HomeFooter from "$lib/components/Home-footer.svelte";
   import { Icon, Divider, MaterialApp } from "svelte-materialify";
   import {mdiGoogle, mdiFacebook} from "@mdi/js";
-  import SignupHeader from "./Signup-header.svelte";
+  import SignupHeader from "../lib/components/Signup-header.svelte";
   import Button from "$lib/components/Button.svelte";
 </script>
 
