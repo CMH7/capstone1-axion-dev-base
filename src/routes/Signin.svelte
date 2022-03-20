@@ -1,8 +1,8 @@
 <script>
     import { mdiGoogle, mdiFacebook } from '@mdi/js'; // icons used
     import { Icon, Divider, MaterialApp } from 'svelte-materialify';
-    import HomeFooter from "./Home-footer.svelte";
-    import HomeHeader from "./Home-header.svelte";
+    import HomeFooter from "$lib/components/Home-footer.svelte"
+    import HomeHeader from "$lib/components/Home-header.svelte"
     import Button from "$lib/components/Button.svelte";
 </script>
 
