@@ -1,5 +1,5 @@
 <script>
-  import MainApp from './MainApp.svelte';
+  import Contacts from '$lib/components/Contacts.svelte';
 </script>
 
-<MainApp />
+<Contacts />
