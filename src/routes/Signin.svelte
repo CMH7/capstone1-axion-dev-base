@@ -63,7 +63,7 @@
             <div class="mb-5">
               <Button type="primary" text="Sign In" textcss="dm-sans has-text-weight-bold is-size-5" on:click/>
             </div>
-            <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="$lib/components/Signup.svelte">Sign up</a></p>
+            <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
 
         </div>
@@ -75,5 +75,5 @@
   <div class="hero-foot">
     <HomeFooter/>
   </div>
-  
+
 </div>
