@@ -9,12 +9,12 @@
   const func = () => console.log("Hello world");
 
   // Subscribe to active in global-stores
-  import { active } from '$lib/stores/global-store';
+  import { active, rgb, transitionActive } from '$lib/stores/global-store';
 </script>
 
 <nav class="navbar is-primary is-spaced">
   <div class="navbar-brand is-flex is-justify-content-space-between">
-    <div class="navbar-item">
+    <div class="navbar-item" on:click={()=> {rgb.set({r: (Math.random() * 256), g: (Math.random() * 256), b: (Math.random() * 256)}); transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}}>
       <AxionText/>
     </div>
   
