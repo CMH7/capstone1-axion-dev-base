@@ -61,7 +61,7 @@
           <!-- 'sign in' button -->
           <div class="is-flex flex-column is-align-items-center">
             <div class="mb-5">
-              <Button type="primary" text="Sign In" textcss="dm-sans has-text-weight-bold is-size-5" on:click/>
+              <Button type="primary" text="Sign In" href="/MainApp" textcss="dm-sans has-text-weight-bold is-size-5" on:click/>
             </div>
             <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
