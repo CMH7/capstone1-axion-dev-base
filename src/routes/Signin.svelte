@@ -9,7 +9,7 @@
 <!-- header -->
 <HomeHeader/>
 <div class="hero is-fullheight-with-navbar">
-  <div class="hero-head">
+  <div class="hero-body">
     <div class="container">
       <div class="columns is-mobile is-centered is-multiline">
   
@@ -69,14 +69,11 @@
         </div>
       </div>
     </div>
-
-    <!-- footer -->
-    <div class="hero-foot">
-      <HomeFooter/>
-    </div>
-
   </div>
-</div>
 
-<style>
-</style>
+  <!-- footer -->
+  <div class="hero-foot">
+    <HomeFooter/>
+  </div>
+  
+</div>
