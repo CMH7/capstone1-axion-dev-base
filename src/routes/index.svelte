@@ -1,5 +1,5 @@
 <script>
-  import Contacts from './Contacts.svelte';
+  import Home from "./Home.svelte";
 </script>
 
-<Contacts />
+<Home />
