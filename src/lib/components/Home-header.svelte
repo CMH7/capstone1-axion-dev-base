@@ -31,12 +31,12 @@
 
   <div class="navbar-menu p-0 {menuActive?"is-active":""}">
     <div class="navbar-end dm-sans">
-      <a on:click={()=>{active.set("Home")}} href="/Home" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
+      <a on:click={()=>{active.set("Home")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
       <a on:click={()=>{active.set("About")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">About</a>
       <a on:click={()=>{active.set("Contact")}} href="/Contacts" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Contact</a>
       <a on:click={()=>{active.set("Sign Up")}} href="/Signup" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":"undisp"}">Sign Up</a>
       <div on:click={()=>{active.set("Sign Up")}} class="navbar-item {menuActive?"undisp":""}">
-        <Button text="Sign Up" textcss="is-size-5-desktop has-text-weight-bold" mainBg="has-background-primary"/>
+        <Button text="Sign Up" href="/Signup" textcss="is-size-5-desktop has-text-weight-bold" mainBg="has-background-primary"/>
       </div>
     </div>
   </div>
