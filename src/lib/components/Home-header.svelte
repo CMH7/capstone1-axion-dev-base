@@ -9,12 +9,12 @@
   const func = () => console.log("Hello world");
 
   // Subscribe to active in global-stores
-  import { active } from '$lib/stores/global-store';
+  import { active, rgb, transitionActive } from '$lib/stores/global-store';
 </script>
 
 <nav class="navbar is-primary is-spaced">
   <div class="navbar-brand is-flex is-justify-content-space-between">
-    <div class="navbar-item">
+    <div class="navbar-item" on:click={()=> {rgb.set({r: (Math.random() * 256), g: (Math.random() * 256), b: (Math.random() * 256)}); transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}}>
       <AxionText/>
     </div>
   
@@ -33,10 +33,10 @@
     <div class="navbar-end dm-sans">
       <a on:click={()=>{active.set("Home")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
       <a on:click={()=>{active.set("About")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">About</a>
-      <a on:click={()=>{active.set("Contact")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Contact</a>
-      <a on:click={()=>{active.set("Sign Up")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":"undisp"}">Sign Up</a>
+      <a on:click={()=>{active.set("Contact")}} href="/Contacts" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Contact</a>
+      <a on:click={()=>{active.set("Sign Up")}} href="/Signup" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":"undisp"}">Sign Up</a>
       <div on:click={()=>{active.set("Sign Up")}} class="navbar-item {menuActive?"undisp":""}">
-        <Button text="Sign Up" textcss="is-size-5-desktop has-text-weight-bold" mainBg="has-background-primary"/>
+        <Button text="Sign Up" href="/Signup" textcss="is-size-5-desktop has-text-weight-bold" mainBg="has-background-primary"/>
       </div>
     </div>
   </div>

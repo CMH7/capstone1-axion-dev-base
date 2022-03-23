@@ -1,5 +1,5 @@
 <script>
-  import MainApp from './MainApp.svelte';
+  import Home from "./Home.svelte";
 </script>
 
-<MainApp />
+<Home />

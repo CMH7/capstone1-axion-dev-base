@@ -1,15 +1,15 @@
 <script>
     import { mdiGoogle, mdiFacebook } from '@mdi/js'; // icons used
     import { Icon, Divider, MaterialApp } from 'svelte-materialify';
-    import HomeFooter from "./Home-footer.svelte";
-    import HomeHeader from "./Home-header.svelte";
+    import HomeFooter from "$lib/components/Home-footer.svelte"
+    import HomeHeader from "$lib/components/Home-header.svelte"
     import Button from "$lib/components/Button.svelte";
 </script>
 
 <!-- header -->
 <HomeHeader/>
 <div class="hero is-fullheight-with-navbar">
-  <div class="hero-head">
+  <div class="hero-body">
     <div class="container">
       <div class="columns is-mobile is-centered is-multiline">
   
@@ -61,22 +61,19 @@
           <!-- 'sign in' button -->
           <div class="is-flex flex-column is-align-items-center">
             <div class="mb-5">
-              <Button type="primary" text="Sign In" textcss="dm-sans has-text-weight-bold is-size-5" on:click/>
+              <Button type="primary" text="Sign In" href="/MainApp" textcss="dm-sans has-text-weight-bold is-size-5" on:click/>
             </div>
-            <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="$lib/components/Signup.svelte">Sign up</a></p>
+            <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
 
         </div>
       </div>
     </div>
-
-    <!-- footer -->
-    <div class="hero-foot">
-      <HomeFooter/>
-    </div>
-
   </div>
-</div>
 
-<style>
-</style>
+  <!-- footer -->
+  <div class="hero-foot">
+    <HomeFooter/>
+  </div>
+
+</div>

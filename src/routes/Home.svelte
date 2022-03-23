@@ -25,7 +25,7 @@
           <div class="container">
             <p class="is-size-1-tablet is-size-3-mobile quicksands has-text-black has-text-weight-bold has-text-centered-touch">An online task management tool for students</p>
             <p class="dm-sans my-5 has-text-centered-touch is-size-3-tablet is-size-5-mobile">Manage and complete your tasks wherever you are!</p>
-            <Button type="primary" text="Sign In" textcss="is-size-4 has-text-weight-bold" mainBg="has-background-white" addcss="mt-6 button-centerx" />
+            <Button href="/Signin" type="primary" text="Sign In" textcss="is-size-4 has-text-weight-bold" mainBg="has-background-white" addcss="mt-6 button-centerx" />
           </div>
         </div>
       </div>
