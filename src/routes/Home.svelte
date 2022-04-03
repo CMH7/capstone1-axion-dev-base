@@ -1,8 +1,6 @@
 <script>
+	import { homevisited } from '$lib/stores/global-store.js';
   import { fade } from 'svelte/transition';
-
-  import { onMount } from "svelte/internal";
-
   import HomeFooter from "$lib/components/Home-footer.svelte";
   import HomeHeader from "$lib/components/Home-header.svelte";
   import Button from "../lib/components/Button.svelte";
@@ -10,11 +8,18 @@
   import FasterLoadingScreen from '$lib/components/FasterLoadingScreen.svelte';
 
   // test when data is fetched
-  let hidenow = false;
 
-  setTimeout(() => {
+  let vis;
+  homevisited.subscribe(value=>vis = value);
+  let hidenow = false;
+  if(!vis){
+    setTimeout(() => {
+      hidenow = true;
+      homevisited.set(true);
+    }, 5000);
+  }else{
     hidenow = true;
-  }, 5000);
+  }
 </script>
 
 {#if !hidenow}
@@ -22,7 +27,7 @@
 {:else}
   <FasterLoadingScreen />
   <HomeHeader/>
-  <div in:fade class="hero is-fullheight-with-navbar">
+  <div in:fade out:fade class="hero is-fullheight-with-navbar">
     <div class="hero-body">
       <div class="container">
         <div class="columns is-mobile is-centered is-multiline">

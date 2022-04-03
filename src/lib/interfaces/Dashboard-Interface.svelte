@@ -1,4 +1,7 @@
 <script>
+  // Transitions
+  import { fade } from 'svelte/transition';
+
   // Global Variables first
   import { activeWorkspace, subjectColor, workspaceColor } from './../stores/global-store.js';
 
@@ -42,7 +45,7 @@
   let ishovering = false;
 </script>
 
-<div class="hero">
+<div in:fade class="hero">
   <div class="hero-head px-3">
     <p class="mb-0 quicksands is-size-1-tablet is-size-3-mobile has-text-weight-bold has-text-info is-unselectable">
       {#if curDashSubInterface === "Subjects"}

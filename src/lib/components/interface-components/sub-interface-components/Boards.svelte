@@ -7,11 +7,14 @@
   export let name = "Unknown";
   export let taskCount = 0;
 
+  // Transition
+  import { fade } from 'svelte/transition';
+
   // variables
   let isHoveringAddIcon = false;
 </script>
 
-<div class="notification px-2 py-1 rounded-lg elevation-3 has-background-{color}-light">
+<div in:fade class="notification px-2 py-1 rounded-lg elevation-3 has-background-{color}-light">
   
   <!-- Board Title -->
   <p class="fredokaone mt-1 mb-2 is-unselectable tag is-{color} is-medium">

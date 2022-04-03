@@ -35,3 +35,6 @@ export let transitionActive = writable(false);
 
 // RGB colors
 export let rgb = writable({ r: 0, g: 0, b: 0 });
+
+// Visited
+export let homevisited = writable(false);
