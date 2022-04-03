@@ -27,6 +27,7 @@
 	"type": "module",
 	"dependencies": {
 		"@mdi/js": "^6.5.95",
+		"svelte-loading-spinners": "^0.1.7",
 		"svelte-materialify": "^0.3.11"
 	}
 }
