@@ -16,13 +16,18 @@
   rgb.subscribe(value => b = value.b)
 
   let color = `rgb(${r}, ${g}, ${b})`;
+
+  //experimental
+
+  import { Pulse } from 'svelte-loading-spinners';
 </script>
 
 <MaterialApp>
   <Overlay {active} {index} {opacity} {color} on:click={()=>transitionActive.set(false)}>
-    <p class="mb-0 is-size-1 fredokaone has-text-white has-text-weight-bold
+    <!-- <p class="mb-0 is-size-1 fredokaone has-text-white has-text-weight-bold
     " style="letter-spacing: 5px;">
       Going Home
-    </p>
+    </p> -->
+    <Pulse size=130 color="#fff" />
   </Overlay>
 </MaterialApp>
