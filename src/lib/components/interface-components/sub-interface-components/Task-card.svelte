@@ -1,7 +1,6 @@
 <script>
   import { Tooltip, Card, CardText, CardTitle, CardSubtitle, MaterialApp, Avatar, Divider } from 'svelte-materialify';
-
-  
+  import TaskBoxPopUpModal from '$lib/components/interface-components/sub-interface-components/Task-box-pop-up-modal.svelte';
 
   // Required params
   
@@ -17,6 +16,9 @@
   // Task Subtask's count
   export let subtasksCount = 0;
 
+  // Task isFavorite
+  export let isFavorite = false;
+
   // Task members
   // Test data
   // members
@@ -31,9 +33,12 @@
   // Members hovering
   let show = false;
 
+  // Modal show
+  let taskmodalactive = false;
 </script>
 
-<div class="is-clickable" on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
+<TaskBoxPopUpModal {name} {isFavorite} active={taskmodalactive}/>
+<div class="is-clickable" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
   <MaterialApp>
     <style>
       .has-transition {

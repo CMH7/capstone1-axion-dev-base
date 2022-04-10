@@ -38,3 +38,6 @@ export let rgb = writable({ r: 0, g: 0, b: 0 });
 
 // Visited
 export let homevisited = writable(false);
+
+// Use hint
+export let useHint = writable(true);
