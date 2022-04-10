@@ -1,4 +1,4 @@
-import members from "../sample-members/members";
+import members from "$lib/sample-case/sample-members/members";
 
 export default {
   tasks: [
