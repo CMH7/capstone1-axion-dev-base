@@ -60,6 +60,7 @@
 
   .notification {
     max-height: 560px;
+    min-width: 250px;
     border: 1px solid rgba(0, 0, 0, 0.15);
   }
 
