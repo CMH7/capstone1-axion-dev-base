@@ -5,7 +5,7 @@
   // Transition
   import { fade } from 'svelte/transition';
  
-let allSubjects = subjects.subjects;
+  let allSubjects = subjects.subjects;
 </script>
 
 <div class="columns is-multiline is-variable is-5 pl-6">
