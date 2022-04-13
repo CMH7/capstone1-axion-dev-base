@@ -26,7 +26,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@mdi/js": "^6.5.95",
+		"@mdi/js": "^6.6.96",
 		"svelte-materialify": "^0.3.11"
 	}
 }
