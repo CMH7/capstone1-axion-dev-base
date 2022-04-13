@@ -20,21 +20,44 @@
       <!-- left side input -->
       <div class="column is-4-tablet is-8-mobile">
         <div class=" d-flex flex-wrap">
-          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Full Name">
+
+          <!-- First name -->
+          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="First Name">
+          
+          <!-- Last name -->
+          <input class="input quicksands mt-3 has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Last Name">
+
+          <!-- Age -->
           <input class="input quicksands my-3 has-text-white has-background-light" style="width: 30%; margin-right: 5%;" type="text" placeholder="Age">
+
+          <!-- Gender -->
           <input class="input quicksands my-3 has-text-white has-background-light" style="width: 65%;" type="text" placeholder="Gender">
-          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="School/University">
-          <input class="input quicksands my-3 has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Course/Year">
+          
+          <!-- E-mail -->
+          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Email">
+
         </div>
       </div>
 
       <!-- right side input -->
       <div class="column is-4-tablet is-8-mobile">
         <div class=" d-flex flex-wrap">
-          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Email">
-          <input class="input quicksands my-3 has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Username">
-          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Password">
-          <input class="input quicksands my-3 has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Confirm Password">
+
+          <!-- School name -->
+          <input class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
+
+          <!-- Course or Year  -->
+          <input class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course/Year">
+
+          <!-- Username  -->
+          <input class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Username">
+
+          <!-- Password -->
+          <input class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
+          
+          <!-- Re-password -->
+          <input class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
+
         </div>
       </div>
       

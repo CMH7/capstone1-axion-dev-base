@@ -1,17 +1,21 @@
 <script>
+  // Transitions
+  import { fade } from 'svelte/transition';
+
   // Global Variables first
   import { activeWorkspace, subjectColor, workspaceColor } from './../stores/global-store.js';
 
   // Test cases
   import tasks from '$lib/sample-case/sample-tasks/tasks.js';
-  import subjects from '$lib/sample-case/sample-subjects/subjects';
   import boards from '$lib/sample-case/sample-boards/boards.js';
 
   // Components
+  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
 	import SubjectBox from '$lib/components/interface-components/Subject-box.svelte';
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte';
 
-  let allTasks = subjects.subjects;
+  // Test cases
+  let allTasks = tasks.tasks;
   let allBoards = boards.boards;
   
 	import { Icon, MaterialApp } from 'svelte-materialify';
@@ -42,7 +46,7 @@
   let ishovering = false;
 </script>
 
-<div class="hero">
+<div in:fade class="hero">
   <div class="hero-head px-3">
     <p class="mb-0 quicksands is-size-1-tablet is-size-3-mobile has-text-weight-bold has-text-info is-unselectable">
       {#if curDashSubInterface === "Subjects"}
@@ -81,12 +85,15 @@
       <!-- <BoardsInterface /> -->
 
       <div class="columns is-mobile pb-5 boardcolumns">
+
         <!-- Todo Default board -->
         <div class="column is-narrow-tablet is-12-mobile">
           <div class="d-flex flex-row justify-center">
             <Boards name="Todo" color="grey">
               {#each allTasks as task}
-                <SubjectBox name={task.name} isFavorite={task.isFavorite} color={task.color} />
+                {#if task.from === currentActiveWorkspace && task.status === "Todo"}
+                  <TaskCard name="{task.name}" level="{task.level}" duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                {/if}
               {/each}
             </Boards>
           </div>
@@ -97,7 +104,9 @@
           <div class="d-flex flex-row justify-center">
             <Boards name="In progress" color="info">
               {#each allTasks as task}
-                <SubjectBox name={task.name} isFavorite={task.isFavorite} color={task.color} />
+                {#if task.from === currentActiveWorkspace && task.status === "In progress"}
+                  <TaskCard name="{task.name}" level="{task.level}" duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                {/if}
               {/each}
             </Boards>
           </div>
@@ -108,7 +117,9 @@
           <div class="d-flex flex-row justify-center">
             <Boards name="Done" color="success">
               {#each allTasks as task}
-                <SubjectBox name={task.name} isFavorite={task.isFavorite} color={task.color} />
+                {#if task.from === currentActiveWorkspace && task.status === "Done"}
+                  <TaskCard name="{task.name}" level="{task.level}" duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                {/if}
               {/each}
             </Boards>
           </div>
@@ -120,7 +131,9 @@
             <div class="d-flex flex-row justify-center">
               <Boards name={board.name} color={board.color}>
                 {#each allTasks as task}
-                  <SubjectBox name={task.name} isFavorite={task.isFavorite} color={task.color} />
+                  {#if task.from === currentActiveWorkspace && task.status === board.name}
+                    <TaskCard name="{task.name}" level="{task.level}" duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                  {/if}
                 {/each}
               </Boards>
             </div>
@@ -133,6 +146,7 @@
 
 <style>
   .boardcolumns {
+    min-height: 70vh;
     overflow-x: scroll;
   }
   .boardcolumns::-webkit-scrollbar {

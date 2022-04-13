@@ -1,3 +1,4 @@
+<!-- Experimental -->
 <script>
 	import { MaterialApp, Button, Icon } from 'svelte-materialify';
 

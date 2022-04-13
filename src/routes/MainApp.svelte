@@ -1,4 +1,5 @@
 <script>
+  import { fade } from 'svelte/transition';
   import MainAppHeader from "$lib/components/MainAppHeader.svelte";
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte";
   import Overlay from "$lib/components/Overlay.svelte";
@@ -22,7 +23,7 @@
 <MainAppDrawerSidebar/>
 <Overlay/>
 
-<div class="hero is-fullheight has-transition pt-16 {isSidebarActive?`${mini?"pl-16":"pl-x"}`:""}">
+<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {isSidebarActive?`${mini?"pl-16":"pl-x"}`:""}">
   {#if curInterface === "Dashboard"}
     <DashboardInterface />
   {:else if curInterface === "Assigned to me"}
