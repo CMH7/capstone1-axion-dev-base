@@ -8,6 +8,18 @@
 
 <div>
   <MaterialApp>
-    <Overlay index={1} {active} on:click={()=>ismini.set(true)}/>
+    <Overlay class="" index={1} {active} on:click={()=>ismini.set(true)}>
+      <div class="blurit hero is-fullheight">
+        <div class="section">
+          
+        </div>
+      </div>
+    </Overlay>
+    <style>
+      .blurit {
+        width: 200vw;
+        backdrop-filter: blur(10px);
+      }
+    </style>
   </MaterialApp>
 </div>
