@@ -5,13 +5,12 @@
     Card,
     CardTitle,
     CardText,
-    CardActions,
-    Ripple,
+    Divider,
     Tooltip,
     Icon,
     MaterialApp } from 'svelte-materialify';
 
-  import { mdiArrowLeft, mdiStarSettings, mdiStarSettingsOutline } from '@mdi/js';
+  import { mdiClose, mdiStarSettings, mdiStarSettingsOutline } from '@mdi/js';
 
   // Required params
   // Task Name
@@ -23,6 +22,9 @@
   // Task favorite
   export let isFavorite = false;
 
+  // Task Level
+  export let level = "L";
+
   export let active = false;
 
   function open() {
@@ -32,82 +34,92 @@
     active = false;
   }
 
-  // Back hovering
-  let backHovering = false;
-
   // useHint store
   import { useHint } from '$lib/stores/global-store';
   let hintAvailable;
   useHint.set(true);
   useHint.subscribe(value => hintAvailable = value);
-
 </script>
 
 <MaterialApp>
   <Dialog fullscreen bind:active>
     <Card>
+      <div class="p-5">
+        <!-- MODAL HEADER PART -->
+        <div class="is-flex is-justify-content-space-between is-align-items-center p-3">
+          <div class="is-flex is-align-items-center">
+  
+            <!-- Task Name -->
+            <CardTitle class="is-unselectable m-0 p-0 mr-4">
+              <p class="dmsans has-text-weight-bold is-size-2-desktop is-size-3-tablet is-size-4-mobile mb-0">{name}</p>
+            </CardTitle>
+  
+            <!-- isFavorite part -->
+            {#if isFavorite}
+              {#if hintAvailable}
+                <Tooltip bottom>
+                  <Icon  size=30px class="yellow-text text-darken-2" path={mdiStarSettings} />
+                  <span slot="tip">
+                    Task is favorite
+                    <Divider class="m-0 p-0" />
+                    Click to remove as favorite
+                  </span>
+                </Tooltip>
+              {:else}
+                <Icon  size=30px class="yellow-text text-darken-2" path={mdiStarSettings} />
+              {/if}
+            {:else}
+              {#if hintAvailable}
+                <Tooltip bottom>
+                  <Icon size=30px class="yellow-text text-darken-2" path={mdiStarSettingsOutline} />
+                  <span slot="tip">
+                    Task is not favorite
+                    <Divider class="m-0 p-0" />
+                    Click to mark as favorite
+                  </span>
+                </Tooltip>
+              {:else}
+                <Icon  size=30px class="yellow-text text-darken-2" path={mdiStarSettings} />
+              {/if}
+            {/if}
 
-      <!-- MODAL HEADER PART -->
-      <div class="is-flex is-justify-content-space-between is-align-items-center p-3">
-        <div class="is-flex is-align-items-center">
-
-          <!-- Go back button or icon -->
-          {#if hintAvailable}
-          <Tooltip bottom>
-            <div on:click={close} on:mouseleave={()=>backHovering = false} on:mouseenter={()=>backHovering = true}>
-              <Icon size=30px class="is-clickable mr-2 {backHovering?"has-text-warning bigger":""}" path={mdiArrowLeft}/>
-            </div>
-            <span slot="tip">go back</span>
-          </Tooltip>
-          {:else}
-          <div on:click={close} on:mouseleave={()=>backHovering = false} on:mouseenter={()=>backHovering = true}>
-            <Icon size=30px class="is-clickable mr-2 {backHovering?"has-text-warning bigger":""}" path={mdiArrowLeft}/>
+            <!-- Level or Priority Label part -->
+            {#if hintAvailable}
+              <Tooltip bottom>
+                <div class="ml-4 button is-small {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"}">
+                  {level}
+                </div>
+                <span slot="tip">Priority level: {level === "L"?"Low":level === "M"?"Meduim":"Highest"} ({level})</span>
+              </Tooltip>
+            {:else}
+              <div class="button is-small {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"}">
+                {level}
+              </div>
+            {/if}
           </div>
-          {/if}
-
-          <!-- Task Name -->
-          <CardTitle class="is-unselectable m-0 p-0 mr-2">
-            <h4 class="fredokaone">{name}</h4>
-          </CardTitle>
-
-          <!-- isFavorite part -->
-          {#if isFavorite}
-          <Icon size=30px class="yellow-text text-darken-2" path={mdiStarSettings} />
+  
+          <!-- Close Button -->
+          {#if hintAvailable}
+            <Tooltip bottom>
+              <div on:click={close}>
+                <Icon size=30px path={mdiClose}/>
+              </div>
+              <span slot="tip">Close {name}</span>
+            </Tooltip>
           {:else}
-          <Icon size=30px class="yellow-text text-darken-2" path={mdiStarSettingsOutline} />
+            <div on:click={close}>
+              <Icon size=30px path={mdiClose}/>
+            </div>
           {/if}
         </div>
-
-        {#if hintAvailable}
-        <Tooltip bottom>
-          <div class="button is-danger is-medium" use:Ripple={{centered: false}}>
-            Delete
-          </div>
-          <span slot="tip">Delete {name}</span>
-        </Tooltip>
-        {:else}
-          <div class="button is-danger is-medium" use:Ripple={{centered: false}}>
-            Delete
-          </div>
-        {/if}
+  
+        <!-- MODAL DUE & FAVORITE -->
+        <div class="is-flex is-justify-content-center is-align-items-center p-3">
+          <CardText class="is-unselectable m-0 p-0">
+            <h5>Due: {duedate}</h5>
+          </CardText>
+        </div>
       </div>
-
-      <!-- MODAL DUE & FAVORITE -->
-      <div class="is-flex is-justify-content-center is-align-items-center p-3">
-        <CardText class="is-unselectable m-0 p-0">
-          Due: {duedate}
-        </CardText>
-      </div>
-
-      <CardActions class="justify-end">
-        <Button on:click={close} text>Save</Button>
-      </CardActions>
     </Card>
   </Dialog>
-
-  <style>
-    .bigger {
-      transform: scale(1.2);
-    }
-  </style>
 </MaterialApp>
