@@ -4,11 +4,14 @@
     import HomeFooter from "$lib/components/Home-footer.svelte"
     import HomeHeader from "$lib/components/Home-header.svelte"
     import Button from "$lib/components/Button.svelte";
+
+    // Transition
+    import {fade} from 'svelte/transition';
 </script>
 
 <!-- header -->
 <HomeHeader/>
-<div class="hero is-fullheight-with-navbar">
+<div in:fade class="hero is-fullheight-with-navbar">
   <div class="hero-body">
     <div class="container">
       <div class="columns is-mobile is-centered is-multiline">
