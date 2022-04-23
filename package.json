@@ -8,6 +8,7 @@
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
 		"prepare": "svelte-kit sync",
+		"start": "node index.svelte",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
 	},
