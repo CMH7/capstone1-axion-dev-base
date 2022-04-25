@@ -25,6 +25,9 @@
   // Task Level
   export let level = "L";
 
+  // Task members
+  export let taskmembers = [];
+
   export let active = false;
 
   function open() {
