@@ -37,7 +37,7 @@
   let taskmodalactive = false;
 </script>
 
-<TaskBoxPopUpModal {name} {isFavorite} {level} assignedMembers={allMembers} active={taskmodalactive}/>
+<TaskBoxPopUpModal {name} {isFavorite} {level} active={taskmodalactive}/>
 <div class="is-clickable" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
   <MaterialApp>
     <style>
