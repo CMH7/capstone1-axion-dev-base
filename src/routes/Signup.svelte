@@ -98,7 +98,7 @@
 
       <div class="column is-12 p-0 pt-7 mb-5">
         <div class="is-flex flex-column is-align-items-center">
-          <Button type="primary" text="Sign up" textcss="dm-sans has-text-weight-bold is-size-4" />
+          <Button type="primary" text="Sign up" textcss="dm-sans has-text-weight-bold is-size-4" href="/Signin" />
           <p class="pt-4 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
         </div>
       </div>
