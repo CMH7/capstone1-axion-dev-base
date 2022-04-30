@@ -92,7 +92,7 @@
             <Boards name="Todo" color="grey">
               {#each allTasks as task}
                 {#if task.from === currentActiveWorkspace && task.status === "Todo"}
-                  <TaskCard name="{task.name}" level="{task.level}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                  <TaskCard name="{task.name}" level="{task.level}" status="{task.status}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
                 {/if}
               {/each}
             </Boards>
@@ -105,7 +105,7 @@
             <Boards name="In progress" color="info">
               {#each allTasks as task}
                 {#if task.from === currentActiveWorkspace && task.status === "In progress"}
-                  <TaskCard name="{task.name}" level="{task.level}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                  <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
                 {/if}
               {/each}
             </Boards>
@@ -118,7 +118,7 @@
             <Boards name="Done" color="success">
               {#each allTasks as task}
                 {#if task.from === currentActiveWorkspace && task.status === "Done"}
-                  <TaskCard name="{task.name}" level="{task.level}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                  <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
                 {/if}
               {/each}
             </Boards>
@@ -132,7 +132,7 @@
               <Boards name={board.name} color={board.color}>
                 {#each allTasks as task}
                   {#if task.from === currentActiveWorkspace && task.status === board.name}
-                    <TaskCard name="{task.name}" level="{task.level}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                    <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
                   {/if}
                 {/each}
               </Boards>
