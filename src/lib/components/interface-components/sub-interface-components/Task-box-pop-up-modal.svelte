@@ -29,10 +29,6 @@
   export let taskmembers = [];
 
   export let active = false;
-
-  function open() {
-    active = true;
-  }
   function close() {
     active = false;
   }
@@ -87,6 +83,20 @@
             {/if}
 
             <!-- Level or Priority Label part -->
+            {#if hintAvailable}
+              <Tooltip bottom>
+                <div class="ml-4 button is-small {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"}">
+                  {level}
+                </div>
+                <span slot="tip">Priority level: {level === "L"?"Low":level === "M"?"Meduim":"Highest"} ({level})</span>
+              </Tooltip>
+            {:else}
+              <div class="button is-small {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"}">
+                {level}
+              </div>
+            {/if}
+            
+            <!-- status part -->
             {#if hintAvailable}
               <Tooltip bottom>
                 <div class="ml-4 button is-small {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"}">
