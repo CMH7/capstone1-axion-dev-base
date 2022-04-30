@@ -17,18 +17,24 @@
       <div class="columns is-mobile is-centered is-multiline">
   
         <div class="column is-5-desktop is-8-touch">
+
+          <!-- Title -->
           <div class="container mt-10 mb-0 is-flex is-flex-direction-column is-align-items-center">
             <p class="is-size-1-tablet is-size-3-mobile is-primary has-text-weight-bold has-text-centered fredokaone">SIGN IN</p>
           </div>
 
           <!-- input fields -->
+          <!-- email -->
           <div class="section py-3">
             <div class="container">
               <input class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
             </div>
+
+            <!-- password -->
             <div class="container">
-              <input class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Password">
+              <input class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
             </div>
+
           </div>
         </div>
 
@@ -63,8 +69,8 @@
 
           <!-- 'sign in' button -->
           <div class="is-flex flex-column is-align-items-center">
-            <div class="mb-5">
-              <Button type="primary" text="Sign In" href="/MainApp" textcss="dm-sans has-text-weight-bold is-size-5" on:click/>
+            <div class="mb-5 mt-6">
+              <Button type="primary" text="Sign In" href="/MainApp" textcss="dm-sans has-text-weight-bold is-size-5"/>
             </div>
             <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
