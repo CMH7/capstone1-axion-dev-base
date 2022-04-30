@@ -19,6 +19,9 @@
   // Task isFavorite
   export let isFavorite = false;
 
+  // Task status
+  export let status = "";
+
   // Task members
   // Test data
   // members
@@ -37,7 +40,7 @@
   let taskmodalactive = false;
 </script>
 
-<TaskBoxPopUpModal {name} {isFavorite} {level} active={taskmodalactive}/>
+<TaskBoxPopUpModal {name} {isFavorite} {status} taskmembers={allMembers} {level} active={taskmodalactive}/>
 <div class="is-clickable" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
   <MaterialApp>
     <style>
