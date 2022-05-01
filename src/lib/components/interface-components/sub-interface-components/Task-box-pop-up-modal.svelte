@@ -12,11 +12,10 @@
     Tabs,
     Tab,
     TabContent,
-    Ripple,
     Avatar,
     MaterialApp } from 'svelte-materialify';
 
-  import { mdiClose, mdiStarSettings, mdiStarSettingsOutline } from '@mdi/js';
+  import { mdiStarSettings, mdiStarSettingsOutline } from '@mdi/js';
 
   // Required params
   // Task Name
