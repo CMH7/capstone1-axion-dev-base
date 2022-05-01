@@ -26,7 +26,6 @@
   // Test data
   // members
   import members from '$lib/sample-case/sample-members/members';
-  import tasks from '$lib/sample-case/sample-tasks/tasks';
 
   export let allMembers = members.members;
 
