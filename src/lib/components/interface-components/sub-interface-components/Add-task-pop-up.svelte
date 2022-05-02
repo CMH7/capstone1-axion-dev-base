@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
 	import { Dialog, MaterialApp, Menu, Avatar, Tooltip, Divider } from 'svelte-materialify';
     import boards from '$lib/sample-case/sample-boards/boards';
 
@@ -54,7 +56,7 @@
 </script>
 
 <MaterialApp>
-	<Dialog class="pa-4 has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
+	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
 
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
