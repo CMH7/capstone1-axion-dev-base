@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
 	import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte';
   import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte';
   import workspaces from '$lib/sample-case/sample-workspaces/workspaces';
