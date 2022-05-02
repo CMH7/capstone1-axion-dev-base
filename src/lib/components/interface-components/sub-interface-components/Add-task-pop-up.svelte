@@ -98,7 +98,7 @@
                     <div on:mouseleave={()=>member.hover = false} on:mouseenter={()=>member.hover = true} on:click={()=>{if(member.selected){member.selected = false}else{member.selected = true}}}>
                         <Tooltip bottom>
                             <Avatar size="35px" class="mx-1 mb-1 is-clickable" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
-                                <img style="border: {member.selected || member.hover ? "5" : "1"}px solid white;" src="{member.profile}" alt="{member.name}" title="{member.name}" />
+                                <img class="has-transition" style="border: {member.selected || member.hover ? "5" : "1"}px solid white;" src="{member.profile}" alt="{member.name}" title="{member.name}" />
                             </Avatar>
                             <span slot="tip">
                                 {#if hintAvailable}
@@ -122,7 +122,7 @@
             <!-- colors -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
                 {#each colors as color}
-                <div class="is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid white;" />
+                <div class="has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid white;" />
                 {/each}
             </div>
 
