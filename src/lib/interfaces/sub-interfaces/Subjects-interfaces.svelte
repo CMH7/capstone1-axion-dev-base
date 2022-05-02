@@ -3,6 +3,7 @@
   import subjects from "$lib/sample-case/sample-subjects/subjects";
   import { mdiPlus } from "@mdi/js";
   import { MaterialApp, Icon, Tooltip } from "svelte-materialify";
+  import AddSubjectPopUp from "$lib/components/interface-components/sub-interface-components/Add-subject-pop-up.svelte";
 
   // Transition
   import { fade } from 'svelte/transition';
@@ -12,19 +13,22 @@
   // mouse hover effect
   let hovering = false;
 
+  // pop up active
+  let popupActive = false;
+
   //hint
   import { useHint } from "$lib/stores/global-store";
-  import AddSubjectPopUp from "$lib/components/interface-components/sub-interface-components/Add-subject-pop-up.svelte";
+
   let hintAvailable;
   useHint.subscribe(value => hintAvailable = value);
 </script>
 
 <div class="columns is-multiline is-variable is-5 pl-6">
+  <AddSubjectPopUp active={popupActive}/>
   <!-- Add button -->
-
   {#if hintAvailable}
   <Tooltip bottom>
-    <div on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} in:fade on:click={() => AddSubjectPopUp} class="column is-narrow">
+    <div on:mouseenter={() => {hovering = true; popupActive = false}} on:mouseleave={() => hovering = false} in:fade on:click={() => popupActive = true} class="column is-narrow">
       <div class="has-transition notification rounded-xl has-background-grey-{hovering ? "dark" : "light"} is-clickable is-flex is-justify-content-center is-align-items-center px-6">
         <div>
           <MaterialApp>
