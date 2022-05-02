@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
 	import { Dialog, MaterialApp, Menu, Avatar, Tooltip, Divider } from 'svelte-materialify';
     import boards from '$lib/sample-case/sample-boards/boards';
 
@@ -54,7 +56,7 @@
 </script>
 
 <MaterialApp>
-	<Dialog class="pa-4 has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
+	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
 
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
@@ -96,7 +98,7 @@
                     <div on:mouseleave={()=>member.hover = false} on:mouseenter={()=>member.hover = true} on:click={()=>{if(member.selected){member.selected = false}else{member.selected = true}}}>
                         <Tooltip bottom>
                             <Avatar size="35px" class="mx-1 mb-1 is-clickable" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
-                                <img style="border: {member.selected || member.hover ? "5" : "1"}px solid white;" src="{member.profile}" alt="{member.name}" title="{member.name}" />
+                                <img class="has-transition" style="border: {member.selected || member.hover ? "5" : "1"}px solid white;" src="{member.profile}" alt="{member.name}" title="{member.name}" />
                             </Avatar>
                             <span slot="tip">
                                 {#if hintAvailable}
@@ -120,7 +122,7 @@
             <!-- colors -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
                 {#each colors as color}
-                <div class="is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid white;" />
+                <div class="has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid white;" />
                 {/each}
             </div>
 

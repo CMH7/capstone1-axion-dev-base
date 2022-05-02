@@ -12,7 +12,7 @@
 
   // Transition
   import { fade } from 'svelte/transition';
-import AddTaskPopUp from "./Add-task-pop-up.svelte";
+  import AddTaskPopUp from "./Add-task-pop-up.svelte";
 
   // variables
   let isHoveringAddIcon = false;
