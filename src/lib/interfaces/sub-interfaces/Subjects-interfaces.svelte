@@ -28,7 +28,7 @@
   <!-- Add button -->
   {#if hintAvailable}
   <Tooltip bottom>
-    <div on:mouseenter={() => {hovering = true; popupActive = false}} on:mouseleave={() => hovering = false} in:fade on:click={() => popupActive = true} class="column is-narrow">
+    <div on:mouseenter={() => {hovering = true; popupActive = false}} on:mouseleave={() => hovering = false} in:fade on:click={() => popupActive = true} class="ml-3 column is-narrow">
       <div class="has-transition notification rounded-xl has-background-grey-{hovering ? "dark" : "light"} is-clickable is-flex is-justify-content-center is-align-items-center px-6">
         <div>
           <MaterialApp>
@@ -44,7 +44,7 @@
     </span>
   </Tooltip>
   {:else}
-  <div on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} in:fade class="column is-narrow">
+  <div on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} in:fade class="ml-3 column is-narrow">
     <div class="has-transition notification rounded-xl has-background-grey-{hovering ? "dark" : "light"} is-clickable is-flex is-justify-content-center is-align-items-center px-6">
       <div>
         <MaterialApp>
