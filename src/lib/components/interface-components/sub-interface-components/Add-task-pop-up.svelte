@@ -1,13 +1,24 @@
 <script>
-	import { Dialog, MaterialApp, Menu } from 'svelte-materialify';
+	import { Dialog, MaterialApp, Menu, Avatar, Tooltip, Divider } from 'svelte-materialify';
     import boards from '$lib/sample-case/sample-boards/boards';
 
     // to open the dialog
 	export let active = false;
 
+    // members of the workspace
+    export let workspaceMembers = [];
+
+    const workspaceMembersLocal = workspaceMembers.map(member => {
+        return {
+            name: `${member.firstName} ${member.lastName}`,
+            profile: `${member.profile}`,
+            selected: false,
+            hover: false,
+        }
+    });
+
     // hover effect
     let hovering = false;
-    let colorHover = false;
 
     // sample case
     let allBoards = boards.boards;
@@ -35,6 +46,11 @@
     // date picker
     import SveltyPicker from 'svelty-picker';
     let myDate = '2021-11-11 14:35';
+
+    // hint
+    import {useHint} from '$lib/stores/global-store';
+    let hintAvailable;
+    useHint.subscribe(value => hintAvailable = value);
 </script>
 
 <MaterialApp>
@@ -75,7 +91,30 @@
             <div class="is-flex is-justify-content-flex-start is-align-items-center" style="width: 100%">
                 <!-- members -->
                 <p class="quicksands mb-0 has-text-white has-text-weight-bold column is-4">Members</p>
-                
+                <div class="is-flex">
+                    {#each workspaceMembersLocal as member}
+                    <div on:mouseleave={()=>member.hover = false} on:mouseenter={()=>member.hover = true} on:click={()=>{if(member.selected){member.selected = false}else{member.selected = true}}}>
+                        <Tooltip bottom>
+                            <Avatar size="35px" class="mx-1 mb-1 is-clickable" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
+                                <img style="border: {member.selected || member.hover ? "5" : "1"}px solid white;" src="{member.profile}" alt="{member.name}" title="{member.name}" />
+                            </Avatar>
+                            <span slot="tip">
+                                {#if hintAvailable}
+                                    {member.name}
+                                    <Divider class="m-0 p-0" />
+                                    {#if !member.selected}
+                                        Click to add as task member
+                                    {:else}
+                                        Click to remove as task member
+                                    {/if}
+                                {:else}
+                                    {member.name}
+                                {/if}
+                            </span>
+                        </Tooltip>
+                    </div>
+                    {/each}
+                </div>
             </div>
 
             <!-- colors -->
