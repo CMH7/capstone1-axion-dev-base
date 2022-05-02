@@ -1,6 +1,6 @@
 <script>
 	import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte';
-import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte';
+  import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte';
   import workspaces from '$lib/sample-case/sample-workspaces/workspaces';
   import { activeSubject, useHint } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';

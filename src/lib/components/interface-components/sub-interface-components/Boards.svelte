@@ -7,6 +7,9 @@
   export let name = "Unknown";
   export let taskCount = 0;
 
+  // workspace members
+  export let workspaceMembers = [];
+
   // Transition
   import { fade } from 'svelte/transition';
 import AddTaskPopUp from "./Add-task-pop-up.svelte";
@@ -16,7 +19,7 @@ import AddTaskPopUp from "./Add-task-pop-up.svelte";
   let popupActive = false;
 </script>
 
-<AddTaskPopUp active = {popupActive}/>
+<AddTaskPopUp active = {popupActive} {workspaceMembers}/>
 
 <div in:fade class="notification px-2 py-1 rounded-lg elevation-3 has-background-{color}-light">
   
@@ -34,7 +37,7 @@ import AddTaskPopUp from "./Add-task-pop-up.svelte";
   <div on:mouseenter={()=>isHoveringAddIcon = true} on:mouseleave={()=>isHoveringAddIcon = false} class="is-clickable rounded-circle iconCont is-paddingless">
     <MaterialApp>
       <div class="d-flex justify-center has-background-{color}-light">
-        <Button icon on:click={() => popupActive = true} on:mouseenter={() => popupActive = false}>
+        <Button icon on:click={() => {if (popupActive) {popupActive = false; popupActive = true}else{popupActive = true}}} on:mouseenter={() => popupActive = false}>
           <Icon size="25px" path={mdiPlus} class="{isHoveringAddIcon?"has-text-dark":""}" />
         </Button>
       </div>
