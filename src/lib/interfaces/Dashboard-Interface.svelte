@@ -1,9 +1,11 @@
 <script>
+// @ts-nocheck
+
   // Transitions
   import { fade } from 'svelte/transition';
 
   // Global Variables first
-  import { activeWorkspace, subjectColor, workspaceColor } from './../stores/global-store.js';
+  import { activeWorkspace, subjectColor, workspaceColor } from '$lib/stores/global-store.js';
 
   // Test cases
   import tasks from '$lib/sample-case/sample-tasks/tasks.js';
@@ -11,7 +13,6 @@
 
   // Components
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
-	import SubjectBox from '$lib/components/interface-components/Subject-box.svelte';
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte';
 
   // Test cases
@@ -24,7 +25,6 @@
   // Sub interfaces of Dashboard
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte";
-  // import BoardsInterface from "$lib/interfaces/sub-interfaces/Boards-interface.svelte";
 
   import { mdiArrowLeft} from '@mdi/js';  
 
@@ -44,6 +44,18 @@
   workspaceColor.subscribe(value => chosenWorkspaceColor = value);
 
   let ishovering = false;
+
+  // import test case
+  import workspaces from '$lib/sample-case/sample-workspaces/workspaces';
+  const allWorkspacess = workspaces.workspaces;
+
+  let workspaceMembers = [];
+  for(let i = 0; i < allWorkspacess.length; i++){
+    if(allWorkspacess[i].name === currentActiveWorkspace){
+      workspaceMembers = allWorkspacess[i].members;
+      break;
+    }
+  }
 </script>
 
 <div in:fade class="hero">
@@ -89,7 +101,7 @@
         <!-- Todo Default board -->
         <div class="column is-narrow-tablet is-12-mobile">
           <div class="d-flex flex-row justify-center">
-            <Boards name="Todo" color="grey">
+            <Boards {workspaceMembers} name="Todo" color="grey">
               {#each allTasks as task}
                 {#if task.from === currentActiveWorkspace && task.status === "Todo"}
                   <TaskCard name="{task.name}" level="{task.level}" status="{task.status}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
@@ -102,7 +114,7 @@
         <!-- In progress default board -->
         <div class="column is-narrow-tablet is-12-mobile">
           <div class="d-flex flex-row justify-center">
-            <Boards name="In progress" color="info">
+            <Boards {workspaceMembers} name="In progress" color="info">
               {#each allTasks as task}
                 {#if task.from === currentActiveWorkspace && task.status === "In progress"}
                   <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
@@ -115,7 +127,7 @@
         <!-- Done default board -->
         <div class="column is-narrow-tablet is-12-mobile">
           <div class="d-flex flex-row justify-center">
-            <Boards name="Done" color="success">
+            <Boards {workspaceMembers} name="Done" color="success">
               {#each allTasks as task}
                 {#if task.from === currentActiveWorkspace && task.status === "Done"}
                   <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
@@ -129,7 +141,7 @@
         {#each allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
-              <Boards name={board.name} color={board.color}>
+              <Boards {workspaceMembers} name={board.name} color={board.color}>
                 {#each allTasks as task}
                   {#if task.from === currentActiveWorkspace && task.status === board.name}
                     <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
