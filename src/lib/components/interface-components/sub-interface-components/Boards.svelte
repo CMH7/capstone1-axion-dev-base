@@ -9,10 +9,14 @@
 
   // Transition
   import { fade } from 'svelte/transition';
+import AddTaskPopUp from "./Add-task-pop-up.svelte";
 
   // variables
   let isHoveringAddIcon = false;
+  let popupActive = false;
 </script>
+
+<AddTaskPopUp active = {popupActive}/>
 
 <div in:fade class="notification px-2 py-1 rounded-lg elevation-3 has-background-{color}-light">
   
@@ -30,7 +34,7 @@
   <div on:mouseenter={()=>isHoveringAddIcon = true} on:mouseleave={()=>isHoveringAddIcon = false} class="is-clickable rounded-circle iconCont is-paddingless">
     <MaterialApp>
       <div class="d-flex justify-center has-background-{color}-light">
-        <Button icon>
+        <Button icon on:click={() => popupActive = true} on:mouseenter={() => popupActive = false}>
           <Icon size="25px" path={mdiPlus} class="{isHoveringAddIcon?"has-text-dark":""}" />
         </Button>
       </div>
