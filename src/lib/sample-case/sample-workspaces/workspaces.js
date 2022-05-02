@@ -19,6 +19,7 @@ export default {
       members.members[1],
       members.members[0],
       members.members[3],
+      members.members[3],
     ]},
     {from: "Literacy", name: "Data Flow Diagram", color: "warning", isFavorite: false, members: [
       members.members[2],
