@@ -122,7 +122,7 @@
             <!-- colors -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
                 {#each colors as color}
-                <div class="has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid white;" />
+                <div class="has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid {color.hover?"black":"white"};" />
                 {/each}
             </div>
 

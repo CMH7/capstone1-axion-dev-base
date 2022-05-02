@@ -32,7 +32,7 @@
 </script>
 
 <MaterialApp>
-	<Dialog class="pa-4 has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
+	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
 
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
@@ -44,7 +44,7 @@
             <!-- colors -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
                 {#each colors as color}
-                <div class="is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid white;" />
+                <div class="has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px; border:{color.selected || color.hover ? "5" : "1"}px solid {color.hover?"black":"white"};" />
                 {/each}
             </div>
 
