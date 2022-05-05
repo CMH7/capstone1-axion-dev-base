@@ -16,7 +16,7 @@
     setTimeout(() => {
       hidenow = true;
       homevisited.set(true);
-    }, 5000);
+    }, 3000);
   }else{
     hidenow = true;
   }
