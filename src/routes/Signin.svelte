@@ -7,6 +7,29 @@
 
     // Transition
     import {fade} from 'svelte/transition';
+
+    // database test
+    import axios from 'axios';
+
+    // log in 
+    let validuser = false;
+
+    // store user data in global store for fast access and less access to database
+    import {userData, useHint} from '$lib/stores/global-store';
+
+    let email, password;
+
+    function login(email, password){
+      if(email === "" || password === "") validuser = false;
+      axios.get(`http://localhost:8080/Signin?email=${email}&p=${password}`).then(res=>{
+        if(res.data.length <= 0) return;
+        validuser = true;
+        userData.set(res.data[0].data);
+        userData.subscribe(value => useHint.set(value.useHint));
+      }).catch(err => {
+        console.log(err);
+      });
+    }
 </script>
 
 <!-- header -->
@@ -27,12 +50,12 @@
           <!-- email -->
           <div class="section py-3">
             <div class="container">
-              <input class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
+              <input bind:value={email} class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
             </div>
 
             <!-- password -->
             <div class="container">
-              <input class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
+              <input bind:value={password} class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
             </div>
 
           </div>
@@ -70,7 +93,10 @@
           <!-- 'sign in' button -->
           <div class="is-flex flex-column is-align-items-center">
             <div class="mb-5 mt-6">
-              <Button type="primary" text="Sign In" href="/MainApp" textcss="dm-sans has-text-weight-bold is-size-5"/>
+              <!-- <button on:click={()=>login(email, password)} class="button is-primary dm-sans has-text-weight-bold is-size-5">Sign In</button> -->
+              <!-- <div on:mouseenter={()=> login(email, password)}> -->
+                <Button on:click={()=> login(email, password)} type="primary" text="Sign In" href="{validuser?"/MainApp":"/Signin"}" textcss="dm-sans has-text-weight-bold is-size-5"/>
+              <!-- </div> -->
             </div>
             <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
