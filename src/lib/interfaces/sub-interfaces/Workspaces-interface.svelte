@@ -3,7 +3,6 @@
 
 	import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte';
   import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte';
-  import workspaces from '$lib/sample-case/sample-workspaces/workspaces';
   import { activeSubject, useHint } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { MaterialApp, Tooltip, Icon } from 'svelte-materialify';
@@ -11,7 +10,11 @@
   // Transition
   import { fade } from 'svelte/transition';
 
-  let allworkspaces = workspaces.workspaces;
+  // import workspaces from userData
+  import { userData } from '$lib/stores/global-store';
+  let allworkspaces;
+  userData.subscribe(value => allworkspaces = value.workspaces)
+
   let currentActiveSubject = "";
   activeSubject.subscribe(value => currentActiveSubject = value);
 

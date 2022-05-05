@@ -7,17 +7,21 @@
   // Global Variables first
   import { activeWorkspace, subjectColor, workspaceColor } from '$lib/stores/global-store.js';
 
-  // Test cases
-  import tasks from '$lib/sample-case/sample-tasks/tasks.js';
-  import boards from '$lib/sample-case/sample-boards/boards.js';
+  // userData imports
+  import {userData} from '$lib/stores/global-store';
+
+  // import workspaces, boards, tasks, subtasks from userData
+  let allWorkspaces, allBoards, allTasks;
+  userData.subscribe(value => {
+    console.log(value);
+    allWorkspaces = value.workspaces;
+    allBoards = value.boards;
+    allTasks = value.tasks;
+  });
 
   // Components
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte';
-
-  // Test cases
-  let allTasks = tasks.tasks;
-  let allBoards = boards.boards;
   
 	import { Icon, MaterialApp } from 'svelte-materialify';
   import { activeSubject, currentDashboardSubInterface } from "$lib/stores/global-store";
@@ -45,14 +49,10 @@
 
   let ishovering = false;
 
-  // import test case
-  import workspaces from '$lib/sample-case/sample-workspaces/workspaces';
-  const allWorkspacess = workspaces.workspaces;
-
   let workspaceMembers = [];
-  for(let i = 0; i < allWorkspacess.length; i++){
-    if(allWorkspacess[i].name === currentActiveWorkspace){
-      workspaceMembers = allWorkspacess[i].members;
+  for(let i = 0; i < allWorkspaces.length; i++){
+    if(allWorkspaces[i].name === currentActiveWorkspace){
+      workspaceMembers = allWorkspaces[i].members;
       break;
     }
   }
@@ -104,7 +104,7 @@
             <Boards {workspaceMembers} name="Todo" color="grey">
               {#each allTasks as task}
                 {#if task.from === currentActiveWorkspace && task.status === "Todo"}
-                  <TaskCard name="{task.name}" level="{task.level}" status="{task.status}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+                  <TaskCard name="{task.name}" level="{task.level}" status="{task.status}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.name} />
                 {/if}
               {/each}
             </Boards>
