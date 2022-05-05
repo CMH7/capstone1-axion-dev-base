@@ -1,6 +1,6 @@
 <script>
 	import { subjectColor } from './../../stores/global-store.js';
-import { activeSubject, currentDashboardSubInterface } from "$lib/stores/global-store";
+  import { activeSubject, currentDashboardSubInterface } from "$lib/stores/global-store";
 
   import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js";
   import { Icon, MaterialApp } from "svelte-materialify";
