@@ -10,6 +10,34 @@
 
   // Transition
   import {fade} from 'svelte/transition';
+
+  // inputs values
+  let firstName, lastName, age, gender, email, school, course, username, password, repassword;
+
+  //database try
+  import axios from 'axios';
+
+  function createNewUser(){
+    if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || username === "" || password === "" || repassword === ""){
+      console.log("incomplete");
+    }else{
+      axios.post('http://localhost:8080/Signup',  {
+        firstName: firstName,
+        lastName: lastName,
+        age: age,
+        gender: gender,
+        email: email,
+        school: school,
+        course: course,
+        username: username,
+        password: password
+      }).then(res=>{
+        console.log(res.data);
+      }).catch(err=>{
+        console.log(err);
+      });
+    }
+  }
 </script>
 
 <SignupHeader/>
@@ -25,19 +53,19 @@
         <div class=" d-flex flex-wrap">
 
           <!-- First name -->
-          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="First Name">
+          <input required bind:value={firstName} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="First Name">
           
           <!-- Last name -->
-          <input class="input quicksands mt-3 has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Last Name">
+          <input required bind:value={lastName} class="input quicksands mt-3 has-background-light" style="width: 100%;" type="text" placeholder="Last Name">
 
           <!-- Age -->
-          <input class="input quicksands my-3 has-text-white has-background-light" style="width: 30%; margin-right: 5%;" type="text" placeholder="Age">
+          <input required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%;" type="text" placeholder="Age">
 
           <!-- Gender -->
-          <input class="input quicksands my-3 has-text-white has-background-light" style="width: 65%;" type="text" placeholder="Gender">
+          <input required bind:value={gender} class="input quicksands my-3 has-background-light" style="width: 65%;" type="text" placeholder="Gender">
           
           <!-- E-mail -->
-          <input class="input quicksands has-text-white has-background-light" style="width: 100%;" type="text" placeholder="Email">
+          <input required bind:value={email} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="Email">
 
         </div>
       </div>
@@ -47,19 +75,19 @@
         <div class=" d-flex flex-wrap">
 
           <!-- School name -->
-          <input class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
+          <input required bind:value={school} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
 
           <!-- Course or Year  -->
-          <input class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course/Year">
+          <input required bind:value={course} class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course-Year (BSIT-3)">
 
           <!-- Username  -->
-          <input class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Username">
+          <input required bind:value={username} class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Username">
 
           <!-- Password -->
-          <input class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
+          <input required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
           
           <!-- Re-password -->
-          <input class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
+          <input required bind:value={repassword} class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
 
         </div>
       </div>
@@ -98,7 +126,8 @@
 
       <div class="column is-12 p-0 pt-7 mb-5">
         <div class="is-flex flex-column is-align-items-center">
-          <Button type="primary" text="Sign up" textcss="dm-sans has-text-weight-bold is-size-4" href="/Signin" />
+          <button on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4">Sign Up</button>
+          <!-- <Button type="primary" text="Sign up" textcss="dm-sans has-text-weight-bold is-size-4" href="/Signin" /> -->
           <p class="pt-4 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
         </div>
       </div>
