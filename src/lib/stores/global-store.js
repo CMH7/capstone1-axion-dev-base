@@ -1,5 +1,8 @@
 import { writable } from "svelte/store";
 
+// User data and information
+export let userData = writable();
+
 // This will determine the button pressed in navbar landing pages
 export const active = writable("");
 
