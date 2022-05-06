@@ -4,28 +4,21 @@
   // Transitions
   import { fade } from 'svelte/transition';
 
-  // Global Variables first
-  import { activeWorkspace } from '$lib/stores/global-store.js';
-
-  // userData imports
-  import {userData, useHint} from '$lib/stores/global-store';
-
-  // import workspaces, boards, tasks, subtasks from userData
-  let allBoards = [],
-      allTasks = [];
-
   // Components
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte';
   
 	import { Icon, MaterialApp } from 'svelte-materialify';
-  import { activeSubject, currentDashboardSubInterface } from "$lib/stores/global-store";
+  import { activeSubject, currentDashboardSubInterface, activeWorkspace } from "$lib/stores/global-store";
 
   // Sub interfaces of Dashboard
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte";
 
-  import { mdiArrowLeft} from '@mdi/js';  
+  import { mdiArrowLeft} from '@mdi/js';
+
+  // Import constants
+  import constants from '$lib/constants';
 
   let curDashSubInterface;
   currentDashboardSubInterface.subscribe(value => curDashSubInterface = value);
@@ -35,14 +28,18 @@
   activeSubject.subscribe(value => currentActiveSubject = value);
 
   // Get the chosen workspace
-  let currentActiveWorkspace;
-  activeWorkspace.subscribe(value => currentActiveWorkspace = value);
+  let currentActiveWorkspace, allBoards, workspaceMembers, allTasks = [];
+  activeWorkspace.subscribe(value => {
+    currentActiveWorkspace = value;
+    allBoards = value.boards;
+    workspaceMembers = value.members;
+    for(let i = 0; i < value.boards.length; i++){
+      allTasks[i] = value.boards.tasks;
+    }
+  });
 
   // Mouse interactions for animation
   let ishovering = false;
-
-  // Gets the workspace's members
-  let workspaceMembers = currentActiveWorkspace.members;
 </script>
 
 <div in:fade class="hero">
@@ -53,7 +50,7 @@
       {:else if curDashSubInterface === "Workspaces"}
         <!-- Back button -->
         <span>
-          <div on:click={()=>{activeSubject.set({}); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
+          <div on:click={()=>{activeSubject.set(constants.subject); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
             <MaterialApp>
               <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
                 <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
@@ -69,7 +66,7 @@
       {:else if curDashSubInterface === "Boards"}
         <!-- Back Button -->
         <span>
-          <div on:click={()=>{activeWorkspace.set(""); currentDashboardSubInterface.set("Workspaces"); ishovering = false}} class="d-inline-block">
+          <div on:click={()=>{activeWorkspace.set(constants.workspace); currentDashboardSubInterface.set("Workspaces"); ishovering = false}} class="d-inline-block">
             <MaterialApp>
               <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
                 <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
@@ -97,54 +94,14 @@
 
       <div class="columns is-mobile pb-5 boardcolumns">
 
-        <!-- Todo Default board -->
-        <div class="column is-narrow-tablet is-12-mobile">
-          <div class="d-flex flex-row justify-center">
-            <Boards {workspaceMembers} name="Todo" color="grey">
-              {#each allTasks as task}
-                {#if task.from === currentActiveWorkspace && task.status === "Todo"}
-                  <TaskCard name="{task.name}" level="{task.level}" status="{task.status}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.name} />
-                {/if}
-              {/each}
-            </Boards>
-          </div>
-        </div>
-
-        <!-- In progress default board -->
-        <div class="column is-narrow-tablet is-12-mobile">
-          <div class="d-flex flex-row justify-center">
-            <Boards {workspaceMembers} name="In progress" color="info">
-              {#each allTasks as task}
-                {#if task.from === currentActiveWorkspace && task.status === "In progress"}
-                  <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
-                {/if}
-              {/each}
-            </Boards>
-          </div>
-        </div>
-
-        <!-- Done default board -->
-        <div class="column is-narrow-tablet is-12-mobile">
-          <div class="d-flex flex-row justify-center">
-            <Boards {workspaceMembers} name="Done" color="success">
-              {#each allTasks as task}
-                {#if task.from === currentActiveWorkspace && task.status === "Done"}
-                  <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
-                {/if}
-              {/each}
-            </Boards>
-          </div>
-        </div>
-
-        <!-- Other Customed boards by user -->
+        <!-- Boards by user -->
+        <!-- First 3 to be rendered are the default boards: Todo, In progress, & done -->
         {#each allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
               <Boards {workspaceMembers} name={board.name} color={board.color}>
-                {#each allTasks as task}
-                  {#if task.from === currentActiveWorkspace && task.status === board.name}
-                    <TaskCard name="{task.name}" level="{task.level}" status={task.status} isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
-                  {/if}
+                {#each board.tasks as task}
+                <TaskCard {task} />
                 {/each}
               </Boards>
             </div>
