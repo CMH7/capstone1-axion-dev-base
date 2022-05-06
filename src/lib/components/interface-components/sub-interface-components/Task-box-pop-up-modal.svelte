@@ -60,7 +60,7 @@
   
             <!-- Task Name -->
             <CardTitle class="is-unselectable column is-12-touch">
-              <p class="dmsans has-text-weight-bold is-size-2-tablet is-size-5-mobile">{name}</p>
+              <p class="dmsans has-text-weight-bold is-size-2-tablet is-size-5-mobile">{task.name}</p>
             </CardTitle>
   
             <!-- isFavorite part -->
