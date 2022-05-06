@@ -83,6 +83,90 @@ app.post('/MainApp', async (req, res) => {
   disconn();
 });
 
+// Creates a new workspace
+app.post('/MainApp/:subjectName', async (req, res) => {
+  conn();
+
+  const userA = await prisma.users.findFirst({
+    where: {
+      AND: {
+        id: {
+          equals: req.query.id
+        },
+        subjects: {
+          some: {
+            name: req.params.subjectName,
+            id: parseInt(req.query.sID)
+          }
+        }
+      }
+    }
+  });
+
+  const user = userA;
+
+  // Find the subject by subject name and sID & assign or add the value of subject's workspaces to newWorkspaces
+  user.subjects.forEach(subject => {
+    if (subject.id == req.query.sID && subject.name === req.params.subjectName) {
+      subject.workspaces.push({
+        boards: [
+          {
+            color: "grey",
+            createdBy: `${user.firstName} ${user.lastName}`,
+            createdOn: new Date(),
+            id: 1,
+            name: "Todo",
+            tasks: []
+          },
+          {
+            color: "info",
+            createdBy: `${user.firstName} ${user.lastName}`,
+            createdOn: new Date(),
+            id: 1,
+            name: "In progress",
+            tasks: []
+          },
+          {
+            color: "success",
+            createdBy: `${user.firstName} ${user.lastName}`,
+            createdOn: new Date(),
+            id: 1,
+            name: "Done",
+            tasks: []
+          },
+        ],
+        color: req.query.color,
+        id: subject.workspaces.length + 1,
+        isFavorite: false,
+        members: [],
+        name: req.query.name
+      });
+    }
+  });
+
+  const userB = await prisma.users.update({
+    where: {
+      id: req.query.id
+    },
+    data: {
+      age: user.age,
+      course: user.course,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      password: user.password,
+      profile: user.profile,
+      school: user.school,
+      subjects: user.subjects,
+      useHint: user.useHint,
+      year: user.year
+    }
+  });
+  res.send(userB);
+  disconn();
+});
+
 
 
 // ====== READ ======
