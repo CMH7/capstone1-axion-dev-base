@@ -1,9 +1,11 @@
 <script>
     import { mdiGoogle, mdiFacebook } from '@mdi/js'; // icons used
     import { Icon, Divider, MaterialApp } from 'svelte-materialify';
-    import HomeFooter from "$lib/components/Home-footer.svelte"
-    import HomeHeader from "$lib/components/Home-header.svelte"
-    import Button from "$lib/components/Button.svelte";
+    import HomeFooter from "$lib/components/Home-footer.svelte";
+    import HomeHeader from "$lib/components/Home-header.svelte";
+
+    // Router
+    import { goto } from '../../.svelte-kit/runtime/app/navigation';
 
     // Transition
     import {fade} from 'svelte/transition';
@@ -11,24 +13,47 @@
     // database test
     import axios from 'axios';
 
-    // log in 
-    let validuser = false;
+    // hash comparer
+    import bcrypt from 'bcryptjs';
 
     // store user data in global store for fast access and less access to database
     import {userData, useHint} from '$lib/stores/global-store';
 
-    let email, password;
+    let emailInput = "",
+        passwordInput = "",
+        data;
 
-    function login(email, password){
-      if(email === "" || password === "") validuser = false;
-      axios.get(`http://localhost:8080/Signin?email=${email}&p=${password}`).then(res=>{
-        if(res.data.length <= 0) return;
-        validuser = true;
-        userData.set(res.data[0].data);
-        userData.subscribe(value => useHint.set(value.useHint));
-      }).catch(err => {
-        console.log(err);
-      });
+    // Button animation
+    let loading = false;
+    let disabled = false;
+
+    function login(){
+      if(emailInput === "" || passwordInput === "") {
+        console.log(`${emailInput === ""? "email": passwordInput === ""? "password": ""} is/are empty!`)
+      }else{
+        axios.get(`http://localhost:8080/Signin?email=${emailInput}`).then(res=>{
+          if(res.data.data == null) {
+            emailInput = "";
+            passwordInput = "";
+          }else if(bcrypt.compare(passwordInput, res.data.data.password)){
+            axios.post('http://localhost:8080/validUser', {
+              email: emailInput,
+            }).then(resp => {
+              data = resp.data;
+              userData.set(data);
+              userData.subscribe(value => {
+                useHint.set(value.useHint);
+              });
+              loading = false;
+              goto('/MainApp', {replaceState: true});
+            }).catch(err => console.error(err));
+          }else{
+            console.log('password does not match');
+          }
+        }).catch(err => {
+          console.log(err);
+        });
+      }
     }
 </script>
 
@@ -50,12 +75,12 @@
           <!-- email -->
           <div class="section py-3">
             <div class="container">
-              <input bind:value={email} class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
+              <input bind:value={emailInput} class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
             </div>
 
             <!-- password -->
             <div class="container">
-              <input bind:value={password} class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
+              <input bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
             </div>
 
           </div>
@@ -93,9 +118,9 @@
           <!-- 'sign in' button -->
           <div class="is-flex flex-column is-align-items-center">
             <div class="mb-5 mt-6">
-              <!-- <button on:click={()=>login(email, password)} class="button is-primary dm-sans has-text-weight-bold is-size-5">Sign In</button> -->
+              <button on:click={()=>{login(); loading = true; disabled = true}} class="button is-primary {loading? "is-loading": ""} dm-sans has-text-weight-bold is-size-5" {disabled}>Sign In</button>
               <!-- <div on:mouseenter={()=> login(email, password)}> -->
-                <Button on:click={()=> login(email, password)} type="primary" text="Sign In" href="{validuser?"/MainApp":"/Signin"}" textcss="dm-sans has-text-weight-bold is-size-5"/>
+                <!-- <Button on:click={()=> login(email, password)} type="primary" text="Sign In" href="{validuser?"/MainApp":"/Signin"}" textcss="dm-sans has-text-weight-bold is-size-5"/> -->
               <!-- </div> -->
             </div>
             <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
