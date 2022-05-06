@@ -23,9 +23,16 @@
         passwordInput = "",
         data;
 
-    // Button animation
+    // animation
     let loading = false;
     let disabled = false;
+
+    // Set a countdown of 2 seconds
+    function countdown() {
+      setTimeout(() => {
+        goto('/MainApp', {replaceState: true});
+      }, 2000);
+    }
 
     function login(){
       if(emailInput === "" || passwordInput === "") {
@@ -45,7 +52,7 @@
                 useHint.set(value.useHint);
               });
               loading = false;
-              goto('/MainApp', {replaceState: true});
+              countdown();
             }).catch(err => console.error(err));
           }else{
             console.log('password does not match');
@@ -75,12 +82,12 @@
           <!-- email -->
           <div class="section py-3">
             <div class="container">
-              <input bind:value={emailInput} class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
+              <input {disabled} bind:value={emailInput} class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
             </div>
 
             <!-- password -->
             <div class="container">
-              <input bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
+              <input {disabled} bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
             </div>
 
           </div>
