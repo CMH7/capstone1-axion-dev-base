@@ -8,16 +8,18 @@
   import { activeWorkspace, subjectColor, workspaceColor } from '$lib/stores/global-store.js';
 
   // userData imports
-  import {userData} from '$lib/stores/global-store';
+  import {userData, useHint} from '$lib/stores/global-store';
 
   // import workspaces, boards, tasks, subtasks from userData
-  let allWorkspaces, allBoards, allTasks;
+  let allSubjects = [],
+      allWorkspaces = [],
+      allBoards = [],
+      allTasks = [];
   userData.subscribe(value => {
-    console.log(value);
-    allWorkspaces = value.workspaces;
-    allBoards = value.boards;
-    allTasks = value.tasks;
+    allSubjects = value.subjects;
   });
+
+  useHint.subscribe(value => console.log(`useHint: ${value}`));
 
   // Components
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
