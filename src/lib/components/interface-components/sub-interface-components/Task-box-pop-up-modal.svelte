@@ -18,23 +18,21 @@
   import { mdiStarSettings, mdiStarSettingsOutline } from '@mdi/js';
 
   // Required params
-  // Task Name
-  export let name = "Task1";
 
-  // Task due
-  export let duedate = "04-16-2022, 11:59 PM"
-
-  // Task favorite
-  export let isFavorite = false;
-
-  // Task Level
-  export let level = "L";
-
-  // Task members
-  export let taskmembers = [];
-
-  // Task status
-  export let status = "";
+  export let task = {
+    createdBy: "",
+    createdOn: new Date(),
+    description: "",
+    dueDateTime: new Date(),
+    id: 0,
+    isFavorite: false,
+    isSubtask: false,
+    level: 0,
+    members: [],
+    name: "",
+    status: "",
+    subtasks: []
+  }
 
   // Modal activeness
   export let active = false;
@@ -66,7 +64,7 @@
             </CardTitle>
   
             <!-- isFavorite part -->
-            {#if isFavorite}
+            {#if task.isFavorite}
               {#if hintAvailable}
                 <Tooltip bottom>
                   <div class="column is-4-mobile">
@@ -101,14 +99,14 @@
             <!-- Level or Priority Label part -->
             {#if hintAvailable}
               <Tooltip bottom>
-                <div class="mx-2 button is-small {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"}">
-                  {level}
+                <div class="mx-2 button is-small {task.level == 0? "has-background-success": task.level == 1?"has-background-warning has-text-black": "has-background-danger"}">
+                  {task.level == 0? "L": task.level == 1? "M": "H"}
                 </div>
-                <span slot="tip">Priority level: {level === "L"?"Low":level === "M"?"Meduim":"Highest"} ({level})</span>
+                <span slot="tip">Priority level: {task.level == 0? "Low": task.level == 1? "Medium": "High"}</span>
               </Tooltip>
             {:else}
-              <div class="mx-2 button is-small {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"}">
-                {level}
+              <div class="mx-2 button is-small {task.level == 0? "has-background-success": task.level == 1? "has-background-warning has-text-black": "has-background-danger"}">
+                {task.level == 0? "Low": task.level == 1? "Medium": "High"}
               </div>
             {/if}
             
@@ -116,7 +114,7 @@
             {#if hintAvailable}
               <Tooltip bottom>
                 <div class="mx-2 button is-small">
-                  {status}
+                  {task.status}
                 </div>
                 <span slot="tip">
                   Status of the task
@@ -126,7 +124,7 @@
               </Tooltip>
             {:else}
               <div class="mx-2 button is-small">
-                {status}
+                {task.status}
               </div>
             {/if}
           </div>
@@ -136,7 +134,7 @@
         <!-- MODAL DUE & FAVORITE -->
         <div class="is-flex is-justify-content-center is-align-items-center p-3">
           <CardText class="is-unselectable m-0 p-0">
-            <p class="mb-0 dmsans is-size-4-desktop is-size-5-tablet is-size-6-mobile">Due: {duedate}</p>
+            <p class="mb-0 dmsans is-size-4-desktop is-size-5-tablet is-size-6-mobile">Due: {task.dueDateTime}</p>
           </CardText>
         </div>
         
@@ -146,30 +144,30 @@
             <p class="mb-0 dmsans is-size-4-desktop is-size-5-tablet is-size-6-mobile"><span class="is-hidden-mobile">Assigned</span> Members: </p>
           </CardText>
           <div>
-            {#if taskmembers.length > 5}
+            {#if task.members.length > 5}
 
               <!-- This renders the top 5 most members of the task if the task members exceeds more than 5 -->
               {#each Array(5) as _, i}
                 <Avatar size=35px class="mx-1 mb-1 is-clickable" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
-                  <img src="{taskmembers[i].profile}" alt="{taskmembers[i].firstName}" title="{taskmembers[i].firstName} {taskmembers[i].lastName}" />
+                  <img src="{task.members[i].profile}" alt="{task.members[i].firstName}" title="{task.members[i].firstName} {task.members[i].lastName}" />
                 </Avatar>
               {/each}
 
                 <!-- Render here the +n members -->
                 <Tooltip bottom>
                   <Avatar size=35px class="mx-1 mb-1 is-clickable" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
-                    + {taskmembers.length - 5}
+                    + {task.members.length - 5}
                   </Avatar>
                   <span slot="tip">
-                    {#each Array(taskmembers.length - 5) as _, i}
-                      {taskmembers[i + 5].firstName} {taskmembers[i + 5].lastName}
+                    {#each Array(task.members.length - 5) as _, i}
+                      {task.members[i + 5].firstName} {task.members[i + 5].lastName}
                     {/each}
                   </span>
                 </Tooltip>
             {:else}
 
               <!-- In here it renders task members that counts upto 5 only -->
-              {#each taskmembers as member}
+              {#each task.members as member}
               <Avatar size=35px class="mx-1 is-clickable" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
                 <img src="{member.profile}" alt="{member.firstName}" title="{member.firstName} {member.lastName}" />
               </Avatar>
