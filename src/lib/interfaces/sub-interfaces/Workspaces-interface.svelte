@@ -3,26 +3,26 @@
 
 	import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte';
   import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte';
-  import workspaces from '$lib/sample-case/sample-workspaces/workspaces';
-  import { activeSubject, useHint } from '$lib/stores/global-store';
+  import { activeSubject, useHint, userData } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { MaterialApp, Tooltip, Icon } from 'svelte-materialify';
 
   // Transition
   import { fade } from 'svelte/transition';
 
-  let allworkspaces = workspaces.workspaces;
-  let currentActiveSubject = "";
+  // determine first what is the name & id of the chosen subject
+  let currentActiveSubject;
   activeSubject.subscribe(value => currentActiveSubject = value);
 
-  // show if theres no matching from workspace to current subject
-  let show = true;
-  let showproof = 0;
-  allworkspaces.forEach(workspace => {
-    if(workspace.from === currentActiveSubject) showproof++;
+  let allworkspaces;
+  userData.subscribe(value => {
+    value.subjects.forEach(subject => {
+      if(subject.name === currentActiveSubject.name && subject.id == currentActiveSubject.id){
+        allworkspaces = subject.workspaces;
+        activeSubject.set(subject);
+      }
+    });
   });
-
-  if(showproof > 0) show = false;
 
   // mouse hover effect
   let hovering = false;
@@ -68,7 +68,7 @@
   </div>
   {/if}
 
-  {#if show}
+  {#if allworkspaces.length == 0}
     <div class="section">
       <div class="container">
         <p>
@@ -78,11 +78,9 @@
     </div>
   {:else}
     {#each allworkspaces as workspace}
-      {#if currentActiveSubject === workspace.from}
-        <div in:fade class="column is-narrow">
-          <WorkspaceBox name={workspace.name} color={workspace.color} isFavorite={workspace.isFavorite}/>
-        </div>
-      {/if}
+    <div in:fade class="column is-narrow">
+      <WorkspaceBox {workspace}/>
+    </div>
     {/each}
   {/if}
 </div>

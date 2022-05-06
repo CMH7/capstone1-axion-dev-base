@@ -6,7 +6,6 @@
 
     // hover effect
     let hovering = false;
-    let colorHover = false;
 
     // colors
     const colors = [
@@ -28,7 +27,54 @@
         paramColor.selected = true
     }
 
-    
+    // button animation
+    let loading = false;
+    let disabled = false;
+
+    // Inputs
+    let workspaceNameInput = "";
+
+    // database
+    import axios from 'axios';
+
+    // import userData
+    import {userData} from '$lib/stores/global-store';
+    let id = "",
+        user;
+    userData.subscribe(value => {
+        id = value.id;
+        user = value;
+    });
+
+    // import current active subject
+    import {activeSubject} from '$lib/stores/global-store';
+    let curActiveSubject = {};
+    activeSubject.subscribe(value => curActiveSubject = value);
+
+    function createWorkspace() {
+        disabled = true;
+        loading = true;
+
+        let selectedColor = "";
+        colors.forEach(color => {
+            if(color.selected){
+                selectedColor = color.name;
+            }
+        });
+
+        axios.post(`http://localhost:8080/MainApp/${curActiveSubject.name}?sID=${curActiveSubject.id}&id=${id}&name=${workspaceNameInput}&color=${selectedColor}`)
+        .then(res => {
+            axios.post('http://localhost:8080/validUser', {
+                email: res.data.email
+            }).then(res => {
+                userData.set(res.data)
+                loading = false;
+                active = false;
+                disabled = false;
+                workspaceNameInput = "";
+            }).catch(err => console.error(`error in gettring user ${err}`));
+        }).catch(err => console.error(`error in posting workspace ${err}`));
+    }
 </script>
 
 <MaterialApp>
@@ -38,19 +84,19 @@
 
             <!-- input -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
-                <input class="p-2 input is-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" type="text" placeholder="Workspace name" />
+                <input {disabled} bind:value={workspaceNameInput} class="p-2 input is-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" type="text" placeholder="Workspace name" />
             </div>
 
             <!-- colors -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
                 {#each colors as color}
-                <div class="has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid {color.hover?"black":"white"};" />
+                <div class="{disabled && !color.selected? "is-hidden": disabled && color.selected? "button is-static": ""} has-transition {disabled? "": "is-clickable"} mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid {color.hover && !disabled?"black":"white"};" />
                 {/each}
             </div>
 
             <!-- create button -->
             <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-                <button on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} class="button has-transition {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;">
+                <button {disabled} on:click={createWorkspace} on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} class="button {loading? "is-loading": ""} has-transition {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;">
                     <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
                 </button>
             </div>

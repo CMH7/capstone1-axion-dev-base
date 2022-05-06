@@ -1,6 +1,5 @@
 <script>
   import SubjectBox from "$lib/components/interface-components/Subject-box.svelte";
-  import subjects from "$lib/sample-case/sample-subjects/subjects";
   import { mdiPlus } from "@mdi/js";
   import { MaterialApp, Icon, Tooltip } from "svelte-materialify";
   import AddSubjectPopUp from "$lib/components/interface-components/sub-interface-components/Add-subject-pop-up.svelte";
@@ -8,7 +7,10 @@
   // Transition
   import { fade } from 'svelte/transition';
  
-  let allSubjects = subjects.subjects;
+  // set subjects from userData
+  import { userData } from '$lib/stores/global-store';
+  let allSubjects = [];
+  userData.subscribe(value => allSubjects = value.subjects);
   
   // mouse hover effect
   let hovering = false;
@@ -60,7 +62,7 @@
   <!-- Other Subjects -->
   {#each allSubjects as subject}
     <div in:fade class="column is-narrow">
-      <SubjectBox name={subject.name} color={subject.color} isFavorite={subject.isFavorite} />
+      <SubjectBox subject={subject}/>
     </div>
   {/each}
 </div>
