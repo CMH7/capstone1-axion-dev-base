@@ -5,7 +5,7 @@
   import { fade } from 'svelte/transition';
 
   // Global Variables first
-  import { activeWorkspace, subjectColor, workspaceColor } from '$lib/stores/global-store.js';
+  import { activeWorkspace, workspaceColor } from '$lib/stores/global-store.js';
 
   // userData imports
   import {userData, useHint} from '$lib/stores/global-store';
@@ -18,8 +18,6 @@
   userData.subscribe(value => {
     allSubjects = value.subjects;
   });
-
-  useHint.subscribe(value => console.log(`useHint: ${value}`));
 
   // Components
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
@@ -37,14 +35,16 @@
   let curDashSubInterface;
   currentDashboardSubInterface.subscribe(value => curDashSubInterface = value);
 
+  // Get the chosen subject
   let currentActiveSubject;
   activeSubject.subscribe(value => currentActiveSubject = value);
+  
+  // Gets the subject's Color
+  let subjectColor = currentActiveSubject.color;
 
   let currentActiveWorkspace;
   activeWorkspace.subscribe(value => currentActiveWorkspace = value);
 
-  let chosenSubjectColor;
-  subjectColor.subscribe(value => chosenSubjectColor = value);
 
   let chosenWorkspaceColor;
   workspaceColor.subscribe(value => chosenWorkspaceColor = value);
@@ -66,15 +66,21 @@
       {#if curDashSubInterface === "Subjects"}
         Subjects
       {:else if curDashSubInterface === "Workspaces"}
+        <!-- Back button -->
         <span>
-          <div on:click={()=>{activeSubject.set(""); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
+          <div on:click={()=>{activeSubject.set({}); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
             <MaterialApp>
               <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
                 <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
               </div>
             </MaterialApp>
           </div>
-        </span> <span class="has-text-{chosenSubjectColor}">{currentActiveSubject}</span>
+        </span>
+
+        <!-- Subject Name -->
+        <span class="has-text-{currentActiveSubject.color === "warning" || currentActiveSubject.color === "success" || currentActiveSubject.color === "info"? `${currentActiveSubject.color}-dark`: currentActiveSubject.color}">
+          {currentActiveSubject.name}
+        </span>
       {:else if curDashSubInterface === "Boards"}
         <span>
           <div on:click={()=>{activeWorkspace.set(""); currentDashboardSubInterface.set("Workspaces"); ishovering = false}} class="d-inline-block">
