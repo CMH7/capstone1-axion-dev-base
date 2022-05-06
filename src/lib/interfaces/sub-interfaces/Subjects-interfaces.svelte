@@ -62,7 +62,7 @@
   <!-- Other Subjects -->
   {#each allSubjects as subject}
     <div in:fade class="column is-narrow">
-      <SubjectBox name={subject.name} color={subject.color} isFavorite={subject.isFavorite} />
+      <SubjectBox subject={subject}/>
     </div>
   {/each}
 </div>
