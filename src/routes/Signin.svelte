@@ -126,9 +126,6 @@
           <div class="is-flex flex-column is-align-items-center">
             <div class="mb-5 mt-6">
               <button on:click={()=>{login(); loading = true; disabled = true}} class="button is-primary {loading? "is-loading": ""} dm-sans has-text-weight-bold is-size-5" {disabled}>Sign In</button>
-              <!-- <div on:mouseenter={()=> login(email, password)}> -->
-                <!-- <Button on:click={()=> login(email, password)} type="primary" text="Sign In" href="{validuser?"/MainApp":"/Signin"}" textcss="dm-sans has-text-weight-bold is-size-5"/> -->
-              <!-- </div> -->
             </div>
             <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
