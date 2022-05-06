@@ -48,14 +48,16 @@
     })
 
     function createSubject() {
+        disabled = true;
+        loading = true;
+
         let selectedColor = "";
         colors.forEach(color => {
             if(color.selected){
                 selectedColor = color.name;
             }
-        })
+        });
 
-        console.log(`id: ${id}\nsubjectName: ${subjectName}\nselectedColor: ${selectedColor}\n`);
         axios.post(`http://localhost:8080/MainApp?id=${id}&name=${subjectName}&color=${selectedColor}`)
         .then(res => {
             axios.post('http://localhost:8080/validUser', {
@@ -90,7 +92,7 @@
 
             <!-- create button -->
             <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-                <button on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} on:click={()=> {createSubject(); loading = true; disabled = true}} class="button has-transition {loading? "is-loading": ""} {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;" {disabled}>
+                <button on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} on:click={createSubject} class="button has-transition {loading? "is-loading": ""} {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;" {disabled}>
                     <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
                 </button>
             </div>
