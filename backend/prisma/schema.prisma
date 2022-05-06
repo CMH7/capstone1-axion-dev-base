@@ -83,6 +83,7 @@ model users {
   course     String
   email      String
   firstName  String
+  gender     String
   lastName   String
   password   String
   profile    String
