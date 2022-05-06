@@ -103,6 +103,7 @@ app.post('/MainApp/:subjectName', async (req, res) => {
     }
   });
 
+  // Assign the resulting user to a variable to be able to edit it 
   const user = userA;
 
   // Find the subject by subject name and sID & assign or add the value of subject's workspaces to newWorkspaces
