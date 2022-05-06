@@ -2,7 +2,6 @@
   // Components used
   import HomeFooter from "$lib/components/Home-footer.svelte";
   import SignupHeader from "$lib/components/Signup-header.svelte";
-  import Button from "$lib/components/Button.svelte";
 
   // Icons and from materialify
   import { Icon, Divider, MaterialApp } from "svelte-materialify";
@@ -12,30 +11,55 @@
   import {fade} from 'svelte/transition';
 
   // inputs values
-  let firstName, lastName, age, gender, email, school, course, username, password, repassword;
+  let firstName = "",
+      lastName = "",
+      age = "",
+      gender = "",
+      email = "",
+      school = "",
+      course = "",
+      year = "",
+      password = "",
+      repassword = "";
 
   //database try
   import axios from 'axios';
 
+  // hash
+  import bcrypt from 'bcryptjs';
+
   function createNewUser(){
-    if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || username === "" || password === "" || repassword === ""){
-      console.log("incomplete");
+    if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || year === "" || password === "" || repassword === ""){
+
+      console.log(`${firstName === ""?"firstName": lastName === ""? "lastName": age === ""? "age": gender === ""? "gender": email === ""? "email": school === ""? "school": course === ""? "course": year === ""? "year": password === ""? "password": repassword === ""? "repassword": ""} is/are empty!`);
+
+    }else if(password !== repassword){
+
+      console.log('password not equal');
+
     }else{
+      password = bcrypt.hashSync(password, password.length);
+
       axios.post('http://localhost:8080/Signup',  {
         firstName: firstName,
         lastName: lastName,
-        age: age,
+        age: parseInt(age),
         gender: gender,
         email: email,
         school: school,
         course: course,
-        username: username,
-        password: password
+        year: parseInt(year),
+        password: password,
+        profile: "",
+        useHint: true,
+        subjects: [],
       }).then(res=>{
-        console.log(res.data);
+        if(res.data.valid) window.location.replace('/Signin');
+        if(!res.data.valid) console.error('creation error')
       }).catch(err=>{
-        console.log(err);
+        console.error(err);
       });
+
     }
   }
 </script>
@@ -59,7 +83,7 @@
           <input required bind:value={lastName} class="input quicksands mt-3 has-background-light" style="width: 100%;" type="text" placeholder="Last Name">
 
           <!-- Age -->
-          <input required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%;" type="text" placeholder="Age">
+          <input required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%" type="text" placeholder="Age">
 
           <!-- Gender -->
           <input required bind:value={gender} class="input quicksands my-3 has-background-light" style="width: 65%;" type="text" placeholder="Gender">
@@ -77,11 +101,11 @@
           <!-- School name -->
           <input required bind:value={school} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
 
-          <!-- Course or Year  -->
-          <input required bind:value={course} class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course-Year (BSIT-3)">
-
-          <!-- Username  -->
-          <input required bind:value={username} class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Username">
+          <!-- Course -->
+          <input required bind:value={course} class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course">
+          
+          <!-- Year -->
+          <input required bind:value={year} class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Year">
 
           <!-- Password -->
           <input required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
