@@ -9,7 +9,7 @@
  
   // set subjects from userData
   import { userData } from '$lib/stores/global-store';
-  let allSubjects;
+  let allSubjects = [];
   userData.subscribe(value => allSubjects = value.subjects);
   
   // mouse hover effect
