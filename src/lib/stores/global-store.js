@@ -29,13 +29,19 @@ export let activeSubject = writable(
 );
 
 // This will determine the current active workspace (user selected workspace)
-export let activeWorkspace = writable("");
+export let activeWorkspace = writable(
+  {
+    boards: [],
+    color: "primary",
+    id: 0,
+    isFavorite: false,
+    members: [],
+    name: ""
+  }
+);
 
 // This will determine the current Dashboard's sub-interface (Active)
 export let currentDashboardSubInterface = writable("Subjects");
-
-//This will determine the color chosen for the specific workspace
-export let workspaceColor = writable("");
 
 // This will determine the if to transition or not
 export let transitionActive = writable(false);
