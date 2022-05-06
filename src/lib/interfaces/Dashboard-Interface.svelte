@@ -5,19 +5,14 @@
   import { fade } from 'svelte/transition';
 
   // Global Variables first
-  import { activeWorkspace, workspaceColor } from '$lib/stores/global-store.js';
+  import { activeWorkspace } from '$lib/stores/global-store.js';
 
   // userData imports
   import {userData, useHint} from '$lib/stores/global-store';
 
   // import workspaces, boards, tasks, subtasks from userData
-  let allSubjects = [],
-      allWorkspaces = [],
-      allBoards = [],
+  let allBoards = [],
       allTasks = [];
-  userData.subscribe(value => {
-    allSubjects = value.subjects;
-  });
 
   // Components
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
@@ -38,26 +33,16 @@
   // Get the chosen subject
   let currentActiveSubject;
   activeSubject.subscribe(value => currentActiveSubject = value);
-  
-  // Gets the subject's Color
-  let subjectColor = currentActiveSubject.color;
 
+  // Get the chosen workspace
   let currentActiveWorkspace;
   activeWorkspace.subscribe(value => currentActiveWorkspace = value);
 
-
-  let chosenWorkspaceColor;
-  workspaceColor.subscribe(value => chosenWorkspaceColor = value);
-
+  // Mouse interactions for animation
   let ishovering = false;
 
-  let workspaceMembers = [];
-  for(let i = 0; i < allWorkspaces.length; i++){
-    if(allWorkspaces[i].name === currentActiveWorkspace){
-      workspaceMembers = allWorkspaces[i].members;
-      break;
-    }
-  }
+  // Gets the workspace's members
+  let workspaceMembers = currentActiveWorkspace.members;
 </script>
 
 <div in:fade class="hero">
@@ -82,6 +67,7 @@
           {currentActiveSubject.name}
         </span>
       {:else if curDashSubInterface === "Boards"}
+        <!-- Back Button -->
         <span>
           <div on:click={()=>{activeWorkspace.set(""); currentDashboardSubInterface.set("Workspaces"); ishovering = false}} class="d-inline-block">
             <MaterialApp>
@@ -90,7 +76,12 @@
               </div>
             </MaterialApp>
           </div>
-        </span> <span class="has-text-{chosenWorkspaceColor}">{currentActiveWorkspace}</span>
+        </span>
+        
+        <!-- Workspace name -->
+        <span class="has-text-{currentActiveWorkspace.color === "warning" || currentActiveWorkspace.color === "success" || currentActiveWorkspace.color === "info"? `${currentActiveWorkspace.color}-dark`: currentActiveWorkspace.color}">
+          {currentActiveWorkspace.name}
+        </span>
       {/if}
     </p>
   </div>
