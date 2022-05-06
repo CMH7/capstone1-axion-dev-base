@@ -47,6 +47,7 @@ type UsersTasks {
   id           Int
   isFavorite   Boolean
   isSubtask    Boolean
+  level        Int
   members      UsersTasksMembers[]
   name         String
   status       String
