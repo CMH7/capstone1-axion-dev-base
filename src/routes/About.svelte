@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import HomeFooter from "$lib/components/Home-footer.svelte";
   import HomeHeader from "$lib/components/Home-header.svelte";
   import Button from "$lib/components/Button.svelte";
