@@ -1,5 +1,8 @@
 import { writable } from "svelte/store";
 
+// User data and information
+export let userData = writable();
+
 // This will determine the button pressed in navbar landing pages
 export const active = writable("");
 
@@ -16,19 +19,29 @@ export const currentInterface = writable("Dashboard");
 export let currentIndex = writable(0);
 
 // THis will determine the active subject (users clicked subject)
-export let activeSubject = writable("");
+export let activeSubject = writable(
+  {
+    name: "",
+    color: "primary",
+    id: 0,
+    isFavorite: false
+  }
+);
 
 // This will determine the current active workspace (user selected workspace)
-export let activeWorkspace = writable("");
+export let activeWorkspace = writable(
+  {
+    boards: [],
+    color: "primary",
+    id: 0,
+    isFavorite: false,
+    members: [],
+    name: ""
+  }
+);
 
 // This will determine the current Dashboard's sub-interface (Active)
 export let currentDashboardSubInterface = writable("Subjects");
-
-// This will determine the color chosen for the specific subject
-export let subjectColor = writable("");
-
-//This will determine the color chosen for the specific workspace
-export let workspaceColor = writable("");
 
 // This will determine the if to transition or not
 export let transitionActive = writable(false);
@@ -38,3 +51,6 @@ export let rgb = writable({ r: 0, g: 0, b: 0 });
 
 // Visited
 export let homevisited = writable(false);
+
+// Use hint
+export let useHint = writable(true);

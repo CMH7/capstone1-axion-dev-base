@@ -1,29 +1,25 @@
 <script>
   import { Tooltip, Card, CardText, CardTitle, CardSubtitle, MaterialApp, Avatar, Divider } from 'svelte-materialify';
-
-  
+  import TaskBoxPopUpModal from '$lib/components/interface-components/sub-interface-components/Task-box-pop-up-modal.svelte';
 
   // Required params
-  
-  // Task Name
-  export let name = "task1";
 
-  // Task Due date
-  export let duedate = "Nov. 14, 2021";
+  export let task = {
+    createdBy: "",
+    createdOn: new Date(),
+    description: "",
+    dueDateTime: new Date(),
+    id: 0,
+    isFavorite: false,
+    isSubtask: false,
+    level: 0,
+    members: [],
+    name: "",
+    status: "",
+    subtasks: []
+  }
 
-  // Task level or priority
-  export let level = "L";
-
-  // Task Subtask's count
-  export let subtasksCount = 0;
-
-  // Task members
-  // Test data
-  // members
-  import members from '$lib/sample-case/sample-members/members';
-  import tasks from '$lib/sample-case/sample-tasks/tasks';
-
-  export let allMembers = members.members;
+  export let allMembers = [];
 
   // Task Card hovering
   let ishovering = false;
@@ -31,9 +27,12 @@
   // Members hovering
   let show = false;
 
+  // Modal show
+  let taskmodalactive = false;
 </script>
 
-<div class="is-clickable" on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
+<TaskBoxPopUpModal {task} active={taskmodalactive}/>
+<div class="is-clickable" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
   <MaterialApp>
     <style>
       .has-transition {
@@ -47,17 +46,17 @@
       <!-- Task Name and Task Labels: level and how many subtitles it has -->
       <div class="d-flex is-justify-content-space-between">
         <CardSubtitle class="p-0 has-text-weight-semibold is-unselectable has-transition {ishovering?"has-text-white":""}">
-          {name}
+          {task.name}
         </CardSubtitle>
   
         <!-- Subtask count and level -->
         <div class="is-flex">
 
           <!-- Subtasks Counts -->
-          <Avatar tile size=20px class="mr-1 is-unselectable dmsans has-text-weight-bold has-text-white has-background-primary-dark rounded text-caption">{subtasksCount}</Avatar>
+          <Avatar tile size=20px class="mr-1 is-unselectable dmsans has-text-weight-bold has-text-white has-background-primary-dark rounded text-caption">{task.subtasks.length}</Avatar>
 
           <!-- Level -->
-          <Avatar tile size=20px class="is-unselectable dmsans has-text-weight-bold has-text-white {level === "L"?"has-background-success":level === "M"?"has-background-warning has-text-black":"has-background-danger"} rounded text-caption">{level}</Avatar>
+          <Avatar tile size=20px class="is-unselectable dmsans has-text-weight-bold has-text-white {task.level == 0?"has-background-success": task.level == 1?"has-background-warning has-text-black":"has-background-danger"} rounded text-caption">{task.level == 0? "Low": task.level == 1? "Medium": "High"}</Avatar>
         </div>
       </div>
   
@@ -67,7 +66,7 @@
       <!-- Due date -->
       <div class="d-flex is-justify-content-space-between align-end">
         <CardSubtitle class="p-0 is-unselectable has-transition {ishovering?"has-text-white":""}">
-          {duedate}
+          {task.dueDateTime}
         </CardSubtitle>
   
         <!-- Members part -->

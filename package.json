@@ -28,7 +28,10 @@
 	"type": "module",
 	"dependencies": {
 		"@mdi/js": "^6.5.95",
+		"axios": "^0.27.2",
+		"bcryptjs": "^2.4.3",
 		"svelte-loading-spinners": "^0.1.7",
-		"svelte-materialify": "^0.3.11"
+		"svelte-materialify": "^0.3.11",
+		"svelty-picker": "^1.2.4"
 	}
 }

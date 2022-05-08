@@ -40,8 +40,11 @@ export default {
       status: "In progress",
       allMembers: [
         members.members[1],
+        members.members[2],
         members.members[0],
-        members.members[3]
+        members.members[3],
+        members.members[4],
+        members.members[5]
       ],
       duedate: "04-25-2022",
       subtasks: [
