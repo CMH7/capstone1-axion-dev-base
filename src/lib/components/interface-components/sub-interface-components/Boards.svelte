@@ -46,7 +46,14 @@
 
   <div class="cont rounded-lg">
     <slot>
-      <SubjectBox name="There are no Tasks" color="primary" isFavorite=false />
+      <SubjectBox subject={
+        {
+          name: "empty",
+          id: 0,
+          isFavorite: false,
+          color: "primary"
+        }
+      } />
     </slot>
   </div>
 </div>

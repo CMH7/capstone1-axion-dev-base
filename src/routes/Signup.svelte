@@ -1,14 +1,11 @@
 <script>
-  // Components used
   import HomeFooter from "$lib/components/Home-footer.svelte";
   import SignupHeader from "$lib/components/Signup-header.svelte";
-
-  // Icons and from materialify
   import { Icon, Divider, MaterialApp } from "svelte-materialify";
   import {mdiGoogle, mdiFacebook} from "@mdi/js";
-
-  // Transition
   import {fade} from 'svelte/transition';
+  import axios from 'axios';
+  import bcrypt from 'bcryptjs';
 
   // inputs values
   let firstName = "",
@@ -22,11 +19,7 @@
       password = "",
       repassword = "";
 
-  //database try
-  import axios from 'axios';
-
-  // hash
-  import bcrypt from 'bcryptjs';
+  
 
   function createNewUser(){
     if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || year === "" || password === "" || repassword === ""){
@@ -151,7 +144,6 @@
       <div class="column is-12 p-0 pt-7 mb-5">
         <div class="is-flex flex-column is-align-items-center">
           <button on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4">Sign Up</button>
-          <!-- <Button type="primary" text="Sign up" textcss="dm-sans has-text-weight-bold is-size-4" href="/Signin" /> -->
           <p class="pt-4 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
         </div>
       </div>

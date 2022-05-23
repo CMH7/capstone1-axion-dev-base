@@ -33,13 +33,39 @@
   // hint
   let hintAvailable;
   useHint.subscribe(value => hintAvailable = value);
+
+  function onKeyDown(e) {
+    if(e.ctrlKey && e.altKey && e.keyCode == 87) {
+      popupActive = false;
+      popupActive = true;
+    }
+  }
 </script>
 
-<div class="columns is-multiline is-variable is-5 pl-6">
+<svelte:window on:keydown={onKeyDown} />
+
+<div class="columns is-multiline is-variable is-2 pl-6">
   <AddWorkspacePopUp active={popupActive}/>
   {#if hintAvailable}
   <Tooltip bottom>
-    <div on:mouseenter={() => {hovering = true; popupActive = false}} on:mouseleave={() => hovering = false} in:fade on:click={() => popupActive = true} class="ml-3 column is-narrow">
+    <div
+      on:mouseenter={
+        () => {
+          hovering = true;
+        }
+      }
+      on:mouseleave={
+        () => hovering = false
+      }
+      on:click={
+        () => {
+          popupActive = false;
+          popupActive = true;
+        }
+      }
+      in:fade
+      class="column is-narrow px-2"
+    >
       <div class="has-transition notification rounded-xl has-background-grey-{hovering ? "dark" : "light"} is-clickable is-flex is-justify-content-center is-align-items-center px-6">
         <div>
           <MaterialApp>
@@ -51,11 +77,29 @@
       </div>
     </div>
     <span slot = "tip">
-      Create new workspace
+      Create new workspace <br>
+      <span class="is-size-7">
+        Shotcut: <kbd>ctrl</kbd> + <kbd>alt</kbd> + <kbd>w</kbd>
+      </span>
     </span>
   </Tooltip>
   {:else}
-  <div on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} in:fade class="ml-3 column is-narrow">
+  <div
+    on:mouseenter={
+      () => hovering = true
+    }
+    on:mouseleave={
+      () => hovering = false
+    }
+    on:click={
+      () => {
+        popupActive = false;
+        popupActive = true;
+      }
+    }
+    in:fade
+    class="column is-narrow px-2"
+  >
     <div class="has-transition notification rounded-xl has-background-grey-{hovering ? "dark" : "light"} is-clickable is-flex is-justify-content-center is-align-items-center px-6">
       <div>
         <MaterialApp>

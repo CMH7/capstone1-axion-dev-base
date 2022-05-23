@@ -1,12 +1,11 @@
 <script>
-  // stores
-  import { rgb, transitionActive } from "$lib/stores/global-store";
+  import {goto} from '$app/navigation';
 </script>
 
-<h1 class="is-size-1 fredokaone">
+<h1 class="is-size-1 fredokaone is-clickable">
   <span>
-    <a href="/Home" class="has-text-white">
+    <p on:click={() => {goto('/', {replaceState: true})}} class="has-text-white">
       Axion
-    </a>
+    </p>
   </span>
 </h1>

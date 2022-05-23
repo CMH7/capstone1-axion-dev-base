@@ -1,5 +1,5 @@
 <script>
-  import { fade, slide } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
   import { Pulse } from 'svelte-loading-spinners';
 </script>
 

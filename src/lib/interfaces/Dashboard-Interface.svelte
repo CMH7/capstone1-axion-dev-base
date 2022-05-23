@@ -9,23 +9,20 @@
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte';
   
 	import { Icon, MaterialApp } from 'svelte-materialify';
-  import { activeSubject, currentDashboardSubInterface, activeWorkspace } from "$lib/stores/global-store";
+  import { activeSubject, currentDashboardSubInterface, activeWorkspace, notifs, userData } from "$lib/stores/global-store";
 
   // Sub interfaces of Dashboard
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte";
 
-  import { mdiArrowLeft} from '@mdi/js';
+  import { mdiArrowLeft } from '@mdi/js';
 
   // Import constants
   import constants from '$lib/constants';
+  import axios from 'axios';
 
   let curDashSubInterface;
   currentDashboardSubInterface.subscribe(value => curDashSubInterface = value);
-
-  // Get the chosen subject
-  let currentActiveSubject;
-  activeSubject.subscribe(value => currentActiveSubject = value);
 
   // Get the chosen workspace
   let currentActiveWorkspace, allBoards, workspaceMembers, allTasks = [];
@@ -40,6 +37,12 @@
 
   // Mouse interactions for animation
   let ishovering = false;
+
+  let subject_name_focused = false;
+
+  function removeFocus() {
+    document.activeElement.blur();
+  }
 </script>
 
 <div in:fade class="hero">
@@ -48,21 +51,44 @@
       {#if curDashSubInterface === "Subjects"}
         Subjects
       {:else if curDashSubInterface === "Workspaces"}
-        <!-- Back button -->
-        <span>
-          <div on:click={()=>{activeSubject.set(constants.subject); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
-            <MaterialApp>
-              <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
-                <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
-              </div>
-            </MaterialApp>
-          </div>
-        </span>
-
-        <!-- Subject Name -->
-        <span class="has-text-{currentActiveSubject.color === "warning" || currentActiveSubject.color === "success" || currentActiveSubject.color === "info"? `${currentActiveSubject.color}-dark`: currentActiveSubject.color}">
-          {currentActiveSubject.name}
-        </span>
+      <!-- Back button -->
+      <span>
+        <div on:click={()=>{activeSubject.set(constants.subject); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
+          <MaterialApp>
+            <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
+              <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
+            </div>
+          </MaterialApp>
+        </div>
+      </span>
+      
+      <!-- Subject Name -->
+      <span
+        contenteditable="true"
+        on:change={
+          () => {
+            console.log(`${$activeSubject.name}`);
+          }
+        }
+        on:focus={
+          () => {
+            subject_name_focused = true;
+          }
+        }
+        on:keydown={
+          (e) => {
+            if(e.keyCode == 13 && subject_name_focused) {
+              subject_name_focused = false;
+              removeFocus();
+              e.preventDefault();
+            }
+          }
+        }
+        bind:innerHTML={$activeSubject.name}
+        class="has-text-{$activeSubject.color === "warning" || $activeSubject.color === "success" || $activeSubject.color === "info"? `${$activeSubject.color}-dark`: $activeSubject.color}"
+      >
+        {$activeSubject.name}
+      </span>
       {:else if curDashSubInterface === "Boards"}
         <!-- Back Button -->
         <span>

@@ -16,7 +16,7 @@ export const sidebarActive = writable(true);
 export const currentInterface = writable("Dashboard");
 
 // This will be used for simple color designation in sidebar
-export let currentIndex = writable(0);
+export let currentIndex = writable();
 
 // THis will determine the active subject (users clicked subject)
 export let activeSubject = writable(
@@ -46,11 +46,23 @@ export let currentDashboardSubInterface = writable("Subjects");
 // This will determine the if to transition or not
 export let transitionActive = writable(false);
 
-// RGB colors
-export let rgb = writable({ r: 0, g: 0, b: 0 });
-
 // Visited
 export let homevisited = writable(false);
 
 // Use hint
 export let useHint = writable(true);
+
+// error handler array
+export let notifs = writable([]);
+
+// Logged in check
+export let isLoggedIn = writable(false);
+
+//Snackbar
+export let snack = writable(
+  {
+    msg: "",
+    active: false,
+    yes: () => { }
+  }
+)
