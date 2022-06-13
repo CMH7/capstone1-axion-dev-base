@@ -1,36 +1,52 @@
 <script>
+// @ts-nocheck
+
   import { MaterialApp, AppBar, Button, Icon, Avatar } from "svelte-materialify";
   import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger } from '@mdi/js';
+  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack } from "$lib/stores/global-store";
+  import { goto } from "$app/navigation";
+
   let collapsed = false;
   let hovered = false;
   let iconHovered = false;
   let burgerHovered = false;
 
-  import { currentIndex, currentInterface, ismini, rgb, sidebarActive, transitionActive } from "$lib/stores/global-store";
-  let mini;
-  ismini.subscribe(value=>mini = value);
-  let disabled;
-  sidebarActive.subscribe(value => disabled = !value);
 </script>
 
 <div class="block mb-0">
   <MaterialApp>
-    <AppBar fixed style="width: 100%;" class=" py-1 has-background-primary" {collapsed} >
+    <AppBar fixed style="width: 100%;" class="py-1 has-background-primary" {collapsed} >
 
       <!-- Burger -->
       <div slot="icon" on:mouseenter={()=>{burgerHovered = true}} on:mouseleave={()=>{burgerHovered = false}}>
-        <Button {disabled} class="has-transition {burgerHovered?"has-background-primary":""}" depressed fab text>
-          <div on:click={()=>{ismini.set(!mini)}}>
+        <Button disabled={!$sidebarActive} class="has-transition {burgerHovered?"has-background-primary":""}" depressed fab text>
+          <div on:click={()=>{ismini.set(!$ismini)}}>
             <Icon size="30px" class="has-text-white" path={mdiMenu} />
           </div>
         </Button>
       </div>
 
       <!-- Title -->
-      <span class="fredokaone is-size-3" slot="title" on:click={()=> {rgb.set({r: (Math.random() * 256), g: (Math.random() * 256), b: (Math.random() * 256)}); transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}}>
-        <a href="/Home" class="has-text-white is-unselectable">
+      <span class="fredokaone is-size-3" slot="title" on:click={
+          () => {
+            transitionActive.set(true);
+            if($isLoggedIn){
+              snack.set(
+                {
+                  msg: "You will be automatically logged out. Do you want to continue?",
+                  active: true,
+                  yes: () => {
+                    goto('/', {replaceState: true});
+                  }
+                }
+              );
+            }
+          }
+        }
+      >
+        <p class="has-text-white is-unselectable mt-4 is-clickable">
           AXION
-        </a>
+        </p>
       </span>
 
       <!-- Expansion-er -->
@@ -52,7 +68,7 @@
       </div>
 
       <!-- Account Button -->
-      <div class="is-clickable is-hidden-touch {disabled?"undisp":""}" on:click={()=>currentInterface.set("My Profile")} on:mouseenter={()=>{iconHovered = true; currentIndex.set(4)}} on:mouseleave={()=>{iconHovered = false}}>
+      <div class="is-clickable is-hidden-touch {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")} on:mouseenter={()=>{iconHovered = true; currentIndex.set(4)}} on:mouseleave={()=>{iconHovered = false}}>
         <Avatar class="p-5 has-transition {iconHovered?"has-background-warning":""}" size="35px">
           <Icon class="has-text-white {iconHovered?"has-text-primary":""}" path={mdiAccount}/>
         </Avatar>

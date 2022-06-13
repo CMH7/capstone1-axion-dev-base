@@ -1,20 +1,16 @@
 <script>
 	import AxionText from '$lib/components/AxionText.svelte';
-  import Button from '$lib/components/Button.svelte';
 
   // Menu show or hide boolean for mobile
   let menuActive = false;
 
-  // Experimental callback for Button
-  const func = () => console.log("Hello world");
-
   // Subscribe to active in global-stores
-  import { active, rgb, transitionActive } from '$lib/stores/global-store';
+  import { active, transitionActive } from '$lib/stores/global-store';
 </script>
 
 <nav class="navbar is-primary is-spaced">
   <div class="navbar-brand is-flex is-justify-content-space-between">
-    <div class="navbar-item" on:click={()=> {rgb.set({r: (Math.random() * 256), g: (Math.random() * 256), b: (Math.random() * 256)}); transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}}>
+    <div class="navbar-item" on:click={()=> {transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}}>
       <AxionText/>
     </div>
   
@@ -31,7 +27,7 @@
 
   <div class="navbar-menu p-0 {menuActive?"is-active":""}">
     <div class="navbar-end dm-sans">
-      <a on:click={()=>{active.set("Home"); rgb.set({r: (Math.random() * 256), g: (Math.random() * 256), b: (Math.random() * 256)}); transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}} href="/Home" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
+      <a on:click={()=>{active.set("Home"); transitionActive.set(true);setTimeout(()=>{transitionActive.set(false)} , 2000)}} href="/Home" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Home</a>
       <a on:click={()=>{active.set("About")}} href="/" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">About</a>
       
         <!-- WORK OF JOANNE CONTACT FORM PAGE -->

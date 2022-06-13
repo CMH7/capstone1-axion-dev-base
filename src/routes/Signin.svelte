@@ -1,23 +1,21 @@
 <script>
+    // @ts-nocheck
     import { mdiGoogle, mdiFacebook } from '@mdi/js'; // icons used
     import { Icon, Divider, MaterialApp } from 'svelte-materialify';
     import HomeFooter from "$lib/components/Home-footer.svelte";
     import HomeHeader from "$lib/components/Home-header.svelte";
-
-    // Router
-    import { goto } from '../../.svelte-kit/runtime/app/navigation';
-
-    // Transition
+    import { goto } from '$app/navigation';
     import {fade} from 'svelte/transition';
-
-    // database test
     import axios from 'axios';
-
-    // hash comparer
     import bcrypt from 'bcryptjs';
+    import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store';
+    import ErrorContainer from '$lib/components/Notification-container.svelte';
+    import ErrorNotification from '$lib/components/Notification.svelte';
 
-    // store user data in global store for fast access and less access to database
-    import {userData, useHint} from '$lib/stores/global-store';
+    // OnKeyDown
+    function onKeyDown(e) {
+      if(e.keyCode == 13) login()
+    }
 
     let emailInput = "",
         passwordInput = "",
@@ -27,35 +25,86 @@
     let loading = false;
     let disabled = false;
 
-    // Set a countdown of 2 seconds
-    function countdown() {
-      setTimeout(() => {
-        goto('/MainApp', {replaceState: true});
-      }, 2000);
-    }
-
     function login(){
+      loading = true;
+      disabled = true;
+
       if(emailInput === "" || passwordInput === "") {
-        console.log(`${emailInput === ""? "email": passwordInput === ""? "password": ""} is/are empty!`)
+        loading = false;
+        disabled = false;
+        let notifsCopy = $notifs;
+        if(emailInput === "" && !(passwordInput === "")) {
+          notifsCopy.push(
+            {
+              msg: "Please input a valid email.",
+              type: "error"
+            }
+          );
+        }else if(passwordInput === "" && !(emailInput === "")) {
+          notifsCopy.push(
+            {
+              msg: "Please input a valid password.",
+              type: "error"
+            }
+          );
+        }else {
+          notifsCopy.push(
+            {
+              msg: "Please input a valid email and password.",
+              type: "error"
+            }
+          );
+        }
+        notifs.set(notifsCopy);
+        emailInput = "";
+        passwordInput = "";
       }else{
         axios.get(`http://localhost:8080/Signin?email=${emailInput}`).then(res=>{
-          if(res.data.data == null) {
+          if(res.data.password === undefined) {
             emailInput = "";
             passwordInput = "";
-          }else if(bcrypt.compare(passwordInput, res.data.data.password)){
+            loading = false;
+            disabled = false;
+            let msgs = $notifs;
+            msgs.push(
+                {
+                  msg: "Wrong email or password. Please try again.",
+                  type: "error"
+                }
+              );
+            notifs.set(msgs);
+          }else if(bcrypt.compareSync(passwordInput, res.data.password)){
             axios.post('http://localhost:8080/validUser', {
-              email: emailInput,
+              email: emailInput
             }).then(resp => {
               data = resp.data;
               userData.set(data);
-              userData.subscribe(value => {
-                useHint.set(value.useHint);
-              });
+              useHint.set($userData.useHint);
               loading = false;
-              countdown();
+              disabled = false;
+              let msgs = $notifs;
+              msgs.push(
+                  {
+                    msg: "Log in Successful",
+                    type: "success"
+                  }
+                );
+              notifs.set(msgs);
+              isLoggedIn.set(true);
+              goto('/MainApp', {replaceState: true});
             }).catch(err => console.error(err));
           }else{
-            console.log('password does not match');
+            loading = false;
+            disabled = false;
+            let notifsCopy = $notifs;
+            notifsCopy.push(
+              {
+                msg: "Wrong email or password. Please try again."
+              }
+            );
+            emailInput = "";
+            passwordInput = "";
+            notifs.set(notifsCopy);
           }
         }).catch(err => {
           console.log(err);
@@ -64,9 +113,19 @@
     }
 </script>
 
+<!-- window keyboard listener -->
+<svelte:window on:keydown={onKeyDown} />
+
+<!-- errors -->
+<ErrorContainer>
+  {#each $notifs as notif}
+  <ErrorNotification msg="{notif.msg}" type="{notif.type}"/>
+  {/each}
+</ErrorContainer>
+
 <!-- header -->
 <HomeHeader/>
-<div in:fade class="hero is-fullheight-with-navbar">
+<div in:fade out:fade class="hero is-fullheight-with-navbar">
   <div class="hero-body">
     <div class="container">
       <div class="columns is-mobile is-centered is-multiline">
@@ -125,7 +184,7 @@
           <!-- 'sign in' button -->
           <div class="is-flex flex-column is-align-items-center">
             <div class="mb-5 mt-6">
-              <button on:click={()=>{login(); loading = true; disabled = true}} class="button is-primary {loading? "is-loading": ""} dm-sans has-text-weight-bold is-size-5" {disabled}>Sign In</button>
+              <button on:click={login} class="button is-primary {loading? "is-loading": ""} dm-sans has-text-weight-bold is-size-5" {disabled}>Sign In</button>
             </div>
             <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>

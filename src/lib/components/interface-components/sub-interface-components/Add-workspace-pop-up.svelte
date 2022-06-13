@@ -38,7 +38,7 @@
     import axios from 'axios';
 
     // import userData
-    import {userData} from '$lib/stores/global-store';
+    import {notifs, userData} from '$lib/stores/global-store';
     let id = "",
         user;
     userData.subscribe(value => {
@@ -61,21 +61,47 @@
                 selectedColor = color.name;
             }
         });
-
         axios.post(`http://localhost:8080/MainApp/${curActiveSubject.name}?sID=${curActiveSubject.id}&id=${id}&name=${workspaceNameInput}&color=${selectedColor}`)
         .then(res => {
+            let notifsCopy = [];
+            notifsCopy = $notifs;
+            notifsCopy.push(
+                {
+                    msg: "Workspace created!",
+                    type: "success"
+                }
+            );
+            notifs.set(notifsCopy);
+            active = false;
             axios.post('http://localhost:8080/validUser', {
                 email: res.data.email
             }).then(res => {
                 userData.set(res.data)
                 loading = false;
-                active = false;
                 disabled = false;
                 workspaceNameInput = "";
             }).catch(err => console.error(`error in gettring user ${err}`));
         }).catch(err => console.error(`error in posting workspace ${err}`));
     }
+
+    function onKeyDown(e) {
+        if(e.keyCode == 13 && active) {
+            if(!(workspaceNameInput === "")) {
+                createWorkspace();
+            }else{
+                let notifsCopy = $notifs;
+                notifsCopy.push(
+                    {
+                        msg: "Workspace name cannot be empty."
+                    }
+                );
+                notifs.set(notifsCopy);
+            }
+        }
+    }
 </script>
+
+<svelte:window on:keydown={onKeyDown} />
 
 <MaterialApp>
 	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
@@ -84,7 +110,8 @@
 
             <!-- input -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
-                <input {disabled} bind:value={workspaceNameInput} class="p-2 input is-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" type="text" placeholder="Workspace name" />
+                <!-- svelte-ignore a11y-autofocus -->
+                <input autofocus {disabled} bind:value={workspaceNameInput} class="p-2 input is-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" type="text" placeholder="Workspace name" />
             </div>
 
             <!-- colors -->

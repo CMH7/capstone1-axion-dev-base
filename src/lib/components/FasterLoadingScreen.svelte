@@ -1,12 +1,12 @@
 <script>
-  import { fade, slide } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
   import { Pulse } from 'svelte-loading-spinners';
 
   let hidenow = false;
 
   setTimeout(() => {
     hidenow = true;
-  }, 1000);
+  }, 500);
 </script>
 
 {#if !hidenow}

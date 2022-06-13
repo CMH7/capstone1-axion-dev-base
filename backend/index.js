@@ -184,20 +184,17 @@ app.get('/', async (req, res) => {
 // Gets only password to sign in
 app.get('/Signin', async (req, res) => {
   conn();
-  const user = await prisma.users.findFirst({
+  const pass = await prisma.users.findFirst({
     select: {
       password: true
     },
     where: {
       email: {
-        equals: `${req.query.email}`
+        equals: req.query.email
       }
     }
   });
-  res.send({
-    status: res.statusCode,
-    data: user
-  });
+  res.send(pass);
   disconn();
 });
 
@@ -217,6 +214,39 @@ app.post('/validUser', async (req, res) => {
 });
 
 // ====== UPDATE ======
+// Updates subjects
+app.put('/Subjects/edits', async (req, res) => {
+  conn();
+  const user = await prisma.users.findFirst({
+    where: {
+      AND: {
+        email: {
+          equals: req.body.email
+        },
+        id: {
+          equals: req.body.id
+        }
+      }
+    }
+  });
+
+  let userCopy = user;
+  userCopy.subjects[req.body.subject_id - 1] = req.body.updated_subject;
+
+  const usera = await prisma.users.update({
+    where: {
+      id: userCopy.id
+    },
+    data: {
+      subjects: {
+        set: userCopy.subjects,
+      }
+    }
+  });
+
+  res.send(userCopy);
+  disconn();
+});
 
 // ====== DELETE ======
 

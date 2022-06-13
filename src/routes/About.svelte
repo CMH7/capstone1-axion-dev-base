@@ -5,6 +5,7 @@
   import HomeHeader from "$lib/components/Home-header.svelte";
   import Button from "$lib/components/Button.svelte";
   import { Tabs, Tab, Window, WindowItem, AppBar, MaterialApp } from "svelte-materialify";
+  import { fade } from 'svelte/transition';
 
   let value = 0;
 </script>
@@ -12,7 +13,7 @@
 <MaterialApp> 
   <!-- header -->
   <HomeHeader/>
-    <div class="hero is-fullheight-with-navbar">
+    <div in:fade class="hero is-fullheight-with-navbar">
       <div class="hero-head p-6 has-background-light"> 
           <!--Title-->
           <div class="columns mx-6 m-5 mr-5 is-flex is-justify-content-center is-multiline is-align-items-center">
