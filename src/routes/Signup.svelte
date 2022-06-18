@@ -38,8 +38,10 @@
       if (course === "") msg += "course, ";
       if (year === "") msg += "year, ";
       if (password === "") msg += "password, ";
-      if (repassword === "") msg += "repassword, ";
+      if (repassword === "") msg += "repassword";
       
+      msg += '.'
+
       notifsCopy.push(
         {
           msg: msg,
@@ -50,7 +52,15 @@
 
     }else if(password !== repassword){
 
-      console.log('password not equal');
+      let notifsCopy = $notifs
+
+      notifsCopy.push(
+        {
+          msg: 'Password does not match. Please try again.',
+          type: 'error'
+        }
+      )
+      notifs.set(notifsCopy)
 
     }else{
       password = bcrypt.hashSync(password, password.length);
