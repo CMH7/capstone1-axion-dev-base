@@ -9,6 +9,7 @@
   import {notifs} from '$lib/stores/global-store';
   import NotificationContainer from "$lib/components/Notification-container.svelte";
   import Notification from "$lib/components/Notification.svelte";
+  import { goto } from '$app/navigation';
 
     // inputs values
   let firstName = "",
@@ -88,7 +89,7 @@
             }
           );
           notifs.set(notifsCopy);
-          window.location.replace('/Signin');
+          goto('/Signin', {replaceState: true});
         }
         if(!res.data.valid) {
           let notifsCopy = $notifs;
