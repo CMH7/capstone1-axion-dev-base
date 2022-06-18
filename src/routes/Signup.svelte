@@ -6,8 +6,11 @@
   import {fade} from 'svelte/transition';
   import axios from 'axios';
   import bcrypt from 'bcryptjs';
+  import {notifs} from '$lib/stores/global-store';
+  import NotificationContainer from "$lib/components/Notification-container.svelte";
+  import Notification from "$lib/components/Notification.svelte";
 
-  // inputs values
+    // inputs values
   let firstName = "",
       lastName = "",
       age = "",
@@ -21,10 +24,29 @@
 
   
 
-  function createNewUser(){
+      function createNewUser(){
     if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || year === "" || password === "" || repassword === ""){
 
-      console.log(`${firstName === ""?"firstName": lastName === ""? "lastName": age === ""? "age": gender === ""? "gender": email === ""? "email": school === ""? "school": course === ""? "course": year === ""? "year": password === ""? "password": repassword === ""? "repassword": ""} is/are empty!`);
+      let notifsCopy = $notifs;
+      let msg = "please input a valid ";
+      if (firstName === "") msg += "first name, ";
+      if (lastName === "") msg += "last name, ";
+      if (age === "") msg += "age, ";
+      if (gender === "") msg += "gender, ";
+      if (email === "") msg += "email, ";
+      if (school === "") msg += "school, ";
+      if (course === "") msg += "course, ";
+      if (year === "") msg += "year, ";
+      if (password === "") msg += "password, ";
+      if (repassword === "") msg += "repassword, ";
+      
+      notifsCopy.push(
+        {
+          msg: msg,
+          type: "error"
+        }
+      );
+      notifs.set(notifsCopy);
 
     }else if(password !== repassword){
 
@@ -47,15 +69,47 @@
         useHint: true,
         subjects: [],
       }).then(res=>{
-        if(res.data.valid) window.location.replace('/Signin');
-        if(!res.data.valid) console.error('creation error')
+        if(res.data.valid) {
+          let notifsCopy = $notifs;
+          notifsCopy.push(
+            {
+              msg: "Creation successful",
+              type: "success"
+            }
+          );
+          notifs.set(notifsCopy);
+          window.location.replace('/Signin');
+        }
+        if(!res.data.valid) {
+          let notifsCopy = $notifs;
+          notifsCopy.push(
+            {
+              msg: "Creation failed. Please try again",
+              type: "error"
+            }
+          );
+          notifs.set(notifsCopy)
+        }
       }).catch(err=>{
-        console.error(err);
+        let notifsCopy = $notifs;
+        notifsCopy.push(
+          {
+            msg:"Database error",
+            type:"error"
+          }
+        );
+        notifs.set(notifsCopy);
       });
 
     }
   }
 </script>
+
+<NotificationContainer>
+  {#each $notifs as notif}
+  <Notification msg={notif.msg}  type={notif.type}/>
+  {/each}
+</NotificationContainer>
 
 <SignupHeader/>
 <div in:fade class="hero is-fullheight-with-navbar">
