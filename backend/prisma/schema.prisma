@@ -92,4 +92,5 @@ model users {
   subjects   UsersSubjects[]
   useHint    Boolean
   year       Int
+  lastActive DateTime
 }
