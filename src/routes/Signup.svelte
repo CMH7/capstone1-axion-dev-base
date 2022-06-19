@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import HomeFooter from "$lib/components/Home-footer.svelte";
   import SignupHeader from "$lib/components/Signup-header.svelte";
   import { Icon, Divider, MaterialApp } from "svelte-materialify";
