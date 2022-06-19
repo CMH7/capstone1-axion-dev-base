@@ -12,6 +12,7 @@
   import NotificationContainer from "$lib/components/Notification-container.svelte";
   import Notification from "$lib/components/Notification.svelte";
   import { goto } from '$app/navigation';
+import { trusted } from "svelte/internal";
 
     // inputs values
   let firstName = "",
@@ -25,9 +26,14 @@
       password = "",
       repassword = "";
 
+  // button variables
+  let loading = false, disabled = false
+
   
 
-      function createNewUser(){
+  function createNewUser(){
+    loading = true
+    disabled = true
     if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || year === "" || password === "" || repassword === ""){
 
       let notifsCopy = $notifs;
@@ -52,6 +58,9 @@
         }
       );
       notifs.set(notifsCopy);
+      
+      loading = false
+      disabled = false
 
     }else if(password !== repassword){
 
@@ -65,6 +74,8 @@
       )
       notifs.set(notifsCopy)
 
+      loading = false
+      disabled = false
     }else{
       password = bcrypt.hashSync(password, password.length);
 
@@ -91,8 +102,10 @@
               type: "success"
             }
           );
-          notifs.set(notifsCopy);
-          goto('/Signin', {replaceState: true});
+          notifs.set(notifsCopy)
+          loading = false
+          disabled = false 
+          goto('/Signin', {replaceState: true})
         }
         if(!res.data.valid) {
           let notifsCopy = $notifs;
@@ -103,17 +116,21 @@
             }
           );
           notifs.set(notifsCopy)
+          loading = false
+          disabled = false
         }
       }).catch(err=>{
-        let notifsCopy = $notifs;
+        let notifsCopy = $notifs
         notifsCopy.push(
           {
             msg:"Database error",
             type:"error"
           }
         );
-        notifs.set(notifsCopy);
-      });
+        notifs.set(notifsCopy)
+        loading = false
+        disabled = false
+      })
 
     }
   }
@@ -138,19 +155,19 @@
         <div class=" d-flex flex-wrap">
 
           <!-- First name -->
-          <input required bind:value={firstName} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="First Name">
+          <input {disabled} required bind:value={firstName} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="First Name">
           
           <!-- Last name -->
-          <input required bind:value={lastName} class="input quicksands mt-3 has-background-light" style="width: 100%;" type="text" placeholder="Last Name">
+          <input {disabled} required bind:value={lastName} class="input quicksands mt-3 has-background-light" style="width: 100%;" type="text" placeholder="Last Name">
 
           <!-- Age -->
-          <input required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%" type="text" placeholder="Age">
+          <input {disabled} required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%" type="text" placeholder="Age">
 
           <!-- Gender -->
-          <input required bind:value={gender} class="input quicksands my-3 has-background-light" style="width: 65%;" type="text" placeholder="Gender">
+          <input {disabled} required bind:value={gender} class="input quicksands my-3 has-background-light" style="width: 65%;" type="text" placeholder="Gender">
           
           <!-- E-mail -->
-          <input required bind:value={email} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="Email">
+          <input {disabled} required bind:value={email} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="Email">
 
         </div>
       </div>
@@ -160,19 +177,19 @@
         <div class=" d-flex flex-wrap">
 
           <!-- School name -->
-          <input required bind:value={school} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
+          <input {disabled} required bind:value={school} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
 
           <!-- Course -->
-          <input required bind:value={course} class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course">
+          <input {disabled} required bind:value={course} class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course">
           
           <!-- Year -->
-          <input required bind:value={year} class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Year">
+          <input {disabled} required bind:value={year} class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Year">
 
           <!-- Password -->
-          <input required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
+          <input {disabled} required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
           
           <!-- Re-password -->
-          <input required bind:value={repassword} class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
+          <input {disabled} required bind:value={repassword} class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
 
         </div>
       </div>
@@ -211,7 +228,7 @@
 
       <div class="column is-12 p-0 pt-7 mb-5">
         <div class="is-flex flex-column is-align-items-center">
-          <button on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4">Sign Up</button>
+          <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Sign Up</button>
           <p class="pt-4 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
         </div>
       </div>
