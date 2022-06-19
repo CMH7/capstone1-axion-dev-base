@@ -13,6 +13,7 @@ type UsersSubjects {
   isFavorite Boolean
   name       String
   workspaces UsersWorkspaces[]
+  owned      Boolean
 }
 
 type UsersWorkspaces {
@@ -22,6 +23,7 @@ type UsersWorkspaces {
   isFavorite Boolean
   members    UsersWorkspacesMembers[]
   name       String
+  owned      Boolean
 }
 
 type UsersWorkspacesMembers {
