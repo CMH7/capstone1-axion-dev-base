@@ -81,6 +81,7 @@
         profile: "",
         useHint: true,
         subjects: [],
+        lastActive: new Date()
       }).then(res=>{
         if(res.data.valid) {
           let notifsCopy = $notifs;
