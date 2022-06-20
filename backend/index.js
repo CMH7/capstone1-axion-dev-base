@@ -73,7 +73,8 @@ app.post('/MainApp', async (req, res) => {
           id: subjectCounts + 1,
           isFavorite: false,
           name: req.query.name,
-          workspaces: []
+          workspaces: [],
+          owned: true
         }
       }
     }
@@ -140,11 +141,13 @@ app.post('/MainApp/:subjectName', async (req, res) => {
         id: subject.workspaces.length + 1,
         isFavorite: false,
         members: [],
-        name: req.query.name
+        name: req.query.name,
+        owned: true
       });
     }
   });
 
+  // set the new data of user to userB and then send the userB
   const userB = await prisma.users.update({
     where: {
       id: req.query.id
