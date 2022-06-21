@@ -10,6 +10,9 @@
     import bcrypt from 'bcryptjs'
     import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
     import NotificationContainer from '$lib/components/Notification-container.svelte'
+    import constants from '$lib/constants'
+
+    const backURI = constants.backURI
 
     // OnKeyDown
     function onKeyDown(e) {
@@ -61,7 +64,7 @@
         emailInput = ""
         passwordInput = ""
       }else{
-        axios.get(`http://localhost:8080/Signin?email=${emailInput}`).then(res=>{
+        axios.get(`${backURI}/Signin?email=${emailInput}`).then(res=>{
           if(res.data.password === undefined) {
             emailInput = ""
             passwordInput = ""
@@ -77,7 +80,7 @@
               )
             notifs.set(msgs)
           }else if(bcrypt.compareSync(passwordInput, res.data.password)){
-            axios.post('http://localhost:8080/validUser', {
+            axios.post(`${backURI}/validUser`, {
               email: emailInput
             }).then(resp => {
               data = resp.data
