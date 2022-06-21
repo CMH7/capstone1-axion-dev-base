@@ -3,7 +3,7 @@
 
   import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify";
   import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger } from '@mdi/js';
-  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface } from "$lib/stores/global-store";
+  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive } from "$lib/stores/global-store";
   import { goto } from "$app/navigation";
 
   let collapsed = false;
@@ -63,17 +63,21 @@
           <div class="{collapsed ? "undisp":""}">
             {#if $useHint }
               <Tooltip bottom class="mt-1">
-                <Button text class="has-text-white quicksands px-2 py-3">
-                  Members
-                </Button>
+                <div on:click={() => memberModalActive.set(true)}>
+                  <Button  text class="has-text-white quicksands px-2 py-3">
+                    Members
+                  </Button>
+                </div>
                 <span slot='tip'>
                   Click to open members interface
                 </span>
               </Tooltip>
               {:else}
-              <Button text class="has-text-white quicksands px-2 py-3">
-                Members
-              </Button>
+              <div on:click={() => memberModalActive.set(true)}>
+                <Button text class="has-text-white quicksands px-2 py-3">
+                  Members
+                </Button>
+              </div>
             {/if}
           </div>
           <!-- End Members tool button -->
