@@ -10,6 +10,9 @@
   import {notifs} from '$lib/stores/global-store'
   import NotificationContainer from "$lib/components/Notification-container.svelte"
   import { goto } from '$app/navigation'
+  import constants from '$lib/constants'
+
+  const backURI = constants.backURI
 
     // inputs values
   let firstName = "",
@@ -78,7 +81,7 @@
     }else{
       password = bcrypt.hashSync(password, password.length);
 
-      axios.post('http://localhost:8080/Signup',  {
+      axios.post(`${backURI}/Signup`,  {
         firstName: firstName,
         lastName: lastName,
         age: parseInt(age),
