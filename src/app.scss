@@ -30,6 +30,22 @@
   font-family: 'Lobster', cursive;
 }
 
+.overflow {
+  &-x {
+    &-scroll {overflow-x: scroll;}
+    &-hidden {overflow-x: hidden;}
+    &-auto {overflow-x: auto;}
+    &-visible {overflow-x: visible;}
+  }
+
+  &-y {
+    &-scroll {overflow-y: scroll;}
+    &-hidden {overflow-y: hidden;}
+    &-auto {overflow-y: auto;}
+    &-visible {overflow-y: visible;}
+  }
+}
+
 // Custom class for button in homepage
 .button-centerx {
   @media only screen and (max-width: 1023px) {
@@ -63,4 +79,388 @@
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.6);
+}
+
+// === DIMENSIONS ====
+
+// BASE
+// WIDTH
+.w {
+  // pixels
+  &-100 {width: 100px;}
+  &-200 {width: 200px;}
+  &-300 {width: 300px;}
+  &-400 {width: 400px;}
+  &-500 {width: 500px;}
+  &-600 {width: 600px;}
+  &-700 {width: 700px;}
+  &-800 {width: 800px;}
+  &-900 {width: 900px;}
+  &-1000 {width: 1000px;}
+
+  // percents
+  &-5 {width: 5%;}
+  &-10p {width: 10%;}
+  &-15p {width: 15%;}
+  &-20p {width: 20%;}
+  &-25p {width: 25%;}
+  &-30p {width: 30%;}
+  &-35p {width: 35%;}
+  &-40p {width: 40%;}
+  &-45p {width: 45%;}
+  &-50p {width: 50%;}
+  &-55p {width: 55%;}
+  &-60p {width: 60%;}
+  &-65p {width: 65%;}
+  &-70p {width: 70%;}
+  &-75p {width: 75%;}
+  &-80p {width: 80%;}
+  &-85p {width: 85%;}
+  &-90p {width: 90%;}
+  &-95p {width: 95%;}
+  &-100p {width: 100%;}
+}
+
+// HEIGHTS
+.h {
+  // pixels
+  &-100 {height: 100px;}
+  &-200 {height: 200px;}
+  &-300 {height: 300px;}
+  &-400 {height: 400px;}
+  &-500 {height: 500px;}
+  &-600 {height: 600px;}
+  &-700 {height: 700px;}
+  &-800 {height: 800px;}
+  &-900 {height: 900px;}
+  &-1000 {height: 1000px;}
+
+  // percents
+  &-5 {height: 5%;}
+  &-10p {height: 10%;}
+  &-15p {height: 15%;}
+  &-20p {height: 20%;}
+  &-25p {height: 25%;}
+  &-30p {height: 30%;}
+  &-35p {height: 35%;}
+  &-40p {height: 40%;}
+  &-45p {height: 45%;}
+  &-50p {height: 50%;}
+  &-55p {height: 55%;}
+  &-60p {height: 60%;}
+  &-65p {height: 65%;}
+  &-70p {height: 70%;}
+  &-75p {height: 75%;}
+  &-80p {height: 80%;}
+  &-85p {height: 85%;}
+  &-90p {height: 90%;}
+  &-95p {height: 95%;}
+  &-100p {height: 100%;}
+}
+
+// == MINS ==
+// WIDTHS
+.min-w {
+  // pixels
+  &-100 {min-width: 100px;}
+  &-200 {min-width: 200px;}
+  &-300 {min-width: 300px;}
+  &-400 {min-width: 400px;}
+  &-500 {min-width: 500px;}
+  &-600 {min-width: 600px;}
+  &-700 {min-width: 700px;}
+  &-800 {min-width: 800px;}
+  &-900 {min-width: 900px;}
+  &-1000 {min-width: 1000px;}
+
+  // percents
+  &-5p {min-width: 5%;}
+  &-10p {min-width: 10%;}
+  &-15p {min-width: 15%;}
+  &-20p {min-width: 20%;}
+  &-25p {min-width: 25%;}
+  &-30p {min-width: 30%;}
+  &-35p {min-width: 35%;}
+  &-40p {min-width: 40%;}
+  &-45p {min-width: 45%;}
+  &-50p {min-width: 50%;}
+  &-55p {min-width: 55%;}
+  &-60p {min-width: 60%;}
+  &-65p {min-width: 65%;}
+  &-70p {min-width: 70%;}
+  &-75p {min-width: 75%;}
+  &-80p {min-width: 80%;}
+  &-85p {min-width: 85%;}
+  &-90p {min-width: 90%;}
+  &-95p {min-width: 95%;}
+  &-100p {min-width: 100%;}
+}
+
+// HEIGHTS
+.min-h {
+  // pixels
+  &-100 {min-height: 100px;}
+  &-200 {min-height: 200px;}
+  &-300 {min-height: 300px;}
+  &-400 {min-height: 400px;}
+  &-500 {min-height: 500px;}
+  &-600 {min-height: 600px;}
+  &-700 {min-height: 700px;}
+  &-800 {min-height: 800px;}
+  &-900 {min-height: 900px;}
+  &-1000 {min-height: 1000px;}
+
+  // percents
+  &-5p {min-height: 5%;}
+  &-10p {min-height: 10%;}
+  &-15p {min-height: 15%;}
+  &-20p {min-height: 20%;}
+  &-25p {min-height: 25%;}
+  &-30p {min-height: 30%;}
+  &-35p {min-height: 35%;}
+  &-40p {min-height: 40%;}
+  &-45p {min-height: 45%;}
+  &-50p {min-height: 50%;}
+  &-55p {min-height: 55%;}
+  &-60p {min-height: 60%;}
+  &-65p {min-height: 65%;}
+  &-70p {min-height: 70%;}
+  &-75p {min-height: 75%;}
+  &-80p {min-height: 80%;}
+  &-85p {min-height: 85%;}
+  &-90p {min-height: 90%;}
+  &-95p {min-height: 95%;}
+  &-100p {min-height: 100%;}
+}
+
+// == MAXS ==
+// WIDTHS
+.max-w {
+  // pixels
+  &-100 {max-width: 100px;}
+  &-200 {max-width: 200px;}
+  &-300 {max-width: 300px;}
+  &-400 {max-width: 400px;}
+  &-500 {max-width: 500px;}
+  &-600 {max-width: 600px;}
+  &-700 {max-width: 700px;}
+  &-800 {max-width: 800px;}
+  &-900 {max-width: 900px;}
+  &-1000 {max-width: 1000px;}
+
+  // percents
+  &-5p {max-width: 5%;}
+  &-10p {max-width: 10%;}
+  &-15p {max-width: 15%;}
+  &-20p {max-width: 20%;}
+  &-25p {max-width: 25%;}
+  &-30p {max-width: 30%;}
+  &-35p {max-width: 35%;}
+  &-40p {max-width: 40%;}
+  &-45p {max-width: 45%;}
+  &-50p {max-width: 50%;}
+  &-55p {max-width: 55%;}
+  &-60p {max-width: 60%;}
+  &-65p {max-width: 65%;}
+  &-70p {max-width: 70%;}
+  &-75p {max-width: 75%;}
+  &-80p {max-width: 80%;}
+  &-85p {max-width: 85%;}
+  &-90p {max-width: 90%;}
+  &-95p {max-width: 95%;}
+  &-100p {max-width: 100%;}
+}
+
+// HEIGHTS
+.max-h {
+  // pixels
+  &-100 {max-height: 100px;}
+  &-200 {max-height: 200px;}
+  &-300 {max-height: 300px;}
+  &-400 {max-height: 400px;}
+  &-500 {max-height: 500px;}
+  &-600 {max-height: 600px;}
+  &-700 {max-height: 700px;}
+  &-800 {max-height: 800px;}
+  &-900 {max-height: 900px;}
+  &-1000 {max-height: 1000px;}
+
+  // percents
+  &-5p {max-height: 5%;}
+  &-10p {max-height: 10%;}
+  &-15p {max-height: 15%;}
+  &-20p {max-height: 20%;}
+  &-25p {max-height: 25%;}
+  &-30p {max-height: 30%;}
+  &-35p {max-height: 35%;}
+  &-40p {max-height: 40%;}
+  &-45p {max-height: 45%;}
+  &-50p {max-height: 50%;}
+  &-55p {max-height: 55%;}
+  &-60p {max-height: 60%;}
+  &-65p {max-height: 65%;}
+  &-70p {max-height: 70%;}
+  &-75p {max-height: 75%;}
+  &-80p {max-height: 80%;}
+  &-85p {max-height: 85%;}
+  &-90p {max-height: 90%;}
+  &-95p {max-height: 95%;}
+  &-100p {max-height: 100%;}
+}
+
+// MAXS AND MINS = MAXMINS
+// WIDTHS
+.maxmins-w {
+  // pixels
+  &-100 {@extend .max-w-100; @extend .min-w-100;}
+  &-200 {@extend .max-w-200; @extend .min-w-200;}
+  &-300 {@extend .max-w-300; @extend .min-w-300;}
+  &-400 {@extend .max-w-400; @extend .min-w-400;}
+  &-500 {@extend .max-w-500; @extend .min-w-500;}
+  &-600 {@extend .max-w-600; @extend .min-w-600;}
+  &-700 {@extend .max-w-700; @extend .min-w-700;}
+  &-800 {@extend .max-w-800; @extend .min-w-800;}
+  &-900 {@extend .max-w-900; @extend .min-w-900;}
+  &-1000 {@extend .max-w-1000; @extend .min-w-1000;}
+
+  // percent
+  &-5p {@extend .max-w-5p; @extend .min-w-5p;}
+  &-10p {@extend .max-w-10p; @extend .min-w-10p;}
+  &-15p {@extend .max-w-15p; @extend .min-w-15p;}
+  &-20p {@extend .max-w-20p; @extend .min-w-20p;}
+  &-25p {@extend .max-w-25p; @extend .min-w-25p;}
+  &-30p {@extend .max-w-30p; @extend .min-w-30p;}
+  &-35p {@extend .max-w-35p; @extend .min-w-35p;}
+  &-40p {@extend .max-w-40p; @extend .min-w-40p;}
+  &-45p {@extend .max-w-45p; @extend .min-w-45p;}
+  &-50p {@extend .max-w-50p; @extend .min-w-50p;}
+  &-55p {@extend .max-w-55p; @extend .min-w-55p;}
+  &-60p {@extend .max-w-60p; @extend .min-w-60p;}
+  &-65p {@extend .max-w-65p; @extend .min-w-65p;}
+  &-70p {@extend .max-w-70p; @extend .min-w-70p;}
+  &-75p {@extend .max-w-75p; @extend .min-w-75p;}
+  &-80p {@extend .max-w-80p; @extend .min-w-80p;}
+  &-85p {@extend .max-w-85p; @extend .min-w-85p;}
+  &-90p {@extend .max-w-90p; @extend .min-w-90p;}
+  &-95p {@extend .max-w-95p; @extend .min-w-95p;}
+  &-100p {@extend .max-w-100p; @extend .min-w-100p;}
+}
+
+// HEIGHTS
+.maxmins-h {
+  // pixels
+  &-100 {@extend .max-h-100; @extend .min-h-100;}
+  &-200 {@extend .max-h-200; @extend .min-h-200;}
+  &-300 {@extend .max-h-300; @extend .min-h-300;}
+  &-400 {@extend .max-h-400; @extend .min-h-400;}
+  &-500 {@extend .max-h-500; @extend .min-h-500;}
+  &-600 {@extend .max-h-600; @extend .min-h-600;}
+  &-700 {@extend .max-h-700; @extend .min-h-700;}
+  &-800 {@extend .max-h-800; @extend .min-h-800;}
+  &-900 {@extend .max-h-900; @extend .min-h-900;}
+  &-1000 {@extend .max-h-1000; @extend .min-h-1000;}
+
+  // percent
+  &-5p {@extend .max-h-5p; @extend .min-h-5p;}
+  &-10p {@extend .max-h-10p; @extend .min-h-10p;}
+  &-15p {@extend .max-h-15p; @extend .min-h-15p;}
+  &-20p {@extend .max-h-20p; @extend .min-h-20p;}
+  &-25p {@extend .max-h-25p; @extend .min-h-25p;}
+  &-30p {@extend .max-h-30p; @extend .min-h-30p;}
+  &-35p {@extend .max-h-35p; @extend .min-h-35p;}
+  &-40p {@extend .max-h-40p; @extend .min-h-40p;}
+  &-45p {@extend .max-h-45p; @extend .min-h-45p;}
+  &-50p {@extend .max-w-50p; @extend .min-h-50p;}
+  &-55p {@extend .max-h-55p; @extend .min-h-55p;}
+  &-60p {@extend .max-h-60p; @extend .min-h-60p;}
+  &-65p {@extend .max-h-65p; @extend .min-h-65p;}
+  &-70p {@extend .max-h-70p; @extend .min-h-70p;}
+  &-75p {@extend .max-h-75p; @extend .min-h-75p;}
+  &-80p {@extend .max-h-80p; @extend .min-h-80p;}
+  &-85p {@extend .max-h-85p; @extend .min-h-85p;}
+  &-90p {@extend .max-h-90p; @extend .min-h-90p;}
+  &-95p {@extend .max-h-95p; @extend .min-h-95p;}
+  &-100p {@extend .max-h-100p; @extend .min-h-100p;}
+}
+
+@media screen and (max-width: $mb) {
+  .maxmins-w {
+    // percent
+    &-40p {
+      &-dt {
+        &-to {
+          &-mb {
+            &-80p {max-width: 80%; min-width: 80%;}
+            &-85p {max-width: 85%; min-width: 85%;}
+            &-90p {max-width: 90%; min-width: 90%;}
+            &-95p {max-width: 95%; min-width: 95%;}
+            &-100p {max-width: 100%; min-width: 100%;}
+          }
+        }
+      }
+    }
+
+    &-65p {
+      &-dt {
+        &-to {
+          &-mb {
+            &-80p {max-width: 80%; min-width: 80%;}
+            &-95p {max-width: 95%; min-width: 95%;}
+          }
+        }
+      }
+    }
+
+    // pixels to percent
+    &-400 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-90p {max-width: 90%; min-width: 90%;}
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: $mb) {
+  .maxmins-w {
+    // percent
+    &-40p {
+      &-dt {
+        &-to {
+          &-mb {
+            &-80p {max-width: 40%; min-width: 40%;}
+            &-85p {max-width: 40%; min-width: 40%;}
+            &-90p {max-width: 40%; min-width: 40%;}
+            &-95p {max-width: 40%; min-width: 40%;}
+            &-100p {max-width: 40%; min-width: 40%;}
+          }
+        }
+      }
+    }
+
+    &-65p {
+      &-dt {
+        &-to {
+          &-mb {
+            &-80p {max-width: 65%; min-width: 65%;}
+            &-95p {max-width: 65%; min-width: 65%;}
+          }
+        }
+      }
+    }
+    
+    // pixels to percent
+    &-400 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-90p {max-width: 400px; min-width: 400px;}
+          }
+        }
+      }
+    }
+  }
 }

@@ -66,3 +66,6 @@ export let snack = writable(
     yes: () => { }
   }
 )
+
+// Member Interface (modal) activeness
+export let memberModalActive = writable(false)

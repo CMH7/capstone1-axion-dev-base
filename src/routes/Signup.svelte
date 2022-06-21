@@ -1,18 +1,15 @@
 <script>
-// @ts-nocheck
-
-  import HomeFooter from "$lib/components/Home-footer.svelte";
-  import SignupHeader from "$lib/components/Signup-header.svelte";
-  import { Icon, Divider, MaterialApp } from "svelte-materialify";
-  import {mdiGoogle, mdiFacebook} from "@mdi/js";
-  import {fade} from 'svelte/transition';
-  import axios from 'axios';
-  import bcrypt from 'bcryptjs';
-  import {notifs} from '$lib/stores/global-store';
-  import NotificationContainer from "$lib/components/Notification-container.svelte";
-  import Notification from "$lib/components/Notification.svelte";
-  import { goto } from '$app/navigation';
-import { trusted } from "svelte/internal";
+  // @ts-nocheck
+  import HomeFooter from "$lib/components/Home-footer.svelte"
+  import SignupHeader from "$lib/components/Signup-header.svelte"
+  import { Icon, Divider, MaterialApp } from "svelte-materialify"
+  import {mdiGoogle, mdiFacebook} from "@mdi/js"
+  import {fade} from 'svelte/transition'
+  import axios from 'axios'
+  import bcrypt from 'bcryptjs'
+  import {notifs} from '$lib/stores/global-store'
+  import NotificationContainer from "$lib/components/Notification-container.svelte"
+  import { goto } from '$app/navigation'
 
     // inputs values
   let firstName = "",
@@ -54,7 +51,8 @@ import { trusted } from "svelte/internal";
       notifsCopy.push(
         {
           msg: msg,
-          type: "error"
+          type: "error",
+          id: $notifs.length + 1
         }
       );
       notifs.set(notifsCopy);
@@ -69,7 +67,8 @@ import { trusted } from "svelte/internal";
       notifsCopy.push(
         {
           msg: 'Password does not match. Please try again.',
-          type: 'error'
+          type: 'error',
+          id: $notifs.length + 1
         }
       )
       notifs.set(notifsCopy)
@@ -99,7 +98,8 @@ import { trusted } from "svelte/internal";
           notifsCopy.push(
             {
               msg: "Creation successful",
-              type: "success"
+              type: "success",
+              id: $notifs.length + 1
             }
           );
           notifs.set(notifsCopy)
@@ -112,7 +112,8 @@ import { trusted } from "svelte/internal";
           notifsCopy.push(
             {
               msg: "Creation failed. Please try again",
-              type: "error"
+              type: "error",
+              id: $notifs.length + 1
             }
           );
           notifs.set(notifsCopy)
@@ -124,7 +125,8 @@ import { trusted } from "svelte/internal";
         notifsCopy.push(
           {
             msg:"Database error",
-            type:"error"
+            type:"error",
+            id: $notifs.length + 1
           }
         );
         notifs.set(notifsCopy)
@@ -136,11 +138,7 @@ import { trusted } from "svelte/internal";
   }
 </script>
 
-<NotificationContainer>
-  {#each $notifs as notif}
-  <Notification msg={notif.msg}  type={notif.type}/>
-  {/each}
-</NotificationContainer>
+<NotificationContainer />
 
 <SignupHeader/>
 <div in:fade class="hero is-fullheight-with-navbar">

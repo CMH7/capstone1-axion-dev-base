@@ -27,7 +27,9 @@
       let notifsCopy = $notifs;
       notifsCopy.push(
         {
-          msg: "Please Sign in first."
+          msg: "Please Sign in first.",
+          type: 'error',
+          id: $notifs.length + 1
         }
       )
       notifs.set(notifsCopy);
@@ -40,14 +42,10 @@
 {#if !$isLoggedIn}
 <div></div>
 {:else}
+<NotificationContainer />
 <MainAppHeader/>
 <MainAppDrawerSidebar/>
 <Overlay/>
-<NotificationContainer>
-  {#each $notifs as notif}
-    <Notification msg="{notif.msg}" type="{notif.type}" />
-  {/each}
-</NotificationContainer>
 
 <!-- Snackbar -->
 <Snackbar class="flex-column" active={$snack.active} absolute bottom center>
