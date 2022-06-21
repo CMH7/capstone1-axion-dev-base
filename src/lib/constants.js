@@ -13,5 +13,5 @@ export default {
     members: [],
     name: ""
   },
-  backURI: "https://axion-back.herokuapp.com/"
+  backURI: "https://axion-back.herokuapp.com"
 }
