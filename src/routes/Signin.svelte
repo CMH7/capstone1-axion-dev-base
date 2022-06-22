@@ -1,16 +1,18 @@
 <script>
     // @ts-nocheck
-    import { mdiGoogle, mdiFacebook } from '@mdi/js'; // icons used
-    import { Icon, Divider, MaterialApp } from 'svelte-materialify';
-    import HomeFooter from "$lib/components/Home-footer.svelte";
-    import HomeHeader from "$lib/components/Home-header.svelte";
-    import { goto } from '$app/navigation';
-    import {fade} from 'svelte/transition';
-    import axios from 'axios';
-    import bcrypt from 'bcryptjs';
-    import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store';
-    import ErrorContainer from '$lib/components/Notification-container.svelte';
-    import ErrorNotification from '$lib/components/Notification.svelte';
+    import { mdiGoogle, mdiFacebook } from '@mdi/js'
+    import { Icon, Divider, MaterialApp } from 'svelte-materialify'
+    import HomeFooter from "$lib/components/Home-footer.svelte"
+    import HomeHeader from "$lib/components/Home-header.svelte"
+    import { goto } from '$app/navigation'
+    import {fade} from 'svelte/transition'
+    import axios from 'axios'
+    import bcrypt from 'bcryptjs'
+    import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
+    import NotificationContainer from '$lib/components/Notification-container.svelte'
+    import constants from '$lib/constants'
+
+    const backURI = constants.backURI
 
     // OnKeyDown
     function onKeyDown(e) {
@@ -37,74 +39,82 @@
           notifsCopy.push(
             {
               msg: "Please input a valid email.",
-              type: "error"
+              type: "error",
+              id: $notifs.length + 1
             }
           );
         }else if(passwordInput === "" && !(emailInput === "")) {
           notifsCopy.push(
             {
               msg: "Please input a valid password.",
-              type: "error"
+              type: "error",
+              id: $notifs.length + 1
             }
-          );
+          )
         }else {
           notifsCopy.push(
             {
               msg: "Please input a valid email and password.",
-              type: "error"
+              type: "error",
+              id: $notifs.length + 1
             }
           );
         }
-        notifs.set(notifsCopy);
-        emailInput = "";
-        passwordInput = "";
+        notifs.set(notifsCopy)
+        emailInput = ""
+        passwordInput = ""
       }else{
-        axios.get(`http://localhost:8080/Signin?email=${emailInput}`).then(res=>{
+        axios.get(`${backURI}/Signin?email=${emailInput}`).then(res=>{
           if(res.data.password === undefined) {
-            emailInput = "";
-            passwordInput = "";
-            loading = false;
-            disabled = false;
-            let msgs = $notifs;
+            emailInput = ""
+            passwordInput = ""
+            loading = false
+            disabled = false
+            let msgs = $notifs
             msgs.push(
                 {
                   msg: "Wrong email or password. Please try again.",
-                  type: "error"
+                  type: "error",
+                  id: $notifs.length + 1
                 }
-              );
-            notifs.set(msgs);
+              )
+            notifs.set(msgs)
           }else if(bcrypt.compareSync(passwordInput, res.data.password)){
-            axios.post('http://localhost:8080/validUser', {
+            axios.post(`${backURI}/validUser`, {
               email: emailInput
             }).then(resp => {
-              data = resp.data;
-              userData.set(data);
-              useHint.set($userData.useHint);
-              loading = false;
-              disabled = false;
-              let msgs = $notifs;
+              data = resp.data
+              userData.set(data)
+              useHint.set($userData.useHint)
+              loading = false
+              disabled = false
+              notifs.set([])
+              let msgs = $notifs
               msgs.push(
                   {
                     msg: "Log in Successful",
-                    type: "success"
+                    type: "success",
+                    id: $notifs.length + 1
                   }
                 );
-              notifs.set(msgs);
-              isLoggedIn.set(true);
-              goto('/MainApp', {replaceState: true});
-            }).catch(err => console.error(err));
+              notifs.set(msgs)
+              isLoggedIn.set(true)
+              goto('/MainApp', {replaceState: true})
+            }).catch(err => console.error(err))
           }else{
-            loading = false;
-            disabled = false;
-            let notifsCopy = $notifs;
+            loading = false
+            disabled = false
+            let notifsCopy = $notifs
             notifsCopy.push(
               {
-                msg: "Wrong email or password. Please try again."
+                msg: "Wrong email or password. Please try again.",
+                type: 'error',
+                id: $notifs.length + 1
               }
             );
-            emailInput = "";
-            passwordInput = "";
-            notifs.set(notifsCopy);
+            notifs.set(notifsCopy)
+            emailInput = ""
+            passwordInput = ""
           }
         }).catch(err => {
           console.log(err);
@@ -116,12 +126,8 @@
 <!-- window keyboard listener -->
 <svelte:window on:keydown={onKeyDown} />
 
-<!-- errors -->
-<ErrorContainer>
-  {#each $notifs as notif}
-  <ErrorNotification msg="{notif.msg}" type="{notif.type}"/>
-  {/each}
-</ErrorContainer>
+<!-- Notification -->
+<NotificationContainer />
 
 <!-- header -->
 <HomeHeader/>

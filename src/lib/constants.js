@@ -12,5 +12,6 @@ export default {
     isFavorite: false,
     members: [],
     name: ""
-  }
+  },
+  backURI: "https://axion-back.herokuapp.com"
 }

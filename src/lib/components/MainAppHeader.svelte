@@ -1,9 +1,9 @@
 <script>
 // @ts-nocheck
 
-  import { MaterialApp, AppBar, Button, Icon, Avatar } from "svelte-materialify";
+  import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify";
   import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger } from '@mdi/js';
-  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack } from "$lib/stores/global-store";
+  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive } from "$lib/stores/global-store";
   import { goto } from "$app/navigation";
 
   let collapsed = false;
@@ -50,7 +50,40 @@
       </span>
 
       <!-- Expansion-er -->
-      <div class="is-flex-grow-1" />
+      <div class="is-flex-grow-1"/>
+
+      <!-- Toolbar -->
+      <div class="mr-3">
+        <!-- Subject tool bar -->
+        <!-- End Subject tool bar -->
+
+        <!-- Workspaces tool bar -->
+        <div class="{$currentDashboardSubInterface === "Workspaces"? "": "undisp"}">
+          <!-- Members tool button -->
+          <div class="{collapsed ? "undisp":""}">
+            {#if $useHint }
+              <Tooltip bottom class="mt-1">
+                <div on:click={() => memberModalActive.set(true)}>
+                  <Button  text class="has-text-white quicksands px-2 py-3">
+                    Members
+                  </Button>
+                </div>
+                <span slot='tip'>
+                  Click to open members interface
+                </span>
+              </Tooltip>
+              {:else}
+              <div on:click={() => memberModalActive.set(true)}>
+                <Button text class="has-text-white quicksands px-2 py-3">
+                  Members
+                </Button>
+              </div>
+            {/if}
+          </div>
+          <!-- End Members tool button -->
+        </div>
+        <!-- End Workspaces tool bar -->
+      </div>
 
       <!-- Collapsers -->
       <!-- Collapse the bar -->

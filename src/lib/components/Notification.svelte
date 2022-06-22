@@ -1,34 +1,27 @@
 <script>
-  import { Alert, Icon } from 'svelte-materialify'
-  import { mdiAlertCircleOutline } from '@mdi/js'
-  import { notifs } from '$lib/stores/global-store';
-  import { fade } from 'svelte/transition';
+  import { notifs } from '$lib/stores/global-store'
+  import { fade } from 'svelte/transition'
 
-  // Message
-  export let msg = "";
+  export let msg = ""
+  export let type = "error"
+  export let id
 
-  // Color
-  export let type = "error";
+  let notifsCopy = $notifs
 
-  setTimeout(() => {
-    let a = [];
-    notifs.subscribe(value => a = value);
-    a.shift();
-    notifs.set(a);
-  }, 4000)
+  let closed = false
 
 </script>
 
-<div in:fade out:fade class="has-background-white rounded" >
-  <Alert
-    text
-    border="left"
-    class="{type === "error"? "red-text": type === "success"? "green-text": ""}"
-  >
-    <div slot="icon">
-      <Icon path={mdiAlertCircleOutline} />
-    </div>
-
-    {msg}
-  </Alert>
-</div> 
+<div in:fade out:fade class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{type === "success"? "success": "danger"} is-light {closed ? "undisp": ""}">
+  {msg}
+  <div
+    class="delete"
+    on:click={
+      e => {
+        notifsCopy = notifsCopy.filter(val => val.id != id)
+        notifs.set(notifsCopy)
+        closed = true
+      }
+    }
+  />
+</div>

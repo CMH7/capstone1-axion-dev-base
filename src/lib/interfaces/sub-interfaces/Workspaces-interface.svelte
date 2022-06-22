@@ -1,9 +1,10 @@
 <script>
 // @ts-nocheck
 
-	import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte';
+	import MemberModal from '$lib/components/interface-components/Member-Modal.svelte';
+  import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte';
   import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte';
-  import { activeSubject, useHint, userData } from '$lib/stores/global-store';
+  import { activeSubject, useHint, userData, memberModalActive } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { MaterialApp, Tooltip, Icon } from 'svelte-materialify';
 
@@ -40,11 +41,15 @@
       popupActive = true;
     }
   }
+
+
 </script>
 
 <svelte:window on:keydown={onKeyDown} />
 
+
 <div class="columns is-multiline is-variable is-2 pl-6">
+  <MemberModal />
   <AddWorkspacePopUp active={popupActive}/>
   {#if hintAvailable}
   <Tooltip bottom>
