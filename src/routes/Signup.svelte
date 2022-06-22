@@ -14,6 +14,12 @@
 
   const backURI = constants.backURI
 
+
+  const items = [
+    {name: 'Male', value: 'Male'},
+    {name: 'Female', value: 'Female'}
+  ]
+
     // inputs values
   let firstName = "",
       lastName = "",
@@ -193,36 +199,58 @@
           <input {disabled} required bind:value={repassword} class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
 
         </div>
-      </div>
-      
-      <div class="column p-0 is-12"/>
-      <div class="column p-0 is-5">
-        <MaterialApp>
-          <Divider />
-        </MaterialApp>
-        </div>
-      <div class="column p-0 is-12"/>
-
-      <div class="column p-0 is-12">
-        <p class="m-0 is-size-5 has-text-black has-text-weight-semibold has-text-centered">with</p>
-      </div>
-
-      <div class="column p-0 is-12 py-5">
-        <div class="is-flex is-justify-content-center">
-          <div class="mx-3">
-            <MaterialApp>
-              <a href="http://gmail.com/" target="_blank">
-                <Icon class="has-text-danger-dark" size="40px" path={mdiGoogle} />
-              </a>
-            </MaterialApp>
+  
+        <!-- right side input -->
+        <div class="column is-4-tablet is-8-mobile">
+          <div class=" d-flex flex-wrap">
+  
+            <!-- School name -->
+            <input required bind:value={school} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
+  
+            <!-- Course -->
+            <input required bind:value={course} class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course">
+            
+            <!-- Year -->
+            <input required bind:value={year} class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Year">
+  
+            <!-- Password -->
+            <input required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
+            
+            <!-- Re-password -->
+            <input required bind:value={repassword} class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
+  
           </div>
-
-          <div class="mx-3">
-            <MaterialApp>
-              <a href="http://facebook.com/" target="_blank">
-                <Icon class="has-text-info" size="40px" path={mdiFacebook} />
-              </a>
-            </MaterialApp>
+        </div>
+        
+        <div class="column p-0 is-12"/>
+        <div class="column p-0 is-5">
+          <MaterialApp>
+            <Divider />
+          </MaterialApp>
+          </div>
+        <div class="column p-0 is-12"/>
+  
+        <div class="column p-0 is-12">
+          <p class="m-0 is-size-5 has-text-black has-text-weight-semibold has-text-centered">with</p>
+        </div>
+  
+        <div class="column p-0 is-12 py-5">
+          <div class="is-flex is-justify-content-center">
+            <div class="mx-3">
+              <MaterialApp>
+                <a href="http://gmail.com/" target="_blank">
+                  <Icon class="has-text-danger-dark" size="40px" path={mdiGoogle} />
+                </a>
+              </MaterialApp>
+            </div>
+  
+            <div class="mx-3">
+              <MaterialApp>
+                <a href="http://facebook.com/" target="_blank">
+                  <Icon class="has-text-info" size="40px" path={mdiFacebook} />
+                </a>
+              </MaterialApp>
+            </div>
           </div>
         </div>
       </div>
@@ -232,13 +260,13 @@
           <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Sign Up</button>
           <p class="pt-4 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
         </div>
-      </div>
-
-    </div>
-  </div>
   
-  <div class="hero-foot">
-    <HomeFooter/>
+      </div>
+    </div>
+    
+    <div class="hero-foot">
+      <HomeFooter/>
+    </div>
+  
   </div>
-
 </div>
