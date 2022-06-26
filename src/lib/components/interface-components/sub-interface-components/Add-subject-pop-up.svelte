@@ -1,6 +1,12 @@
 <script>
-	import { Dialog, MaterialApp } from 'svelte-materialify';
-    import { notifs } from '$lib/stores/global-store';
+	import { Dialog, MaterialApp } from 'svelte-materialify'
+    import { notifs } from '$lib/stores/global-store'
+    import constants from '$lib/constants'
+    import bcrypt from 'bcryptjs'
+    import { userData } from '$lib/stores/global-store'
+    import axios from 'axios'
+
+    const backURI = constants.backURI
 
     // to open the dialog
 	export let active = false;
@@ -35,59 +41,60 @@
     // inputs
     let subjectName = "";
 
-    // database
-    import axios from 'axios';
-
-    // import userData
-    import {userData} from '$lib/stores/global-store';
-    let id;
-    userData.subscribe(value => {
-        id = value.id
-    })
-
     function createSubject() {
         if(subjectName === "") {
-            let notifsCopy = [];
-            notifsCopy = $notifs;
+            let notifsCopy = []
+            notifsCopy = $notifs
             notifsCopy.push(
                 {
-                    msg: "Subject name is invalid/ empty."
+                    msg: "Subject name is empty."
                 }
-            );
-            notifs.set(notifsCopy);
-            return false;
+            )
+            notifs.set(notifsCopy)
+            return false
         }
-        disabled = true;
-        loading = true;
+        disabled = true
+        loading = true
 
-        let selectedColor = "";
+        let selectedColor = ""
         colors.forEach(color => {
             if(color.selected){
-                selectedColor = color.name;
+                selectedColor = color.name
             }
-        });
+        })
 
-        axios.post(`http://localhost:8080/MainApp?id=${id}&name=${subjectName}&color=${selectedColor}`)
+        axios.post(`${backURI}/MainApp/dashboard/create/subject`, {
+            ids: {
+                user: $userData.id,
+                subject: bcrypt.hashSync(`${$userData.id}${subjectName}${new Date()}`, `${$userData.id}${subjectName}${new Date()}`.length)
+            },
+            subject: {
+                color: selectedColor,
+                name: subjectName,
+                owned: true,
+                createdBy: `${$userData.firstName} ${$userData.lastName}`
+            }
+        })
         .then(res => {
-            let notifsCopy = [];
-            notifsCopy = $notifs;
+            let notifsCopy = []
+            notifsCopy = $notifs
             notifsCopy.push(
                 {
                     msg: "Subject created!",
                     type: "success"
                 }
-            );
-            notifs.set(notifsCopy);
-            active = false;
-            axios.post('http://localhost:8080/validUser', {
+            )
+            notifs.set(notifsCopy)
+            active = false
+            axios.post(`${backURI}/validUser`, {
                 email: res.data.email
             }).then(res => {
                 userData.set(res.data)
-                loading = false;
-                disabled = false;
-                subjectName = "";
-            }).catch(err => console.error(`error in gettring user ${err}`));
-        }).catch(err => console.error(`error in posting subject ${err}`));
+                loading = false
+                disabled = false
+                subjectName = ""
+            }).catch(err => console.error(`error in gettring user ${err}`))
+        }).catch(err => console.error(`error in posting subject ${err}`))
     }
 
     function onKeyDown(e) {
