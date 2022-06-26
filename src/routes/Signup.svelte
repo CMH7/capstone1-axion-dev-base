@@ -88,18 +88,19 @@
       password = bcrypt.hashSync(password, password.length);
 
       axios.post(`${backURI}/Signup`,  {
-        firstName: firstName,
-        lastName: lastName,
+        subjects: [],
+        notifications: [],
         age: parseInt(age),
-        gender: gender,
-        email: email,
-        school: school,
         course: course,
-        year: parseInt(year),
+        email: email,
+        firstName: firstName,
+        gender: gender,
+        lastName: lastName,
         password: password,
         profile: "",
+        school: school,
         useHint: true,
-        subjects: [],
+        year: parseInt(year),
         lastActive: new Date()
       }).then(res=>{
         if(res.data.valid) {
