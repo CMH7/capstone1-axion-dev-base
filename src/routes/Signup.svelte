@@ -171,7 +171,13 @@
           <input {disabled} required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%" type="text" placeholder="Age">
 
           <!-- Gender -->
-          <input {disabled} required bind:value={gender} class="input quicksands my-3 has-background-light" style="width: 65%;" type="text" placeholder="Gender">
+          <div class="select quicksands my-3 w-65p">
+            <select class="w-100p has-background-light">
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Rather not say">Rather not say</option>
+            </select>
+          </div>
           
           <!-- E-mail -->
           <input {disabled} required bind:value={email} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="Email">
