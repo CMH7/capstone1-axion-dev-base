@@ -2,7 +2,7 @@
 	import { Dialog, MaterialApp } from 'svelte-materialify'
     import axios from 'axios'
     import { notifs, userData, activeSubject } from '$lib/stores/global-store'
-    import bcrypt from 'bcryptjs/dist/bcrypt'
+    import bcrypt from 'bcryptjs'
     import constants from '$lib/constants'
 
     const backURI = constants.backURI

@@ -1,31 +1,19 @@
 <script>
-// @ts-nocheck
-
-  // Transitions
-  import { fade } from 'svelte/transition';
-
-  // Components
-  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
-	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte';
-  
-	import { Icon, MaterialApp } from 'svelte-materialify';
-  import { activeSubject, currentDashboardSubInterface, activeWorkspace, notifs, userData } from "$lib/stores/global-store";
-
-  // Sub interfaces of Dashboard
+  // @ts-nocheck
+  import { fade } from 'svelte/transition'
+  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
+	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
+	import { Icon, MaterialApp } from 'svelte-materialify'
+  import { activeSubject, currentDashboardSubInterface, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
-  import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte";
+  import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
+  import { mdiArrowLeft } from '@mdi/js'
+  import constants from '$lib/constants'
 
-  import { mdiArrowLeft } from '@mdi/js';
-
-  // Import constants
-  import constants from '$lib/constants';
-  import axios from 'axios';
-
-  let curDashSubInterface;
-  currentDashboardSubInterface.subscribe(value => curDashSubInterface = value);
+  let curDashSubInterface = $currentDashboardSubInterface
 
   // Get the chosen workspace
-  let currentActiveWorkspace, allBoards, workspaceMembers, allTasks = [];
+  let currentActiveWorkspace, allBoards, allTasks = []
   activeWorkspace.subscribe(value => {
     currentActiveWorkspace = value;
     allBoards = value.boards;
@@ -38,10 +26,10 @@
   // Mouse interactions for animation
   let ishovering = false;
 
-  let subject_name_focused = false;
+  let subject_name_focused = false
 
   function removeFocus() {
-    document.activeElement.blur();
+    document.activeElement.blur()
   }
 </script>
 

@@ -1,11 +1,11 @@
 <script>
     // @ts-nocheck
-	import { Dialog, MaterialApp, Menu, Textarea, Select } from 'svelte-materialify'
+	import { Dialog, MaterialApp, Textarea, Select } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
     import { activeSubject, activeWorkspace, notifs, useHint, userData } from '$lib/stores/global-store'
     import axios from 'axios'
     import constants from '$lib/constants'
-    import bcrypt from 'bcryptjs/dist/bcrypt';
+    import bcrypt from 'bcryptjs'
 
     const backURI = constants.backURI
 
