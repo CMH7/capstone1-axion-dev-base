@@ -5,7 +5,7 @@
     import { activeSubject, activeWorkspace, notifs, useHint, userData } from '$lib/stores/global-store'
     import axios from 'axios'
     import constants from '$lib/constants'
-import bcrypt from 'bcryptjs/dist/bcrypt';
+    import bcrypt from 'bcryptjs/dist/bcrypt';
 
     const backURI = constants.backURI
 
@@ -49,17 +49,6 @@ import bcrypt from 'bcryptjs/dist/bcrypt';
         {name: "danger", selected:false, hover:false}
     ]
 
-    // active color
-    function activeColor (paramColor){
-        colors.forEach(color => {
-            if (color.name != paramColor.name){
-                color.selected = false;
-            }
-        })
-        paramColor.selected = true
-    }
-
-    // date picker
     const levels = [
         {name: "Low", value: 1},
         {name: "Medium", value: 2},
@@ -72,11 +61,11 @@ import bcrypt from 'bcryptjs/dist/bcrypt';
     let dueDateTime = ''
     const isSubtask = false
     let taskName = 'Task name'
-    const taskID = bcrypt.hashSync(`${$activeWorkspace.id}${taskName}${new Date()}`, Math.ceil(Math.random() * 1))
+    const workspaceID = $activeWorkspace.id
     let level = ''
+    const taskID = bcrypt.hashSync(`${workspaceID}${taskName}${new Date()}`, Math.ceil(Math.random() * 1))
     const userID = $userData.id
     const subjectID = $activeSubject.id
-    const workspaceID = $activeWorkspace.id
 
     const createTask = () => {
         loading = true
@@ -202,9 +191,9 @@ import bcrypt from 'bcryptjs/dist/bcrypt';
                     on:click={createTask}
                     on:mouseenter={() => hovering = true }
                     on:mouseleave={() => hovering = false }
-                    class="button has-transition {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;"
+                    class="button has-transition {hovering ? "has-background-grey" : ""} {loading? "is-loading": ""}" style="letter-spacing: 1px;"
                 >
-                    <span class="quicksands has-text-weight-bold {loading? "is-loading": ""} {hovering ? "has-text-white" : ""}">Create</span>
+                    <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
                 </button>
             </div>
         </div>
