@@ -10,8 +10,15 @@
   import { mdiArrowLeft } from '@mdi/js'
   import constants from '$lib/constants'
 
-  let curDashSubInterface = $currentDashboardSubInterface
-  let currentActiveWorkspace = $activeWorkspace
+  let curDashSubInterface = ''
+  currentDashboardSubInterface.subscribe(value => curDashSubInterface = value)
+  let currentActiveWorkspace = ''
+  let allBoards = [] 
+  activeWorkspace.subscribe(value => {
+    currentActiveWorkspace = value
+    allBoards = value.boards
+  })
+
 
   // Mouse interactions for animation
   let ishovering = false
