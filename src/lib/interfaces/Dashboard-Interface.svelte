@@ -11,20 +11,10 @@
   import constants from '$lib/constants'
 
   let curDashSubInterface = $currentDashboardSubInterface
-
-  // Get the chosen workspace
-  let currentActiveWorkspace, allBoards, allTasks = []
-  activeWorkspace.subscribe(value => {
-    currentActiveWorkspace = value;
-    allBoards = value.boards;
-    workspaceMembers = value.members;
-    for(let i = 0; i < value.boards.length; i++){
-      allTasks[i] = value.boards.tasks;
-    }
-  });
+  let currentActiveWorkspace = $activeWorkspace
 
   // Mouse interactions for animation
-  let ishovering = false;
+  let ishovering = false
 
   let subject_name_focused = false
 
