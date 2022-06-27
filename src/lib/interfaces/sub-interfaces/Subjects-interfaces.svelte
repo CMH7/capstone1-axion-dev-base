@@ -1,25 +1,21 @@
 <script>
-  import SubjectBox from "$lib/components/interface-components/Subject-box.svelte";
-  import { mdiPlus } from "@mdi/js";
-  import { MaterialApp, Icon, Tooltip } from "svelte-materialify";
-  import AddSubjectPopUp from "$lib/components/interface-components/sub-interface-components/Add-subject-pop-up.svelte";
+  import SubjectBox from "$lib/components/interface-components/Subject-box.svelte"
+  import { mdiPlus } from "@mdi/js"
+  import { MaterialApp, Icon, Tooltip } from "svelte-materialify"
+  import AddSubjectPopUp from "$lib/components/interface-components/sub-interface-components/Add-subject-pop-up.svelte"
+  import { fade } from 'svelte/transition'
+  import { userData, useHint } from '$lib/stores/global-store'
 
-  // Transition
-  import { fade } from 'svelte/transition';
- 
-  // set subjects from userData
-  import { userData } from '$lib/stores/global-store';
-  let allSubjects = [];
-  userData.subscribe(value => allSubjects = value.subjects);
+  // Do this to retain the reactivity of elements and in sync
+  let allSubjects = []
+  userData.subscribe(value => allSubjects = value.subjects)
   
   // mouse hover effect
   let hovering = false;
 
   // pop up active
-  let popupActive = false;
-
-  //hint
-  import { useHint } from "$lib/stores/global-store";
+  let popupActive = false
+  
 
   function onKeyDown(e) {
     if(e.ctrlKey && e.altKey && e.keyCode == 83) {

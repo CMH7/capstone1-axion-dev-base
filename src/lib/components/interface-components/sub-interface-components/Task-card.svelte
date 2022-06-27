@@ -5,18 +5,20 @@
   // Required params
 
   export let task = {
+    members: [],
+    subtasks: [],
+    conversations: [],
+    viewers: [],
     createdBy: "",
     createdOn: new Date(),
     description: "",
     dueDateTime: new Date(),
-    id: 0,
+    id: "",
     isFavorite: false,
     isSubtask: false,
     level: 0,
-    members: [],
     name: "",
-    status: "",
-    subtasks: []
+    status: ""
   }
 
   export let allMembers = [];

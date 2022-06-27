@@ -6,11 +6,14 @@
 
   // export the subject
   export let subject = {
+    color: "primary",
+    id: "",
+    isFavorite: false,
     name: "",
-    color: "",
-    id: 0,
-    isFavorite: false
-  };
+    workspaces: [],
+    owned: true,
+    createdBy: ""
+  }
 
   let mouseEnter = false;
   let mouseEnterStar = false;
@@ -32,8 +35,8 @@
   on:contextmenu|preventDefault={handleRightClick}
   on:click={
     () => {
-      activeSubject.set(subject);
-      currentDashboardSubInterface.set("Workspaces");
+      activeSubject.set(subject)
+      currentDashboardSubInterface.set("Workspaces")
     }
   }
   on:mouseenter={

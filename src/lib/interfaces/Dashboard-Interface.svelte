@@ -125,7 +125,7 @@
         {#each allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
-              <Boards {workspaceMembers} name={board.name} color={board.color}>
+              <Boards name={board.name} color={board.color}>
                 {#each board.tasks as task}
                 <TaskCard {task} />
                 {/each}

@@ -30,6 +30,27 @@
   font-family: 'Lobster', cursive;
 }
 
+.cursor {
+  &-pointer {cursor: pointer;}
+  &-text {cursor: text;}
+}
+
+.border {
+  &-grey {
+    &-light {
+      border: 1px solid grey;
+    }
+  }
+
+  &-default {
+    border: 1px solid black;
+  }
+}
+
+.shadow-inside-default {
+  box-shadow: inset 0px 0px 2px rgb(144, 143, 143)
+}
+
 .overflow {
   &-x {
     &-scroll {overflow-x: scroll;}
@@ -88,14 +109,23 @@
 .w {
   // pixels
   &-100 {width: 100px;}
+  &-150 {width: 150px;}
   &-200 {width: 200px;}
+  &-250 {width: 250px;}
   &-300 {width: 300px;}
+  &-350 {width: 350px;}
   &-400 {width: 400px;}
+  &-450 {width: 450px;}
   &-500 {width: 500px;}
+  &-550 {width: 550px;}
   &-600 {width: 600px;}
+  &-650 {width: 650px;}
   &-700 {width: 700px;}
+  &-750 {width: 750px;}
   &-800 {width: 800px;}
+  &-850 {width: 850px;}
   &-900 {width: 900px;}
+  &-950 {width: 950px;}
   &-1000 {width: 1000px;}
 
   // percents
@@ -383,6 +413,7 @@
   &-100p {@extend .max-h-100p; @extend .min-h-100p;}
 }
 
+// Transitions width
 @media screen and (max-width: $mb) {
   .maxmins-w {
     // percent
@@ -412,7 +443,61 @@
     }
 
     // pixels to percent
+    &-100 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 100%; min-width: 100%;}
+          }
+        }
+      }
+    }
+    &-150 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 100%; min-width: 100%;}
+          }
+        }
+      }
+    }
+    &-250 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 100%; min-width: 100%;}
+          }
+        }
+      }
+    }
+    &-300 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 100%; min-width: 100%;}
+          }
+        }
+      }
+    }
+    &-350 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 100%; min-width: 100%;}
+          }
+        }
+      }
+    }
     &-400 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-90p {max-width: 90%; min-width: 90%;}
+          }
+        }
+      }
+    }
+    &-450 {
       &-dt {
         &-to {
           &-mb {
@@ -453,11 +538,65 @@
     }
     
     // pixels to percent
+    &-100 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 100px; min-width: 100px;}
+          }
+        }
+      }
+    }
+    &-150 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 150px; min-width: 150px;}
+          }
+        }
+      }
+    }
+    &-250 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 250px; min-width: 250px;}
+          }
+        }
+      }
+    }
+    &-300 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 300px; min-width: 300px;}
+          }
+        }
+      }
+    }
+    &-350 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 350px; min-width: 350px;}
+          }
+        }
+      }
+    }
     &-400 {
       &-dt {
         &-to {
           &-mb {
             &-90p {max-width: 400px; min-width: 400px;}
+          }
+        }
+      }
+    }
+    &-450 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-90p {max-width: 450px; min-width: 450px;}
           }
         }
       }

@@ -1,44 +1,34 @@
 <script>
 // @ts-nocheck
 
-	import MemberModal from '$lib/components/interface-components/Member-Modal.svelte';
-  import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte';
-  import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte';
-  import { activeSubject, useHint, userData, memberModalActive } from '$lib/stores/global-store';
-  import { mdiPlus } from '@mdi/js';
-  import { MaterialApp, Tooltip, Icon } from 'svelte-materialify';
+	import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
+  import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte'
+  import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte'
+  import { activeSubject, useHint, userData } from '$lib/stores/global-store'
+  import { mdiPlus } from '@mdi/js'
+  import { MaterialApp, Tooltip, Icon } from 'svelte-materialify'
+  import { fade } from 'svelte/transition'
 
-  // Transition
-  import { fade } from 'svelte/transition';
-
-  // determine first what is the name & id of the chosen subject
-  let currentActiveSubject;
-  activeSubject.subscribe(value => currentActiveSubject = value);
-
-  let allworkspaces;
+  // Do this to retain reactivity of the elements and in sync
+  let allworkspaces = []
   userData.subscribe(value => {
-    value.subjects.forEach(subject => {
-      if(subject.name === currentActiveSubject.name && subject.id == currentActiveSubject.id){
-        allworkspaces = subject.workspaces;
-        activeSubject.set(subject);
+    value.subjects.map(subject => {
+      if(subject.id === $activeSubject.id) {
+        allworkspaces = subject.workspaces
       }
-    });
-  });
+    })
+  })
 
   // mouse hover effect
-  let hovering = false;
+  let hovering = false
 
   // pop up active
-  let popupActive = false;
-
-  // hint
-  let hintAvailable;
-  useHint.subscribe(value => hintAvailable = value);
+  let popupActive = false
 
   function onKeyDown(e) {
     if(e.ctrlKey && e.altKey && e.keyCode == 87) {
-      popupActive = false;
-      popupActive = true;
+      popupActive = false
+      popupActive = true
     }
   }
 
@@ -47,23 +37,18 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
-
 <div class="columns is-multiline is-variable is-2 pl-6">
   <MemberModal />
   <AddWorkspacePopUp active={popupActive}/>
-  {#if hintAvailable}
+  {#if $useHint}
   <Tooltip bottom>
     <div
-      on:mouseenter={
-        () => {
+      on:mouseenter={() => {
           hovering = true;
         }
       }
-      on:mouseleave={
-        () => hovering = false
-      }
-      on:click={
-        () => {
+      on:mouseleave={() => hovering = false }
+      on:click={() => {
           popupActive = false;
           popupActive = true;
         }
@@ -90,14 +75,9 @@
   </Tooltip>
   {:else}
   <div
-    on:mouseenter={
-      () => hovering = true
-    }
-    on:mouseleave={
-      () => hovering = false
-    }
-    on:click={
-      () => {
+    on:mouseenter={() => hovering = true }
+    on:mouseleave={() => hovering = false }
+    on:click={() => {
         popupActive = false;
         popupActive = true;
       }

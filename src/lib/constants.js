@@ -1,17 +1,28 @@
 export default {
   subject: {
-    name: "",
     color: "primary",
-    id: 0,
-    isFavorite: false
+    id: "",
+    isFavorite: false,
+    name: "",
+    workspaces: [],
+    owned: true,
+    createdBy: ""
   },
   workspace: {
-    boards: [],
-    color: "primary",
-    id: 0,
-    isFavorite: false,
     members: [],
-    name: ""
+    boards: [],
+    admins: [],
+    color: "primary",
+    id: "",
+    isFavorite: false,
+    name: "",
+    owned: true,
+    createdBy: ""
+  },
+  workspaceMember: {
+    email: "",
+    name: "",
+    profile: ""
   },
   backURI: "https://axion-back.herokuapp.com"
 }

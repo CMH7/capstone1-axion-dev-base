@@ -1,25 +1,20 @@
 <script>
-  import { mdiPlus } from "@mdi/js";
-  import { MaterialApp, Icon, Button } from "svelte-materialify";
-  import SubjectBox from "../Subject-box.svelte";
+  import { mdiPlus } from "@mdi/js"
+  import { MaterialApp, Icon, Button } from "svelte-materialify"
+  import SubjectBox from "../Subject-box.svelte"
+  import { fade } from 'svelte/transition'
+  import AddTaskPopUp from "./Add-task-pop-up.svelte"
 
-  export let color = "success";
-  export let name = "Unknown";
-  export let taskCount = 0;
-
-  // workspace members
-  export let workspaceMembers = [];
-
-  // Transition
-  import { fade } from 'svelte/transition';
-  import AddTaskPopUp from "./Add-task-pop-up.svelte";
+  export let color = "success"
+  export let name = "Unknown"
+  export let taskCount = 0
 
   // variables
-  let isHoveringAddIcon = false;
-  let popupActive = false;
+  let isHoveringAddIcon = false
+  let popupActive = false
 </script>
 
-<AddTaskPopUp active = {popupActive} {workspaceMembers}/>
+<AddTaskPopUp active={popupActive}/>
 
 <div in:fade class="notification px-2 py-1 rounded-lg elevation-3 has-background-{color}-light">
   
@@ -34,10 +29,28 @@
   </p>
 
   <!-- Add Task Icon Button -->
-  <div on:mouseenter={()=>isHoveringAddIcon = true} on:mouseleave={()=>isHoveringAddIcon = false} class="is-clickable rounded-circle iconCont is-paddingless">
+  <div
+    on:mouseenter={() => {
+        isHoveringAddIcon = true
+        popupActive = false
+      }
+    }
+    on:mouseleave={() => isHoveringAddIcon = false }
+    on:click={() => {
+      if(popupActive) {
+        popupActive = false
+        popupActive = true
+      } else {
+        popupActive = true
+      }
+    }}
+    class="is-clickable rounded-circle iconCont is-paddingless"
+  >
     <MaterialApp>
       <div class="d-flex justify-center has-background-{color}-light">
-        <Button icon on:click={() => {if (popupActive) {popupActive = false; popupActive = true}else{popupActive = true}}} on:mouseenter={() => popupActive = false}>
+        <Button 
+          icon
+        >
           <Icon size="25px" path={mdiPlus} class="{isHoveringAddIcon?"has-text-dark":""}" />
         </Button>
       </div>
@@ -45,16 +58,7 @@
   </div>
 
   <div class="cont rounded-lg">
-    <slot>
-      <SubjectBox subject={
-        {
-          name: "empty",
-          id: 0,
-          isFavorite: false,
-          color: "primary"
-        }
-      } />
-    </slot>
+    <slot></slot>
   </div>
 </div>
 

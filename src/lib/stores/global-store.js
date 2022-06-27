@@ -21,22 +21,28 @@ export let currentIndex = writable();
 // THis will determine the active subject (users clicked subject)
 export let activeSubject = writable(
   {
-    name: "",
     color: "primary",
-    id: 0,
-    isFavorite: false
+    id: "",
+    isFavorite: false,
+    name: "",
+    workspaces: [],
+    owned: true,
+    createdBy: ""
   }
 );
 
 // This will determine the current active workspace (user selected workspace)
 export let activeWorkspace = writable(
   {
-    boards: [],
-    color: "primary",
-    id: 0,
-    isFavorite: false,
     members: [],
-    name: ""
+    boards: [],
+    admins: [],
+    color: "primary",
+    id: "",
+    isFavorite: false,
+    name: "",
+    owned: true,
+    createdBy: ""
   }
 );
 

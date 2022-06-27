@@ -63,10 +63,12 @@
             }
         })
 
+        const id = $userData.id
+
         axios.post(`${backURI}/MainApp/dashboard/create/subject`, {
             ids: {
-                user: $userData.id,
-                subject: bcrypt.hashSync(`${$userData.id}${subjectName}${new Date()}`, `${$userData.id}${subjectName}${new Date()}`.length)
+                user: id,
+                subject: bcrypt.hashSync(`${id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
             },
             subject: {
                 color: selectedColor,

@@ -1,11 +1,17 @@
 <script>
-	import { Dialog, MaterialApp } from 'svelte-materialify';
+	import { Dialog, MaterialApp } from 'svelte-materialify'
+    import axios from 'axios'
+    import { notifs, userData, activeSubject } from '$lib/stores/global-store'
+    import bcrypt from 'bcryptjs/dist/bcrypt'
+    import constants from '$lib/constants'
+
+    const backURI = constants.backURI
 
     // to open the dialog
-	export let active = false;
+	export let active = false
 
     // hover effect
-    let hovering = false;
+    let hovering = false
 
     // colors
     const colors = [
@@ -21,81 +27,92 @@
     function activeColor (paramColor){
         colors.forEach(color => {
             if (color.name != paramColor.name){
-                color.selected = false;
+                color.selected = false
             }
         })
         paramColor.selected = true
     }
 
     // button animation
-    let loading = false;
-    let disabled = false;
+    let loading = false
+    let disabled = false
 
     // Inputs
-    let workspaceNameInput = "";
+    let workspaceNameInput = ""
 
-    // database
-    import axios from 'axios';
+    let id = $userData.id
+    let user = $userData
 
-    // import userData
-    import {notifs, userData} from '$lib/stores/global-store';
-    let id = "",
-        user;
-    userData.subscribe(value => {
-        id = value.id;
-        user = value;
-    });
-
-    // import current active subject
-    import {activeSubject} from '$lib/stores/global-store';
-    let curActiveSubject = {};
-    activeSubject.subscribe(value => curActiveSubject = value);
+    // Active subject
+    let curActiveSubject = $activeSubject
 
     function createWorkspace() {
-        disabled = true;
-        loading = true;
+        disabled = true
+        loading = true
 
-        let selectedColor = "";
+        let selectedColor = ""
         colors.forEach(color => {
             if(color.selected){
-                selectedColor = color.name;
+                selectedColor = color.name
             }
-        });
-        axios.post(`http://localhost:8080/MainApp/${curActiveSubject.name}?sID=${curActiveSubject.id}&id=${id}&name=${workspaceNameInput}&color=${selectedColor}`)
+        })
+
+        const workspaceID = bcrypt.hashSync(`${curActiveSubject.id}${workspaceNameInput}${new Date()}`, Math.ceil(Math.random() * 1))
+
+        axios.post(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
+            ids: {
+                user: id,
+                subject: curActiveSubject.id,
+                todo: bcrypt.hashSync(`${workspaceID}Todo${new Date()}`, Math.ceil(Math.random() * 1)),
+                inprog: bcrypt.hashSync(`${workspaceID}In progress${new Date()}`, Math.ceil(Math.random() * 1)),
+                done: bcrypt.hashSync(`${workspaceID}Done${new Date()}`, Math.ceil(Math.random() * 1)),
+                workspace: workspaceID
+            },
+            workspace: {
+                board: {
+                    createdBy: `${$userData.firstName} ${$userData.lastName}`,
+                    createdOn: new Date()
+                },
+                color: selectedColor,
+                name: workspaceNameInput,
+                createdBy: `${$userData.firstName} ${$userData.lastName}`
+            }
+        })
         .then(res => {
-            let notifsCopy = [];
-            notifsCopy = $notifs;
+            let notifsCopy = []
+            notifsCopy = $notifs
             notifsCopy.push(
                 {
                     msg: "Workspace created!",
                     type: "success"
                 }
             );
-            notifs.set(notifsCopy);
-            active = false;
-            axios.post('http://localhost:8080/validUser', {
+            notifs.set(notifsCopy)
+            active = false
+            axios.post(`${backURI}/validUser`, {
                 email: res.data.email
             }).then(res => {
                 userData.set(res.data)
-                loading = false;
-                disabled = false;
-                workspaceNameInput = "";
-            }).catch(err => console.error(`error in gettring user ${err}`));
-        }).catch(err => console.error(`error in posting workspace ${err}`));
+                loading = false
+                disabled = false
+                workspaceNameInput = ""
+            }).catch(err => console.error(`error in gettring user ${err}`))
+        }).catch(err => console.error(`error in posting workspace ${err}`))
     }
 
     function onKeyDown(e) {
         if(e.keyCode == 13 && active) {
             if(!(workspaceNameInput === "")) {
-                createWorkspace();
+                createWorkspace()
             }else{
-                let notifsCopy = $notifs;
+                let notifsCopy = $notifs
                 notifsCopy.push(
                     {
-                        msg: "Workspace name cannot be empty."
+                        msg: "Workspace name cannot be empty.",
+                        type: 'error'
                     }
                 );
-                notifs.set(notifsCopy);
+                notifs.set(notifsCopy)
             }
         }
     }
