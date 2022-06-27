@@ -135,24 +135,22 @@
   <div class="hero-body">
     <div class="container">
       <div class="columns is-mobile is-centered is-multiline">
-  
         <div class="column is-5-desktop is-8-touch">
-
           <!-- Title -->
-          <div class="container mt-10 mb-0 is-flex is-flex-direction-column is-align-items-center">
+          <div class="mt-10 mb-0 is-flex is-flex-direction-column is-align-items-center">
             <p class="is-size-1-tablet is-size-3-mobile is-primary has-text-weight-bold has-text-centered fredokaone">SIGN IN</p>
           </div>
 
           <!-- input fields -->
           <!-- email -->
-          <div class="section py-3">
-            <div class="container">
-              <input {disabled} bind:value={emailInput} class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
+          <div class="section py-3 px-0">
+            <div class="container is-flex is-justify-content-center">
+              <input {disabled} bind:value={emailInput} class="input quicksands has-text-black has-background-light min-w-250" type="text" placeholder="Email">
             </div>
 
             <!-- password -->
-            <div class="container">
-              <input {disabled} bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
+            <div class="container is-flex is-justify-content-center">
+              <input {disabled} bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light min-w-250" type="password" placeholder="Password">
             </div>
 
           </div>
