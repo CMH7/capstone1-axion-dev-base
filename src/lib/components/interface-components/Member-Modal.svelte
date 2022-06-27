@@ -1,7 +1,7 @@
 <script>
   import { memberModalActive, notifs } from '$lib/stores/global-store'
-  import { mdiMagnify } from '@mdi/js'
-  import { MaterialApp, Dialog, Button, TextField, Icon } from "svelte-materialify"
+  import { mdiMagnify, mdiAccountCircle } from '@mdi/js'
+  import { MaterialApp, Dialog, Button, TextField, Icon, Avatar } from "svelte-materialify"
 
 </script>
 
@@ -31,19 +31,40 @@
         </TextField>
       </div>
 
-      <div class="w-100p h-400 py-3 overflow-y-auto mb-3">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, qui. Aperiam, harum facilis? Facilis tempore deserunt non aliquid odio perferendis animi. Illum nihil consectetur perferendis aperiam fugit tempore velit nostrum.</p>
+      <div class="w-100p h-400 py-3 overflow-y-auto mb-3 is-flex is-flex-wrap-wrap">
+        <div class="is-flex is-justify-content-space-evenly min-w-100p">
+          <div class="max-h-50 maxmins-w-45p">
+            <div class="box shadow-inside-default p-4 is-flex is-align-items-center is-justify-content-space-between">
+              <div class="is-flex is-align-items-center">
+                <Avatar size="30px" class="blue white-text">
+                  <Icon path={mdiAccountCircle} />
+                </Avatar>
+                <div class="ml-4 dm-sans">
+                  Charles Maverick Herrera
+                </div>
+              </div>
+              <div class="is-size-7 is-clickable">
+                Invite
+              </div>
+            </div>
+          </div>
+         
+          <div class="max-h-50 maxmins-w-45p">
+            <div class="box shadow-inside-default p-4 is-flex is-align-items-center is-justify-content-space-between">
+              <div class="is-flex is-align-items-center">
+                <Avatar size="30px" class="blue white-text">
+                  <Icon path={mdiAccountCircle} />
+                </Avatar>
+                <div class="ml-4 dm-sans">
+                  Charles Maverick Herrera
+                </div>
+              </div>
+              <div class="is-size-7 is-clickable is-italic">
+                Added
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div on:click={() => memberModalActive.set(false)} style="float: right">
