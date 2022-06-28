@@ -1,11 +1,12 @@
 <script>
     // @ts-nocheck
-	import { Dialog, MaterialApp, Textarea, Select } from 'svelte-materialify'
+	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
     import { activeSubject, activeWorkspace, notifs, useHint, userData } from '$lib/stores/global-store'
     import axios from 'axios'
     import constants from '$lib/constants'
     import bcrypt from 'bcryptjs'
+    import { mdiClose } from '@mdi/js'
 
     const backURI = constants.backURI
 
@@ -33,10 +34,7 @@
     })
 
     const workspaceMembersLocal = workspaceMembers.map(member => {
-        return {
-            name: member.name,
-            value: member.name
-        }
+        return { name: member.name, value: member}
     })
 
     // colors
@@ -67,7 +65,16 @@
     const userID = $userData.id
     const subjectID = $activeSubject.id
 
-    const createTask = () => {
+    const fieldClear = () => {
+
+        taskName = ''
+        dueDateTime = ''
+        level = 0
+        description = ''
+        taskMembers = []
+    }
+
+    const createTask = async () => {
         loading = true
         disabled = true
 
@@ -81,58 +88,83 @@
             let notifsCopy = $notifs
             notifsCopy.push({
                 msg: msg,
-                type: 'error'
+                type: 'error',
+                id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
+
             loading = false
             disabled = false
             return false
         }
 
-        axios.post(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
-            ids: {
-                user: userID,
-                subject: subjectID,
-                workspace: workspaceID
-            },
-            task: {
-                members: taskMembers,
-                createdBy: createdBy,
-                description: description,
-                dueDateTime: dueDateTime,
-                id: taskID,
-                isSubtask: isSubtask,
-                level: level,
-                name: taskName
-            }
+        const [ dateValue, timeValue ] = dueDateTime.split(' ')
+        const [ year, month, day ] = dateValue.split('-')
+        const [ hour, minute ] = timeValue.split(':')
+        const semiDue = new Date(year, month, day, hour, minute, 0, 0)
+        const finalDueDateTime = semiDue.toISOString()
+
+        await axios.post(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
+             ids: {
+                 user: userID,
+                 subject: subjectID,
+                 workspace: workspaceID
+             },
+             task: {
+                 member: taskMembers,
+                 createdBy: createdBy,
+                 description: description,
+                 dueDateTime: finalDueDateTime,
+                 id: taskID,
+                 isSubtask: isSubtask,
+                 level: level,
+                 name: taskName
+             }
+         })
+         .then(res => {
+             if(res.data) {
+                 const data = res.data
+                 userData.set(data)
+                 active = false
+                 loading = false
+                 disabled = false
+                 let notifsCopy = $notifs
+                 notifsCopy.push({
+                     msg: 'Task created',
+                     type: 'success',
+                     id: notifsCopy.length + 1
+                 })
+                 notifs.set(notifsCopy)
+             }
+         })
+         .catch(err => {
+             let notifsCopy = $notifs
+             notifsCopy.push({
+                 msg: `Create task error, ${err}`,
+                 type: 'error',
+                 id: $notifs.length + 1
+             })
+             notifs.set(notifsCopy)
+             loading = false
+             disabled = false
         })
-        .then(res => {
-            if(res.data) {
-                const data = res.data
-                userData.set(data)
-                active = false
-                loading = false
-                disabled = false
-            }
-        })
-        .catch(err => {
-            let notifsCopy = $notifs
-            notifsCopy.push({
-                msg: `Create task error, ${err}`,
-                type: 'error'
-            })
-            notifs.set(notifsCopy)
-            loading = false
-            disabled = false
-        })
+        .finally(() => fieldClear())
     }
 </script>
 
 <MaterialApp>
-	<Dialog class="maxmins-w-450-dt-to-mb-90p overflow-x-hidden pa-4 has-transition has-background-white" bind:active>
+	<Dialog persistent class="maxmins-w-450-dt-to-mb-90p overflow-x-hidden pa-4 has-transition has-background-white" bind:active>
 
-        <div class="mb-2 pl-1 min-w-100p has-text-grey-dark has-text-weight-bold dm-sans">
-            New Task
+        <div class="mb-2 min-w-100p is-flex is-justify-content-space-between">
+            <div class="pl-1 has-text-grey-dark has-text-weight-bold dm-sans">
+                New Task
+            </div>
+            <div
+                class="is-clickable"
+                on:click={() => active = false}
+            >
+                <Icon path={mdiClose}/>
+            </div>
         </div>
 
         <div class="is-flex is-align-items-center is-flex-wrap-wrap is-multiline">
@@ -172,6 +204,7 @@
                 outlined
                 bind:value={taskMembers}
                 class="maxmins-w-100p rounded mb-2"
+
             >
                 Asignee/s
             </Select>

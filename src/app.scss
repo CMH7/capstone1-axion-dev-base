@@ -51,6 +51,15 @@
   box-shadow: inset 0px 0px 2px rgb(144, 143, 143)
 }
 
+.txt {
+  &-overflow {
+    &-ellipsis {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
 .overflow {
   &-x {
     &-scroll {overflow-x: scroll;}
@@ -194,6 +203,7 @@
   // pixels
   &-100 {min-width: 100px;}
   &-200 {min-width: 200px;}
+  &-250 {min-width: 250px;}
   &-300 {min-width: 300px;}
   &-400 {min-width: 400px;}
   &-500 {min-width: 500px;}
@@ -229,6 +239,7 @@
 // HEIGHTS
 .min-h {
   // pixels
+  &-50 {min-height: 50px;}
   &-100 {min-height: 100px;}
   &-200 {min-height: 200px;}
   &-300 {min-height: 300px;}
@@ -304,6 +315,7 @@
 // HEIGHTS
 .max-h {
   // pixels
+  &-50 {max-height: 50px;}
   &-100 {max-height: 100px;}
   &-200 {max-height: 200px;}
   &-300 {max-height: 300px;}

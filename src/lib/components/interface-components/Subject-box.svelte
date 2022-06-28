@@ -1,8 +1,13 @@
 <script>
-  import { activeSubject, currentDashboardSubInterface, snack } from "$lib/stores/global-store";
+  import { activeSubject, currentDashboardSubInterface, snack } from "$lib/stores/global-store"
+  import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js"
+  import { Icon, MaterialApp, ProgressLinear } from "svelte-materialify"
+  import axios from "axios"
+  import constants from "$lib/constants"
+  import { userData, notifs } from '$lib/stores/global-store'
 
-  import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js";
-  import { Icon, MaterialApp } from "svelte-materialify";
+  const backURI = constants.backURI
+  let userID = $userData.id
 
   // export the subject
   export let subject = {
@@ -15,23 +20,60 @@
     createdBy: ""
   }
 
-  let mouseEnter = false;
-  let mouseEnterStar = false;
+  let mouseEnter = false
+  let mouseEnterStar = false
+
+  let deleting = false
+  
+  /**
+  * @param {any} e
+  */
   function handleRightClick(e) {
     snack.set(
       {
         msg: `Delete ${subject.name}?`,
         active: true,
         yes: () => {
-          console.log(`id: ${subject.id}; name: ${subject.name}`);
-        }
+          deleting = true
+          axios.delete(`${backURI}/MainApp/delete/subject`, {
+            data: {
+              ids: {
+                user: userID,
+                subject: subject.id
+              }
+            }
+          })
+          .then(res => {
+            let notifsCopy = $notifs
+            notifsCopy.push({
+              msg: 'Subject deleted',
+              type: 'success',
+              id: notifsCopy.length + 1
+            })
+            notifs.set(notifsCopy)
+            const data = res.data
+            userData.set(data)
+          })
+          .catch(err => {
+            let notifsCopy = $notifs
+            notifsCopy.push({
+              msg: `Error in deleting, ${err}`,
+              type: 'error',
+              id: notifsCopy.length + 1
+            })
+            notifs.set(notifsCopy)
+          })
+        },
+        no: () => {}
       }
-    );
-    return false;
+    )
+
+    return false
   }
 </script>
 
 <div
+  disabled={deleting}
   on:contextmenu|preventDefault={handleRightClick}
   on:click={
     () => {
@@ -47,6 +89,9 @@
   }
   class="has-transition notification rounded-xl {mouseEnter?`has-background-${subject.color}-dark`:""} is-{subject.color}"
 >
+  {#if deleting}
+  <ProgressLinear color="red" backgroundColor="red" indeterminate />
+  {/if}
   <div>
     <MaterialApp>
       {#if !subject.isFavorite}

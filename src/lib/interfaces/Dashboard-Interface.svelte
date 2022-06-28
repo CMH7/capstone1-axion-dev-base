@@ -4,7 +4,7 @@
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
 	import { Icon, MaterialApp } from 'svelte-materialify'
-  import { activeSubject, currentDashboardSubInterface, activeWorkspace } from "$lib/stores/global-store"
+  import { activeSubject, currentDashboardSubInterface, activeWorkspace, userData } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import { mdiArrowLeft } from '@mdi/js'
@@ -12,8 +12,24 @@
 
   let curDashSubInterface = ''
   currentDashboardSubInterface.subscribe(value => curDashSubInterface = value)
+
   let currentActiveWorkspace = ''
   let allBoards = [] 
+
+  userData.subscribe(value => {
+    value.subjects.map(subject => {
+      if(subject.id === $activeSubject.id) {
+        activeSubject.set(subject)
+        subject.workspaces.map(workspace => {
+          if(workspace.id === $activeWorkspace.id) {
+            activeWorkspace.set(workspace)
+            allBoards = workspace.boards
+          }
+        })
+      }
+    })
+  })
+
   activeWorkspace.subscribe(value => {
     currentActiveWorkspace = value
     allBoards = value.boards
@@ -110,8 +126,8 @@
         {#each allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
-              <Boards name={board.name} color={board.color}>
-                {#each board.tasks as task}
+              <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
+                {#each board.tasks.sort((a, b) => b.level - a.level) as task}
                 <TaskCard {task} />
                 {/each}
               </Boards>

@@ -12,7 +12,7 @@
     createdBy: "",
     createdOn: new Date(),
     description: "",
-    dueDateTime: new Date(),
+    dueDateTime: '',
     id: "",
     isFavorite: false,
     isSubtask: false,
@@ -21,7 +21,54 @@
     status: ""
   }
 
-  export let allMembers = [];
+  export let allMembers = []
+
+  const [ dateValue, timeValue ] = task.dueDateTime.split('T')
+  const [ year, month, date ] = dateValue.split('-')
+  const [ hour, minute, other ] = timeValue.split(':')
+
+  let dueDate = ''
+
+  switch(month) {
+    case '01':
+      dueDate += 'Jan'
+      break
+    case '02':
+      dueDate += 'Feb'
+      break
+    case '03':
+      dueDate += 'Mar'
+      break
+    case '04':
+      dueDate += 'Apr'
+      break
+    case '05':
+      dueDate += 'May'
+      break
+    case '06':
+      dueDate += 'Jun'
+      break
+    case '07':
+      dueDate += 'Jul'
+      break
+    case '08':
+      dueDate += 'Aug'
+      break
+    case '09':
+      dueDate += 'Sep'
+      break
+    case '10':
+      dueDate += 'Oct'
+      break
+    case '11':
+      dueDate += 'Nov'
+      break
+    case '12':
+      dueDate += 'Dec'
+      break
+  }
+
+  const finalHour = parseInt(hour) % 12 == 0 ? 12 : parseInt(hour) % 12
 
   // Task Card hovering
   let ishovering = false;
@@ -34,7 +81,7 @@
 </script>
 
 <TaskBoxPopUpModal {task} active={taskmodalactive}/>
-<div class="is-clickable" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
+<div class="is-clickable mb-1" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
   <MaterialApp>
     <style>
       .has-transition {
@@ -47,7 +94,7 @@
   
       <!-- Task Name and Task Labels: level and how many subtitles it has -->
       <div class="d-flex is-justify-content-space-between">
-        <CardSubtitle class="p-0 has-text-weight-semibold is-unselectable has-transition {ishovering?"has-text-white":""}">
+        <CardSubtitle class="p-0 has-text-weight-semibold is-unselectable has-transition text-body-2 max-w-60p txt-overflow-ellipsis overflow-x-hidden {ishovering?"has-text-white":""}">
           {task.name}
         </CardSubtitle>
   
@@ -58,7 +105,7 @@
           <Avatar tile size=20px class="mr-1 is-unselectable dmsans has-text-weight-bold has-text-white has-background-primary-dark rounded text-caption">{task.subtasks.length}</Avatar>
 
           <!-- Level -->
-          <Avatar tile size=20px class="is-unselectable dmsans has-text-weight-bold has-text-white {task.level == 0?"has-background-success": task.level == 1?"has-background-warning has-text-black":"has-background-danger"} rounded text-caption">{task.level == 0? "Low": task.level == 1? "Medium": "High"}</Avatar>
+          <Avatar tile size=20px style="min-width: fit-content" class="is-unselectable dmsans has-text-weight-bold has-text-white {task.level == 1?"has-background-success": task.level == 2?"has-background-warning has-text-black":"has-background-danger"} rounded text-caption px-1">{task.level == 1? "Low": task.level == 2? "Medium": "High"}</Avatar>
         </div>
       </div>
   
@@ -67,8 +114,8 @@
   
       <!-- Due date -->
       <div class="d-flex is-justify-content-space-between align-end">
-        <CardSubtitle class="p-0 is-unselectable has-transition {ishovering?"has-text-white":""}">
-          {task.dueDateTime}
+        <CardSubtitle class="p-0 is-unselectable is-size-7 has-transition {ishovering?"has-text-white":""}">
+          {`${dueDate} ${date} ${finalHour}:${minute} ${parseInt(hour) > 12 ? 'PM': 'AM'}`}
         </CardSubtitle>
   
         <!-- Members part -->

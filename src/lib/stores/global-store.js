@@ -69,7 +69,8 @@ export let snack = writable(
   {
     msg: "",
     active: false,
-    yes: () => { }
+    yes: () => { },
+    no: () => { }
   }
 )
 
