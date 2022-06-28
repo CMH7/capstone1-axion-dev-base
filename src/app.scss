@@ -51,6 +51,15 @@
   box-shadow: inset 0px 0px 2px rgb(144, 143, 143)
 }
 
+.txt {
+  &-overflow {
+    &-ellipsis {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
 .overflow {
   &-x {
     &-scroll {overflow-x: scroll;}
