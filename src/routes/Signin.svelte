@@ -190,7 +190,7 @@
             <div class="mb-5 mt-6">
               <button on:click={login} class="button is-primary {loading? "is-loading": ""} dm-sans has-text-weight-bold is-size-5" {disabled}>Sign In</button>
             </div>
-            <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
+            <p class="mb-14 is-size-7-touch is-size-6-desktop dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
 
         </div>
