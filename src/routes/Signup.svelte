@@ -11,6 +11,7 @@
   import NotificationContainer from "$lib/components/Notification-container.svelte"
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
+  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte";
 
   const backURI = constants.backURI
 
@@ -146,9 +147,20 @@
 
     }
   }
+
+  let comingSoonModalOpen = false
+  const openComingSoon = () => {
+    if (!comingSoonModalOpen) {
+      comingSoonModalOpen = true
+    } else {
+      comingSoonModalOpen = false
+      comingSoonModalOpen = true
+    }
+  }
 </script>
 
 <NotificationContainer />
+<ComingSoonModal active={comingSoonModalOpen}/>
 
 <SignupHeader/>
 <div in:fade class="hero is-fullheight-with-navbar">
@@ -219,17 +231,17 @@
         <div class="is-flex is-justify-content-center">
           <div class="mx-3">
             <MaterialApp>
-              <a href="http://gmail.com/" target="_blank">
+              <div class="is-clickable" on:click={openComingSoon}>
                 <Icon class="has-text-danger-dark" size="40px" path={mdiGoogle} />
-              </a>
+              </div>
             </MaterialApp>
           </div>
 
           <div class="mx-3">
             <MaterialApp>
-              <a href="http://facebook.com/" target="_blank">
+              <div class="is-clickable" on:click={openComingSoon}>
                 <Icon class="has-text-info" size="40px" path={mdiFacebook} />
-              </a>
+              </div>
             </MaterialApp>
           </div>
         </div>
