@@ -41,7 +41,7 @@
     // inputs
     let subjectName = "";
 
-    function createSubject() {
+    const createSubject = async () => {
         if(subjectName === "") {
             let notifsCopy = []
             notifsCopy = $notifs
@@ -65,7 +65,7 @@
 
         const id = $userData.id
 
-        axios.post(`${backURI}/MainApp/dashboard/create/subject`, {
+        await axios.post(`${backURI}/MainApp/dashboard/create/subject`, {
             ids: {
                 user: id,
                 subject: bcrypt.hashSync(`${id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
@@ -83,7 +83,8 @@
             notifsCopy.push(
                 {
                     msg: "Subject created!",
-                    type: "success"
+                    type: "success",
+                    id: notifsCopy.length + 1
                 }
             )
             notifs.set(notifsCopy)
@@ -107,7 +108,9 @@
                 let notifsCopy = $notifs;
                 notifsCopy.push(
                     {
-                        msg: "Subject name cannot be empty."
+                        msg: "Subject name cannot be empty.",
+                        type: 'error',
+                        id: notifsCopy.length + 1
                     }
                 );
                 notifs.set(notifsCopy);

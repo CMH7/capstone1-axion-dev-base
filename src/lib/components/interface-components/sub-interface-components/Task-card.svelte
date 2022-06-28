@@ -34,7 +34,7 @@
 </script>
 
 <TaskBoxPopUpModal {task} active={taskmodalactive}/>
-<div class="is-clickable" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
+<div class="is-clickable mb-1" on:click={()=>{if(taskmodalactive == true){taskmodalactive = false; taskmodalactive = true}else{taskmodalactive = true}}} on:mouseleave={()=>{ishovering = false}} on:mouseenter={()=>{ishovering = true}}>
   <MaterialApp>
     <style>
       .has-transition {
@@ -58,7 +58,7 @@
           <Avatar tile size=20px class="mr-1 is-unselectable dmsans has-text-weight-bold has-text-white has-background-primary-dark rounded text-caption">{task.subtasks.length}</Avatar>
 
           <!-- Level -->
-          <Avatar tile size=20px class="is-unselectable dmsans has-text-weight-bold has-text-white {task.level == 0?"has-background-success": task.level == 1?"has-background-warning has-text-black":"has-background-danger"} rounded text-caption">{task.level == 0? "Low": task.level == 1? "Medium": "High"}</Avatar>
+          <Avatar tile size=20px style="min-width: fit-content" class="is-unselectable dmsans has-text-weight-bold has-text-white {task.level == 0?"has-background-success": task.level == 1?"has-background-warning has-text-black":"has-background-danger"} rounded text-caption px-1">{task.level == 0? "Low": task.level == 1? "Medium": "High"}</Avatar>
         </div>
       </div>
   

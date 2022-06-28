@@ -110,7 +110,7 @@
         {#each allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
-              <Boards name={board.name} color={board.color}>
+              <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
                 {#each board.tasks as task}
                 <TaskCard {task} />
                 {/each}

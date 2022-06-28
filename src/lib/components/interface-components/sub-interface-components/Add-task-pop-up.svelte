@@ -67,7 +67,7 @@
     const userID = $userData.id
     const subjectID = $activeSubject.id
 
-    const createTask = () => {
+    const createTask = async () => {
         loading = true
         disabled = true
 
@@ -81,7 +81,8 @@
             let notifsCopy = $notifs
             notifsCopy.push({
                 msg: msg,
-                type: 'error'
+                type: 'error',
+                id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
             loading = false
@@ -89,7 +90,7 @@
             return false
         }
 
-        axios.post(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
+        await axios.post(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
             ids: {
                 user: userID,
                 subject: subjectID,
@@ -105,6 +106,11 @@
                 level: level,
                 name: taskName
             }
+        }, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            }
         })
         .then(res => {
             if(res.data) {
@@ -119,7 +125,8 @@
             let notifsCopy = $notifs
             notifsCopy.push({
                 msg: `Create task error, ${err}`,
-                type: 'error'
+                type: 'error',
+                id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
             loading = false

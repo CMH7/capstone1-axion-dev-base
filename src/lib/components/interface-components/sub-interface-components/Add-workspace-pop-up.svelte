@@ -46,7 +46,7 @@
     // Active subject
     let curActiveSubject = $activeSubject
 
-    function createWorkspace() {
+    const createWorkspace = async () => {
         disabled = true
         loading = true
 
@@ -59,7 +59,7 @@
 
         const workspaceID = bcrypt.hashSync(`${curActiveSubject.id}${workspaceNameInput}${new Date()}`, Math.ceil(Math.random() * 1))
 
-        axios.post(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
+        await axios.post(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
             ids: {
                 user: id,
                 subject: curActiveSubject.id,
@@ -96,10 +96,13 @@
                 loading = false
                 disabled = false
                 workspaceNameInput = ""
-            }).catch(err => console.error(`error in gettring user ${err}`))
+            }).catch(err => console.error(`error in getting user ${err}`))
         }).catch(err => console.error(`error in posting workspace ${err}`))
     }
 
+    /**
+    * @param {{ keyCode: number; }} e
+    */
     function onKeyDown(e) {
         if(e.keyCode == 13 && active) {
             if(!(workspaceNameInput === "")) {
@@ -109,7 +112,8 @@
                 notifsCopy.push(
                     {
                         msg: "Workspace name cannot be empty.",
-                        type: 'error'
+                        type: 'error',
+                        id: $notifs.length + 1
                     }
                 );
                 notifs.set(notifsCopy)

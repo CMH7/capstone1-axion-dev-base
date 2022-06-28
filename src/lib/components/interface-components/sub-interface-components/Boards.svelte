@@ -1,5 +1,5 @@
 <script>
-  import { mdiPlus } from "@mdi/js"
+  import { mdiCog, mdiPlus } from "@mdi/js"
   import { MaterialApp, Icon, Button } from "svelte-materialify"
   import SubjectBox from "../Subject-box.svelte"
   import { fade } from 'svelte/transition'
@@ -29,6 +29,7 @@
   </p>
 
   <!-- Add Task Icon Button -->
+  {#if name === "Todo"}
   <div
     on:mouseenter={() => {
         isHoveringAddIcon = true
@@ -56,6 +57,23 @@
       </div>
     </MaterialApp>
   </div>
+  {:else}
+  <div
+    on:mouseenter={() => isHoveringAddIcon = true }
+    on:mouseleave={() => isHoveringAddIcon = false }
+    class="is-clickable rounded-circle iconCont is-paddingless"
+  >
+    <MaterialApp>
+      <div class="d-flex justify-center has-background-{color}-light">
+        <Button 
+          icon
+        >
+          <Icon size="25px" path={mdiCog} class="{isHoveringAddIcon?"has-text-dark":""}" />
+        </Button>
+      </div>
+    </MaterialApp>
+  </div>
+  {/if}
 
   <div class="cont rounded-lg">
     <slot></slot>
