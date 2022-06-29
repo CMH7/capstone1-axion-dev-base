@@ -86,7 +86,7 @@
       loading = false
       disabled = false
     }else{
-      password = bcrypt.hashSync(password, password.length);
+      const finalPassword = bcrypt.hashSync(password, password.length)
 
       axios.post(`${backURI}/Signup`,  {
         subjects: [],
@@ -97,7 +97,7 @@
         firstName: firstName,
         gender: gender,
         lastName: lastName,
-        password: password,
+        password: finalPassword,
         profile: "",
         school: school,
         useHint: true,
