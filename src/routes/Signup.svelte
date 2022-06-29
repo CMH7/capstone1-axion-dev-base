@@ -184,7 +184,7 @@
 
           <!-- Gender -->
           <div class="select quicksands my-3 w-65p">
-            <select class="w-100p has-background-light">
+            <select bind:value={gender} placeholder="Gender" class="w-100p has-background-light">
               <option value="Female">Female</option>
               <option value="Male">Male</option>
               <option value="Rather not say">Rather not say</option>
