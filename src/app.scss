@@ -7,6 +7,7 @@
 @import 'bulma/sass/grid/_all';
 @import 'bulma/sass/helpers/_all';
 @import 'bulma/sass/layout/_all';
+@import 'SCSS/index.scss';
 
 
 // Font imports from google fonts and based in canva system design by co-designer Hazel Anne M. Mejias
@@ -201,16 +202,26 @@
 // WIDTHS
 .min-w {
   // pixels
+  &-50 {min-width: 50px;}
+  &-75 {min-width: 75px;}
   &-100 {min-width: 100px;}
+  &-150 {min-width: 150px;}
   &-200 {min-width: 200px;}
   &-250 {min-width: 250px;}
   &-300 {min-width: 300px;}
+  &-350 {min-width: 350px;}
   &-400 {min-width: 400px;}
+  &-450 {min-width: 450px;}
   &-500 {min-width: 500px;}
+  &-550 {min-width: 550px;}
   &-600 {min-width: 600px;}
+  &-650 {min-width: 650px;}
   &-700 {min-width: 700px;}
+  &-750 {min-width: 750px;}
   &-800 {min-width: 800px;}
+  &-850 {min-width: 850px;}
   &-900 {min-width: 900px;}
+  &-950 {min-width: 950px;}
   &-1000 {min-width: 1000px;}
 
   // percents
@@ -240,15 +251,25 @@
 .min-h {
   // pixels
   &-50 {min-height: 50px;}
+  &-75 {min-height: 75px;}
   &-100 {min-height: 100px;}
+  &-150 {min-height: 150px;}
   &-200 {min-height: 200px;}
+  &-250 {min-height: 250px;}
   &-300 {min-height: 300px;}
+  &-350 {min-height: 350px;}
   &-400 {min-height: 400px;}
+  &-450 {min-height: 450px;}
   &-500 {min-height: 500px;}
+  &-550 {min-height: 550px;}
   &-600 {min-height: 600px;}
+  &-650 {min-height: 650px;}
   &-700 {min-height: 700px;}
+  &-750 {min-height: 750px;}
   &-800 {min-height: 800px;}
+  &-850 {min-height: 850px;}
   &-900 {min-height: 900px;}
+  &-950 {min-height: 950px;}
   &-1000 {min-height: 1000px;}
 
   // percents
@@ -278,15 +299,26 @@
 // WIDTHS
 .max-w {
   // pixels
+  &-50 {max-width: 50px;}
+  &-75 {max-width: 75px;}
   &-100 {max-width: 100px;}
+  &-150 {max-width: 150px;}
   &-200 {max-width: 200px;}
+  &-250 {max-width: 250px;}
   &-300 {max-width: 300px;}
+  &-350 {max-width: 350px;}
   &-400 {max-width: 400px;}
+  &-450 {max-width: 450px;}
   &-500 {max-width: 500px;}
+  &-550 {max-width: 550px;}
   &-600 {max-width: 600px;}
+  &-650 {max-width: 650px;}
   &-700 {max-width: 700px;}
+  &-750 {max-width: 750px;}
   &-800 {max-width: 800px;}
+  &-850 {max-width: 850px;}
   &-900 {max-width: 900px;}
+  &-950 {max-width: 950px;}
   &-1000 {max-width: 1000px;}
 
   // percents
@@ -316,15 +348,25 @@
 .max-h {
   // pixels
   &-50 {max-height: 50px;}
+  &-75 {max-height: 75px;}
   &-100 {max-height: 100px;}
+  &-150 {max-height: 150px;}
   &-200 {max-height: 200px;}
+  &-250 {max-height: 250px;}
   &-300 {max-height: 300px;}
+  &-350 {max-height: 350px;}
   &-400 {max-height: 400px;}
+  &-450 {max-height: 450px;}
   &-500 {max-height: 500px;}
+  &-550 {max-height: 550px;}
   &-600 {max-height: 600px;}
+  &-650 {max-height: 650px;}
   &-700 {max-height: 700px;}
+  &-750 {max-height: 750px;}
   &-800 {max-height: 800px;}
+  &-850 {max-height: 850px;}
   &-900 {max-height: 900px;}
+  &-950 {max-height: 950px;}
   &-1000 {max-height: 1000px;}
 
   // percents
@@ -355,14 +397,23 @@
 .maxmins-w {
   // pixels
   &-100 {@extend .max-w-100; @extend .min-w-100;}
+  &-150 {@extend .max-w-150; @extend .min-w-150;}
   &-200 {@extend .max-w-200; @extend .min-w-200;}
+  &-250 {@extend .max-w-250; @extend .min-w-250;}
   &-300 {@extend .max-w-300; @extend .min-w-300;}
+  &-350 {@extend .max-w-350; @extend .min-w-350;}
   &-400 {@extend .max-w-400; @extend .min-w-400;}
+  &-450 {@extend .max-w-450; @extend .min-w-450;}
   &-500 {@extend .max-w-500; @extend .min-w-500;}
+  &-550 {@extend .max-w-550; @extend .min-w-550;}
   &-600 {@extend .max-w-600; @extend .min-w-600;}
+  &-650 {@extend .max-w-650; @extend .min-w-650;}
   &-700 {@extend .max-w-700; @extend .min-w-700;}
+  &-750 {@extend .max-w-750; @extend .min-w-750;}
   &-800 {@extend .max-w-800; @extend .min-w-800;}
+  &-850 {@extend .max-w-850; @extend .min-w-850;}
   &-900 {@extend .max-w-900; @extend .min-w-900;}
+  &-950 {@extend .max-w-950; @extend .min-w-950;}
   &-1000 {@extend .max-w-1000; @extend .min-w-1000;}
 
   // percent
@@ -392,14 +443,23 @@
 .maxmins-h {
   // pixels
   &-100 {@extend .max-h-100; @extend .min-h-100;}
+  &-150 {@extend .max-h-150; @extend .min-h-150;}
   &-200 {@extend .max-h-200; @extend .min-h-200;}
+  &-250 {@extend .max-h-250; @extend .min-h-250;}
   &-300 {@extend .max-h-300; @extend .min-h-300;}
+  &-350 {@extend .max-h-350; @extend .min-h-350;}
   &-400 {@extend .max-h-400; @extend .min-h-400;}
+  &-450 {@extend .max-h-450; @extend .min-h-450;}
   &-500 {@extend .max-h-500; @extend .min-h-500;}
+  &-550 {@extend .max-h-550; @extend .min-h-550;}
   &-600 {@extend .max-h-600; @extend .min-h-600;}
+  &-650 {@extend .max-h-650; @extend .min-h-650;}
   &-700 {@extend .max-h-700; @extend .min-h-700;}
+  &-750 {@extend .max-h-750; @extend .min-h-750;}
   &-800 {@extend .max-h-800; @extend .min-h-800;}
+  &-850 {@extend .max-h-850; @extend .min-h-850;}
   &-900 {@extend .max-h-900; @extend .min-h-900;}
+  &-950 {@extend .max-h-950; @extend .min-h-950;}
   &-1000 {@extend .max-h-1000; @extend .min-h-1000;}
 
   // percent

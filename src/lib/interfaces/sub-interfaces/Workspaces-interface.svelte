@@ -1,7 +1,5 @@
 <script>
-// @ts-nocheck
-
-	import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
+  // @ts-nocheck
   import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte'
   import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte'
   import { activeSubject, useHint, userData, memberModalLoading } from '$lib/stores/global-store'
@@ -38,7 +36,6 @@
 <svelte:window on:keydown={onKeyDown} />
 
 <div class="columns is-multiline is-variable is-2 pl-6">
-  <MemberModal/>
   <AddWorkspacePopUp active={popupActive}/>
   {#if $useHint}
   <Tooltip bottom>
