@@ -3,14 +3,39 @@
 
   import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify";
   import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger } from '@mdi/js';
-  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive } from "$lib/stores/global-store";
-  import { goto } from "$app/navigation";
+  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive, allUsers, notifs, memberModalLoading } from "$lib/stores/global-store";
+  import { goto } from "$app/navigation"
+  import axios from 'axios'
+  import constants from '$lib/constants'
 
-  let collapsed = false;
-  let hovered = false;
-  let iconHovered = false;
-  let burgerHovered = false;
+  let collapsed = false
+  let hovered = false
+  let iconHovered = false
+  let burgerHovered = false
 
+  const backURI = constants.backURI
+
+  const getAllUsers = async () => {
+    memberModalLoading.set(true)
+    memberModalActive.set(true)
+    await axios.get(`${backURI}/`)
+    .then(res => {
+      const data = res.data
+      allUsers.set(data)
+    })
+    .catch(err => {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `Getting all users failed, ${err}`,
+        type: 'error',
+        id: $notifs.length
+      })
+      notifs.set(notifsCopy)
+    })
+    .finally(() => {
+      memberModalLoading.set(false)
+    })
+  }
 </script>
 
 <div class="block mb-0">
@@ -63,7 +88,7 @@
           <div class="{collapsed ? "undisp":""}">
             {#if $useHint }
               <Tooltip bottom class="mt-1">
-                <div on:click={() => memberModalActive.set(true)}>
+                <div on:click={getAllUsers}>
                   <Button  text class="has-text-white quicksands px-2 py-3">
                     Members
                   </Button>
@@ -73,7 +98,7 @@
                 </span>
               </Tooltip>
               {:else}
-              <div on:click={() => memberModalActive.set(true)}>
+              <div on:click={getAllUsers}>
                 <Button text class="has-text-white quicksands px-2 py-3">
                   Members
                 </Button>

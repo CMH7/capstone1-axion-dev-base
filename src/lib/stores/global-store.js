@@ -76,3 +76,7 @@ export let snack = writable(
 
 // Member Interface (modal) activeness
 export let memberModalActive = writable(false)
+export let memberModalLoading = writable(true)
+
+// All users
+export let allUsers = writable([])

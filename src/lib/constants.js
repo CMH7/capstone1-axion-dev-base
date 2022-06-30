@@ -24,5 +24,22 @@ export default {
     name: "",
     profile: ""
   },
+  user: {
+    subjects: [],
+    notifications: [],
+    id: '',
+    age: 0,
+    course: '',
+    email: '',
+    firstName: '',
+    gender: '',
+    lastName: '',
+    password: '',
+    profile: '',
+    school: '',
+    useHint: true,
+    year: 0,
+    lastActive: new Date()
+  },
   backURI: "https://axion-back.herokuapp.com"
 }
