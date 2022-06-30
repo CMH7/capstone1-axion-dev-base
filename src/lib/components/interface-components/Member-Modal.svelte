@@ -15,7 +15,7 @@
   <div>
     <Dialog persistent active={$memberModalActive} class="p-5 maxmins-w-65p-dt-to-mb-95p maxmins-h-70p">
       <div>
-        <TextField color="#000" outlined dense class="max-w-80p">
+        <TextField color="#000" outlined dense class="maxmins-w-100p">
           Name or Email
           <div
             slot='append'
