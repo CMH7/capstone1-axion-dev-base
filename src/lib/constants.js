@@ -39,7 +39,8 @@ export default {
     school: '',
     useHint: true,
     year: 0,
-    lastActive: new Date()
+    lastActive: new Date(),
+    bio: ''
   },
   backURI: "https://axion-back.herokuapp.com"
 }

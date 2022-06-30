@@ -102,7 +102,8 @@
         school: school,
         useHint: true,
         year: parseInt(year),
-        lastActive: new Date()
+        lastActive: new Date(),
+        bio: ''
       }).then(res=>{
         if(res.data.valid) {
           let notifsCopy = $notifs;

@@ -18,7 +18,8 @@
     school: '',
     useHint: true,
     year: 0,
-    lastActive: new Date()
+    lastActive: new Date(),
+    bio: ''
   }
 
   let isAdded = false
