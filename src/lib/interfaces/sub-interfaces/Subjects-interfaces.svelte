@@ -23,11 +23,16 @@
       popupActive = true;
     }
   }
+
+  let width = window.screen.width
+  const handleResize = (e) => {
+    width = e.target.outerWidth
+  }
 </script>
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window on:keydown={onKeyDown} on:resize={handleResize} />
 
-<div class="columns is-multiline is-variable is-2">
+<div class="columns is-multiline is-variable is-2 {width < 321 ? "pl-4": ""}">
   <AddSubjectPopUp active={popupActive}/>
   <!-- Add button -->
   {#if $useHint}

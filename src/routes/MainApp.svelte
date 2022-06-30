@@ -36,7 +36,13 @@
     }
   })
 
+  let width = window.screen.width
+  const handleResize = (e) => {
+    width = e.target.outerWidth
+  }
 </script>
+
+<svelte:window on:resize={handleResize} />
 
 {#if !$isLoggedIn}
 <div></div>
@@ -82,7 +88,7 @@
     </Button>
   </div>
 </Snackbar>
-<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${$ismini?"pl-16":"pl-x"}`:""}">
+<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 321 && $ismini?"pl-16":""}`:""}">
   {#if $currentInterface === "Dashboard"}
     <DashboardInterface />
   {:else if $currentInterface === "Assigned to me"}
