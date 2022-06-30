@@ -11,113 +11,72 @@
   import constants from '$lib/constants'
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
 
-  let curDashSubInterface = ''
-  currentDashboardSubInterface.subscribe(value => curDashSubInterface = value)
+  let allBoards = []
+  activeWorkspace.subscribe(value => allBoards = value.boards)
 
-  let currentActiveWorkspace = ''
-  let allBoards = [] 
-
-  userData.subscribe(value => {
-    value.subjects.map(subject => {
-      if(subject.id === $activeSubject.id) {
-        activeSubject.set(subject)
-        subject.workspaces.map(workspace => {
-          if(workspace.id === $activeWorkspace.id) {
-            activeWorkspace.set(workspace)
-            allBoards = workspace.boards
-          }
-        })
-      }
-    })
-  })
-
-  activeWorkspace.subscribe(value => {
-    currentActiveWorkspace = value
-    allBoards = value.boards
-  })
-
-
-  // Mouse interactions for animation
-  let ishovering = false
-
-  let subject_name_focused = false
-
-  function removeFocus() {
-    document.activeElement.blur()
-  }
 </script>
 
 <div in:fade class="hero">
   <div class="hero-head px-3">
     <p class="mb-0 quicksands is-size-1-tablet is-size-3-mobile has-text-weight-bold has-text-info is-unselectable">
-      {#if curDashSubInterface === "Subjects"}
+      {#if $currentDashboardSubInterface === "Subjects"}
         Subjects
-      {:else if curDashSubInterface === "Workspaces"}
+      {:else if $currentDashboardSubInterface === "Workspaces"}
       <!-- Back button -->
       <span>
-        <div on:click={()=>{activeSubject.set(constants.subject); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
+        <div
+          on:click={() => {
+            activeSubject.set(constants.subject)
+            currentDashboardSubInterface.set("Subjects")
+          }}
+          class="d-inline-block"
+        >
           <MaterialApp>
-            <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
-              <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
+            <div class="is-clickable rounded">
+              <Icon class="hover-txt-color-warning" path={mdiArrowLeft} />
             </div>
           </MaterialApp>
         </div>
       </span>
       
       <!-- Subject Name -->
-      <span
-        contenteditable="true"
-        on:change={
-          () => {
-            console.log(`${$activeSubject.name}`);
-          }
-        }
-        on:focus={
-          () => {
-            subject_name_focused = true;
-          }
-        }
-        on:keydown={
-          (e) => {
-            if(e.keyCode == 13 && subject_name_focused) {
-              subject_name_focused = false;
-              removeFocus();
-              e.preventDefault();
-            }
-          }
-        }
-        bind:innerHTML={$activeSubject.name}
-        class="has-text-{$activeSubject.color === "warning" || $activeSubject.color === "success" || $activeSubject.color === "info"? `${$activeSubject.color}-dark`: $activeSubject.color}"
+      <span class="has-text-{$activeSubject.color === "warning" || $activeSubject.color === "success" || $activeSubject.color === "info"? `${$activeSubject.color}-dark`: $activeSubject.color}"
       >
         {$activeSubject.name}
       </span>
-      {:else if curDashSubInterface === "Boards"}
+      {:else if $currentDashboardSubInterface === "Boards"}
         <!-- Back Button -->
         <span>
-          <div on:click={()=>{activeWorkspace.set(constants.workspace); currentDashboardSubInterface.set("Workspaces"); ishovering = false}} class="d-inline-block">
+          <div
+            on:click={() => {
+              activeWorkspace.set(constants.workspace)
+              currentDashboardSubInterface.set("Workspaces")
+            }}
+            class="d-inline-block"
+          >
             <MaterialApp>
-              <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
-                <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
+              <div class="is-clickable rounded">
+                <Icon class="hover-txt-color-warning" path={mdiArrowLeft} />
               </div>
             </MaterialApp>
           </div>
         </span>
         
         <!-- Workspace name -->
-        <span class="has-text-{currentActiveWorkspace.color === "warning" || currentActiveWorkspace.color === "success" || currentActiveWorkspace.color === "info"? `${currentActiveWorkspace.color}-dark`: currentActiveWorkspace.color}">
-          {currentActiveWorkspace.name}
+        <span class="has-text-{$activeWorkspace.color === "warning" || $activeWorkspace.color === "success" || $activeWorkspace.color === "info"? `${$activeWorkspace.color}-dark`: $activeWorkspace.color}">
+          {$activeWorkspace.name}
         </span>
       {/if}
     </p>
   </div>
 
   <!-- Body -->
-  <div class="hero-body {curDashSubInterface === "Boards"?"py-0":""}">
-    {#if curDashSubInterface === "Subjects"}
+  <div class="hero-body {$currentDashboardSubInterface === "Boards"?"py-0":""}">
+    {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
-    {:else if curDashSubInterface === "Workspaces"}
+    {:else if $currentDashboardSubInterface === "Workspaces"}
       <WorkspacesInterface />
-    {:else if curDashSubInterface === "Boards"}
+    {:else if $currentDashboardSubInterface === "Boards"}
       <!-- <BoardsInterface /> -->
       <MemberModal/>
       <div class="columns is-mobile pb-5 boardcolumns">

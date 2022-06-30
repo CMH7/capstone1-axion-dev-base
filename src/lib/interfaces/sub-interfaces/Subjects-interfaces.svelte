@@ -27,7 +27,7 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
-<div class="columns is-multiline is-variable is-2 pl-6">
+<div class="columns is-multiline is-variable is-2">
   <AddSubjectPopUp active={popupActive}/>
   <!-- Add button -->
   {#if $useHint}
