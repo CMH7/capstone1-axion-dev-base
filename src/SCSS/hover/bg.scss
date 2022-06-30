@@ -1,0 +1,9 @@
+.hover {
+  &-bg {
+    &-grey {
+      &-light:hover {background-color: hsl(0, 0%, 71%);}
+      &-lighter:hover {background-color: hsl(0, 0%, 86%);}
+    }
+    &-primary:hover {background-color: hsl(238, 49%, 19%);}
+  }
+}

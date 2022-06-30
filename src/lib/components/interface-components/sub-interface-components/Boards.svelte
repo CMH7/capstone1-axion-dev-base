@@ -52,7 +52,7 @@
         <Button 
           icon
         >
-          <Icon size="25px" path={mdiPlus} class="{isHoveringAddIcon?"has-text-dark":""}" />
+          <Icon size="20px" path={mdiPlus} class="{isHoveringAddIcon?"has-text-dark":""}" />
         </Button>
       </div>
     </MaterialApp>
@@ -68,7 +68,7 @@
         <Button 
           icon
         >
-          <Icon size="25px" path={mdiCog} class="{isHoveringAddIcon?"has-text-dark":""}" />
+          <Icon size="20px" path={mdiCog} class="{isHoveringAddIcon?"has-text-dark":""}" />
         </Button>
       </div>
     </MaterialApp>

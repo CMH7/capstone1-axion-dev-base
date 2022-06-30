@@ -3,7 +3,7 @@
 
   import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify";
   import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger } from '@mdi/js';
-  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive, allUsers, notifs, memberModalLoading } from "$lib/stores/global-store";
+  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive, allUsers, notifs, memberModalLoading, userData, activeWorkspace } from "$lib/stores/global-store";
   import { goto } from "$app/navigation"
   import axios from 'axios'
   import constants from '$lib/constants'
@@ -20,7 +20,11 @@
     memberModalActive.set(true)
     await axios.get(`${backURI}/`)
     .then(res => {
-      const data = res.data
+      const wsMembers = $activeWorkspace.members
+      let data = res.data.filter(user => user.id != $userData.id)
+      wsMembers.forEach(member => {
+        data = data.filter(user => user.email != member.email)
+      })
       allUsers.set(data)
     })
     .catch(err => {
@@ -43,8 +47,8 @@
     <AppBar fixed style="width: 100%;" class="py-1 has-background-primary" {collapsed} >
 
       <!-- Burger -->
-      <div slot="icon" on:mouseenter={()=>{burgerHovered = true}} on:mouseleave={()=>{burgerHovered = false}}>
-        <Button disabled={!$sidebarActive} class="has-transition {burgerHovered?"has-background-primary":""}" depressed fab text>
+      <div slot="icon">
+        <Button disabled={!$sidebarActive} class="has-transition hover-bg-primary" depressed fab text>
           <div on:click={()=>{ismini.set(!$ismini)}}>
             <Icon size="30px" class="has-text-white" path={mdiMenu} />
           </div>
@@ -83,7 +87,7 @@
         <!-- End Subject tool bar -->
 
         <!-- Workspaces tool bar -->
-        <div class="{$currentDashboardSubInterface === "Workspaces"? "": "undisp"}">
+        <div class="{$currentDashboardSubInterface === "Boards"? "": "undisp"}">
           <!-- Members tool button -->
           <div class="{collapsed ? "undisp":""}">
             {#if $useHint }

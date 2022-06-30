@@ -9,6 +9,7 @@
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import { mdiArrowLeft } from '@mdi/js'
   import constants from '$lib/constants'
+  import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
 
   let curDashSubInterface = ''
   currentDashboardSubInterface.subscribe(value => curDashSubInterface = value)
@@ -118,7 +119,7 @@
       <WorkspacesInterface />
     {:else if curDashSubInterface === "Boards"}
       <!-- <BoardsInterface /> -->
-
+      <MemberModal/>
       <div class="columns is-mobile pb-5 boardcolumns">
 
         <!-- Boards by user -->
