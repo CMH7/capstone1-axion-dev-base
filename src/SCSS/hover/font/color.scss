@@ -1,0 +1,8 @@
+.hover {
+  &-txt {
+    &-color {
+      &-warning:hover {color: hsl(48, 100%, 67%);}
+      &-primary:hover {color: hsl(238, 49%, 19%);}
+    }
+  }
+}
