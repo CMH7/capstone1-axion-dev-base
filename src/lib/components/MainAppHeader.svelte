@@ -11,7 +11,6 @@
   let collapsed = false
   let hovered = false
   let iconHovered = false
-  let burgerHovered = false
 
   const backURI = constants.backURI
 
@@ -32,7 +31,7 @@
       notifsCopy.push({
         msg: `Getting all users failed, ${err}`,
         type: 'error',
-        id: $notifs.length
+        id: $notifs.length + 1
       })
       notifs.set(notifsCopy)
     })
@@ -48,7 +47,7 @@
 
       <!-- Burger -->
       <div slot="icon">
-        <Button disabled={!$sidebarActive} class="has-transition hover-bg-primary" depressed fab text>
+        <Button disabled={!$sidebarActive} class="has-transition" depressed fab text>
           <div on:click={()=>{ismini.set(!$ismini)}}>
             <Icon size="30px" class="has-text-white" path={mdiMenu} />
           </div>
@@ -116,23 +115,23 @@
 
       <!-- Collapsers -->
       <!-- Collapse the bar -->
-      <div class="is-clickable mr-2 rounded-circle has-transition {hovered?"has-background-grey-lighter":""} {collapsed?"undisp":""}" on:click={()=>{collapsed = true; ismini.set(true); sidebarActive.set(false)}} on:mouseenter={()=>{hovered = true}} on:mouseleave={()=>{hovered = false}}>
+      <div class="is-clickable mr-2 rounded-circle has-transition hover-bg-grey-lighter {collapsed?"undisp":""}" on:click={()=>{collapsed = true; ismini.set(true); sidebarActive.set(false)}}>
         <Avatar class="p-5" size="25px">
           <Icon class="has-text-white {hovered?"has-text-primary":""}" path={mdiBackburger} />
         </Avatar>
       </div>
 
       <!-- Uncollapse the bar -->
-      <div class="is-clickable mr-2 rounded-circle has-transition {hovered?"has-background-grey-lighter":""} {collapsed?"":"undisp"}" on:click={()=>{collapsed = false; sidebarActive.set(true)}} on:mouseenter={()=>{hovered = true}} on:mouseleave={()=>{hovered = false}}>
+      <div class="is-clickable mr-2 rounded-circle has-transition hover-bg-grey-lighter {collapsed?"":"undisp"}" on:click={()=>{collapsed = false; sidebarActive.set(true)}}>
         <Avatar class="p-4" size="20px">
-          <Icon class="has-text-white {hovered?"has-text-primary":""}" path={mdiForwardburger} />
+          <Icon class="white-text" path={mdiForwardburger} />
         </Avatar>
       </div>
 
       <!-- Account Button -->
       <div class="is-clickable is-hidden-touch {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")} on:mouseenter={()=>{iconHovered = true; currentIndex.set(4)}} on:mouseleave={()=>{iconHovered = false}}>
-        <Avatar class="p-5 has-transition {iconHovered?"has-background-warning":""}" size="35px">
-          <Icon class="has-text-white {iconHovered?"has-text-primary":""}" path={mdiAccount}/>
+        <Avatar class="p-5 has-transition hover-bg-warning" size="35px">
+          <Icon class="white-text" path={mdiAccount}/>
         </Avatar>
       </div>
     </AppBar>
