@@ -1,6 +1,14 @@
 .hover {
   &-bg {
     &-grey {
+      &-light {
+        &-grey {
+          &-dark {background-color: hsl(0, 0%, 71%);}
+          &-dark:hover {background-color: hsl(0, 0%, 29%);}
+        }
+      }
+
+      &-dark:hover {background-color: hsl(0, 0%, 29%);}
       &-light:hover {background-color: hsl(0, 0%, 71%);}
       &-lighter:hover {background-color: hsl(0, 0%, 86%);}
     }

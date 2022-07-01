@@ -51,11 +51,11 @@
       in:fade
       class="column is-narrow px-2"
     >
-      <div class="has-transition notification rounded-xl has-background-grey-{hovering ? "dark" : "light"} is-clickable is-flex is-justify-content-center is-align-items-center px-6">
+      <div class="has-transition notification rounded-xl hover-bg-grey-light-grey-dark is-clickable is-flex is-justify-content-center is-align-items-center px-6">
         <div>
           <MaterialApp>
-            <div class="has-transition is-clickable has-background-grey-{hovering ? "dark" : "light"}">
-              <Icon size="40px" class="{hovering ? "grey-text lighten-3" : ""}" path={mdiPlus}/>
+            <div class="has-transition is-clickable">
+              <Icon size="40px" path={mdiPlus}/>
             </div>
           </MaterialApp>
         </div>
