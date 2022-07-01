@@ -28,7 +28,7 @@
   let width = 0
 </script>
 
-<svelte:window bind:outerWidth={width} on:resize={e => width = e.target.outerWidth} />
+<svelte:window bind:outerWidth={width}/>
 
 <div class="columns is-multiline is-variable is-2 {width < 321 ? "pl-4": ""}">
   <AddSubjectPopUp active={popupActive}/>

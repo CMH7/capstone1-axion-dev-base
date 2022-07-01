@@ -19,7 +19,7 @@
   let width = 0
 </script>
 
-<svelte:window bind:outerWidth={width} on:resize={e => width = e.target.outerWidth} />
+<svelte:window bind:outerWidth={width}/>
 
 <div>
   <MaterialApp>
