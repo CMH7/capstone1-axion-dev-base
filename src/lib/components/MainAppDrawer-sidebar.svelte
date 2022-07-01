@@ -16,13 +16,10 @@
   let dashCount = 0;
   currentIndex.set(0)
 
-  let width = window.screen.width
-  const handleResize = (e) => {
-    width = e.target.outerWidth
-  }
+  let width = 0
 </script>
 
-<svelte:window on:resize={handleResize} />
+<svelte:window bind:outerWidth={width} on:resize={e => width = e.target.outerWidth} />
 
 <div>
   <MaterialApp>

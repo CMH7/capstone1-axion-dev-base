@@ -1,4 +1,5 @@
 <script>
+  // @ts-nocheck
   import SubjectBox from "$lib/components/interface-components/Subject-box.svelte"
   import { mdiPlus } from "@mdi/js"
   import { MaterialApp, Icon, Tooltip } from "svelte-materialify"
@@ -24,13 +25,10 @@
     }
   }
 
-  let width = window.screen.width
-  const handleResize = (e) => {
-    width = e.target.outerWidth
-  }
+  let width = 0
 </script>
 
-<svelte:window on:keydown={onKeyDown} on:resize={handleResize} />
+<svelte:window bind:outerWidth={width} on:resize={e => width = e.target.outerWidth} />
 
 <div class="columns is-multiline is-variable is-2 {width < 321 ? "pl-4": ""}">
   <AddSubjectPopUp active={popupActive}/>
