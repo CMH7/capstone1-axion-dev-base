@@ -11,10 +11,17 @@
   import NotificationContainer from "$lib/components/Notification-container.svelte"
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
-  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte";
+  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+  
 
   const backURI = constants.backURI
 
+  const isEmailValid = (email) => {
+    const emailRegexp = new RegExp(
+      /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+    )
+    return emailRegexp.test(email)
+  }
 
   const items = [
     {name: 'Male', value: 'Male'},
@@ -25,7 +32,7 @@
   let firstName = "",
       lastName = "",
       age = "",
-      gender = "",
+      gender = "Female",
       email = "",
       school = "",
       course = "",
@@ -42,8 +49,6 @@
     loading = true
     disabled = true
     if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || year === "" || password === "" || repassword === ""){
-
-      let notifsCopy = $notifs;
       let msg = "please input a valid ";
       if (firstName === "") msg += "first name, ";
       if (lastName === "") msg += "last name, ";
@@ -55,97 +60,131 @@
       if (year === "") msg += "year, ";
       if (password === "") msg += "password, ";
       if (repassword === "") msg += "repassword";
-      
       msg += '.'
 
-      notifsCopy.push(
-        {
+      let notifsCopy = $notifs
+      notifsCopy.push({
           msg: msg,
           type: "error",
           id: $notifs.length + 1
-        }
-      );
-      notifs.set(notifsCopy);
-      
+      })
+      notifs.set(notifsCopy)
+
       loading = false
       disabled = false
-
-    }else if(password !== repassword){
-
+    } else if (!isEmailValid(email)){
       let notifsCopy = $notifs
-
-      notifsCopy.push(
-        {
+      notifsCopy.push({
+        msg: 'Invalid E-mail.',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      email = ''
+      loading = false
+      disabled = false
+    }else if(password !== repassword){
+      let notifsCopy = $notifs
+      notifsCopy.push({
           msg: 'Password does not match. Please try again.',
           type: 'error',
           id: $notifs.length + 1
-        }
-      )
+      })
       notifs.set(notifsCopy)
 
       loading = false
       disabled = false
     }else{
-      const finalPassword = bcrypt.hashSync(password, password.length)
+      let notifss = $notifs
+      notifss.push({
+        msg: 'Checking account availability.',
+        type: 'success',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifss)
 
-      axios.post(`${backURI}/Signup`,  {
-        subjects: [],
-        notifications: [],
-        age: parseInt(age),
-        course: course,
-        email: email,
-        firstName: firstName,
-        gender: gender,
-        lastName: lastName,
-        password: finalPassword,
-        profile: "",
-        school: school,
-        useHint: true,
-        year: parseInt(year),
-        lastActive: new Date(),
-        bio: ''
-      }).then(res=>{
-        if(res.data.valid) {
-          let notifsCopy = $notifs;
-          notifsCopy.push(
-            {
-              msg: "Creation successful",
-              type: "success",
-              id: $notifs.length + 1
-            }
-          );
+      axios.post(`${backURI}/validUser`, {email: email})
+      .then(res => {
+        if(res.data) {
+          let notifsCopy = $notifs
+          notifsCopy.push({
+            msg: 'Email used has an existing account.',
+            type: 'error',
+            id: $notifs.length + 1
+          })
           notifs.set(notifsCopy)
-          loading = false
-          disabled = false 
-          goto('/Signin', {replaceState: true})
-        }
-        if(!res.data.valid) {
-          let notifsCopy = $notifs;
-          notifsCopy.push(
-            {
-              msg: "Creation failed. Please try again",
-              type: "error",
-              id: $notifs.length + 1
-            }
-          );
-          notifs.set(notifsCopy)
+
           loading = false
           disabled = false
+        }else{
+          const finalPassword = bcrypt.hashSync(password, password.length)
+          axios.post(`${backURI}/Signup`,  {
+            subjects: [],
+            notifications: [],
+            age: parseInt(age),
+            course: course,
+            email: email,
+            firstName: firstName,
+            gender: gender,
+            lastName: lastName,
+            password: finalPassword,
+            profile: "",
+            school: school,
+            useHint: true,
+            year: parseInt(year),
+            lastActive: new Date(),
+            bio: ''
+          }).then(res=>{
+            if(res.data.valid) {
+              let notifsCopy = $notifs
+              notifsCopy.push({
+                  msg: "Creation successful",
+                  type: "success",
+                  id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+              loading = false
+              disabled = false 
+              goto('/Signin', {replaceState: true})
+            }
+            if(!res.data.valid) {
+              let notifsCopy = $notifs;
+              notifsCopy.push({
+                  msg: "Creation failed. Please try again",
+                  type: "error",
+                  id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+              loading = false
+              disabled = false
+            }
+          }).catch(err=>{
+            let notifsCopy = $notifs
+            notifsCopy.push(
+              {
+                msg: `Database error, ${err}`,
+                type: "error",
+                id: $notifs.length + 1
+              }
+            );
+            notifs.set(notifsCopy)
+            loading = false
+            disabled = false
+          })
         }
-      }).catch(err=>{
-        let notifsCopy = $notifs
-        notifsCopy.push(
-          {
-            msg:"Database error",
-            type:"error",
-            id: $notifs.length + 1
-          }
-        );
-        notifs.set(notifsCopy)
-        loading = false
-        disabled = false
       })
-
+      .catch(err => {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `Error checking existing account. ${err}`,
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+      })
+      .finally(() => {
+        // Do something here
+      })
     }
   }
 
@@ -185,7 +224,7 @@
 
           <!-- Gender -->
           <div class="select quicksands my-3 w-65p">
-            <select bind:value={gender} placeholder="Gender" class="w-100p has-background-light">
+            <select bind:value={gender} class="w-100p has-background-light">
               <option value="Female">Female</option>
               <option value="Male">Male</option>
               <option value="Rather not say">Rather not say</option>

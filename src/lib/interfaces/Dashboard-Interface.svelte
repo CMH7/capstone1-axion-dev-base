@@ -12,7 +12,17 @@
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
 
   let allBoards = []
-  activeWorkspace.subscribe(value => allBoards = value.boards)
+  userData.subscribe(account => {
+    account.subjects.forEach(subject => {
+      if(subject.id === $activeSubject.id) {
+        subject.workspaces.forEach(workspace => {
+          if(workspace.id === $activeWorkspace.id) {
+            allBoards = workspace.boards
+          }
+        })
+      }
+    })
+  })
 
 </script>
 
@@ -71,7 +81,7 @@
   </div>
 
   <!-- Body -->
-  <div class="hero-body {$currentDashboardSubInterface === "Boards"?"py-0":""}">
+  <div class="hero-body pt-4">
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
     {:else if $currentDashboardSubInterface === "Workspaces"}
