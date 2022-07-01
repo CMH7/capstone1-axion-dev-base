@@ -30,12 +30,12 @@
     }
   }
 
-
+  let width = 0
 </script>
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window on:keydown={onKeyDown} bind:outerWidth={width}/>
 
-<div class="columns is-multiline is-variable is-2 pl-6">
+<div class="columns is-multiline is-variable is-2 {width < 321? "pl-4": ""}">
   <AddWorkspacePopUp active={popupActive}/>
   {#if $useHint}
   <Tooltip bottom>
