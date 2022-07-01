@@ -12,7 +12,19 @@
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
 
   let allBoards = []
-  activeWorkspace.subscribe(value => allBoards = value.boards)
+  userData.subscribe(account => {
+    account.subjects.forEach(subject => {
+      if(subject.id === $activeSubject.id) {
+        activeSubject.set(subject)
+        subject.workspaces.forEach(workspace => {
+          if(workspace.id === $activeWorkspace.id) {
+            activeWorkspace.set(workspace)
+            allBoards = workspace.boards
+          }
+        })
+      }
+    })
+  })
 
 </script>
 
