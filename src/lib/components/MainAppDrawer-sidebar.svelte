@@ -23,7 +23,7 @@
 
 <div>
   <MaterialApp>
-    <NavigationDrawer active={$sidebarActive} class="pt-16" fixed borderless miniWidth={width < 321 && $ismini? "0px": "68px"} width="220px" mini={$ismini}>
+    <NavigationDrawer active={$sidebarActive} class="pt-16" fixed borderless miniWidth={width < 426 && $ismini? "0px": "68px"} width="220px" mini={$ismini}>
       <List nav>
         <ListItemGroup class="has-text-{navs[$currentIndex].color} {navs[$currentIndex].color}">
 

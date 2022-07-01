@@ -15,10 +15,8 @@
   userData.subscribe(account => {
     account.subjects.forEach(subject => {
       if(subject.id === $activeSubject.id) {
-        activeSubject.set(subject)
         subject.workspaces.forEach(workspace => {
           if(workspace.id === $activeWorkspace.id) {
-            activeWorkspace.set(workspace)
             allBoards = workspace.boards
           }
         })
@@ -83,7 +81,7 @@
   </div>
 
   <!-- Body -->
-  <div class="hero-body {$currentDashboardSubInterface === "Boards"?"py-0":""}">
+  <div class="hero-body pt-4">
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
     {:else if $currentDashboardSubInterface === "Workspaces"}

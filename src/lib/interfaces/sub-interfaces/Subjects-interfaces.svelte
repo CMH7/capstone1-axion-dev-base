@@ -30,7 +30,7 @@
 
 <svelte:window bind:outerWidth={width}/>
 
-<div class="columns is-multiline is-variable is-2 {width < 321 ? "pl-4": ""}">
+<div class="columns is-multiline is-variable is-2 {width < 426 ? "pl-4": ""}">
   <AddSubjectPopUp active={popupActive}/>
   <!-- Add button -->
   {#if $useHint}

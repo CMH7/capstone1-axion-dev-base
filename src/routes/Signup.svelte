@@ -16,6 +16,12 @@
 
   const backURI = constants.backURI
 
+  const isEmailValid = (email) => {
+    const emailRegexp = new RegExp(
+      /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+    )
+    return emailRegexp.test(email)
+  }
 
   const items = [
     {name: 'Male', value: 'Male'},
@@ -66,7 +72,7 @@
 
       loading = false
       disabled = false
-    } else if (false){
+    } else if (!isEmailValid(email)){
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: 'Invalid E-mail.',
@@ -99,7 +105,7 @@
 
       axios.post(`${backURI}/validUser`, {email: email})
       .then(res => {
-        if(!res.data) {
+        if(res.data) {
           let notifsCopy = $notifs
           notifsCopy.push({
             msg: 'Email used has an existing account.',
@@ -107,6 +113,9 @@
             id: $notifs.length + 1
           })
           notifs.set(notifsCopy)
+
+          loading = false
+          disabled = false
         }else{
           const finalPassword = bcrypt.hashSync(password, password.length)
           axios.post(`${backURI}/Signup`,  {

@@ -78,6 +78,7 @@
             }
         })
         .then(res => {
+            userData.set(res.data)
             let notifsCopy = []
             notifsCopy = $notifs
             notifsCopy.push(
@@ -89,15 +90,20 @@
             )
             notifs.set(notifsCopy)
             active = false
-            axios.post(`${backURI}/validUser`, {
-                email: res.data.email
-            }).then(res => {
-                userData.set(res.data)
-                loading = false
-                disabled = false
-                subjectName = ""
-            }).catch(err => console.error(`error in gettring user ${err}`))
-        }).catch(err => console.error(`error in posting subject ${err}`))
+        }).catch(err => {
+            let notifsCopy = $notifs
+            notifsCopy.push({
+                msg: `Error in creating subject, ${err}`,
+                type: 'error',
+                id: $notifs.length + 1
+            })
+            notifs.set(notifsCopy)
+        })
+        .finally(() => {
+            subjectName = ''
+            loading = false
+            disabled = false
+        })
     }
 
     function onKeyDown(e) {

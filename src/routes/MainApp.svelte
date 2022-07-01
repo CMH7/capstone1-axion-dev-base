@@ -85,7 +85,7 @@
     </Button>
   </div>
 </Snackbar>
-<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 321 && $ismini?"pl-16":""}`:""}">
+<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 426 && $ismini ? "pl-16" : ""}`:""}">
   {#if $currentInterface === "Dashboard"}
     <DashboardInterface />
   {:else if $currentInterface === "Assigned to me"}

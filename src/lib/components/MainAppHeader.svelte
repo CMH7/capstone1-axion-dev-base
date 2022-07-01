@@ -10,7 +10,6 @@
 
   let collapsed = false
   let hovered = false
-  let iconHovered = false
 
   const backURI = constants.backURI
 

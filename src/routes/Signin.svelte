@@ -24,101 +24,116 @@
         data;
 
     // animation
-    let loading = false;
-    let disabled = false;
+    let loading = false
+    let disabled = false
 
-    function login(){
+    const isEmailValid = (email) => {
+    const emailRegexp = new RegExp(
+        /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+      )
+      return emailRegexp.test(email)
+    }
+
+    const validateUser = async () => {
+      await axios.post(`${backURI}/validUser`, {
+        email: emailInput
+      }).then(resp => {
+        userData.set(resp.data)
+        useHint.set($userData.useHint)
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: "Log in Successful",
+          type: "success",
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        notifs.set([])
+        isLoggedIn.set(true)
+        goto('/MainApp', {replaceState: true})
+      })
+      .catch(err => {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `Error logging in. ${err}`,
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+      })
+      .finally(() => {
+
+        emailInput = ""
+        passwordInput = ""
+        loading = false
+        disabled = false
+      })
+    }
+
+    const login = async () => {
       loading = true;
       disabled = true;
 
       if(emailInput === "" || passwordInput === "") {
-        loading = false;
-        disabled = false;
+        loading = false
+        disabled = false
         let notifsCopy = $notifs;
-        if(emailInput === "" && !(passwordInput === "")) {
-          notifsCopy.push(
-            {
+        if(emailInput === "" && !(passwordInput === "") || !isEmailValid(emailInput)) {
+          notifsCopy.push({
               msg: "Please input a valid email.",
               type: "error",
               id: $notifs.length + 1
-            }
-          );
+          })
         }else if(passwordInput === "" && !(emailInput === "")) {
-          notifsCopy.push(
-            {
+          notifsCopy.push({
               msg: "Please input a valid password.",
               type: "error",
               id: $notifs.length + 1
-            }
-          )
+          })
         }else {
-          notifsCopy.push(
-            {
+          notifsCopy.push({
               msg: "Please input a valid email and password.",
               type: "error",
               id: $notifs.length + 1
-            }
-          );
+          })
         }
         notifs.set(notifsCopy)
         emailInput = ""
         passwordInput = ""
       }else{
-        axios.get(`${backURI}/Signin?email=${emailInput}`).then(res=>{
+        await axios.get(`${backURI}/Signin?email=${emailInput}`).then(res=>{
           if(res.data.password === undefined) {
-            emailInput = ""
-            passwordInput = ""
-            loading = false
-            disabled = false
-            let msgs = $notifs
-            msgs.push(
-                {
-                  msg: "Wrong email or password. Please try again.",
-                  type: "error",
-                  id: $notifs.length + 1
-                }
-              )
-            notifs.set(msgs)
-          }else if(bcrypt.compareSync(passwordInput, res.data.password)){
-            axios.post(`${backURI}/validUser`, {
-              email: emailInput
-            }).then(resp => {
-              data = resp.data
-              userData.set(data)
-              useHint.set($userData.useHint)
-              loading = false
-              disabled = false
-              notifs.set([])
-              let msgs = $notifs
-              msgs.push(
-                  {
-                    msg: "Log in Successful",
-                    type: "success",
-                    id: $notifs.length + 1
-                  }
-                );
-              notifs.set(msgs)
-              isLoggedIn.set(true)
-              goto('/MainApp', {replaceState: true})
-            }).catch(err => console.error(err))
-          }else{
-            loading = false
-            disabled = false
             let notifsCopy = $notifs
-            notifsCopy.push(
-              {
-                msg: "Wrong email or password. Please try again.",
-                type: 'error',
-                id: $notifs.length + 1
-              }
-            );
+            notifsCopy.push({
+              msg: "Wrong email or password. Please try again.",
+              type: "error",
+              id: $notifs.length + 1
+            })
             notifs.set(notifsCopy)
-            emailInput = ""
-            passwordInput = ""
+          }else if(bcrypt.compareSync(passwordInput, res.data.password)){
+            validateUser()
+          }else{
+            let notifsCopy = $notifs
+            notifsCopy.push({
+              msg: "Wrong email or password. Please try again.",
+              type: 'error',
+              id: $notifs.length + 1
+            })
+            notifs.set(notifsCopy)
           }
-        }).catch(err => {
-          console.log(err);
-        });
+        })
+        .catch(err => {
+          let notifsCopy = $notifs
+          notifsCopy.push({
+            msg: `Error getting account, ${err}`
+          })
+          notifs.set(notifsCopy)
+        })
+        .finally(() => {
+          loading = false
+          disabled = false
+          emailInput = ""
+          passwordInput = ""
+        })
       }
     }
 </script>
