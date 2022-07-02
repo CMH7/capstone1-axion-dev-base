@@ -39,7 +39,7 @@
                           Charles Maverick Herrera
                           <br>
                           <small class="has-text-weight-normal is-family-secondary">
-                          Developer
+                            Technical Lead
                           </small>
                         </p>
                       </div>
@@ -78,7 +78,7 @@
                             Joanne Razelle L. Roche
                           <br>
                           <small class="has-text-weight-normal is-family-secondary">
-                            Developer
+                            Front-end Developer
                           </small>
                         </p>
                       </div>
@@ -117,7 +117,7 @@
                               Mart Yazen Mikhail Clarin
                             <br>
                             <small class="has-text-weight-normal is-family-secondary">
-                              Developer
+                              Quality Assurance, Research Lead
                             </small>
                           </p>
                         </div>
@@ -156,7 +156,7 @@
                               El John S. Matimtim
                             <br>
                             <small class="has-text-weight-normal is-family-secondary">
-                              Developer
+                              Quality Assurance Lead
                             </small>
                           </p>
                         </div>
