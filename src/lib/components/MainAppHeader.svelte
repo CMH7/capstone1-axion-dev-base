@@ -128,7 +128,7 @@
       </div>
 
       <!-- Account Button -->
-      <div class="is-clickable is-hidden-touch {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")} on:mouseenter={()=>{iconHovered = true; currentIndex.set(4)}} on:mouseleave={()=>{iconHovered = false}}>
+      <div class="is-clickable is-hidden-touch {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")}>
         <Avatar class="p-5 has-transition hover-bg-warning" size="35px">
           <Icon class="white-text" path={mdiAccount}/>
         </Avatar>
