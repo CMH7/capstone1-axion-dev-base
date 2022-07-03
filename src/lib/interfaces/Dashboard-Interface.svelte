@@ -10,6 +10,8 @@
   import { mdiArrowLeft } from '@mdi/js'
   import constants from '$lib/constants'
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
+  import Fab from '$lib/components/FAB/FAB.svelte'
+  import AddTaskPopUp from '$lib/components/interface-components/sub-interface-components/Add-task-pop-up.svelte'
 
 </script>
 
@@ -69,6 +71,8 @@
 
   <!-- Body -->
   <div class="hero-body pt-4">
+    <Fab/>
+    <AddTaskPopUp/>
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
     {:else if $currentDashboardSubInterface === "Workspaces"}

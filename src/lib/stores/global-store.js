@@ -90,3 +90,6 @@ export let addSubjectModalActive = writable(false)
 
 // add workspace modal active
 export let addWorkspaceModalActive = writable(false)
+
+// add task modal active
+export let addTaskModalActive = writable(false)
