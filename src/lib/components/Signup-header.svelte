@@ -1,5 +1,6 @@
 <script>
 	import AxionText from '$lib/components/AxionText.svelte';
+  import Button from '$lib/components/Button.svelte';
 
   // Menu show or hide boolean for mobile
   let menuActive = false;
@@ -32,7 +33,10 @@
       
         <!-- WORK OF JOANNE CONTACT FORM PAGE -->
       <a on:click={()=>{active.set("Contact")}} href="/Contactform" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":""}">Contact</a>
-      <a on:click={()=>{active.set("Sign In")}} href="/Signin" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":"undisp"}">Sign In</a>
+      <a on:click={()=>{active.set("Sign Up")}} href="/Signup" class="navbar-item is-size-5 {menuActive?"py-4 has-text-centered":"undisp"}">Sign In</a>
+      <div on:click={()=>{active.set("Sign Up")}} class="navbar-item {menuActive?"undisp":""}">
+        <Button text="Sign In" href="/Signin" textcss="is-size-5-desktop has-text-weight-bold" mainBg="has-background-primary"/>
+      </div>
     </div>
   </div>
 </nav>
