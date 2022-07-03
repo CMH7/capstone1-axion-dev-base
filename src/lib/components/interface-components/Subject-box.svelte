@@ -1,5 +1,5 @@
 <script>
-  import { activeSubject, currentDashboardSubInterface, snack } from "$lib/stores/global-store"
+  import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, snack } from "$lib/stores/global-store"
   import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js"
   import { Icon, MaterialApp, ProgressLinear } from "svelte-materialify"
   import axios from "axios"
@@ -78,6 +78,7 @@
   on:click={() => {
     activeSubject.set(subject)
     currentDashboardSubInterface.set("Workspaces")
+    breadCrumbsItems.set([{text: subject.name}])
   }}
   on:mouseenter={() => mouseEnter = true}
   on:mouseleave={() => mouseEnter = false}

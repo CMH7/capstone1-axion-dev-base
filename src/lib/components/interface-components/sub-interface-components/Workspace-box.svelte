@@ -1,5 +1,5 @@
 <script>
-  import { activeWorkspace, allBoards, currentDashboardSubInterface} from "$lib/stores/global-store"
+  import { activeWorkspace, allBoards, breadCrumbsItems, currentDashboardSubInterface} from "$lib/stores/global-store"
   import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js"
   import { Icon, MaterialApp } from "svelte-materialify"
 
@@ -26,6 +26,8 @@
     activeWorkspace.set(workspace)
     allBoards.set(workspace.boards)
     currentDashboardSubInterface.set("Boards")
+    breadCrumbsItems.set([...$breadCrumbsItems, {text: workspace.name}])
+    breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
   }}
   on:mouseenter={() => mouseEnter = true }
   on:mouseleave={() => mouseEnter = false }
