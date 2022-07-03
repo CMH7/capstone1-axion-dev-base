@@ -11,6 +11,7 @@
     import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
     import NotificationContainer from '$lib/components/Notification-container.svelte'
     import constants from '$lib/constants'
+    import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
 
     const backURI = constants.backURI
 
@@ -159,6 +160,16 @@
         })
       }
     }
+
+    let comingSoonModalOpen = false
+  const openComingSoon = () => {
+    if (!comingSoonModalOpen) {
+      comingSoonModalOpen = true
+    } else {
+      comingSoonModalOpen = false
+      comingSoonModalOpen = true
+    }
+  }
 </script>
 
 <!-- window keyboard listener -->
@@ -166,6 +177,7 @@
 
 <!-- Notification -->
 <NotificationContainer />
+<ComingSoonModal active={comingSoonModalOpen}/>
 
 <!-- header -->
 <HomeHeader/>
@@ -208,14 +220,14 @@
             <div class="is-flex is-justify-content-center">
               <div class="mx-3">
                 <MaterialApp>
-                  <a href="http://gmail.com/" target="_blank">
+                  <a class="is-clickable"on:click={openComingSoon}>
                     <Icon class="has-text-danger-dark" size="38px" path={mdiGoogle} />
                   </a>
                 </MaterialApp>
               </div>
               <div class="mx-3">
                 <MaterialApp>
-                  <a href="http://facebook.com/" target="_blank">
+                  <a class="" on:click={openComingSoon}>
                     <Icon class="has-text-info" size="38px" path={mdiFacebook} />
                   </a>
                 </MaterialApp>
