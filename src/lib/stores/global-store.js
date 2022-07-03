@@ -93,3 +93,6 @@ export let addWorkspaceModalActive = writable(false)
 
 // add task modal active
 export let addTaskModalActive = writable(false)
+
+// breadcrumbds items
+export let breadCrumbsItems = writable([])
