@@ -3,7 +3,7 @@
     import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp } from 'svelte-materialify'
     import axios from 'axios'
-    import { notifs, userData, activeSubject, addWorkspaceModalActive } from '$lib/stores/global-store'
+    import { notifs, userData, activeSubject, addWorkspaceModalActive, modalChosenColor } from '$lib/stores/global-store'
     import bcrypt from 'bcryptjs'
     import constants from '$lib/constants'
 
@@ -24,6 +24,7 @@
 
     // active color
     function activeColor (paramColor){
+        modalChosenColor.set(paramColor.name)
         colors.forEach(color => {
             if (color.name != paramColor.name){
                 color.selected = false
@@ -40,7 +41,6 @@
     let workspaceNameInput = ""
 
     let id = $userData.id
-    let user = $userData
 
     // Active subject
     let curActiveSubject = $activeSubject
@@ -140,26 +140,34 @@
         }
     }
 
-    onDestroy(() => addWorkspaceModalActive.set(false))
+    onDestroy(() => {
+        addWorkspaceModalActive.set(false)
+        modalChosenColor.set('primary')
+    })
+    let width = 0
 </script>
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window on:keydown={onKeyDown} bind:outerWidth={width} />
 
 <MaterialApp>
-	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" persistent={isCreating ? true : false } bind:active={$addWorkspaceModalActive}>
+	<Dialog class="pa-4 has-transition has-background-{$modalChosenColor}" persistent={isCreating ? true : false } bind:active={$addWorkspaceModalActive}>
 
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
             <!-- input -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
                 <!-- svelte-ignore a11y-autofocus -->
-                <input autofocus {disabled} bind:value={workspaceNameInput} class="p-2 input is-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" type="text" placeholder="Workspace name" />
+                <input autofocus {disabled} bind:value={workspaceNameInput} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Workspace name" />
             </div>
 
             <!-- colors -->
-            <div class="is-flex is-justify-content-center" style="width: 100%">
+            <div class="is-flex is-justify-content-center w-100p">
                 {#each colors as color}
-                <div class="{disabled && !color.selected? "is-hidden": disabled && color.selected? "button is-static": ""} has-transition {disabled? "": "is-clickable"} mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid {color.hover && !disabled?"black":"white"};" />
+                <div
+                    class="{disabled && !color.selected? "is-hidden": disabled && color.selected? "button is-static": ""} has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name} {width < 426 ? "w-25 h-25": "w-40 h-40"} border-color-white border-type-solid hover:border-w-1-5"
+                    on:click={() => activeColor(color)}
+                    style="{color.name === $modalChosenColor ? "border-color: #000; border-width: 5px": "#fff"}"
+                />
                 {/each}
             </div>
 
