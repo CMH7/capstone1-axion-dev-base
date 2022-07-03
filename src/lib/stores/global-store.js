@@ -96,3 +96,6 @@ export let addTaskModalActive = writable(false)
 
 // breadcrumbds items
 export let breadCrumbsItems = writable([])
+
+// modal chosen colors
+export let modalChosenColor = writable('primary')
