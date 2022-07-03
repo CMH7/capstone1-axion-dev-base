@@ -71,9 +71,11 @@
           }
         }
       >
-        <p class="has-text-white is-unselectable mt-4 is-clickable">
-          AXION
-        </p>
+        <div class="column is-7-mobile">
+          <p class="has-text-white is-unselectable mt-4 is-clickable">
+            AXION
+          </p>
+        </div>
       </span>
 
       <!-- Expansion-er -->
