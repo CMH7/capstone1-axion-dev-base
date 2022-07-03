@@ -1,0 +1,23 @@
+.hover\:border {
+  &-w {
+    // normal state
+    &-0 {border-width: 0px;}
+    &-1 {
+      border-width: 1px;
+      
+      // hovers
+      &-5 {border-width: 1px;}
+      &-5:hover {border-width: 5px;}
+    }
+    &-2 {border-width: 2px;}
+    &-3 {border-width: 3px;}
+    &-4 {border-width: 4px;}
+    &-5 {border-width: 5px;}
+    &-6 {border-width: 6px;}
+    &-7 {border-width: 7px;}
+    &-8 {border-width: 8px;}
+    &-9 {border-width: 9px;}
+    &-10 {border-width: 10px;}
+    &-0 {border-width: 0px;}
+  }
+}
