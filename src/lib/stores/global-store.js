@@ -82,6 +82,9 @@ export let memberModalLoading = writable(true)
 // All users
 export let allUsers = writable([])
 
+// All boards of the current workspace
+export let allBoards = writable([])
+
 // add subject modal active
 export let addSubjectModalActive = writable(false)
 
