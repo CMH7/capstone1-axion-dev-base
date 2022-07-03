@@ -1,16 +1,19 @@
 <script>
     // @ts-nocheck
-    import { mdiGoogle, mdiFacebook } from '@mdi/js'; // icons used
-    import { Icon, Divider, MaterialApp } from 'svelte-materialify';
-    import HomeFooter from "$lib/components/Home-footer.svelte";
-    import HomeHeader from "$lib/components/Home-header.svelte";
-    import { goto } from '$app/navigation';
-    import {fade} from 'svelte/transition';
-    import axios from 'axios';
-    import bcrypt from 'bcryptjs';
-    import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store';
-    import ErrorContainer from '$lib/components/Notification-container.svelte';
-    import ErrorNotification from '$lib/components/Notification.svelte';
+    import { mdiGoogle, mdiFacebook } from '@mdi/js'
+    import { Icon, Divider, MaterialApp } from 'svelte-materialify'
+    import HomeFooter from "$lib/components/Home-footer.svelte"
+    import HomeHeader from "$lib/components/Home-header.svelte"
+    import { goto } from '$app/navigation'
+    import {fade} from 'svelte/transition'
+    import axios from 'axios'
+    import bcrypt from 'bcryptjs'
+    import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
+    import NotificationContainer from '$lib/components/Notification-container.svelte'
+    import constants from '$lib/constants'
+    import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+
+    const backURI = constants.backURI
 
     // OnKeyDown
     function onKeyDown(e) {
@@ -22,106 +25,163 @@
         data;
 
     // animation
-    let loading = false;
-    let disabled = false;
+    let loading = false
+    let disabled = false
 
-    function login(){
-      loading = true;
-      disabled = true;
+    const isEmailValid = (email) => {
+    const emailRegexp = new RegExp(
+        /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+      )
+      return emailRegexp.test(email)
+    }
+
+    const isPassValid = (pass) => {
+      const passRegexp = new RegExp(/^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!&$%&? "]).*$/)
+      return passRegexp.test(pass)
+    }
+
+    const login = () => {
+      if(!isEmailValid(emailInput)) {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Email is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        return false
+      }
+      if(!isPassValid(passwordInput)) {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Password is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        passwordInput = ''
+        return false
+      }
+      loading = true
+      disabled = true
 
       if(emailInput === "" || passwordInput === "") {
-        loading = false;
-        disabled = false;
+        loading = false
+        disabled = false
         let notifsCopy = $notifs;
         if(emailInput === "" && !(passwordInput === "")) {
-          notifsCopy.push(
-            {
+          notifsCopy.push({
               msg: "Please input a valid email.",
-              type: "error"
-            }
-          );
+              type: "error",
+              id: $notifs.length + 1
+          })
         }else if(passwordInput === "" && !(emailInput === "")) {
-          notifsCopy.push(
-            {
+          notifsCopy.push({
               msg: "Please input a valid password.",
-              type: "error"
-            }
-          );
+              type: "error",
+              id: $notifs.length + 1
+          })
         }else {
-          notifsCopy.push(
-            {
+          notifsCopy.push({
               msg: "Please input a valid email and password.",
-              type: "error"
-            }
-          );
+              type: "error",
+              id: $notifs.length + 1
+          })
         }
-        notifs.set(notifsCopy);
-        emailInput = "";
-        passwordInput = "";
+        notifs.set(notifsCopy)
+        emailInput = ""
+        passwordInput = ""
       }else{
-        axios.get(`http://localhost:8080/Signin?email=${emailInput}`).then(res=>{
+        axios.get(`${backURI}/Signin?email=${emailInput}`).then(res=>{
           if(res.data.password === undefined) {
-            emailInput = "";
-            passwordInput = "";
-            loading = false;
-            disabled = false;
-            let msgs = $notifs;
-            msgs.push(
-                {
-                  msg: "Wrong email or password. Please try again.",
-                  type: "error"
-                }
-              );
-            notifs.set(msgs);
+            let notifsCopy = $notifs
+            notifsCopy.push({
+              msg: "Wrong email or password. Please try again.",
+              type: "error",
+              id: $notifs.length + 1
+            })
+            notifs.set(notifsCopy)
+            loading = false
+            disabled = false
           }else if(bcrypt.compareSync(passwordInput, res.data.password)){
-            axios.post('http://localhost:8080/validUser', {
+            axios.post(`${backURI}/validUser`, {
               email: emailInput
             }).then(resp => {
-              data = resp.data;
-              userData.set(data);
-              useHint.set($userData.useHint);
-              loading = false;
-              disabled = false;
-              let msgs = $notifs;
-              msgs.push(
-                  {
-                    msg: "Log in Successful",
-                    type: "success"
-                  }
-                );
-              notifs.set(msgs);
-              isLoggedIn.set(true);
-              goto('/MainApp', {replaceState: true});
-            }).catch(err => console.error(err));
+              notifs.set([])
+              userData.set(resp.data)
+              useHint.set($userData.useHint)
+              let notifsCopy = $notifs
+              notifsCopy.push({
+                msg: "Log in Successful",
+                type: "success",
+                id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+              isLoggedIn.set(true)
+              goto('/MainApp', {replaceState: true})
+
+              emailInput = ""
+              passwordInput = ""
+            })
+            .catch(err => {
+              let notifsCopy = $notifs
+              notifsCopy.push({
+                msg: `Error logging in. ${err}`,
+                type: 'error',
+                id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+
+              emailInput = ""
+              passwordInput = ""
+              loading = false
+              disabled = false
+            })
           }else{
-            loading = false;
-            disabled = false;
-            let notifsCopy = $notifs;
-            notifsCopy.push(
-              {
-                msg: "Wrong email or password. Please try again."
-              }
-            );
-            emailInput = "";
-            passwordInput = "";
-            notifs.set(notifsCopy);
+            let notifsCopy = $notifs
+            notifsCopy.push({
+              msg: "Wrong email or password. Please try again.",
+              type: 'error',
+              id: $notifs.length + 1
+            })
+            notifs.set(notifsCopy)
           }
-        }).catch(err => {
-          console.log(err);
-        });
+        })
+        .catch(err => {
+          let notifsCopy = $notifs
+          notifsCopy.push({
+            msg: `Error getting account, ${err}`
+          })
+          notifs.set(notifsCopy)
+          loading = false
+          disabled = false
+          emailInput = ""
+          passwordInput = ""
+        })
       }
     }
+
+    let comingSoonModalOpen = false
+  const openComingSoon = () => {
+    if (!comingSoonModalOpen) {
+      comingSoonModalOpen = true
+    } else {
+      comingSoonModalOpen = false
+      comingSoonModalOpen = true
+    }
+  }
 </script>
+
+<svelte:head>
+  <title>Axion | Signin</title>
+</svelte:head>
 
 <!-- window keyboard listener -->
 <svelte:window on:keydown={onKeyDown} />
 
-<!-- errors -->
-<ErrorContainer>
-  {#each $notifs as notif}
-  <ErrorNotification msg="{notif.msg}" type="{notif.type}"/>
-  {/each}
-</ErrorContainer>
+<!-- Notification -->
+<NotificationContainer />
+<ComingSoonModal active={comingSoonModalOpen}/>
 
 <!-- header -->
 <HomeHeader/>
@@ -129,24 +189,22 @@
   <div class="hero-body">
     <div class="container">
       <div class="columns is-mobile is-centered is-multiline">
-  
         <div class="column is-5-desktop is-8-touch">
-
           <!-- Title -->
-          <div class="container mt-10 mb-0 is-flex is-flex-direction-column is-align-items-center">
+          <div class="mt-10 mb-0 is-flex is-flex-direction-column is-align-items-center">
             <p class="is-size-1-tablet is-size-3-mobile is-primary has-text-weight-bold has-text-centered fredokaone">SIGN IN</p>
           </div>
 
           <!-- input fields -->
           <!-- email -->
-          <div class="section py-3">
-            <div class="container">
-              <input {disabled} bind:value={emailInput} class="input quicksands has-text-black has-background-light" style="width: 100%;" type="text" placeholder="Email">
+          <div class="section py-3 px-0">
+            <div class="container is-flex is-justify-content-center">
+              <input {disabled} bind:value={emailInput} class="input quicksands has-text-black has-background-light min-w-250" type="text" placeholder="Email">
             </div>
 
             <!-- password -->
-            <div class="container">
-              <input {disabled} bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light" style="width: 100%;" type="password" placeholder="Password">
+            <div class="container is-flex is-justify-content-center">
+              <input {disabled} bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light min-w-250" type="password" placeholder="Password">
             </div>
 
           </div>
@@ -166,14 +224,14 @@
             <div class="is-flex is-justify-content-center">
               <div class="mx-3">
                 <MaterialApp>
-                  <a href="http://gmail.com/" target="_blank">
+                  <a class="is-clickable"on:click={openComingSoon}>
                     <Icon class="has-text-danger-dark" size="38px" path={mdiGoogle} />
                   </a>
                 </MaterialApp>
               </div>
               <div class="mx-3">
                 <MaterialApp>
-                  <a href="http://facebook.com/" target="_blank">
+                  <a class="" on:click={openComingSoon}>
                     <Icon class="has-text-info" size="38px" path={mdiFacebook} />
                   </a>
                 </MaterialApp>
@@ -186,7 +244,7 @@
             <div class="mb-5 mt-6">
               <button on:click={login} class="button is-primary {loading? "is-loading": ""} dm-sans has-text-weight-bold is-size-5" {disabled}>Sign In</button>
             </div>
-            <p class="mb-14 is-size-6-touch dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
+            <p class="mb-14 is-size-7-touch is-size-6-desktop dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
 
         </div>

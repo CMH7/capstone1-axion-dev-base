@@ -1,0 +1,18 @@
+.hover {
+  &-bg {
+    &-grey {
+      &-light {
+        &-grey {
+          &-dark {background-color: hsl(0, 0%, 71%);}
+          &-dark:hover {background-color: hsl(0, 0%, 29%);}
+        }
+      }
+
+      &-dark:hover {background-color: hsl(0, 0%, 29%);}
+      &-light:hover {background-color: hsl(0, 0%, 71%);}
+      &-lighter:hover {background-color: hsl(0, 0%, 86%);}
+    }
+    &-primary:hover {background-color: hsl(238, 49%, 19%);}
+    &-warning:hover {background-color: hsl(48, 100%, 67%);}
+  }
+}

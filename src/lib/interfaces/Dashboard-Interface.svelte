@@ -1,138 +1,87 @@
 <script>
-// @ts-nocheck
-
-  // Transitions
-  import { fade } from 'svelte/transition';
-
-  // Components
-  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
-	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte';
-  
-	import { Icon, MaterialApp } from 'svelte-materialify';
-  import { activeSubject, currentDashboardSubInterface, activeWorkspace, notifs, userData } from "$lib/stores/global-store";
-
-  // Sub interfaces of Dashboard
+  // @ts-nocheck
+  // @ts-ignore
+  import { onMount } from 'svelte'
+  import { fade } from 'svelte/transition'
+  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
+	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
+	import { Breadcrumbs } from 'svelte-materialify'
+  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
-  import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte";
+  import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
+  import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
+  import Fab from '$lib/components/FAB/FAB.svelte'
+  import AddTaskPopUp from '$lib/components/interface-components/sub-interface-components/Add-task-pop-up.svelte'
 
-  import { mdiArrowLeft } from '@mdi/js';
-
-  // Import constants
-  import constants from '$lib/constants';
-  import axios from 'axios';
-
-  let curDashSubInterface;
-  currentDashboardSubInterface.subscribe(value => curDashSubInterface = value);
-
-  // Get the chosen workspace
-  let currentActiveWorkspace, allBoards, workspaceMembers, allTasks = [];
-  activeWorkspace.subscribe(value => {
-    currentActiveWorkspace = value;
-    allBoards = value.boards;
-    workspaceMembers = value.members;
-    for(let i = 0; i < value.boards.length; i++){
-      allTasks[i] = value.boards.tasks;
+  onMount(() => {
+    if($breadCrumbsItems.length < 1) {
+      breadCrumbsItems.set([
+        ...$breadCrumbsItems, 
+        {
+          text: 'Subjects'
+        }
+      ])
     }
-  });
+  })
 
-  // Mouse interactions for animation
-  let ishovering = false;
-
-  let subject_name_focused = false;
-
-  function removeFocus() {
-    document.activeElement.blur();
-  }
+  let width = 0
 </script>
+
+<svelte:head>
+  <title>Dashboard | {$currentDashboardSubInterface}</title>
+</svelte:head>
+
+<svelte:window bind:outerWidth={width} />
 
 <div in:fade class="hero">
   <div class="hero-head px-3">
-    <p class="mb-0 quicksands is-size-1-tablet is-size-3-mobile has-text-weight-bold has-text-info is-unselectable">
-      {#if curDashSubInterface === "Subjects"}
-        Subjects
-      {:else if curDashSubInterface === "Workspaces"}
-      <!-- Back button -->
-      <span>
-        <div on:click={()=>{activeSubject.set(constants.subject); currentDashboardSubInterface.set("Subjects"); ishovering = false}} class="d-inline-block">
-          <MaterialApp>
-            <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
-              <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
-            </div>
-          </MaterialApp>
+    <Breadcrumbs large items={$breadCrumbsItems} class="pb-0" let:item>
+      <div on:click={() => {
+        if(item.text === $activeSubject.name) {
+          currentDashboardSubInterface.set("Subjects")
+          breadCrumbsItems.set([{text: 'Subjects'}])
+        }
+        if(item.text === $activeWorkspace.name) {
+          currentDashboardSubInterface.set("Workspaces")
+          let breadCrumbsItemsCopy = $breadCrumbsItems
+          breadCrumbsItemsCopy.pop()
+          breadCrumbsItemsCopy.pop()
+          breadCrumbsItems.set(breadCrumbsItemsCopy)
+        }
+      }}>
+        <div class="is-size-{width < 426 ? "7": "4"} is-clickable">
+          {item.text}
         </div>
-      </span>
-      
-      <!-- Subject Name -->
-      <span
-        contenteditable="true"
-        on:change={
-          () => {
-            console.log(`${$activeSubject.name}`);
-          }
-        }
-        on:focus={
-          () => {
-            subject_name_focused = true;
-          }
-        }
-        on:keydown={
-          (e) => {
-            if(e.keyCode == 13 && subject_name_focused) {
-              subject_name_focused = false;
-              removeFocus();
-              e.preventDefault();
-            }
-          }
-        }
-        bind:innerHTML={$activeSubject.name}
-        class="has-text-{$activeSubject.color === "warning" || $activeSubject.color === "success" || $activeSubject.color === "info"? `${$activeSubject.color}-dark`: $activeSubject.color}"
-      >
-        {$activeSubject.name}
-      </span>
-      {:else if curDashSubInterface === "Boards"}
-        <!-- Back Button -->
-        <span>
-          <div on:click={()=>{activeWorkspace.set(constants.workspace); currentDashboardSubInterface.set("Workspaces"); ishovering = false}} class="d-inline-block">
-            <MaterialApp>
-              <div on:mouseenter={()=>ishovering = true} on:mouseleave={()=>ishovering = false} class="is-clickable rounded">
-                <Icon class="{ishovering?"has-text-warning":""}" path={mdiArrowLeft} />
-              </div>
-            </MaterialApp>
-          </div>
-        </span>
-        
-        <!-- Workspace name -->
-        <span class="has-text-{currentActiveWorkspace.color === "warning" || currentActiveWorkspace.color === "success" || currentActiveWorkspace.color === "info"? `${currentActiveWorkspace.color}-dark`: currentActiveWorkspace.color}">
-          {currentActiveWorkspace.name}
-        </span>
-      {/if}
-    </p>
+      </div>
+    </Breadcrumbs>
   </div>
 
   <!-- Body -->
-  <div class="hero-body {curDashSubInterface === "Boards"?"py-0":""}">
-    {#if curDashSubInterface === "Subjects"}
+  <div class="hero-body pt-4">
+    <Fab/>
+    <AddTaskPopUp/>
+    {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
-    {:else if curDashSubInterface === "Workspaces"}
+    {:else if $currentDashboardSubInterface === "Workspaces"}
       <WorkspacesInterface />
-    {:else if curDashSubInterface === "Boards"}
+    {:else if $currentDashboardSubInterface === "Boards"}
       <!-- <BoardsInterface /> -->
-
+      <MemberModal/>
       <div class="columns is-mobile pb-5 boardcolumns">
 
         <!-- Boards by user -->
-        <!-- First 3 to be rendered are the default boards: Todo, In progress, & done -->
-        {#each allBoards as board}
+        {#each $allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
-              <Boards {workspaceMembers} name={board.name} color={board.color}>
-                {#each board.tasks as task}
+              <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
+                {#each board.tasks.sort((a, b) => b.level - a.level) as task}
                 <TaskCard {task} />
                 {/each}
               </Boards>
             </div>
           </div>
         {/each}
+
       </div>
     {/if}
   </div>

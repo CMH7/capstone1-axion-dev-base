@@ -1,29 +1,39 @@
 <script>
-// @ts-nocheck
+    // @ts-ignore
+    import { onDestroy } from 'svelte'
+	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
+    import SveltyPicker from 'svelty-picker'
+    import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive } from '$lib/stores/global-store'
+    import axios from 'axios'
+    import constants from '$lib/constants'
+    import bcrypt from 'bcryptjs'
+    import { mdiClose } from '@mdi/js'
 
-	import { Dialog, MaterialApp, Menu, Avatar, Tooltip, Divider } from 'svelte-materialify';
-    import boards from '$lib/sample-case/sample-boards/boards';
-
-    // to open the dialog
-	export let active = false;
-
-    // members of the workspace
-    export let workspaceMembers = [];
-
-    const workspaceMembersLocal = workspaceMembers.map(member => {
-        return {
-            name: `${member.firstName} ${member.lastName}`,
-            profile: `${member.profile}`,
-            selected: false,
-            hover: false,
-        }
-    });
+    const backURI = constants.backURI
 
     // hover effect
-    let hovering = false;
+    let hovering = false
 
-    // sample case
-    let allBoards = boards.boards;
+    let loading = false
+    let disabled = false
+
+    let workspaceMembers = []
+
+    userData.subscribe(value => {
+        value.subjects.map(subject => {
+            if(subject.id === $activeSubject.id) {
+                subject.workspaces.map(workspace => {
+                    if(workspace.id === $activeWorkspace.id){
+                        workspaceMembers = workspace.members
+                    }
+                })
+            }
+        })
+    })
+
+    const workspaceMembersLocal = workspaceMembers.map(member => {
+        return { name: member.name, value: member}
+    })
 
     // colors
     const colors = [
@@ -35,100 +45,187 @@
         {name: "danger", selected:false, hover:false}
     ]
 
-    // active color
-    function activeColor (paramColor){
-        colors.forEach(color => {
-            if (color.name != paramColor.name){
-                color.selected = false;
-            }
-        })
-        paramColor.selected = true
+    const levels = [
+        {name: "Low", value: 1},
+        {name: "Medium", value: 2},
+        {name: "High", value: 3}
+    ]
+    
+    let taskMembers = []
+    let createdBy = `${$userData.firstName} ${$userData.lastName}`
+    let description = ''
+    let dueDateTime = ''
+    const isSubtask = false
+    let taskName = 'Task name'
+    const workspaceID = $activeWorkspace.id
+    let level = ''
+    const taskID = bcrypt.hashSync(`${workspaceID}${taskName}${new Date()}`, Math.ceil(Math.random() * 1))
+    const userID = $userData.id
+    const subjectID = $activeSubject.id
+
+    const fieldClear = () => {
+
+        taskName = ''
+        dueDateTime = ''
+        level = ''
+        description = ''
+        taskMembers = []
     }
 
-    // date picker
-    import SveltyPicker from 'svelty-picker';
-    let myDate = '2021-11-11 14:35';
+    const createTask = async () => {
+        loading = true
+        disabled = true
 
-    // hint
-    import {useHint} from '$lib/stores/global-store';
-    let hintAvailable;
-    useHint.subscribe(value => hintAvailable = value);
+        let msg = ''
+        if(!taskName) msg += 'Task name '
+        if(!taskName && !dueDateTime) msg += ', due date-time '
+        if(taskName && !dueDateTime) msg += 'Due date-time '
+        msg += 'cannot be empty'
+
+        if(!taskName || !dueDateTime) {
+            let notifsCopy = $notifs
+            notifsCopy.push({
+                msg: msg,
+                type: 'error',
+                id: $notifs.length + 1
+            })
+            notifs.set(notifsCopy)
+
+            loading = false
+            disabled = false
+            return false
+        }
+
+        const [ dateValue, timeValue ] = dueDateTime.split(' ')
+        const [ year, month, day ] = dateValue.split('-')
+        const [ hour, minute ] = timeValue.split(':')
+        const semiDue = new Date(parseInt(year), parseInt(month), parseInt(day), parseInt(hour), parseInt(minute), 0, 0)
+        const finalDueDateTime = semiDue.toISOString()
+
+        await axios.post(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
+             ids: {
+                 user: userID,
+                 subject: subjectID,
+                 workspace: workspaceID
+             },
+             task: {
+                 member: taskMembers,
+                 createdBy: createdBy,
+                 description: description,
+                 dueDateTime: finalDueDateTime,
+                 id: taskID,
+                 isSubtask: isSubtask,
+                 level: level,
+                 name: taskName
+             }
+         })
+         .then(res => {
+             if(res.data) {
+                 const data = res.data
+                 userData.set(data)
+                 loading = false
+                 disabled = false
+                 let notifsCopy = $notifs
+                 notifsCopy.push({
+                     msg: 'Task created',
+                     type: 'success',
+                     id: notifsCopy.length + 1
+                 })
+                 notifs.set(notifsCopy)
+                 addTaskModalActive.set(false)
+             }
+         })
+         .catch(err => {
+             let notifsCopy = $notifs
+             notifsCopy.push({
+                 msg: `Create task error, ${err}`,
+                 type: 'error',
+                 id: $notifs.length + 1
+             })
+             notifs.set(notifsCopy)
+             loading = false
+             disabled = false
+        })
+        .finally(() => fieldClear())
+    }
+
+    onDestroy(() => addTaskModalActive.set(false))
 </script>
 
 <MaterialApp>
-	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
+	<Dialog persistent class="maxmins-w-450-dt-to-mb-90p overflow-x-hidden pa-4 has-transition has-background-white" bind:active={$addTaskModalActive}>
 
-        <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
+        <div class="mb-2 min-w-100p is-flex is-justify-content-space-between">
+            <div class="pl-1 has-text-grey-dark has-text-weight-bold dm-sans">
+                New Task
+            </div>
+            <div
+                class="is-clickable"
+                on:click={() => addTaskModalActive.set(false)}
+            >
+                <Icon path={mdiClose}/>
+            </div>
+        </div>
 
+        <div class="is-flex is-align-items-center is-flex-wrap-wrap is-multiline">
             <!-- input -->
-            <div class="is-flex is-justify-content-space-between is-align-items-center" style="width: 100%">
-                <!-- Task name -->
-                <p class="quicksands mb-0 has-text-white has-text-weight-bold column is-4">Task Name</p>
-                <input class="p-2 input is-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" type="text" style="width:80%"/>
-            </div>
+            <!-- Task name -->
+            <input {disabled} class="min-w-100p py-5 pl-2 input" type="text" bind:value={taskName} />
 
-            <div class="is-flex is-justify-content-flex-start is-align-items-center" style="width: 100%">
+            <!-- due and level -->
+            <div {disabled} class="maxmins-w-100p is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between my-3">
                 <!-- due date -->
-                <p class="quicksands mb-0 has-text-white has-text-weight-bold column is-4">Due Date</p>
-                <SveltyPicker inputClasses="form-control has-background-white rounded py-2 px-2 dmsans" format="yyyy-mm-dd hh:ii" bind:value={myDate}/>
-            </div>
-
-            <div class="is-flex is-justify-content-flex-start is-align-items-center" style="width: 100%">
-                <!-- status -->
-                <p class="quicksands mb-0 has-text-white has-text-weight-bold column is-4">Status</p>
-                <Menu>
-                    <div slot="activator" class="select">
-                        <select>
-                            <option>Todo</option>    
-                            <option>In progress</option>    
-                            <option>Done</option>
-                            {#each allBoards as board}
-                                <option>{board.name}</option>    
-                            {/each}    
-                        </select>
-                    </div>
-                </Menu>
-            </div>
-
-            <div class="is-flex is-justify-content-flex-start is-align-items-center" style="width: 100%">
-                <!-- members -->
-                <p class="quicksands mb-0 has-text-white has-text-weight-bold column is-4">Members</p>
-                <div class="is-flex">
-                    {#each workspaceMembersLocal as member}
-                    <div on:mouseleave={()=>member.hover = false} on:mouseenter={()=>member.hover = true} on:click={()=>{if(member.selected){member.selected = false}else{member.selected = true}}}>
-                        <Tooltip bottom>
-                            <Avatar size="35px" class="mx-1 mb-1 is-clickable" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
-                                <img class="has-transition" style="border: {member.selected || member.hover ? "5" : "1"}px solid white;" src="{member.profile}" alt="{member.name}" title="{member.name}" />
-                            </Avatar>
-                            <span slot="tip">
-                                {#if hintAvailable}
-                                    {member.name}
-                                    <Divider class="m-0 p-0" />
-                                    {#if !member.selected}
-                                        Click to add as task member
-                                    {:else}
-                                        Click to remove as task member
-                                    {/if}
-                                {:else}
-                                    {member.name}
-                                {/if}
-                            </span>
-                        </Tooltip>
-                    </div>
-                    {/each}
+                <SveltyPicker
+                    placeholder="Due date"
+                    inputClasses="maxmins-w-300-dt-to-mb-100p form-control rounded py-4 px-2 dmsans shadow-inside-default"
+                    format="yyyy-mm-dd hh:ii"
+                    bind:value={dueDateTime}
+                />
+    
+                <!-- Levels or priority -->
+                <div class="maxmins-w-100-dt-to-mb-100p">
+                    <Select
+                        outlined
+                        dense
+                        items={levels}
+                        bind:value={level}
+                    >
+                        Level
+                    </Select>
                 </div>
             </div>
 
-            <!-- colors -->
-            <div class="is-flex is-justify-content-center" style="width: 100%">
-                {#each colors as color}
-                <div class="has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name}" on:click={() => activeColor(color)} on:mouseenter={() => color.hover = true} on:mouseleave={() => color.hover = false} style="width:40px; height:40px;border:{color.selected || color.hover ? "5" : "1"}px solid {color.hover?"black":"white"};" />
-                {/each}
-            </div>
+            <!-- members -->
+            <Select
+                {disabled}
+                chips
+                multiple
+                items={workspaceMembersLocal}
+                outlined
+                bind:value={taskMembers}
+                class="maxmins-w-100p rounded mb-2"
+
+            >
+                Asignee/s
+            </Select>
+
+            <!-- description -->
+            <Textarea
+                {disabled}
+                outlined
+                class="has-background-white rounded mt-0 min-w-100p"
+                bind:value={description}
+            >Description</Textarea>
 
             <!-- create button -->
             <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-                <button on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} class="button has-transition {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;">
+                <button
+                    {disabled}
+                    on:click={createTask}
+                    on:mouseenter={() => hovering = true }
+                    on:mouseleave={() => hovering = false }
+                    class="button has-transition {hovering ? "has-background-grey" : ""} {loading? "is-loading": ""}" style="letter-spacing: 1px;"
+                >
                     <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
                 </button>
             </div>

@@ -1,24 +1,43 @@
 <script>
-// @ts-nocheck
+  // @ts-nocheck
+  import HomeFooter from "$lib/components/Home-footer.svelte"
+  import SignupHeader from "$lib/components/Signup-header.svelte"
+  import { Icon, Divider, MaterialApp } from "svelte-materialify"
+  import {mdiGoogle, mdiFacebook} from "@mdi/js"
+  import {fade} from 'svelte/transition'
+  import axios from 'axios'
+  import bcrypt from 'bcryptjs'
+  import {notifs} from '$lib/stores/global-store'
+  import NotificationContainer from "$lib/components/Notification-container.svelte"
+  import { goto } from '$app/navigation'
+  import constants from '$lib/constants'
+  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+  
 
-  import HomeFooter from "$lib/components/Home-footer.svelte";
-  import SignupHeader from "$lib/components/Signup-header.svelte";
-  import { Icon, Divider, MaterialApp } from "svelte-materialify";
-  import {mdiGoogle, mdiFacebook} from "@mdi/js";
-  import {fade} from 'svelte/transition';
-  import axios from 'axios';
-  import bcrypt from 'bcryptjs';
-  import {notifs} from '$lib/stores/global-store';
-  import NotificationContainer from "$lib/components/Notification-container.svelte";
-  import Notification from "$lib/components/Notification.svelte";
-  import { goto } from '$app/navigation';
-import { trusted } from "svelte/internal";
+  const backURI = constants.backURI
+
+  const isEmailValid = (email) => {
+    const emailRegexp = new RegExp(
+      /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+    )
+    return emailRegexp.test(email)
+  }
+
+  const isPassValid = (pass) => {
+    const passRegexp = new RegExp(/^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!&$%&? "]).*$/)
+    return passRegexp.test(pass)
+  }
+
+  const items = [
+    {name: 'Male', value: 'Male'},
+    {name: 'Female', value: 'Female'}
+  ]
 
     // inputs values
   let firstName = "",
       lastName = "",
       age = "",
-      gender = "",
+      gender = "Female",
       email = "",
       school = "",
       course = "",
@@ -32,115 +51,175 @@ import { trusted } from "svelte/internal";
   
 
   function createNewUser(){
+    if(!isEmailValid(email)) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Email is invalid',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      return false
+    }
+    if(!isPassValid(password)) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Password is invalid',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      return false
+    }
+
     loading = true
     disabled = true
-    if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || year === "" || password === "" || repassword === ""){
 
-      let notifsCopy = $notifs;
+    if(firstName === "" || lastName === "" || age === "" || gender === "" || school === "" || course === "" || year === "" || repassword === ""){
       let msg = "please input a valid ";
       if (firstName === "") msg += "first name, ";
       if (lastName === "") msg += "last name, ";
       if (age === "") msg += "age, ";
       if (gender === "") msg += "gender, ";
-      if (email === "") msg += "email, ";
       if (school === "") msg += "school, ";
       if (course === "") msg += "course, ";
       if (year === "") msg += "year, ";
-      if (password === "") msg += "password, ";
       if (repassword === "") msg += "repassword";
-      
       msg += '.'
 
-      notifsCopy.push(
-        {
-          msg: msg,
-          type: "error"
-        }
-      );
-      notifs.set(notifsCopy);
-      
-      loading = false
-      disabled = false
-
-    }else if(password !== repassword){
-
       let notifsCopy = $notifs
-
-      notifsCopy.push(
-        {
-          msg: 'Password does not match. Please try again.',
-          type: 'error'
-        }
-      )
+      notifsCopy.push({
+          msg: msg,
+          type: "error",
+          id: $notifs.length + 1
+      })
       notifs.set(notifsCopy)
 
       loading = false
       disabled = false
+    }else if(password !== repassword){
+      let notifsCopy = $notifs
+      notifsCopy.push({
+          msg: 'Password does not match. Please try again.',
+          type: 'error',
+          id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      password = ''
+      repassword = ''
+      loading = false
+      disabled = false
     }else{
-      password = bcrypt.hashSync(password, password.length);
+      let notifss = $notifs
+      notifss.push({
+        msg: 'Checking account availability.',
+        type: 'success',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifss)
 
-      axios.post('http://localhost:8080/Signup',  {
-        firstName: firstName,
-        lastName: lastName,
-        age: parseInt(age),
-        gender: gender,
-        email: email,
-        school: school,
-        course: course,
-        year: parseInt(year),
-        password: password,
-        profile: "",
-        useHint: true,
-        subjects: [],
-        lastActive: new Date()
-      }).then(res=>{
-        if(res.data.valid) {
-          let notifsCopy = $notifs;
-          notifsCopy.push(
-            {
-              msg: "Creation successful",
-              type: "success"
-            }
-          );
+      axios.post(`${backURI}/validUser`, {email: email})
+      .then(res => {
+        if(res.data) {
+          let notifsCopy = $notifs
+          notifsCopy.push({
+            msg: 'Email used has an existing account.',
+            type: 'error',
+            id: $notifs.length + 1
+          })
           notifs.set(notifsCopy)
-          loading = false
-          disabled = false 
-          goto('/Signin', {replaceState: true})
-        }
-        if(!res.data.valid) {
-          let notifsCopy = $notifs;
-          notifsCopy.push(
-            {
-              msg: "Creation failed. Please try again",
-              type: "error"
-            }
-          );
-          notifs.set(notifsCopy)
+
           loading = false
           disabled = false
+        }else{
+          const finalPassword = bcrypt.hashSync(password, password.length)
+          axios.post(`${backURI}/Signup`,  {
+            subjects: [],
+            notifications: [],
+            age: parseInt(age),
+            course: course,
+            email: email,
+            firstName: firstName,
+            gender: gender,
+            lastName: lastName,
+            password: finalPassword,
+            profile: "",
+            school: school,
+            useHint: true,
+            year: parseInt(year),
+            lastActive: new Date(),
+            bio: ''
+          }).then(res=>{
+            if(res.data.valid) {
+              let notifsCopy = $notifs
+              notifsCopy.push({
+                  msg: "Creation successful",
+                  type: "success",
+                  id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+              loading = false
+              disabled = false 
+              goto('/Signin', {replaceState: true})
+            }
+            if(!res.data.valid) {
+              let notifsCopy = $notifs;
+              notifsCopy.push({
+                  msg: "Creation failed. Please try again",
+                  type: "error",
+                  id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+              loading = false
+              disabled = false
+            }
+          }).catch(err=>{
+            let notifsCopy = $notifs
+            notifsCopy.push(
+              {
+                msg: `Database error, ${err}`,
+                type: "error",
+                id: $notifs.length + 1
+              }
+            );
+            notifs.set(notifsCopy)
+            loading = false
+            disabled = false
+          })
         }
-      }).catch(err=>{
-        let notifsCopy = $notifs
-        notifsCopy.push(
-          {
-            msg:"Database error",
-            type:"error"
-          }
-        );
-        notifs.set(notifsCopy)
-        loading = false
-        disabled = false
       })
+      .catch(err => {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `Error checking existing account. ${err}`,
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+      })
+      .finally(() => {
+        // Do something here
+      })
+    }
+  }
 
+  let comingSoonModalOpen = false
+  const openComingSoon = () => {
+    if (!comingSoonModalOpen) {
+      comingSoonModalOpen = true
+    } else {
+      comingSoonModalOpen = false
+      comingSoonModalOpen = true
     }
   }
 </script>
 
-<NotificationContainer>
-  {#each $notifs as notif}
-  <Notification msg={notif.msg}  type={notif.type}/>
-  {/each}
-</NotificationContainer>
+<svelte:head>
+  <title>Axion | Signup</title>
+</svelte:head>
+
+<NotificationContainer />
+<ComingSoonModal active={comingSoonModalOpen}/>
 
 <SignupHeader/>
 <div in:fade class="hero is-fullheight-with-navbar">
@@ -153,7 +232,6 @@ import { trusted } from "svelte/internal";
       <!-- left side input -->
       <div class="column is-4-tablet is-8-mobile">
         <div class=" d-flex flex-wrap">
-
           <!-- First name -->
           <input {disabled} required bind:value={firstName} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="First Name">
           
@@ -164,18 +242,22 @@ import { trusted } from "svelte/internal";
           <input {disabled} required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%" type="text" placeholder="Age">
 
           <!-- Gender -->
-          <input {disabled} required bind:value={gender} class="input quicksands my-3 has-background-light" style="width: 65%;" type="text" placeholder="Gender">
+          <div class="select quicksands my-3 w-65p">
+            <select bind:value={gender} class="w-100p has-background-light">
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Rather not say">Rather not say</option>
+            </select>
+          </div>
           
           <!-- E-mail -->
           <input {disabled} required bind:value={email} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="Email">
-
         </div>
       </div>
 
       <!-- right side input -->
       <div class="column is-4-tablet is-8-mobile">
         <div class=" d-flex flex-wrap">
-
           <!-- School name -->
           <input {disabled} required bind:value={school} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
 
@@ -190,18 +272,16 @@ import { trusted } from "svelte/internal";
           
           <!-- Re-password -->
           <input {disabled} required bind:value={repassword} class="input quicksands has-background-light" style="width: 48%;" type="password" placeholder="Confirm Password">
-
         </div>
       </div>
-      
+
       <div class="column p-0 is-12"/>
       <div class="column p-0 is-5">
         <MaterialApp>
           <Divider />
         </MaterialApp>
-        </div>
+      </div>
       <div class="column p-0 is-12"/>
-
       <div class="column p-0 is-12">
         <p class="m-0 is-size-5 has-text-black has-text-weight-semibold has-text-centered">with</p>
       </div>
@@ -210,34 +290,33 @@ import { trusted } from "svelte/internal";
         <div class="is-flex is-justify-content-center">
           <div class="mx-3">
             <MaterialApp>
-              <a href="http://gmail.com/" target="_blank">
+              <div class="is-clickable" on:click={openComingSoon}>
                 <Icon class="has-text-danger-dark" size="40px" path={mdiGoogle} />
-              </a>
+              </div>
             </MaterialApp>
           </div>
 
           <div class="mx-3">
             <MaterialApp>
-              <a href="http://facebook.com/" target="_blank">
+              <div class="is-clickable" on:click={openComingSoon}>
                 <Icon class="has-text-info" size="40px" path={mdiFacebook} />
-              </a>
+              </div>
             </MaterialApp>
           </div>
         </div>
       </div>
 
-      <div class="column is-12 p-0 pt-7 mb-5">
+      <div class="column is-12 p-0 pt-7 pb-6 mb-8">
         <div class="is-flex flex-column is-align-items-center">
-          <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Sign Up</button>
-          <p class="pt-4 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
+          <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Submit</button>
+          <p class="pt-4 pb-6 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
         </div>
       </div>
-
     </div>
+
+    
   </div>
-  
   <div class="hero-foot">
     <HomeFooter/>
   </div>
-
 </div>

@@ -1,4 +1,5 @@
 <script>
+  // @ts-ignore
   import {goto} from '$app/navigation';
 </script>
 

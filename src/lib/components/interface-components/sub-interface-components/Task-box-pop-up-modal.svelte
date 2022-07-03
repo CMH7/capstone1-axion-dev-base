@@ -15,24 +15,31 @@
     Avatar,
     MaterialApp } from 'svelte-materialify';
 
-  import { mdiStarSettings, mdiStarSettingsOutline } from '@mdi/js';
+  import { mdiStarSettings, mdiStarSettingsOutline } from '@mdi/js'
+  import { userData } from '$lib/stores/global-store'
 
   // Required params
 
   export let task = {
+    members: [],
+    subtasks: [],
+    conversations: [],
+    viewers: [],
     createdBy: "",
     createdOn: new Date(),
     description: "",
-    dueDateTime: new Date(),
-    id: 0,
+    dueDateTime: '',
+    id: "",
     isFavorite: false,
     isSubtask: false,
     level: 0,
-    members: [],
     name: "",
-    status: "",
-    subtasks: []
+    status: ""
   }
+
+  const [ dateValue, timeValue ] = task.dueDateTime.split('T')
+  const [ year, month, date ] = dateValue.split('-')
+  const [ hour, minute, other ] = timeValue.split(':')
 
   // Modal activeness
   export let active = false;
@@ -41,13 +48,9 @@
   }
 
   // Current tab as int 0 for subtasks and 1 for descriptions
-  let currentTab = 0;
+  let currentTab = 0
 
-  // useHint store
-  import { useHint } from '$lib/stores/global-store';
-  let hintAvailable;
-  useHint.set(true);
-  useHint.subscribe(value => hintAvailable = value);
+  let hintAvailable = $userData.useHint
 </script>
 
 <MaterialApp>

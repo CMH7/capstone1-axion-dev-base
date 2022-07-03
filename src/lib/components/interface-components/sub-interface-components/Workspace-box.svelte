@@ -1,25 +1,38 @@
 <script>
-  import { activeWorkspace, currentDashboardSubInterface} from "$lib/stores/global-store";
-
-  import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js";
-  import { Icon, MaterialApp } from "svelte-materialify";
+  import { activeWorkspace, allBoards, breadCrumbsItems, currentDashboardSubInterface} from "$lib/stores/global-store"
+  import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js"
+  import { Icon, MaterialApp } from "svelte-materialify"
 
   // export only the active workspace
   export let workspace = {
-    boards: [],
-    color: "primary",
-    id: 0,
-    isFavorite: false,
     members: [],
-    name: ""
-  };
+    boards: [],
+    admins: [],
+    color: "primary",
+    id: "",
+    isFavorite: false,
+    name: "",
+    owned: true,
+    createdBy: ""
+  }
 
   // Hovering effects
-  let mouseEnter = false;
-  let mouseEnterStar = false;
+  let mouseEnter = false
+  let mouseEnterStar = false
 </script>
 
-<div on:click={()=>{activeWorkspace.set(workspace); currentDashboardSubInterface.set("Boards")}} on:mouseenter={()=>mouseEnter = true} on:mouseleave={()=> mouseEnter = false} class="has-transition notification rounded-xl {mouseEnter?`has-background-${workspace.color}-dark`:""} is-{workspace.color}">
+<div
+  on:click={() => {
+    activeWorkspace.set(workspace)
+    allBoards.set(workspace.boards)
+    currentDashboardSubInterface.set("Boards")
+    breadCrumbsItems.set([...$breadCrumbsItems, {text: workspace.name}])
+    breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
+  }}
+  on:mouseenter={() => mouseEnter = true }
+  on:mouseleave={() => mouseEnter = false }
+  class="has-transition notification rounded-xl {mouseEnter?`has-background-${workspace.color}-dark`:""} is-{workspace.color}"
+>
   <div>
     <MaterialApp>
       {#if !workspace.isFavorite}

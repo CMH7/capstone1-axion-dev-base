@@ -1,7 +1,8 @@
-import { writable } from "svelte/store";
+import { writable } from "svelte/store"
+import constants from "$lib/constants"
 
 // User data and information
-export let userData = writable();
+export let userData = writable(constants.user)
 
 // This will determine the button pressed in navbar landing pages
 export const active = writable("");
@@ -21,22 +22,28 @@ export let currentIndex = writable();
 // THis will determine the active subject (users clicked subject)
 export let activeSubject = writable(
   {
-    name: "",
     color: "primary",
-    id: 0,
-    isFavorite: false
+    id: "",
+    isFavorite: false,
+    name: "",
+    workspaces: [],
+    owned: true,
+    createdBy: ""
   }
 );
 
 // This will determine the current active workspace (user selected workspace)
 export let activeWorkspace = writable(
   {
-    boards: [],
-    color: "primary",
-    id: 0,
-    isFavorite: false,
     members: [],
-    name: ""
+    boards: [],
+    admins: [],
+    color: "primary",
+    id: "",
+    isFavorite: false,
+    name: "",
+    owned: true,
+    createdBy: ""
   }
 );
 
@@ -63,6 +70,32 @@ export let snack = writable(
   {
     msg: "",
     active: false,
-    yes: () => { }
+    yes: () => { },
+    no: () => { }
   }
 )
+
+// Member Interface (modal) activeness
+export let memberModalActive = writable(false)
+export let memberModalLoading = writable(true)
+
+// All users
+export let allUsers = writable([])
+
+// All boards of the current workspace
+export let allBoards = writable([])
+
+// add subject modal active
+export let addSubjectModalActive = writable(false)
+
+// add workspace modal active
+export let addWorkspaceModalActive = writable(false)
+
+// add task modal active
+export let addTaskModalActive = writable(false)
+
+// breadcrumbds items
+export let breadCrumbsItems = writable([])
+
+// modal chosen colors
+export let modalChosenColor = writable('primary')
