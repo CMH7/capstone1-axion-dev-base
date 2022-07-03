@@ -7,7 +7,7 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn } from "$lib/stores/global-store"
+  import { currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
   import CalendarInterface from "$lib/interfaces/Calendar-interface.svelte"
@@ -38,6 +38,10 @@
 
   let width = 0
 </script>
+
+<svelte:head>
+  <title>Dashboard | {$currentDashboardSubInterface}</title>
+</svelte:head>
 
 <svelte:window bind:outerWidth={width}/>
 

@@ -21,8 +21,6 @@
     status: ""
   }
 
-  export let allMembers = []
-
   const [ dateValue, timeValue ] = task.dueDateTime.split('T')
   const [ year, month, date ] = dateValue.split('-')
   const [ hour, minute, other ] = timeValue.split(':')
@@ -120,23 +118,23 @@
   
         <!-- Members part -->
         <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
-          {#if allMembers.length > 3}
+          {#if task.members.length > 3}
             <Tooltip class="mt-1" bottom bind:active={show}>
               <!-- Icon of how many members are there other than 3 most members -->
-              <Avatar size=20px class="is-unselectable has-background-success text-caption" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); position: absolute; right: 1%; bottom: 5%;">+{allMembers.length - 3}</Avatar>
+              <Avatar size=20px class="is-unselectable has-background-success text-caption" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); position: absolute; right: 1%; bottom: 5%;">+{task.members.length - 3}</Avatar>
     
               <!-- 3 most members -->
               {#each Array(3) as _, i}
                   <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); position: absolute; right: {(i + 1) * 5}%; bottom: 5%;">
-                    <img src="{allMembers[i].profile}" alt="{allMembers[i].firstName}" />
+                    <img src="{task.members[i].profile}" alt="{task.members[i].name}" />
                   </Avatar>
               {/each}
               <span slot="tip">
                 <p class="has-text-left mb-0">
                   Assigned Members:
                   <Divider class="p-0 mt-1 mb-2" />
-                  {#each allMembers as member}
-                    {member.firstName} {member.lastName} <br>
+                  {#each task.members as member}
+                    {member.name} <br>
                   {/each}
                 </p>
               </span>
@@ -146,7 +144,7 @@
             <!-- 3 or less members -->
             <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
               <Tooltip bottom bind:active={show}>
-                {#each allMembers as member}
+                {#each task.members as member}
                   <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
                     <img src="{member.profile}" alt="Avatar"/>
                   </Avatar>
@@ -155,7 +153,7 @@
                   <p class="has-text-left mb-0">
                     Assigned Members:
                     <Divider class="p-0 mt-1 mb-2" />
-                    {#each allMembers as member}
+                    {#each task.members as member}
                       {member.firstName} {member.lastName} <br>
                     {/each}
                   </p>

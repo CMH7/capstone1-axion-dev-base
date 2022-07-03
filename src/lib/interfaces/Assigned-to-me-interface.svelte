@@ -1,14 +1,30 @@
 <script>
-  // Transitions
-  import { fade } from 'svelte/transition';
-  
-  //Task-Card
-  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte';
+  import { fade } from 'svelte/transition'
+  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
+  import { userData } from '$lib/stores/global-store'
 
-  //test case tasks
-  import tasks from '$lib/sample-case/sample-tasks/tasks';
-  let allTasks = tasks.tasks;
+  let assignedTasks = []
+  userData.subscribe(account => {
+    account.subjects.map(subject => {
+      subject.workspaces.map(workspace => {
+        workspace.boards.map(board => {
+          board.tasks.map(task => {
+            task.members.every(member => {
+              if(member.email === account.email) {
+                assignedTasks.push(task)
+                return false
+              }
+            })
+          })
+        })
+      })
+    })
+  })
 </script>
+
+<svelte:head>
+  <title>Assigned to me</title>
+</svelte:head>
 
 <div in:fade class="hero">
   <div class="hero-head px-3">
@@ -18,9 +34,9 @@
   </div>
   <div class="hero-body pt-0 mt-0">
     <div class="columns is-multiline">
-      {#each allTasks as task}  
+      {#each assignedTasks as task}  
         <div class="column">
-          <TaskCard name="{task.name}" level="{task.level}" isFavorite={task.isFavorite} duedate="{task.duedate}" allMembers={task.allMembers} subtasksCount={task.subtasks.length} />
+          <TaskCard {task} />
         </div>
       {/each}
     </div>

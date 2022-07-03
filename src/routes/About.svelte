@@ -10,6 +10,10 @@
   let value = 0;
 </script>
 
+<svelte:head>
+  <title>Axion | About</title>
+</svelte:head>
+
 <MaterialApp> 
   <!-- header -->
   <HomeHeader/>

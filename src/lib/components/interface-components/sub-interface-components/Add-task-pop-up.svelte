@@ -11,9 +11,6 @@
 
     const backURI = constants.backURI
 
-    // to open the dialog
-	export let active = false
-
     // hover effect
     let hovering = false
 
@@ -164,7 +161,7 @@
             </div>
             <div
                 class="is-clickable"
-                on:click={() => active = false}
+                on:click={() => addTaskModalActive.set(false)}
             >
                 <Icon path={mdiClose}/>
             </div>
