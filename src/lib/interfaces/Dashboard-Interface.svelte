@@ -1,72 +1,55 @@
 <script>
   // @ts-nocheck
+  // @ts-ignore
+  import { onMount } from 'svelte'
   import { fade } from 'svelte/transition'
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
-	import { Icon, MaterialApp } from 'svelte-materialify'
-  import { activeSubject, currentDashboardSubInterface, activeWorkspace, allBoards } from "$lib/stores/global-store"
+	import { Breadcrumbs } from 'svelte-materialify'
+  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
-  import { mdiArrowLeft } from '@mdi/js'
-  import constants from '$lib/constants'
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
   import Fab from '$lib/components/FAB/FAB.svelte'
   import AddTaskPopUp from '$lib/components/interface-components/sub-interface-components/Add-task-pop-up.svelte'
 
+  onMount(() => {
+    if($breadCrumbsItems.length < 1) {
+      breadCrumbsItems.set([
+        ...$breadCrumbsItems, 
+        {
+          text: 'Subjects'
+        }
+      ])
+    }
+  })
+
+  let width = 0
 </script>
+
+<svelte:window bind:outerWidth={width} />
 
 <div in:fade class="hero">
   <div class="hero-head px-3">
-    <p class="mb-0 quicksands is-size-1-tablet is-size-3-mobile has-text-weight-bold has-text-info is-unselectable">
-      {#if $currentDashboardSubInterface === "Subjects"}
-        Subjects
-      {:else if $currentDashboardSubInterface === "Workspaces"}
-      <!-- Back button -->
-      <span>
-        <div
-          on:click={() => {
-            activeSubject.set(constants.subject)
-            currentDashboardSubInterface.set("Subjects")
-          }}
-          class="d-inline-block"
-        >
-          <MaterialApp>
-            <div class="is-clickable rounded">
-              <Icon class="hover-txt-color-warning" path={mdiArrowLeft} />
-            </div>
-          </MaterialApp>
+    <Breadcrumbs large items={$breadCrumbsItems} class="pb-0" let:item>
+      <div on:click={() => {
+        if(item.text === $activeSubject.name) {
+          currentDashboardSubInterface.set("Subjects")
+          breadCrumbsItems.set([{text: 'Subjects'}])
+        }
+        if(item.text === $activeWorkspace.name) {
+          currentDashboardSubInterface.set("Workspaces")
+          let breadCrumbsItemsCopy = $breadCrumbsItems
+          breadCrumbsItemsCopy.pop()
+          breadCrumbsItemsCopy.pop()
+          breadCrumbsItems.set(breadCrumbsItemsCopy)
+        }
+      }}>
+        <div class="is-size-{width < 426 ? "7": "4"} is-clickable">
+          {item.text}
         </div>
-      </span>
-      
-      <!-- Subject Name -->
-      <span class="has-text-{$activeSubject.color === "warning" || $activeSubject.color === "success" || $activeSubject.color === "info"? `${$activeSubject.color}-dark`: $activeSubject.color}"
-      >
-        {$activeSubject.name}
-      </span>
-      {:else if $currentDashboardSubInterface === "Boards"}
-        <!-- Back Button -->
-        <span>
-          <div
-            on:click={() => {
-              activeWorkspace.set(constants.workspace)
-              currentDashboardSubInterface.set("Workspaces")
-            }}
-            class="d-inline-block"
-          >
-            <MaterialApp>
-              <div class="is-clickable rounded">
-                <Icon class="hover-txt-color-warning" path={mdiArrowLeft} />
-              </div>
-            </MaterialApp>
-          </div>
-        </span>
-        
-        <!-- Workspace name -->
-        <span class="has-text-{$activeWorkspace.color === "warning" || $activeWorkspace.color === "success" || $activeWorkspace.color === "info"? `${$activeWorkspace.color}-dark`: $activeWorkspace.color}">
-          {$activeWorkspace.name}
-        </span>
-      {/if}
-    </p>
+      </div>
+    </Breadcrumbs>
   </div>
 
   <!-- Body -->
