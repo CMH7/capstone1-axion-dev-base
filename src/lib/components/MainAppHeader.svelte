@@ -1,15 +1,11 @@
 <script>
-// @ts-nocheck
-
-  import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify";
-  import {mdiMenu, mdiAccount, mdiBackburger, mdiForwardburger } from '@mdi/js';
-  import { currentIndex, currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive, allUsers, notifs, memberModalLoading, userData, activeWorkspace } from "$lib/stores/global-store";
+  // @ts-nocheck
+  import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify"
+  import {mdiMenu, mdiAccount } from '@mdi/js'
+  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive, allUsers, notifs, memberModalLoading, userData, activeWorkspace } from "$lib/stores/global-store"
   import { goto } from "$app/navigation"
   import axios from 'axios'
   import constants from '$lib/constants'
-
-  let collapsed = false
-  let hovered = false
 
   const backURI = constants.backURI
 
@@ -34,15 +30,13 @@
       })
       notifs.set(notifsCopy)
     })
-    .finally(() => {
-      memberModalLoading.set(false)
-    })
+    .finally(() => memberModalLoading.set(false))
   }
 </script>
 
 <div class="block mb-0">
   <MaterialApp>
-    <AppBar fixed style="width: 100%;" class="py-1 has-background-primary" {collapsed} >
+    <AppBar fixed style="width: 100%;" class="py-1 has-background-primary">
 
       <!-- Burger -->
       <div slot="icon">
@@ -89,44 +83,14 @@
         <!-- Workspaces tool bar -->
         <div class="{$currentDashboardSubInterface === "Boards"? "": "undisp"}">
           <!-- Members tool button -->
-          <div class="{collapsed ? "undisp":""}">
-            {#if $useHint }
-              <Tooltip bottom class="mt-1">
-                <div on:click={getAllUsers}>
-                  <Button  text class="has-text-white quicksands px-2 py-3">
-                    Members
-                  </Button>
-                </div>
-                <span slot='tip'>
-                  Click to open members interface
-                </span>
-              </Tooltip>
-              {:else}
-              <div on:click={getAllUsers}>
-                <Button text class="has-text-white quicksands px-2 py-3">
-                  Members
-                </Button>
-              </div>
-            {/if}
+          <div on:click={getAllUsers}>
+            <Button text class="has-text-white quicksands px-2 py-3">
+              Members
+            </Button>
           </div>
           <!-- End Members tool button -->
         </div>
         <!-- End Workspaces tool bar -->
-      </div>
-
-      <!-- Collapsers -->
-      <!-- Collapse the bar -->
-      <div class="is-clickable mr-2 rounded-circle has-transition hover-bg-grey-lighter {collapsed?"undisp":""}" on:click={()=>{collapsed = true; ismini.set(true); sidebarActive.set(false)}}>
-        <Avatar class="p-5" size="25px">
-          <Icon class="has-text-white {hovered?"has-text-primary":""}" path={mdiBackburger} />
-        </Avatar>
-      </div>
-
-      <!-- Uncollapse the bar -->
-      <div class="is-clickable mr-2 rounded-circle has-transition hover-bg-grey-lighter {collapsed?"":"undisp"}" on:click={()=>{collapsed = false; sidebarActive.set(true)}}>
-        <Avatar class="p-4" size="20px">
-          <Icon class="white-text" path={mdiForwardburger} />
-        </Avatar>
       </div>
 
       <!-- Account Button -->
