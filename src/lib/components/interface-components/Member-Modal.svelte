@@ -45,17 +45,6 @@
           <div
             slot='append'
             class="is-clickable"
-            on:click={ () => {
-              let notifsCopy = $notifs
-              notifsCopy.push(
-                {
-                  msg: 'Search Clicked',
-                  type: 'success',
-                  id: $notifs.length + 1
-                }
-              )
-              notifs.set(notifsCopy)
-            }}
           >
             <Icon path={mdiMagnify}/>
           </div>
