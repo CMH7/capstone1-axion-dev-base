@@ -15,9 +15,6 @@
     })
   })
 
-  // mouse hover effect
-  let hovering = false
-
   function onKeyDown(e) {
     if(e.ctrlKey && e.altKey && e.keyCode == 87) {
       popupActive = false
@@ -32,7 +29,7 @@
 
 <div class="columns is-multiline is-variable is-2 {width < 426 ? "pl-4": ""}">
   <AddWorkspacePopUp/>
-  {#if allworkspaces.length == 0}
+  {#if allworkspaces.length < 1}
     <div class="section">
       <div class="container">
         <p>

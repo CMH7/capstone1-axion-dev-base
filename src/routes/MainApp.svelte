@@ -15,7 +15,6 @@
   import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
   import NotificationContainer from '$lib/components/Notification-container.svelte'
   import { goto } from '$app/navigation'
-  import FAB from '$lib/components/FAB/FAB.svelte'
 
   onMount(()=>{
     history.pushState(null, null, location.href);
@@ -87,7 +86,6 @@
   </div>
 </Snackbar>
 <div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 426 && $ismini ? "pl-16" : ""}`:""}">
-  <FAB />
   {#if $currentInterface === "Dashboard"}
     <DashboardInterface />
   {:else if $currentInterface === "Assigned to me"}

@@ -1,9 +1,7 @@
 <script>
-  import { mdiCog, mdiPlus } from "@mdi/js"
+  import { mdiCog } from "@mdi/js"
   import { MaterialApp, Icon, Button } from "svelte-materialify"
-  import SubjectBox from "../Subject-box.svelte"
   import { fade } from 'svelte/transition'
-  import AddTaskPopUp from "./Add-task-pop-up.svelte"
 
   export let color = "success"
   export let name = "Unknown"
@@ -11,10 +9,7 @@
 
   // variables
   let isHoveringAddIcon = false
-  let popupActive = false
 </script>
-
-<AddTaskPopUp active={popupActive}/>
 
 <div in:fade class="notification px-2 py-1 rounded-lg elevation-3 has-background-{color}-light">
   
@@ -28,36 +23,6 @@
     {taskCount} {taskCount > 1?"Tasks":"Task"}
   </p>
 
-  <!-- Add Task Icon Button -->
-  {#if name === "Todo"}
-  <div
-    on:mouseenter={() => {
-        isHoveringAddIcon = true
-        popupActive = false
-      }
-    }
-    on:mouseleave={() => isHoveringAddIcon = false }
-    on:click={() => {
-      if(popupActive) {
-        popupActive = false
-        popupActive = true
-      } else {
-        popupActive = true
-      }
-    }}
-    class="is-clickable rounded-circle iconCont is-paddingless"
-  >
-    <MaterialApp>
-      <div class="d-flex justify-center has-background-{color}-light">
-        <Button 
-          icon
-        >
-          <Icon size="20px" path={mdiPlus} class="{isHoveringAddIcon?"has-text-dark":""}" />
-        </Button>
-      </div>
-    </MaterialApp>
-  </div>
-  {:else}
   <div
     on:mouseenter={() => isHoveringAddIcon = true }
     on:mouseleave={() => isHoveringAddIcon = false }
@@ -73,7 +38,6 @@
       </div>
     </MaterialApp>
   </div>
-  {/if}
 
   <div class="cont rounded-lg">
     <slot></slot>

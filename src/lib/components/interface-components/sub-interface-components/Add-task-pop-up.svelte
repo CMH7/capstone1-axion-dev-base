@@ -1,8 +1,9 @@
 <script>
-    // @ts-nocheck
+    // @ts-ignore
+    import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
-    import { activeSubject, activeWorkspace, notifs, useHint, userData } from '$lib/stores/global-store'
+    import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive } from '$lib/stores/global-store'
     import axios from 'axios'
     import constants from '$lib/constants'
     import bcrypt from 'bcryptjs'
@@ -69,7 +70,7 @@
 
         taskName = ''
         dueDateTime = ''
-        level = 0
+        level = ''
         description = ''
         taskMembers = []
     }
@@ -101,7 +102,7 @@
         const [ dateValue, timeValue ] = dueDateTime.split(' ')
         const [ year, month, day ] = dateValue.split('-')
         const [ hour, minute ] = timeValue.split(':')
-        const semiDue = new Date(year, month, day, hour, minute, 0, 0)
+        const semiDue = new Date(parseInt(year), parseInt(month), parseInt(day), parseInt(hour), parseInt(minute), 0, 0)
         const finalDueDateTime = semiDue.toISOString()
 
         await axios.post(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
@@ -125,7 +126,6 @@
              if(res.data) {
                  const data = res.data
                  userData.set(data)
-                 active = false
                  loading = false
                  disabled = false
                  let notifsCopy = $notifs
@@ -135,6 +135,7 @@
                      id: notifsCopy.length + 1
                  })
                  notifs.set(notifsCopy)
+                 addTaskModalActive.set(false)
              }
          })
          .catch(err => {
@@ -150,10 +151,12 @@
         })
         .finally(() => fieldClear())
     }
+
+    onDestroy(() => addTaskModalActive.set(false))
 </script>
 
 <MaterialApp>
-	<Dialog persistent class="maxmins-w-450-dt-to-mb-90p overflow-x-hidden pa-4 has-transition has-background-white" bind:active>
+	<Dialog persistent class="maxmins-w-450-dt-to-mb-90p overflow-x-hidden pa-4 has-transition has-background-white" bind:active={$addTaskModalActive}>
 
         <div class="mb-2 min-w-100p is-flex is-justify-content-space-between">
             <div class="pl-1 has-text-grey-dark has-text-weight-bold dm-sans">
