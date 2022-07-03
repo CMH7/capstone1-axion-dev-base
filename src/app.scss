@@ -118,6 +118,9 @@
 // WIDTH
 .w {
   // pixels
+  &-25 {width: 25px;}
+  &-40 {width: 40px;}
+  &-50 {width: 50px;}
   &-100 {width: 100px;}
   &-150 {width: 150px;}
   &-200 {width: 200px;}
@@ -139,7 +142,7 @@
   &-1000 {width: 1000px;}
 
   // percents
-  &-5 {width: 5%;}
+  &-5p {width: 5%;}
   &-10p {width: 10%;}
   &-15p {width: 15%;}
   &-20p {width: 20%;}
@@ -164,6 +167,9 @@
 // HEIGHTS
 .h {
   // pixels
+  &-25 {height: 25px;}
+  &-40 {height: 40px;}
+  &-50 {height: 50px;}
   &-100 {height: 100px;}
   &-200 {height: 200px;}
   &-300 {height: 300px;}
@@ -176,7 +182,7 @@
   &-1000 {height: 1000px;}
 
   // percents
-  &-5 {height: 5%;}
+  &-5p {height: 5%;}
   &-10p {height: 10%;}
   &-15p {height: 15%;}
   &-20p {height: 20%;}
