@@ -6,6 +6,10 @@
 
 </script>
 
+<svelte:head>
+  <title>Axion | Home</title>
+</svelte:head>
+
 <HomeHeader/>
 <div in:fade class="hero is-fullheight-with-navbar">
   <div class="hero-body">

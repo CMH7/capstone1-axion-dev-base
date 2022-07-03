@@ -1,12 +1,14 @@
 <script>
-    import { Card, CardActions, Icon,  MaterialApp } from "svelte-materialify";
-    import { mdiGoogle, mdiFacebook } from '@mdi/js';
-    import HomeHeader from "$lib/components/Home-header.svelte";
-    import HomeFooter from "$lib/components/Home-footer.svelte";
-    
-    // Transitions
-    import {fade} from 'svelte/transition';
-    </script>
+  import { Card, CardActions, Icon,  MaterialApp } from "svelte-materialify"
+  import { mdiGoogle, mdiFacebook } from '@mdi/js'
+  import HomeHeader from "$lib/components/Home-header.svelte"
+  import HomeFooter from "$lib/components/Home-footer.svelte"
+  import {fade} from 'svelte/transition'
+</script>
+
+<svelte:head>
+  <title>Axion | Contacts</title>
+</svelte:head>
 
 <HomeHeader/>
 <MaterialApp>

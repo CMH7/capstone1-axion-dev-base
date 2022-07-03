@@ -172,6 +172,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Axion | Signin</title>
+</svelte:head>
+
 <!-- window keyboard listener -->
 <svelte:window on:keydown={onKeyDown} />
 

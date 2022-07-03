@@ -214,6 +214,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Axion | Signup</title>
+</svelte:head>
+
 <NotificationContainer />
 <ComingSoonModal active={comingSoonModalOpen}/>
 

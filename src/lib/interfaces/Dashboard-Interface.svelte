@@ -27,6 +27,10 @@
   let width = 0
 </script>
 
+<svelte:head>
+  <title>Dashboard | {$currentDashboardSubInterface}</title>
+</svelte:head>
+
 <svelte:window bind:outerWidth={width} />
 
 <div in:fade class="hero">
