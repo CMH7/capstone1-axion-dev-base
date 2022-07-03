@@ -1,0 +1,197 @@
+.pos {
+  &-static {position: static;}
+  &-sticky {position: sticky;}
+  &-rel {position: relative;}
+  &-abs {position: absolute;}
+  &-fix {position: fixed;}
+
+  // positioning layout
+  // percent
+  &-t {
+    &-0p {top: 0%}
+    &-5p {top: 5%}
+    &-10p {top: 10%}
+    &-15p {top: 15%}
+    &-20p {top: 20%}
+    &-25p {top: 25%}
+    &-30p {top: 30%}
+    &-35p {top: 35%}
+    &-40p {top: 40%}
+    &-45p {top: 45%}
+    &-50p {top: 50%}
+    &-55p {top: 55%}
+    &-60p {top: 60%}
+    &-65p {top: 65%}
+    &-70p {top: 70%}
+    &-75p {top: 75%}
+    &-80p {top: 80%}
+    &-85p {top: 85%}
+    &-90p {top: 90%}
+    &-95p {top: 95%}
+    &-100p {top: 100%}
+  }
+  &-b {
+    &-0p {bottom: 0%}
+    &-5p {bottom: 5%}
+    &-10p {bottom: 10%}
+    &-15p {bottom: 15%}
+    &-20p {bottom: 20%}
+    &-25p {bottom: 25%}
+    &-30p {bottom: 30%}
+    &-35p {bottom: 35%}
+    &-40p {bottom: 40%}
+    &-45p {bottom: 45%}
+    &-50p {bottom: 50%}
+    &-55p {bottom: 55%}
+    &-60p {bottom: 60%}
+    &-65p {bottom: 65%}
+    &-70p {bottom: 70%}
+    &-75p {bottom: 75%}
+    &-80p {bottom: 80%}
+    &-85p {bottom: 85%}
+    &-90p {bottom: 90%}
+    &-95p {bottom: 95%}
+    &-100p {bottom: 100%}
+  }
+  &-r {
+    &-0p {right: 0%}
+    &-5p {right: 5%}
+    &-10p {right: 10%}
+    &-15p {right: 15%}
+    &-20p {right: 20%}
+    &-25p {right: 25%}
+    &-30p {right: 30%}
+    &-35p {right: 35%}
+    &-40p {right: 40%}
+    &-45p {right: 45%}
+    &-50p {right: 50%}
+    &-55p {right: 55%}
+    &-60p {right: 60%}
+    &-65p {right: 65%}
+    &-70p {right: 70%}
+    &-75p {right: 75%}
+    &-80p {right: 80%}
+    &-85p {right: 85%}
+    &-90p {right: 90%}
+    &-95p {right: 95%}
+    &-100p {right: 100%}
+  }
+  &-l {
+    &-0p {left: 0%}
+    &-5p {left: 5%}
+    &-10p {left: 10%}
+    &-15p {left: 15%}
+    &-20p {left: 20%}
+    &-25p {left: 25%}
+    &-30p {left: 30%}
+    &-35p {left: 35%}
+    &-40p {left: 40%}
+    &-45p {left: 45%}
+    &-50p {left: 50%}
+    &-55p {left: 55%}
+    &-60p {left: 60%}
+    &-65p {left: 65%}
+    &-70p {left: 70%}
+    &-75p {left: 75%}
+    &-80p {left: 80%}
+    &-85p {left: 85%}
+    &-90p {left: 90%}
+    &-95p {left: 95%}
+    &-100p {left: 100%}
+  }
+  
+  // pixels
+  &-t {
+    &-0 {top: 0px}
+    &-5 {top: 5px}
+    &-10 {top: 10px}
+    &-15 {top: 15px}
+    &-20 {top: 20px}
+    &-25 {top: 25px}
+    &-30 {top: 30px}
+    &-35 {top: 35px}
+    &-40 {top: 40px}
+    &-45 {top: 45px}
+    &-50 {top: 50px}
+    &-55 {top: 55px}
+    &-60 {top: 60px}
+    &-65 {top: 65px}
+    &-70 {top: 70px}
+    &-75 {top: 75px}
+    &-80 {top: 80px}
+    &-85 {top: 85px}
+    &-90 {top: 90px}
+    &-95 {top: 95px}
+    &-100 {top: 100px}
+  }
+  &-b {
+    &-0 {bottom: 0px}
+    &-5 {bottom: 5px}
+    &-10 {bottom: 10px}
+    &-15 {bottom: 15px}
+    &-20 {bottom: 20px}
+    &-25 {bottom: 25px}
+    &-30 {bottom: 30px}
+    &-35 {bottom: 35px}
+    &-40 {bottom: 40px}
+    &-45 {bottom: 45px}
+    &-50 {bottom: 50px}
+    &-55 {bottom: 55px}
+    &-60 {bottom: 60px}
+    &-65 {bottom: 65px}
+    &-70 {bottom: 70px}
+    &-75 {bottom: 75px}
+    &-80 {bottom: 80px}
+    &-85 {bottom: 85px}
+    &-90 {bottom: 90px}
+    &-95 {bottom: 95px}
+    &-100 {bottom: 100px}
+  }
+  &-r {
+    &-0 {right: 0px}
+    &-5 {right: 5px}
+    &-10 {right: 10px}
+    &-15 {right: 15px}
+    &-20 {right: 20px}
+    &-25 {right: 25px}
+    &-30 {right: 30px}
+    &-35 {right: 35px}
+    &-40 {right: 40px}
+    &-45 {right: 45px}
+    &-50 {right: 50px}
+    &-55 {right: 55px}
+    &-60 {right: 60px}
+    &-65 {right: 65px}
+    &-70 {right: 70px}
+    &-75 {right: 75px}
+    &-80 {right: 80px}
+    &-85 {right: 85px}
+    &-90 {right: 90px}
+    &-95 {right: 95px}
+    &-100 {right: 100px}
+  }
+  &-l {
+    &-0 {left: 0px}
+    &-5 {left: 5px}
+    &-10 {left: 10px}
+    &-15 {left: 15px}
+    &-20 {left: 20px}
+    &-25 {left: 25px}
+    &-30 {left: 30px}
+    &-35 {left: 35px}
+    &-40 {left: 40px}
+    &-45 {left: 45px}
+    &-50 {left: 50px}
+    &-55 {left: 55px}
+    &-60 {left: 60px}
+    &-65 {left: 65px}
+    &-70 {left: 70px}
+    &-75 {left: 75px}
+    &-80 {left: 80px}
+    &-85 {left: 85px}
+    &-90 {left: 90px}
+    &-95 {left: 95px}
+    &-100 {left: 100px}
+  }
+  
+}

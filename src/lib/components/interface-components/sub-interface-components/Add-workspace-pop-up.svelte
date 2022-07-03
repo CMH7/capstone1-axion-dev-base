@@ -1,14 +1,13 @@
 <script>
+    // @ts-ignore
+    import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp } from 'svelte-materialify'
     import axios from 'axios'
-    import { notifs, userData, activeSubject } from '$lib/stores/global-store'
+    import { notifs, userData, activeSubject, addWorkspaceModalActive } from '$lib/stores/global-store'
     import bcrypt from 'bcryptjs'
     import constants from '$lib/constants'
 
     const backURI = constants.backURI
-
-    // to open the dialog
-	export let active = false
 
     // hover effect
     let hovering = false
@@ -46,7 +45,10 @@
     // Active subject
     let curActiveSubject = $activeSubject
 
+    let isCreating = false
+
     const createWorkspace = async () => {
+        isCreating = true
         disabled = true
         loading = true
 
@@ -88,44 +90,63 @@
                 }
             );
             notifs.set(notifsCopy)
-            active = false
+            addWorkspaceModalActive.set(false)
             axios.post(`${backURI}/validUser`, {
                 email: res.data.email
-            }).then(res => {
+            })
+            .then(res => {
                 userData.set(res.data)
                 loading = false
                 disabled = false
                 workspaceNameInput = ""
-            }).catch(err => console.error(`error in getting user ${err}`))
-        }).catch(err => console.error(`error in posting workspace ${err}`))
+            })
+            .catch(err => {
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: `error in resync, ${err}`,
+                    type: 'error',
+                    id: $notifs.length + 1
+                })
+                notifs.set(notifsCopy)
+            })
+        }).catch(err => {
+            let notifsCopy = $notifs
+            notifsCopy.push({
+                msg: `error in posting workspace ${err}`,
+                type: 'error',
+                id: $notifs.length + 1
+            })
+            notifs.set(notifsCopy)
+        })
+        .finally(() => isCreating = false)
     }
 
     /**
     * @param {{ keyCode: number; }} e
     */
     function onKeyDown(e) {
-        if(e.keyCode == 13 && active) {
+        if(e.keyCode == 13 && $addWorkspaceModalActive) {
             if(!(workspaceNameInput === "")) {
                 createWorkspace()
             }else{
                 let notifsCopy = $notifs
-                notifsCopy.push(
-                    {
-                        msg: "Workspace name cannot be empty.",
-                        type: 'error',
-                        id: $notifs.length + 1
-                    }
-                );
+                notifsCopy.push({
+                    msg: "Workspace name cannot be empty.",
+                    type: 'error',
+                    id: $notifs.length + 1
+                })
                 notifs.set(notifsCopy)
             }
         }
     }
+
+    onDestroy(() => addWorkspaceModalActive.set(false))
 </script>
 
 <svelte:window on:keydown={onKeyDown} />
 
 <MaterialApp>
-	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
+	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" persistent={isCreating ? true : false } bind:active={$addWorkspaceModalActive}>
 
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 

@@ -1,6 +1,8 @@
 <script>
-	import { Dialog, MaterialApp } from 'svelte-materialify'
-    import { notifs } from '$lib/stores/global-store'
+    // @ts-ignore
+    import { onDestroy } from 'svelte'
+    import { Dialog, MaterialApp } from 'svelte-materialify'
+    import { notifs, addSubjectModalActive } from '$lib/stores/global-store'
     import constants from '$lib/constants'
     import bcrypt from 'bcryptjs'
     import { userData } from '$lib/stores/global-store'
@@ -8,8 +10,7 @@
 
     const backURI = constants.backURI
 
-    // to open the dialog
-	export let active = false;
+    let isCreating = false
 
     // hover effect
     let hovering = false;
@@ -42,6 +43,7 @@
     let subjectName = "";
 
     const createSubject = async () => {
+        isCreating = true
         if(subjectName === "") {
             let notifsCopy = []
             notifsCopy = $notifs
@@ -89,7 +91,7 @@
                 }
             )
             notifs.set(notifsCopy)
-            active = false
+            addSubjectModalActive.set(false)
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
@@ -103,11 +105,12 @@
             subjectName = ''
             loading = false
             disabled = false
+            isCreating = false
         })
     }
 
     function onKeyDown(e) {
-        if(e.keyCode == 13 && active) {
+        if(e.keyCode == 13 && $addSubjectModalActive) {
             if(!(subjectName === "")) {
                 createSubject();
             }else{
@@ -123,12 +126,14 @@
             }
         }
     }
+
+    onDestroy(() => addSubjectModalActive.set(false))
 </script>
 
 <svelte:window on:keydown={onKeyDown} />
 
 <MaterialApp>
-	<Dialog class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active>
+	<Dialog persistent={isCreating ? true : false} class="pa-4 has-transition has-background-{colors[0].selected ? `${colors[0].name}` : colors[1].selected ? `${colors[1].name}` : colors[2].selected ? `${colors[2].name}` : colors[3].selected ? `${colors[3].name}` : colors[4].selected ? `${colors[4].name}` : colors[5].selected ? `${colors[5].name}` : ""}" bind:active={$addSubjectModalActive}>
 
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
