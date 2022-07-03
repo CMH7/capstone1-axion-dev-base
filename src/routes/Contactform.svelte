@@ -47,7 +47,7 @@
                     <!--ICON-->
                       <div class="mt-3 is-flex is-justify-content-center">
                         <div class="mx-2">
-                          <a href="http://facebook.com/" target="_blank">
+                          <a href="https://www.facebook.com/SIEMCMSIEM" target="_blank">
                             <Icon class="has-text-info" size="32px" path={mdiFacebook} />
                           </a>
                         </div>
@@ -86,7 +86,7 @@
                       <!--ICON-->
                       <div class="mt-3 is-flex is-justify-content-center">
                         <div class="mx-2">
-                          <a href="http://facebook.com/" target="_blank">
+                          <a href="https://www.facebook.com/joanne.roche19/" target="_blank">
                             <Icon class="has-text-info" size="32px" path={mdiFacebook} />
                           </a>
                         </div>
@@ -125,7 +125,7 @@
                       <!--ICON-->
                         <div class="mt-3 is-flex is-justify-content-center">
                           <div class="mx-2">
-                            <a href="http://facebook.com/" target="_blank">
+                            <a href="https://www.facebook.com/yazen.clarin" target="_blank">
                               <Icon class="has-text-info" size="32px" path={mdiFacebook} />
                             </a>
                           </div>
@@ -164,7 +164,7 @@
                         <!--ICON-->
                           <div class="mt-3 is-flex is-justify-content-center">
                             <div class="mx-2">
-                              <a href="http://facebook.com/" target="_blank">
+                              <a href="https://www.facebook.com/el.john.756859" target="_blank">
                                 <Icon class="has-text-info" size="32px" path={mdiFacebook} />
                               </a>
                             </div>
