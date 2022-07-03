@@ -289,7 +289,7 @@
 
       <div class="column is-12 p-0 pt-7 mb-5">
         <div class="is-flex flex-column is-align-items-center">
-          <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Sign Up</button>
+          <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Submit</button>
           <p class="pt-4 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
         </div>
       </div>
