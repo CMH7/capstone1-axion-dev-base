@@ -1,5 +1,5 @@
 <script>
-  import { activeWorkspace, currentDashboardSubInterface} from "$lib/stores/global-store"
+  import { activeWorkspace, allBoards, currentDashboardSubInterface} from "$lib/stores/global-store"
   import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js"
   import { Icon, MaterialApp } from "svelte-materialify"
 
@@ -24,9 +24,9 @@
 <div
   on:click={() => {
     activeWorkspace.set(workspace)
+    allBoards.set(workspace.boards)
     currentDashboardSubInterface.set("Boards")
-    }
-  }
+  }}
   on:mouseenter={() => mouseEnter = true }
   on:mouseleave={() => mouseEnter = false }
   class="has-transition notification rounded-xl {mouseEnter?`has-background-${workspace.color}-dark`:""} is-{workspace.color}"

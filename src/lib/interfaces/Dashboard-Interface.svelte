@@ -4,25 +4,12 @@
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
 	import { Icon, MaterialApp } from 'svelte-materialify'
-  import { activeSubject, currentDashboardSubInterface, activeWorkspace, userData } from "$lib/stores/global-store"
+  import { activeSubject, currentDashboardSubInterface, activeWorkspace, allBoards } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import { mdiArrowLeft } from '@mdi/js'
   import constants from '$lib/constants'
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
-
-  let allBoards = []
-  userData.subscribe(account => {
-    account.subjects.forEach(subject => {
-      if(subject.id === $activeSubject.id) {
-        subject.workspaces.forEach(workspace => {
-          if(workspace.id === $activeWorkspace.id) {
-            allBoards = workspace.boards
-          }
-        })
-      }
-    })
-  })
 
 </script>
 
@@ -92,8 +79,7 @@
       <div class="columns is-mobile pb-5 boardcolumns">
 
         <!-- Boards by user -->
-        <!-- First 3 to be rendered are the default boards: Todo, In progress, & done -->
-        {#each allBoards as board}
+        {#each $allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
               <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
@@ -104,6 +90,7 @@
             </div>
           </div>
         {/each}
+
       </div>
     {/if}
   </div>

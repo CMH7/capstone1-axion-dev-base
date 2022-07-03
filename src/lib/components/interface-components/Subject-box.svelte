@@ -75,18 +75,12 @@
 <div
   disabled={deleting}
   on:contextmenu|preventDefault={handleRightClick}
-  on:click={
-    () => {
-      activeSubject.set(subject)
-      currentDashboardSubInterface.set("Workspaces")
-    }
-  }
-  on:mouseenter={
-    () => mouseEnter = true
-  }
-  on:mouseleave={
-    () => mouseEnter = false
-  }
+  on:click={() => {
+    activeSubject.set(subject)
+    currentDashboardSubInterface.set("Workspaces")
+  }}
+  on:mouseenter={() => mouseEnter = true}
+  on:mouseleave={() => mouseEnter = false}
   class="has-transition notification rounded-xl {mouseEnter?`has-background-${subject.color}-dark`:""} is-{subject.color}"
 >
   {#if deleting}
