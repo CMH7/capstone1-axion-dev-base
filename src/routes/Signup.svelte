@@ -23,6 +23,11 @@
     return emailRegexp.test(email)
   }
 
+  const isPassValid = (pass) => {
+    const passRegexp = new RegExp(/^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!&$%&? "]).*$/)
+    return passRegexp.test(pass)
+  }
+
   const items = [
     {name: 'Male', value: 'Male'},
     {name: 'Female', value: 'Female'}
@@ -46,19 +51,39 @@
   
 
   function createNewUser(){
+    if(!isEmailValid(email)) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Email is invalid',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      return false
+    }
+    if(!isPassValid(password)) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Password is invalid',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      return false
+    }
+
     loading = true
     disabled = true
-    if(firstName === "" || lastName === "" || age === "" || gender === "" || email === "" || school === "" || course === "" || year === "" || password === "" || repassword === ""){
+
+    if(firstName === "" || lastName === "" || age === "" || gender === "" || school === "" || course === "" || year === "" || repassword === ""){
       let msg = "please input a valid ";
       if (firstName === "") msg += "first name, ";
       if (lastName === "") msg += "last name, ";
       if (age === "") msg += "age, ";
       if (gender === "") msg += "gender, ";
-      if (email === "") msg += "email, ";
       if (school === "") msg += "school, ";
       if (course === "") msg += "course, ";
       if (year === "") msg += "year, ";
-      if (password === "") msg += "password, ";
       if (repassword === "") msg += "repassword";
       msg += '.'
 
@@ -72,17 +97,6 @@
 
       loading = false
       disabled = false
-    } else if (!isEmailValid(email)){
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Invalid E-mail.',
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-      email = ''
-      loading = false
-      disabled = false
     }else if(password !== repassword){
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -91,7 +105,8 @@
           id: $notifs.length + 1
       })
       notifs.set(notifsCopy)
-
+      password = ''
+      repassword = ''
       loading = false
       disabled = false
     }else{

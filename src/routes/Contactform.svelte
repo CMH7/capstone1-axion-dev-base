@@ -13,7 +13,7 @@
   <div class="hero is-fullheight-with-navbar">
     <!--BANNER-->
     <figure class="column is-20-mobile">
-      <img class="is-rounded" src="static/Banner.jpg" alt="background" />
+      <img class="is-rounded" src="/Banner.jpg" alt="background" />
     </figure>
     
     <!--DEVELOPER-->    

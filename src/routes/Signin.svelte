@@ -34,15 +34,41 @@
       return emailRegexp.test(email)
     }
 
+    const isPassValid = (pass) => {
+      const passRegexp = new RegExp(/^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!&$%&? "]).*$/)
+      return passRegexp.test(pass)
+    }
+
     const login = () => {
-      loading = true;
-      disabled = true;
+      if(!isEmailValid(emailInput)) {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Email is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        return false
+      }
+      if(!isPassValid(passwordInput)) {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Password is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        passwordInput = ''
+        return false
+      }
+      loading = true
+      disabled = true
 
       if(emailInput === "" || passwordInput === "") {
         loading = false
         disabled = false
         let notifsCopy = $notifs;
-        if(emailInput === "" && !(passwordInput === "") || !isEmailValid(emailInput)) {
+        if(emailInput === "" && !(passwordInput === "")) {
           notifsCopy.push({
               msg: "Please input a valid email.",
               type: "error",
@@ -74,6 +100,8 @@
               id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
+            loading = false
+            disabled = false
           }else if(bcrypt.compareSync(passwordInput, res.data.password)){
             axios.post(`${backURI}/validUser`, {
               email: emailInput
