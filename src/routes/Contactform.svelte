@@ -4,11 +4,24 @@
   import HomeHeader from "$lib/components/Home-header.svelte"
   import HomeFooter from "$lib/components/Home-footer.svelte"
   import {fade} from 'svelte/transition'
+  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+
+  let comingSoonModalOpen = false
+  const openComingSoon = () => {
+    if (!comingSoonModalOpen) {
+      comingSoonModalOpen = true
+    } else {
+      comingSoonModalOpen = false
+      comingSoonModalOpen = true
+    }
+  }
 </script>
 
 <svelte:head>
   <title>Axion | Contacts</title>
 </svelte:head>
+
+<ComingSoonModal active={comingSoonModalOpen}/>
 
 <HomeHeader/>
 <MaterialApp>
@@ -55,7 +68,7 @@
                         </div>
                         
                         <div class="mx-2">
-                          <a href="http://gmail.com/" target="_blank">
+                          <a class="is-clickable"on:click={openComingSoon}>
                             <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
                           </a>
                         </div>
@@ -94,7 +107,7 @@
                         </div>
                                
                         <div class="mx-2">
-                          <a href="http://gmail.com/" target="_blank">
+                          <a class="is-clickable"on:click={openComingSoon}>
                             <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
                           </a>
                         </div>
@@ -133,7 +146,7 @@
                           </div>
 
                           <div class="mx-2">
-                            <a href="http://gmail.com/" target="_blank">
+                            <a class="is-clickable"on:click={openComingSoon}>
                               <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
                             </a>
                           </div>
@@ -172,7 +185,7 @@
                             </div>
 
                             <div class="mx-2">
-                              <a href="http://gmail.com/" target="_blank">
+                              <a class="is-clickable"on:click={openComingSoon}>
                                 <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
                               </a>
                             </div>
