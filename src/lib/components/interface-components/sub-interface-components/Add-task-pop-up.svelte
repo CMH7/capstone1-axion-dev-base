@@ -35,16 +35,6 @@
         return { name: member.name, value: member}
     })
 
-    // colors
-    const colors = [
-        {name: "primary", selected:true, hover:false},
-        {name: "link", selected:false, hover:false},
-        {name: "info", selected:false, hover:false},
-        {name: "success", selected:false, hover:false},
-        {name: "warning", selected:false, hover:false},
-        {name: "danger", selected:false, hover:false}
-    ]
-
     const levels = [
         {name: "Low", value: 1},
         {name: "Medium", value: 2},
@@ -57,11 +47,14 @@
     let dueDateTime = ''
     const isSubtask = false
     let taskName = 'Task name'
-    const workspaceID = $activeWorkspace.id
+    let workspaceID = ''
+    activeWorkspace.subscribe(value => workspaceID = value.id)
     let level = ''
     const taskID = bcrypt.hashSync(`${workspaceID}${taskName}${new Date()}`, Math.ceil(Math.random() * 1))
-    const userID = $userData.id
-    const subjectID = $activeSubject.id
+    let userID = ''
+    userData.subscribe(value => userID = value.id)
+    let subjectID = ''
+    activeSubject.subscribe(value => subjectID = value.id)
 
     const fieldClear = () => {
 
@@ -121,18 +114,18 @@
          })
          .then(res => {
              if(res.data) {
-                 const data = res.data
-                 userData.set(data)
-                 loading = false
-                 disabled = false
-                 let notifsCopy = $notifs
-                 notifsCopy.push({
-                     msg: 'Task created',
-                     type: 'success',
-                     id: notifsCopy.length + 1
-                 })
-                 notifs.set(notifsCopy)
-                 addTaskModalActive.set(false)
+                const data = res.data
+                userData.set(data)
+                loading = false
+                disabled = false
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: 'Task created',
+                    type: 'success',
+                    id: notifsCopy.length + 1
+                })
+                notifs.set(notifsCopy)
+                addTaskModalActive.set(false)
              }
          })
          .catch(err => {
