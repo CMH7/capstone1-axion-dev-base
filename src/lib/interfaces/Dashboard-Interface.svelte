@@ -6,7 +6,7 @@
   import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
 	import { Breadcrumbs } from 'svelte-materialify'
-  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
+  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace, userData } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
@@ -25,6 +25,21 @@
   })
 
   let width = 0
+
+  let boards = []
+  userData.subscribe(user => {
+    user.subjects.every(subject => {
+      if(subject.id === $activeSubject.id) {
+        subject.workspaces.every(workspace => {
+          if(workspace.id === $activeWorkspace.id) {
+            boards = workspace.boards
+            return false
+          }
+        })
+        return false
+      }
+    })
+  })
 </script>
 
 <svelte:head>
@@ -70,7 +85,7 @@
       <div class="columns is-mobile pb-5 boardcolumns">
 
         <!-- Boards by user -->
-        {#each $allBoards as board}
+        {#each boards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
               <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
