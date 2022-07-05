@@ -68,9 +68,9 @@
                         </div>
                         
                         <div class="mx-2">
-                          <a class="is-clickable"on:click={openComingSoon}>
+                          <div class="is-clickable"on:click={openComingSoon}>
                             <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                          </a>
+                          </div>
                         </div>
                       </div>
                   </Card>
@@ -107,9 +107,9 @@
                         </div>
                                
                         <div class="mx-2">
-                          <a class="is-clickable"on:click={openComingSoon}>
+                          <div class="is-clickable"on:click={openComingSoon}>
                             <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                          </a>
+                          </div>
                         </div>
                       </div>  
                     </Card>
@@ -146,9 +146,9 @@
                           </div>
 
                           <div class="mx-2">
-                            <a class="is-clickable"on:click={openComingSoon}>
+                            <div class="is-clickable"on:click={openComingSoon}>
                               <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                            </a>
+                            </div>
                           </div>
                         </div>
                     </Card>   
@@ -185,9 +185,9 @@
                             </div>
 
                             <div class="mx-2">
-                              <a class="is-clickable"on:click={openComingSoon}>
+                              <div class="is-clickable"on:click={openComingSoon}>
                                 <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                              </a>
+                              </div>
                             </div>
                           </div>  
                       </Card>
