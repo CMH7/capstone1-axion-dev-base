@@ -12,25 +12,26 @@
   const getAllUsers = async () => {
     memberModalLoading.set(true)
     memberModalActive.set(true)
-    await axios.get(`${constants.backURI}/`)
-    .then(res => {
+    const res = await fetch(`${constants.backURI}/`)
+    const users = await res.json()
+    if(res.ok) {
       const wsMembers = $activeWorkspace.members
-      let data = res.data.filter(user => user.id != $userData.id)
+      let data = users.filter(user => user.id != $userData.id)
       wsMembers.forEach(member => {
         data = data.filter(user => user.email != member.email)
       })
       allUsers.set(data)
-    })
-    .catch(err => {
+      memberModalLoading.set(false)
+    } else {
       let notifsCopy = $notifs
       notifsCopy.push({
-        msg: `Getting all users failed, ${err}`,
+        msg: `Getting all users failed, ${res.statusText}`,
         type: 'error',
         id: $notifs.length + 1
       })
       notifs.set(notifsCopy)
-    })
-    .finally(() => memberModalLoading.set(false))
+      memberModalLoading.set(false)
+    }
   }
 </script>
 
