@@ -19,30 +19,51 @@
 
   const addMember = async () => {
     isLoading = true
-    await axios.post(`${constants.backURI}/MainApp/dashboard/subject/workspace/create/member`, {
-      ids: {
-        user: $userData.id,
-        subject: $activeSubject.id,
-        workspace: $activeWorkspace.id
+    await fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/create/member`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'aplication/json'
       },
-      workspace: {
-        member: user.data
-      }
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id
+        },
+        workspace: {
+          member: user.data
+        }
+      })
     })
-    .then(res => {
-      if(res.data) {
-        userData.set(res.data)
-        let notifsCopy = $notifs
-        notifsCopy.push({
-          msg: `${user.data.name} is added to the workspace`,
-          type: 'success',
-          id: $notifs.length + 1
-        })
-        notifs.set(notifsCopy)
-        user.isAdded = 1
-        active = false
-        isLoading = false
-      }
+    .then(async res => {
+      const data = await res.json()
+      userData.set(data)
+      userData.subscribe(user => {
+          user.subjects.every(subject => {
+              if(subject.id === $activeSubject.id) {
+                  activeSubject.set(subject)
+                  subject.workspaces.every(workspace => {
+                      if(workspace.id === $activeWorkspace.id) {
+                          activeWorkspace.set(workspace)
+                          return false
+                      }
+                      return true
+                  })
+                  return false
+              }
+              return true
+          })
+      })
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `${user.data.name} is added to the workspace`,
+        type: 'success',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      user.isAdded = 1
+      active = false
+      isLoading = false
     })
     .catch(err => {
       let notifsCopy = $notifs
@@ -54,62 +75,60 @@
       notifs.set(notifsCopy)
       active = false
       isLoading = false
-    })
-    .finally(() => {
-      userData.subscribe(user => {
-        user.subjects.every(subject => {
-          if(subject.id === $activeSubject.id) {
-            subject.workspaces.every(workspace => {
-              if(workspace.id === $activeWorkspace.id) {
-                activeWorkspace.set(workspace)
-                return false
-              }
-              return true
-            })
-            return false
-          }
-          return true
-        })
-      })
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Resync done',
-        type: 'success',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
     })
   }
 
   const removeMember = async () => {
     isLoading = true
-    await axios.delete(`${constants.backURI}/MainApp/subject/workspace/delete/member`, {
-      data: {
-        ids: {
-          user: $userData.id,
-          subject: $activeSubject.id
+    const res = await fetch(
+      `${constants.backURI}/MainApp/subject/workspace/delete/member`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        workspace: {
-          id: $activeWorkspace.id,
-          member: user.data.email
-        }
+        body: JSON.stringify(
+          {
+            ids: {
+              user: $userData.id,
+              subject: $activeSubject.id
+            },
+            workspace: {
+              id: $activeWorkspace.id,
+              member: user.data
+            }
+          }
+        )
       }
-    })
-    .then(res => {
-      console.log(res)
-      if(res.data) {
-        userData.set(res.data)
-        let notifsCopy = $notifs
-        notifsCopy.push({
-          msg: `${user.data.name} is removed in the workspace`,
-          type: 'success',
-          id: $notifs.length + 1
-        })
-        notifs.set(notifsCopy)
-        user.isAdded = 2
-        active = false
-        isLoading = false
-      }
+    ).then(async res => {
+      const data = await res.json()
+      userData.set(data)
+      userData.subscribe(user => {
+          user.subjects.every(subject => {
+              if(subject.id === $activeSubject.id) {
+                  activeSubject.set(subject)
+                  subject.workspaces.every(workspace => {
+                      if(workspace.id === $activeWorkspace.id) {
+                          activeWorkspace.set(workspace)
+                          return false
+                      }
+                      return true
+                  })
+                  return false
+              }
+              return true
+          })
+      })
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `${user.data.name} is removed in the workspace`,
+        type: 'success',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      user.isAdded = 2
+      active = false
+      isLoading = false
     })
     .catch(err => {
       let notifsCopy = $notifs
@@ -121,30 +140,6 @@
       notifs.set(notifsCopy)
       active = false
       isLoading = false
-    })
-    .finally(() => {
-      userData.subscribe(user => {
-        user.subjects.every(subject => {
-          if(subject.id === $activeSubject.id) {
-            subject.workspaces.every(workspace => {
-              if(workspace.id === $activeWorkspace.id) {
-                activeWorkspace.set(workspace)
-                return false
-              }
-              return true
-            })
-            return false
-          }
-          return true
-        })
-      })
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Resync done',
-        type: 'success',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
     })
   }
 </script>
