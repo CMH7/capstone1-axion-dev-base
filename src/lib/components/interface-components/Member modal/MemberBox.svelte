@@ -22,18 +22,20 @@
     await fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/create/member`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'aplication/json'
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        ids: {
-          user: $userData.id,
-          subject: $activeSubject.id,
-          workspace: $activeWorkspace.id
-        },
-        workspace: {
-          member: user.data
+      body: JSON.stringify(
+        {
+          ids: {
+            user: $userData.id,
+            subject: $activeSubject.id,
+            workspace: $activeWorkspace.id
+          },
+          workspace: {
+            member: user.data
+          }
         }
-      })
+      )
     })
     .then(async res => {
       const data = await res.json()
