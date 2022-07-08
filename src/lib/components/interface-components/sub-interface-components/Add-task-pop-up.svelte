@@ -3,7 +3,7 @@
     import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
-    import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive } from '$lib/stores/global-store'
+    import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive, allBoards } from '$lib/stores/global-store'
     import axios from 'axios'
     import constants from '$lib/constants'
     import bcrypt from 'bcryptjs'
@@ -116,6 +116,23 @@
              if(res.data) {
                 const data = res.data
                 userData.set(data)
+                userData.subscribe(user => {
+                    user.subjects.every(subject => {
+                        if(subject.id === $activeSubject.id) {
+                            activeSubject.set(subject)
+                            subject.workspaces.every(workspace => {
+                                if(workspace.id === $activeWorkspace.id) {
+                                    activeWorkspace.set(workspace)
+                                    allBoards.set($activeWorkspace.boards)
+                                    return false
+                                }
+                                return true
+                            })
+                            return false
+                        }
+                        return true
+                    })
+                })
                 loading = false
                 disabled = false
                 let notifsCopy = $notifs

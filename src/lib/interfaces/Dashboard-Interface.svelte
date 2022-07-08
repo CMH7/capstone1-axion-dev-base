@@ -12,6 +12,7 @@
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
   import Fab from '$lib/components/FAB/FAB.svelte'
   import AddTaskPopUp from '$lib/components/interface-components/sub-interface-components/Add-task-pop-up.svelte'
+  import constants from '$lib/constants'
 
   onMount(() => {
     if($breadCrumbsItems.length < 1) {
@@ -26,20 +27,8 @@
 
   let width = 0
 
-  let boards = []
-  userData.subscribe(user => {
-    user.subjects.every(subject => {
-      if(subject.id === $activeSubject.id) {
-        subject.workspaces.every(workspace => {
-          if(workspace.id === $activeWorkspace.id) {
-            boards = workspace.boards
-            return false
-          }
-        })
-        return false
-      }
-    })
-  })
+  const subjectDef = constants.subject
+  const workspaceDef = constants.workspace
 </script>
 
 <svelte:head>
@@ -54,10 +43,15 @@
       <div on:click={() => {
         if(item.text === $activeSubject.name) {
           currentDashboardSubInterface.set("Subjects")
+          activeSubject.set(subjectDef)
+          activeWorkspace.set(workspaceDef)
+          allBoards.set([])
           breadCrumbsItems.set([{text: 'Subjects'}])
         }
         if(item.text === $activeWorkspace.name) {
           currentDashboardSubInterface.set("Workspaces")
+          activeWorkspace.set(workspaceDef)
+          allBoards.set([])
           let breadCrumbsItemsCopy = $breadCrumbsItems
           breadCrumbsItemsCopy.pop()
           breadCrumbsItemsCopy.pop()
@@ -85,7 +79,7 @@
       <div class="columns is-mobile pb-5 boardcolumns">
 
         <!-- Boards by user -->
-        {#each boards as board}
+        {#each $allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
               <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
