@@ -18,21 +18,25 @@
     let disabled = false
 
     let workspaceMembers = []
+    let workspaceMembersLocal = []
 
     userData.subscribe(value => {
-        value.subjects.map(subject => {
+        value.subjects.every(subject => {
             if(subject.id === $activeSubject.id) {
-                subject.workspaces.map(workspace => {
+                subject.workspaces.every(workspace => {
                     if(workspace.id === $activeWorkspace.id){
                         workspaceMembers = workspace.members
+                        workspaceMembersLocal = workspaceMembers.map(member => {
+                            return { name: member.name, value: member}
+                        })
+                        return false
                     }
+                    return true
                 })
+                return false
             }
+            return true
         })
-    })
-
-    const workspaceMembersLocal = workspaceMembers.map(member => {
-        return { name: member.name, value: member}
     })
 
     const levels = [
