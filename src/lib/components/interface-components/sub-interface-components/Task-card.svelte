@@ -125,8 +125,14 @@
   
             <!-- 3 most members -->
             {#each Array(3) as _, i}
-                <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); position: absolute; right: {(i + 1) * 5}%; bottom: 5%;">
-                  <img src="{task.members[i].profile}" alt="{task.members[i].name}" />
+                <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); position: absolute; right: {(i + 1) * 5}%; bottom: 5%; background-color: rgb({Math.random() * 255}, {Math.random() * 255}, {Math.random() * 255})">
+                  {#if task.members[i].profile === ''}
+                  <div class="has-text-weight-bold has-text-white">
+                    {task.members[i].name.substring(0, 1)}
+                  </div>
+                  {:else}
+                  <img src="{task.members[i].profile}" alt="{task.members[i].name}"/>
+                  {/if}
                 </Avatar>
             {/each}
             <span slot="tip">
@@ -145,8 +151,14 @@
           <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
             <Tooltip bottom bind:active={show}>
               {#each task.members as member}
-                <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2)">
-                  <img src="{member.profile}" alt="Avatar"/>
+                <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); background-color: rgb({Math.random() * 255}, {Math.random() * 255}, {Math.random() * 255})">
+                  {#if member.profile === ''}
+                  <div class="has-text-weight-bold has-text-white">
+                    {member.name.substring(0, 1)}
+                  </div>
+                  {:else}
+                  <img src="{member.profile}" alt="{member.name}"/>
+                  {/if}
                 </Avatar>
               {/each}
               <span slot="tip">
@@ -154,7 +166,7 @@
                   Assigned Members:
                   <Divider class="p-0 mt-1 mb-2" />
                   {#each task.members as member}
-                    {member.firstName} {member.lastName} <br>
+                    {member.name} <br>
                   {/each}
                 </p>
               </span>
