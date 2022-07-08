@@ -29,6 +29,16 @@
                         workspaceMembersLocal = workspaceMembers.map(member => {
                             return { name: member.name, value: member}
                         })
+                        if(workspace.owned) {
+                            workspaceMembersLocal.push({
+                                name: `${$userData.firstName} ${$userData.lastName} (Owner)`,
+                                value: {
+                                    name: `${$userData.firstName} ${$userData.lastName}`,
+                                    email: `${$userData.email}`,
+                                    profile: `${$userData.profile}`
+                                }
+                            })
+                        }
                         return false
                     }
                     return true
