@@ -41,24 +41,19 @@
     const lenInva = invalids.length
     
     if(pass.length < 8) {
-      console.log('length failed')
       valid = false
       invalids += '8 characters length'
-    }else{
-      console.log('length passed')
     }
 
     let upChecker = false
     constants.upperCasedLetters.every(l => {
       if(pass.match(l)) {
-        console.log('upper passed')
         upChecker = true
         return false
       }
       return true
     })
     if(!upChecker) {
-      console.log('upper failed')
       invalids += invalids.length > lenInva ? ', 1 upper cased letter' : '1 upper cased letter'
       valid = false
     }
@@ -66,14 +61,12 @@
     let lowerChecker = false
     constants.lowerCasedLetters.every(l => {
       if(pass.match(l)) {
-        console.log('lower passed')
         lowerChecker = true
         return false
       }
       return true
     })
     if(!lowerChecker) {
-      console.log('lower failed')
       invalids += invalids.length > lenInva ? ', 1 lower cased letter' : '1 lower cased letter'
       valid = false
     }
@@ -81,14 +74,12 @@
     let digitsChecker = false
     constants.digits.every(n => {
       if(pass.match(n.toString())) {
-        console.log('digits passed')
         digitsChecker = true
         return false
       }
       return true
     })
     if(!digitsChecker) {
-      console.log('digits failed')
       invalids += invalids.length > lenInva ? ', one 0-9 digit' : 'One of the 0-9 digit'
       valid = false
     }
@@ -97,15 +88,12 @@
     constants.specialCharacters.every(l => {
       const re = new RegExp(`\\${l}`)
       if(pass.match(re)) {
-        console.log(l)
-        console.log('special passed')
         specialChecker = true
         return false
       }
       return true
     })
     if(!specialChecker) {
-      console.log('special failed')
       invalids += invalids.length > lenInva ? ', 1 special character ~!$%^&*_=+}{\'?-' : '1 special character ~!$%^&*_=+}{\'?-'
       valid = false
     }
@@ -170,7 +158,6 @@
     }else{
       const res = await fetch(`${backURI}/Signin?email=${emailInput}`)
       const { password } = await res.json()
-      console.log(password)
       if(password) {
         if(bcrypt.compareSync(passwordInput, password)){
           await fetch(`${backURI}/validUser`, {
@@ -183,7 +170,6 @@
             })
           }).then(async resp => {
             const data = await resp.json()
-            console.log(data)
             localStorage.setItem("userData", JSON.stringify(data))
             notifs.set([])
             userData.set(data)
