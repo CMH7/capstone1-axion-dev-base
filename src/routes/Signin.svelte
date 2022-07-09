@@ -170,8 +170,8 @@
     }else{
       const res = await fetch(`${backURI}/Signin?email=${emailInput}`)
       const { password } = await res.json()
-
-      if(res.ok) {
+      console.log(password)
+      if(password) {
         if(bcrypt.compareSync(passwordInput, password)){
           await fetch(`${backURI}/validUser`, {
             method: 'POST',
@@ -222,11 +222,13 @@
             id: $notifs.length + 1
           })
           notifs.set(notifsCopy)
+          loading = false
+          disabled = false
         }
       }else{
         let notifsCopy = $notifs
         notifsCopy.push({
-          msg: "Wrong email or password. Please try again.",
+          msg: "No account found.",
           type: "error",
           id: $notifs.length + 1
         })
