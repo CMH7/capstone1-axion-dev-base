@@ -29,7 +29,8 @@
                   msg: "You will be automatically logged out. Do you want to continue?",
                   active: true,
                   yes: () => {
-                    goto('/', {replaceState: true});
+                    localStorage.removeItem('userData')
+                    goto('/')
                   }
                 }
               );
