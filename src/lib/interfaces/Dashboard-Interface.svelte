@@ -29,6 +29,9 @@
 
   const subjectDef = constants.subject
   const workspaceDef = constants.workspace
+
+  let breadCrumbsItemsCopy = []
+  breadCrumbsItems.subscribe(value => breadCrumbsItemsCopy = value)
 </script>
 
 <svelte:head>
@@ -39,7 +42,7 @@
 
 <div in:fade class="hero">
   <div class="hero-head px-3">
-    <Breadcrumbs large items={$breadCrumbsItems} class="pb-0" let:item>
+    <Breadcrumbs large bind:items={breadCrumbsItemsCopy} class="pb-0" let:item>
       <div on:click={() => {
         if(item.text === $activeSubject.name) {
           currentDashboardSubInterface.set("Subjects")
