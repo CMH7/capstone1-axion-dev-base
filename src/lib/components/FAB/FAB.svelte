@@ -1,38 +1,11 @@
 <script>
-  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading } from '$lib/stores/global-store';
+  import { addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, ismini } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem, MaterialApp } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
-  import constants from '$lib/constants'
-  import axios from 'axios'
 
   let width = 0
   let active = false
-
-  const getAllUsers = async () => {
-    memberModalLoading.set(true)
-    memberModalActive.set(true)
-    const res = await fetch(`${constants.backURI}/`)
-    const users = await res.json()
-    if(res.ok) {
-      const wsMembers = $activeWorkspace.members
-      let data = users.filter(user => user.id != $userData.id)
-      wsMembers.forEach(member => {
-        data = data.filter(user => user.email != member.email)
-      })
-      allUsers.set(data)
-      memberModalLoading.set(false)
-    } else {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: `Getting all users failed, ${res.statusText}`,
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-      memberModalLoading.set(false)
-    }
-  }
 </script>
 
 <svelte:window bind:outerWidth={width} />
@@ -71,13 +44,7 @@
             Create task
           </div>
         </ListItem>
-        <ListItem>
-          <div
-            on:click={getAllUsers}
-          >
-            Manage members
-          </div>
-        </ListItem>
+        <ListItem>Manage members</ListItem>
         <ListItem>Workspace settings</ListItem>
         {/if}
       </List>

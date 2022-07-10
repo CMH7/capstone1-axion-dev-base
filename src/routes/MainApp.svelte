@@ -7,7 +7,7 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData } from "$lib/stores/global-store"
+  import { currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
   import CalendarInterface from "$lib/interfaces/Calendar-interface.svelte"
@@ -15,35 +15,14 @@
   import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
   import NotificationContainer from '$lib/components/Notification-container.svelte'
   import { goto } from '$app/navigation'
-  import constants from '$lib/constants'
 
   onMount(()=>{
+    history.pushState(null, null, location.href);
     window.onpopstate = function () {
-      if(($currentInterface === 'Dashboard' || $currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
-        console.log('on root')
-        location.href = '/'
-      }else if($currentDashboardSubInterface === 'Workspaces') {
-        console.log('on workspace')
-        currentDashboardSubInterface.set('Subjects')
-        activeSubject.set(constants.subject)
-        activeWorkspace.set(constants.workspace)
-        allBoards.set([])
-        breadCrumbsItems.set([{text: 'Subjects'}])
-        history.forward()
-      } else if($currentDashboardSubInterface === 'Boards') {
-        console.log('on boards')
-        currentDashboardSubInterface.set('Workspaces')
-        activeWorkspace.set(constants.workspace)
-        allBoards.set([])
-        let breadCrumbsItemsCopy = $breadCrumbsItems
-        breadCrumbsItemsCopy.pop()
-        breadCrumbsItemsCopy.pop()
-        breadCrumbsItems.set(breadCrumbsItemsCopy)
-        history.forward()
-      }
+      history.go(1)
     }
 
-    if(!$isLoggedIn && !localStorage.getItem('userData')) {
+    if(!$isLoggedIn) {
       let notifsCopy = $notifs;
       notifsCopy.push(
         {
@@ -54,9 +33,6 @@
       )
       notifs.set(notifsCopy)
       goto('/Signin')
-    }else{
-      userData.set(JSON.parse(localStorage.getItem('userData')))
-      isLoggedIn.set(true)
     }
   })
 

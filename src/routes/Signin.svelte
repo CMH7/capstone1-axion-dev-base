@@ -1,231 +1,167 @@
 <script>
-  // @ts-nocheck
-  // @ts-ignore
-  import { onMount } from 'svelte'
-  import { goto } from '$app/navigation'
-  import { browser } from '$app/env'
-  import { mdiGoogle, mdiFacebook } from '@mdi/js'
-  import { Icon, Divider, MaterialApp } from 'svelte-materialify'
-  import HomeFooter from "$lib/components/Home-footer.svelte"
-  import HomeHeader from "$lib/components/Home-header.svelte"
-  import {fade} from 'svelte/transition'
-  import bcrypt from 'bcryptjs'
-  import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
-  import NotificationContainer from '$lib/components/Notification-container.svelte'
-  import constants from '$lib/constants'
-  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+    // @ts-nocheck
+    import { mdiGoogle, mdiFacebook } from '@mdi/js'
+    import { Icon, Divider, MaterialApp } from 'svelte-materialify'
+    import HomeFooter from "$lib/components/Home-footer.svelte"
+    import HomeHeader from "$lib/components/Home-header.svelte"
+    import { goto } from '$app/navigation'
+    import {fade} from 'svelte/transition'
+    import axios from 'axios'
+    import bcrypt from 'bcryptjs'
+    import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
+    import NotificationContainer from '$lib/components/Notification-container.svelte'
+    import constants from '$lib/constants'
+    import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
 
-  const backURI = constants.backURI
+    const backURI = constants.backURI
 
-  // OnKeyDown
-  function onKeyDown(e) {
-    if(e.keyCode == 13) login()
-  }
-
-  let emailInput = "", passwordInput = ""
-
-  // animation
-  let loading = false
-  let disabled = false
-
-  const isEmailValid = (email) => {
-  const emailRegexp = new RegExp(
-      /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
-    )
-    return emailRegexp.test(email)
-  }
-
-  const isPassValid = (pass) => {
-    let valid = true
-    let invalids = 'Password must have '
-    const lenInva = invalids.length
-    
-    if(pass.length < 8) {
-      valid = false
-      invalids += '8 characters length'
+    // OnKeyDown
+    function onKeyDown(e) {
+      if(e.keyCode == 13) login()
     }
 
-    let upChecker = false
-    constants.upperCasedLetters.every(l => {
-      if(pass.match(l)) {
-        upChecker = true
-        return false
-      }
-      return true
-    })
-    if(!upChecker) {
-      invalids += invalids.length > lenInva ? ', 1 upper cased letter' : '1 upper cased letter'
-      valid = false
-    }
-     
-    let lowerChecker = false
-    constants.lowerCasedLetters.every(l => {
-      if(pass.match(l)) {
-        lowerChecker = true
-        return false
-      }
-      return true
-    })
-    if(!lowerChecker) {
-      invalids += invalids.length > lenInva ? ', 1 lower cased letter' : '1 lower cased letter'
-      valid = false
+    let emailInput = "",
+        passwordInput = "",
+        data;
+
+    // animation
+    let loading = false
+    let disabled = false
+
+    const isEmailValid = (email) => {
+    const emailRegexp = new RegExp(
+        /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+      )
+      return emailRegexp.test(email)
     }
 
-    let digitsChecker = false
-    constants.digits.every(n => {
-      if(pass.match(n.toString())) {
-        digitsChecker = true
-        return false
-      }
-      return true
-    })
-    if(!digitsChecker) {
-      invalids += invalids.length > lenInva ? ', one 0-9 digit' : 'One of the 0-9 digit'
-      valid = false
+    const isPassValid = (pass) => {
+      const passRegexp = new RegExp(/^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!&$%&? "]).*$/)
+      return passRegexp.test(pass)
     }
-    
-    let specialChecker = false
-    constants.specialCharacters.every(l => {
-      const re = new RegExp(`\\${l}`)
-      if(pass.match(re)) {
-        specialChecker = true
-        return false
-      }
-      return true
-    })
-    if(!specialChecker) {
-      invalids += invalids.length > lenInva ? ', 1 special character ~!$%^&*_=+}{\'?-' : '1 special character ~!$%^&*_=+}{\'?-'
-      valid = false
-    }
-    
-    if(!valid) {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: invalids,
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-      return false
-    } else {
-      return true
-    }
-  }
 
-  const login = async () => {
-    if(!isEmailValid(emailInput)) {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Email is invalid',
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-      return false
-    }
-    
-    if(!isPassValid(passwordInput)) return false
-
-    loading = true
-    disabled = true
-
-    if(emailInput === "" || passwordInput === "") {
-      loading = false
-      disabled = false
-      let notifsCopy = $notifs;
-      if(emailInput === "" && !(passwordInput === "")) {
+    const login = () => {
+      if(!isEmailValid(emailInput)) {
+        let notifsCopy = $notifs
         notifsCopy.push({
-            msg: "Please input a valid email.",
-            type: "error",
-            id: $notifs.length + 1
+          msg: 'Email is invalid',
+          type: 'error',
+          id: $notifs.length + 1
         })
-      }else if(passwordInput === "" && !(emailInput === "")) {
-        notifsCopy.push({
-            msg: "Please input a valid password.",
-            type: "error",
-            id: $notifs.length + 1
-        })
-      }else {
-        notifsCopy.push({
-            msg: "Please input a valid email and password.",
-            type: "error",
-            id: $notifs.length + 1
-        })
+        notifs.set(notifsCopy)
+        return false
       }
-      notifs.set(notifsCopy)
-      emailInput = ""
-      passwordInput = ""
-    }else{
-      const res = await fetch(`${backURI}/Signin?email=${emailInput}`)
-      const { password } = await res.json()
-      if(password) {
-        if(bcrypt.compareSync(passwordInput, password)){
-          await fetch(`${backURI}/validUser`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              email: emailInput
-            })
-          }).then(async resp => {
-            const data = await resp.json()
-            localStorage.setItem("userData", JSON.stringify(data))
-            notifs.set([])
-            userData.set(data)
-            useHint.set($userData.useHint)
+      if(!isPassValid(passwordInput)) {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Password is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        passwordInput = ''
+        return false
+      }
+      loading = true
+      disabled = true
+
+      if(emailInput === "" || passwordInput === "") {
+        loading = false
+        disabled = false
+        let notifsCopy = $notifs;
+        if(emailInput === "" && !(passwordInput === "")) {
+          notifsCopy.push({
+              msg: "Please input a valid email.",
+              type: "error",
+              id: $notifs.length + 1
+          })
+        }else if(passwordInput === "" && !(emailInput === "")) {
+          notifsCopy.push({
+              msg: "Please input a valid password.",
+              type: "error",
+              id: $notifs.length + 1
+          })
+        }else {
+          notifsCopy.push({
+              msg: "Please input a valid email and password.",
+              type: "error",
+              id: $notifs.length + 1
+          })
+        }
+        notifs.set(notifsCopy)
+        emailInput = ""
+        passwordInput = ""
+      }else{
+        axios.get(`${backURI}/Signin?email=${emailInput}`).then(res=>{
+          if(res.data.password === undefined) {
             let notifsCopy = $notifs
             notifsCopy.push({
-              msg: "Log in Successful",
-              type: "success",
+              msg: "Wrong email or password. Please try again.",
+              type: "error",
               id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
-            isLoggedIn.set(true)
-            goto('/MainApp', {replaceState: true})
-            emailInput = ""
-            passwordInput = ""
-          })
-          .catch(err => {
+            loading = false
+            disabled = false
+          }else if(bcrypt.compareSync(passwordInput, res.data.password)){
+            axios.post(`${backURI}/validUser`, {
+              email: emailInput
+            }).then(resp => {
+              notifs.set([])
+              userData.set(resp.data)
+              useHint.set($userData.useHint)
+              let notifsCopy = $notifs
+              notifsCopy.push({
+                msg: "Log in Successful",
+                type: "success",
+                id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+              isLoggedIn.set(true)
+              goto('/MainApp', {replaceState: true})
+
+              emailInput = ""
+              passwordInput = ""
+            })
+            .catch(err => {
+              let notifsCopy = $notifs
+              notifsCopy.push({
+                msg: `Error logging in. ${err}`,
+                type: 'error',
+                id: $notifs.length + 1
+              })
+              notifs.set(notifsCopy)
+
+              emailInput = ""
+              passwordInput = ""
+              loading = false
+              disabled = false
+            })
+          }else{
             let notifsCopy = $notifs
             notifsCopy.push({
-              msg: `Error logging in. ${err}`,
+              msg: "Wrong email or password. Please try again.",
               type: 'error',
               id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
-
-            emailInput = ""
-            passwordInput = ""
-            loading = false
-            disabled = false
-          })
-        }else{
+          }
+        })
+        .catch(err => {
           let notifsCopy = $notifs
           notifsCopy.push({
-            msg: "Wrong email or password. Please try again.",
-            type: 'error',
-            id: $notifs.length + 1
+            msg: `Error getting account, ${err}`
           })
           notifs.set(notifsCopy)
           loading = false
           disabled = false
-        }
-      }else{
-        let notifsCopy = $notifs
-        notifsCopy.push({
-          msg: "No account found.",
-          type: "error",
-          id: $notifs.length + 1
+          emailInput = ""
+          passwordInput = ""
         })
-        notifs.set(notifsCopy)
-        loading = false
-        disabled = false
       }
     }
-  }
 
-  let comingSoonModalOpen = false
+    let comingSoonModalOpen = false
   const openComingSoon = () => {
     if (!comingSoonModalOpen) {
       comingSoonModalOpen = true
@@ -234,16 +170,6 @@
       comingSoonModalOpen = true
     }
   }
-
-  onMount(() => {
-    if(browser && localStorage.getItem('userData')) {
-      const user = JSON.parse(localStorage.getItem('userData'))
-      userData.set(user)
-      notifs.set([])
-      isLoggedIn.set(true)
-      goto('/MainApp', {replaceState: true})
-    }
-  })
 </script>
 
 <svelte:head>

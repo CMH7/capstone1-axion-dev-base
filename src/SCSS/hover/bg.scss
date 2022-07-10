@@ -8,15 +8,6 @@
         }
       }
 
-      &-lighter {
-        &-grey {
-          &-light {background-color: hsl(0, 0%, 86%);}
-          &-light:hover {background-color: hsl(0, 0%, 71%);}
-          &-dark {background-color: hsl(0, 0%, 86%);}
-          &-dark:hover {background-color: hsl(0, 0%, 29%);}
-        }
-      }
-
       &-dark:hover {background-color: hsl(0, 0%, 29%);}
       &-light:hover {background-color: hsl(0, 0%, 71%);}
       &-lighter:hover {background-color: hsl(0, 0%, 86%);}

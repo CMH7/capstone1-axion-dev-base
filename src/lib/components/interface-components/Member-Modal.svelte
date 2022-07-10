@@ -7,7 +7,6 @@
   import { allUsers, activeWorkspace } from '$lib/stores/global-store'
 
   let users = []
-  let usersCopy = []
 
   // Do all this whenever the allUsers data are changed
   allUsers.subscribe(value => {
@@ -32,64 +31,20 @@
     })
 
     users = users.sort((a, b) => a.isAdded - b.isAdded)
-    usersCopy = [...users]
   })
 
-  let searchValue = ''
-  let errorMsg = []
-  let searchSuccess = false
-  let searchIconClicked = false
-  const search = (e) => {
-    if((e.keyCode == 13 || searchIconClicked) && $memberModalActive) {
-      if(!searchValue) {
-        users = [...usersCopy]
-        searchSuccess = false
-        errorMsg = []
-      }else{
-        users = []
-        usersCopy.forEach(prof => {
-          let nameEmail = `${prof.data.name} ${prof.data.email}`.toLowerCase()
-          if(nameEmail.match(searchValue)) {
-            users = [...users, prof]
-          }
-        })
-        if(users.length == 0) {
-          errorMsg = [`${searchValue} is not found`]
-          searchSuccess = false
-        }else{
-          errorMsg = []
-          searchSuccess = true
-        }
-        searchIconClicked = false
-      }
-    }
-  }
-</script>
 
-<svelte:window on:keydown={search} />
+</script>
 
 <MaterialApp>
   <div>
     <Dialog persistent active={$memberModalActive} class="p-5 maxmins-w-65p-dt-to-mb-95p maxmins-h-70p">
       <div>
-        <TextField
-          messages={errorMsg}
-          error={users.length == 0}
-          success={searchSuccess}
-          bind:value={searchValue}
-          color="#000"
-          outlined
-          dense
-          class="maxmins-w-100p"
-        >
+        <TextField color="#000" outlined dense class="maxmins-w-100p">
           Name or Email
           <div
             slot='append'
             class="is-clickable"
-            on:click={e => {
-              searchIconClicked = true
-              search(e)
-            }}
           >
             <Icon path={mdiMagnify}/>
           </div>

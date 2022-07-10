@@ -1,4 +1,5 @@
 <script>
+  import { Avatar } from 'svelte-materialify'
   // @ts-ignore
   import Skeleton from 'svelte-skeleton/Skeleton.svelte'
 </script>
