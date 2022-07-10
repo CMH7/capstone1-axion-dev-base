@@ -183,11 +183,13 @@
             <div class="pl-1 has-text-grey-dark has-text-weight-bold dm-sans">
                 New Task
             </div>
+
+            <!-- close icon -->
             <div
                 class="is-clickable"
                 on:click={() => addTaskModalActive.set(false)}
             >
-                <Icon path={mdiClose}/>
+                <Icon class="hover-txt-color-primary" path={mdiClose}/>
             </div>
         </div>
 
@@ -197,7 +199,10 @@
             <input {disabled} class="min-w-100p py-5 pl-2 input" type="text" bind:value={taskName} />
 
             <!-- due and level -->
-            <div {disabled} class="maxmins-w-100p is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between my-3">
+            <div
+                {disabled}
+                class="maxmins-w-100p is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-space-between my-3"
+            >
                 <!-- due date -->
                 <SveltyPicker
                     placeholder="Due date"
@@ -222,15 +227,14 @@
             <!-- members -->
             <Select
                 {disabled}
-                chips
                 multiple
                 items={workspaceMembersLocal}
                 outlined
                 bind:value={taskMembers}
                 class="maxmins-w-100p rounded mb-2"
-
+                chips
             >
-                Asignee/s
+                Assignee/s
             </Select>
 
             <!-- description -->
@@ -239,7 +243,9 @@
                 outlined
                 class="has-background-white rounded mt-0 min-w-100p"
                 bind:value={description}
-            >Description</Textarea>
+            >
+                Description
+            </Textarea>
 
             <!-- create button -->
             <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
