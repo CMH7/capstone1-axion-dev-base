@@ -1,7 +1,6 @@
 <script>
   import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, snack } from "$lib/stores/global-store"
-  import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js"
-  import { Icon, MaterialApp, ProgressLinear } from "svelte-materialify"
+  import { ProgressLinear } from "svelte-materialify"
   import axios from "axios"
   import constants from "$lib/constants"
   import { userData, notifs } from '$lib/stores/global-store'
@@ -21,8 +20,6 @@
   }
 
   let mouseEnter = false
-  let mouseEnterStar = false
-
   let deleting = false
   
   /**

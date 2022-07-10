@@ -1,7 +1,5 @@
 <script>
   import { activeWorkspace, allBoards, breadCrumbsItems, currentDashboardSubInterface} from "$lib/stores/global-store"
-  import { mdiStarSettings, mdiStarSettingsOutline } from "@mdi/js"
-  import { Icon, MaterialApp } from "svelte-materialify"
 
   // export only the active workspace
   export let workspace = {
@@ -18,7 +16,6 @@
 
   // Hovering effects
   let mouseEnter = false
-  let mouseEnterStar = false
 </script>
 
 <div
