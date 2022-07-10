@@ -7,6 +7,7 @@
   import { allUsers, activeWorkspace } from '$lib/stores/global-store'
 
   let users = []
+  let usersCopy = []
 
   // Do all this whenever the allUsers data are changed
   allUsers.subscribe(value => {
@@ -31,6 +32,7 @@
     })
 
     users = users.sort((a, b) => a.isAdded - b.isAdded)
+    usersCopy = [...users]
   })
 
   let searchValue = ''
@@ -64,15 +66,30 @@
   }
 </script>
 
+<svelte:window on:keydown={search} />
+
 <MaterialApp>
   <div>
     <Dialog persistent active={$memberModalActive} class="p-5 maxmins-w-65p-dt-to-mb-95p maxmins-h-70p">
       <div>
-        <TextField color="#000" outlined dense class="maxmins-w-100p">
+        <TextField
+          messages={errorMsg}
+          error={users.length == 0}
+          success={searchSuccess}
+          bind:value={searchValue}
+          color="#000"
+          outlined
+          dense
+          class="maxmins-w-100p"
+        >
           Name or Email
           <div
             slot='append'
             class="is-clickable"
+            on:click={e => {
+              searchIconClicked = true
+              search(e)
+            }}
           >
             <Icon path={mdiMagnify}/>
           </div>

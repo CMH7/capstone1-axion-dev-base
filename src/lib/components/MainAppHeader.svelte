@@ -2,36 +2,8 @@
   // @ts-nocheck
   import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify"
   import {mdiMenu, mdiAccount } from '@mdi/js'
-  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, useHint, currentDashboardSubInterface, memberModalActive, allUsers, notifs, memberModalLoading, userData, activeWorkspace } from "$lib/stores/global-store"
+  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack } from "$lib/stores/global-store"
   import { goto } from "$app/navigation"
-  import axios from 'axios'
-  import constants from '$lib/constants'
-
-  const backURI = constants.backURI
-
-  const getAllUsers = async () => {
-    memberModalLoading.set(true)
-    memberModalActive.set(true)
-    await axios.get(`${backURI}/`)
-    .then(res => {
-      const wsMembers = $activeWorkspace.members
-      let data = res.data.filter(user => user.id != $userData.id)
-      wsMembers.forEach(member => {
-        data = data.filter(user => user.email != member.email)
-      })
-      allUsers.set(data)
-    })
-    .catch(err => {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: `Getting all users failed, ${err}`,
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-    })
-    .finally(() => memberModalLoading.set(false))
-  }
 </script>
 
 <div class="block mb-0">
@@ -57,7 +29,8 @@
                   msg: "You will be automatically logged out. Do you want to continue?",
                   active: true,
                   yes: () => {
-                    goto('/', {replaceState: true});
+                    localStorage.removeItem('userData')
+                    goto('/')
                   }
                 }
               );
@@ -74,24 +47,6 @@
 
       <!-- Expansion-er -->
       <div class="is-flex-grow-1"/>
-
-      <!-- Toolbar -->
-      <div class="mr-3">
-        <!-- Subject tool bar -->
-        <!-- End Subject tool bar -->
-
-        <!-- Workspaces tool bar -->
-        <div class="{$currentDashboardSubInterface === "Boards"? "": "undisp"}">
-          <!-- Members tool button -->
-          <div on:click={getAllUsers}>
-            <Button text class="has-text-white quicksands px-2 py-3">
-              Members
-            </Button>
-          </div>
-          <!-- End Members tool button -->
-        </div>
-        <!-- End Workspaces tool bar -->
-      </div>
 
       <!-- Account Button -->
       <div class="is-clickable is-hidden-touch {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")}>
