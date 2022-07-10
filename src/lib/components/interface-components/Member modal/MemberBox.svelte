@@ -1,9 +1,11 @@
 <script>
+  //@ts-ignore
+  import { browser } from '$app/env'
   import { Avatar, Icon, Dialog, Button } from 'svelte-materialify'
-  import { mdiAccountCircle } from '@mdi/js'
-  import axios from 'axios'
-  import { userData, activeSubject, activeWorkspace, notifs, allUsers } from '$lib/stores/global-store'
+  import { mdiAccountCircle, mdiClose } from '@mdi/js'
+  import { userData, activeSubject, activeWorkspace, notifs } from '$lib/stores/global-store'
   import constants from '$lib/constants'
+  import Skeleton from 'svelte-skeleton/Skeleton.svelte'
 
   export let user = {
     isAdded: 0,
@@ -15,7 +17,16 @@
   }
 
   let active = false
+  let viewUser = false
   let isLoading = false
+  let profile = ''
+  let firstName = ''
+  let lastName = ''
+  let age = 0
+  let bio = ''
+  let school = ''
+  let course = ''
+
 
   const addMember = async () => {
     isLoading = true
@@ -144,7 +155,184 @@
       isLoading = false
     })
   }
+
+  const view = async () => {
+    isLoading = true
+    viewUser = true
+    if(browser && sessionStorage.getItem(`${user.data.email}`)) {
+      const userV = JSON.parse(sessionStorage.getItem(`${user.data.email}`))
+      profile = userV.profile
+      firstName = userV.firstName
+      lastName = userV.lastName
+      age = userV.age
+      bio = userV.bio
+      school = userV.school
+      course = userV.course
+      isLoading = false
+    } else {
+      await fetch(`${constants.backURI}/validUser`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: user.data.email
+        })
+      }).then(async res => {
+        const userV = await res.json()
+        sessionStorage.setItem(`${user.data.email}`, JSON.stringify(userV))
+        profile = userV.profile
+        firstName = userV.firstName
+        lastName = userV.lastName
+        age = userV.age
+        bio = userV.bio
+        school = userV.school
+        course = userV.course
+        isLoading = false
+      }).catch(err => {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `Viewing user error, ${err}`,
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        isLoading = false
+        viewUser = false
+      })
+    }
+  }
+
+  let outerWidth = 0
+  let bioContainerWidth = 0
+  let bioContainerHeight = 0
+  let nameContainerWidth = 0
+  let ageContainerWidth = 0
+  let courseContainerWidth = 0
+  let schoolContainerWidth = 0
 </script>
+
+<svelte:window bind:outerWidth />
+
+<Dialog
+  persistent
+  bind:active={viewUser}
+  class='p-4 {outerWidth < 426 ?  'maxmins-w-90p' : outerWidth < 769 && outerWidth > 426 ? 'maxmins-w-50p': 'maxmins-w-40p'}'
+>
+  <!-- porfile and infos -->
+  <div class="is-flex">
+    <!-- profile -->
+    <div>
+      {#if isLoading}
+        <div class="p-2">
+          <Skeleton height={90} width={90} >
+            <circle cx={45} cy={45} r={45} />
+          </Skeleton>
+        </div>
+      {:else}
+        {#if !profile}
+          <Avatar
+            size={100}
+          >
+            <Icon class="blue white-text" path={mdiAccountCircle} />
+          </Avatar>
+        {:else}
+          <Avatar
+            size={100}
+          >
+            <img src={profile} alt={firstName} />
+          </Avatar>
+        {/if}
+      {/if}
+    </div>
+
+    <!-- infos and close -->
+    <div class="flex-grow-1 is-flex is-justify-content-space-between pl-3">
+      <div class="flex-grow-1">
+        <!-- Name -->
+        <div
+          bind:clientWidth={nameContainerWidth}
+          class="dm-sans txt-weight-400 is-size-3-desktop is-size-4-tablet is-size-5-mobile"
+        >
+          {#if isLoading}
+          <div class="mt-1"/>
+          <Skeleton width={nameContainerWidth} height={36}>
+            <rect width={nameContainerWidth} height={36} />
+          </Skeleton>
+          {:else}
+          {`${firstName} ${lastName}`}
+          {/if}
+        </div>
+
+        <!-- age -->
+        <div
+          bind:clientWidth={ageContainerWidth}
+          class="is-size-7-mobile"
+        >
+          {#if isLoading}
+          <Skeleton width={ageContainerWidth} height={15}>
+            <rect width={ageContainerWidth} height={15} />
+          </Skeleton>
+          {:else}
+          {`${age} yrs. old`}
+          {/if}
+        </div>
+        
+        <!-- course -->
+        <div 
+          bind:clientWidth={courseContainerWidth}
+          class="is-size-7-mobile"
+        >
+          {#if isLoading}
+          <Skeleton width={courseContainerWidth} height={15}>
+            <rect width={courseContainerWidth} height={15} />
+          </Skeleton>
+          {:else}
+          {`${course}`}
+          {/if}
+        </div>
+        
+        <!-- school -->
+        <div
+          bind:clientWidth={schoolContainerWidth}
+          class="is-size-7-mobile"
+        >
+          {#if isLoading}
+          <Skeleton width={schoolContainerWidth} height={15}>
+            <rect width={schoolContainerWidth} height={15} />
+          </Skeleton>
+          {:else}
+          {`${school}`}
+          {/if}
+        </div>
+      </div>
+
+      <!-- close -->
+      <div
+        class="is-clickable"
+        on:click={() => viewUser = false}
+      >
+        <Icon class="has-transition hover-txt-color-primary" path={mdiClose} />
+      </div>
+    </div>
+  </div>
+  
+  <!-- bio -->
+  <div
+    bind:clientWidth={bioContainerWidth}
+    bind:clientHeight={bioContainerHeight}
+    class="maxmins-w-100p maxmins-h-100 is-flex is-justify-content-center is-align-items-center"
+  >
+    {#if isLoading}
+      <Skeleton width={bioContainerWidth} height={bioContainerHeight}>
+        <rect width={bioContainerWidth} height={bioContainerHeight} />
+      </Skeleton>
+    {:else}
+      <div class="maxmins-w-100p maxmins-h-100 shadow-inside-default rounded mt-2 px-2">
+        {`${bio ? bio: '...'}`}
+      </div>
+    {/if}
+  </div>
+</Dialog>
 
 <Dialog persistent bind:active>
   <div class="is-flex is-flex-direction-column p-2">
@@ -171,7 +359,10 @@
 
 <div class="box shadow-inside-default p-4 is-flex is-align-items-center is-justify-content-space-between has-transition hover-bg-grey-lighter">
   <div class="is-flex is-align-items-center">
-    <div class="is-clickable">
+    <div
+      on:click={view}
+      class="is-clickable"
+    >
       <Avatar size="30px" class="blue white-text">
         {#if user.data.profile === ""}
         <Icon path={mdiAccountCircle} />
@@ -181,7 +372,8 @@
       </Avatar>
     </div>
     <div
-      class="ml-4 dm-sans text-body-2 is-clickable"
+      on:click={view}
+      class="ml-4 dm-sans text-body-2 is-clickable has-transition hover-txt-style-underline"
     >
       {user.data.name}
     </div>
