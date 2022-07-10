@@ -22,6 +22,7 @@
   let profile = ''
   let firstName = ''
   let lastName = ''
+  let email = ''
   let age = 0
   let bio = ''
   let school = ''
@@ -168,6 +169,7 @@
       bio = userV.bio
       school = userV.school
       course = userV.course
+      email = userV.email
       isLoading = false
     } else {
       await fetch(`${constants.backURI}/validUser`, {
@@ -188,6 +190,7 @@
         bio = userV.bio
         school = userV.school
         course = userV.course
+        email = userV.email
         isLoading = false
       }).catch(err => {
         let notifsCopy = $notifs
@@ -221,7 +224,7 @@
   <!-- porfile and infos -->
   <div class="is-flex">
     <!-- profile -->
-    <div>
+    <div class="is-flex is-align-items-center">
       {#if isLoading}
         <div class="p-2">
           <Skeleton height={90} width={90} >
@@ -260,6 +263,20 @@
           </Skeleton>
           {:else}
           {`${firstName} ${lastName}`}
+          {/if}
+        </div>
+
+        <!-- email -->
+        <div
+          bind:clientWidth={ageContainerWidth}
+          class="is-size-7-mobile"
+        >
+          {#if isLoading}
+          <Skeleton width={ageContainerWidth} height={15}>
+            <rect width={ageContainerWidth} height={15} />
+          </Skeleton>
+          {:else}
+          {`${email}`}
           {/if}
         </div>
 
