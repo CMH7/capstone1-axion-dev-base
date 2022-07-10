@@ -25,10 +25,6 @@
             if(subject.id === $activeSubject.id) {
                 subject.workspaces.every(workspace => {
                     if(workspace.id === $activeWorkspace.id){
-                        workspaceMembers = workspace.members
-                        workspaceMembersLocal = workspaceMembers.map(member => {
-                            return { name: member.name, value: member}
-                        })
                         if(workspace.owned) {
                             workspaceMembersLocal.push({
                                 name: `${$userData.firstName} ${$userData.lastName} (Owner)`,
@@ -39,6 +35,13 @@
                                 }
                             })
                         }
+                        workspaceMembers = workspace.members
+                        workspaceMembers.forEach(member => {
+                            workspaceMembersLocal.push({
+                                name: member.name,
+                                value: member
+                            })
+                        })
                         return false
                     }
                     return true
