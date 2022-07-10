@@ -340,15 +340,24 @@
       {user.isAdded == 1 ? 'Remove' : 'Invite'} {user.data.name} to the workspace?
     </div>
     <div class="is-flex is-justify-content-flex-end">
-      <div on:click={() => {
-        if(user.isAdded == 1) removeMember()
-        if(user.isAdded != 1) addMember()
-      }} class="mx-1">
+      <div
+        on:click={() => {
+          if(isLoading) return false
+          if(user.isAdded == 1) removeMember()
+          if(user.isAdded != 1) addMember()
+        }} class="mx-1"
+      >
         <Button disabled={isLoading} text class="has-background-{user.isAdded == 1 ? 'danger' : 'success'} has-text-white button {isLoading? 'is-loading': ''}">
           {user.isAdded == 1 ? 'Remove' : 'Invite'}
         </Button>
       </div>
-      <div on:click={e => active = false} class="mx-1">
+      <div
+        on:click={e => {
+          if(isLoading) return false
+          active = false
+        }}
+        class="mx-1"
+      >
         <Button disabled={isLoading} text class="has-background-danger-dark has-text-white button {isLoading? 'is-loading': ''}">
           Cancel
         </Button>
