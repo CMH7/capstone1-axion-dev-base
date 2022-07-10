@@ -24,8 +24,80 @@
   }
 
   const isPassValid = (pass) => {
-    const passRegexp = new RegExp(/^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!&$%&? "]).*$/)
-    return passRegexp.test(pass)
+    let valid = true
+    let invalids = 'Password must have '
+    const lenInva = invalids.length
+    
+    if(pass.length < 8) {
+      valid = false
+      invalids += '8 characters length'
+    }
+
+    let upChecker = false
+    constants.upperCasedLetters.every(l => {
+      if(pass.match(l)) {
+        upChecker = true
+        return false
+      }
+      return true
+    })
+    if(!upChecker) {
+      invalids += invalids.length > lenInva ? ', 1 upper cased letter' : '1 upper cased letter'
+      valid = false
+    }
+     
+    let lowerChecker = false
+    constants.lowerCasedLetters.every(l => {
+      if(pass.match(l)) {
+        lowerChecker = true
+        return false
+      }
+      return true
+    })
+    if(!lowerChecker) {
+      invalids += invalids.length > lenInva ? ', 1 lower cased letter' : '1 lower cased letter'
+      valid = false
+    }
+
+    let digitsChecker = false
+    constants.digits.every(n => {
+      if(pass.match(n.toString())) {
+        digitsChecker = true
+        return false
+      }
+      return true
+    })
+    if(!digitsChecker) {
+      invalids += invalids.length > lenInva ? ', one 0-9 digit' : 'One of the 0-9 digit'
+      valid = false
+    }
+    
+    let specialChecker = false
+    constants.specialCharacters.every(l => {
+      const re = new RegExp(`\\${l}`)
+      if(pass.match(re)) {
+        specialChecker = true
+        return false
+      }
+      return true
+    })
+    if(!specialChecker) {
+      invalids += invalids.length > lenInva ? ', 1 special character ~!$%^&*_=+}{\'?-' : '1 special character ~!$%^&*_=+}{\'?-'
+      valid = false
+    }
+    
+    if(!valid) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: invalids,
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      return false
+    } else {
+      return true
+    }
   }
 
   const items = [
@@ -50,7 +122,7 @@
 
   
 
-  function createNewUser(){
+  const createNewUser = async () => {
     if(!isEmailValid(email)) {
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -61,16 +133,8 @@
       notifs.set(notifsCopy)
       return false
     }
-    if(!isPassValid(password)) {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Password is invalid',
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-      return false
-    }
+
+    if(!isPassValid(password)) return false
 
     loading = true
     disabled = true
@@ -118,9 +182,18 @@
       })
       notifs.set(notifss)
 
-      axios.post(`${backURI}/validUser`, {email: email})
-      .then(res => {
-        if(res.data) {
+      await fetch(`${backURI}/validUser`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email
+        })
+      })
+      .then( async res => {
+        const data = await res.json()
+        if(data?.id) {
           let notifsCopy = $notifs
           notifsCopy.push({
             msg: 'Email used has an existing account.',
@@ -133,45 +206,54 @@
           disabled = false
         }else{
           const finalPassword = bcrypt.hashSync(password, password.length)
-          axios.post(`${backURI}/Signup`,  {
-            subjects: [],
-            notifications: [],
-            age: parseInt(age),
-            course: course,
-            email: email,
-            firstName: firstName,
-            gender: gender,
-            lastName: lastName,
-            password: finalPassword,
-            profile: "",
-            school: school,
-            useHint: true,
-            year: parseInt(year),
-            lastActive: new Date(),
-            bio: ''
-          }).then(res=>{
-            if(res.data.valid) {
-              let notifsCopy = $notifs
-              notifsCopy.push({
-                  msg: "Creation successful",
-                  type: "success",
-                  id: $notifs.length + 1
-              })
-              notifs.set(notifsCopy)
-              loading = false
-              disabled = false 
-              goto('/Signin', {replaceState: true})
-            }
-            if(!res.data.valid) {
-              let notifsCopy = $notifs;
-              notifsCopy.push({
-                  msg: "Creation failed. Please try again",
-                  type: "error",
-                  id: $notifs.length + 1
-              })
-              notifs.set(notifsCopy)
-              loading = false
-              disabled = false
+          await fetch(`${backURI}/Signup`,  {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              subjects: [],
+              notifications: [],
+              age: parseInt(age),
+              course: course,
+              email: email,
+              firstName: firstName,
+              gender: gender,
+              lastName: lastName,
+              password: finalPassword,
+              profile: "",
+              school: school,
+              useHint: true,
+              year: parseInt(year),
+              lastActive: new Date(),
+              bio: ''
+            })
+          }).then(async res=>{
+            if(res.ok) {
+              const { valid } = await res.json()
+              if(valid) {
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: "Creation successful",
+                    type: "success",
+                    id: $notifs.length + 1
+                })
+                notifs.set(notifsCopy)
+                loading = false
+                disabled = false 
+                goto('/Signin', {replaceState: true})
+              }
+              if(!valid) {
+                let notifsCopy = $notifs;
+                notifsCopy.push({
+                    msg: "Creation failed. Please try again",
+                    type: "error",
+                    id: $notifs.length + 1
+                })
+                notifs.set(notifsCopy)
+                loading = false
+                disabled = false
+              }
             }
           }).catch(err=>{
             let notifsCopy = $notifs
@@ -196,9 +278,6 @@
           id: $notifs.length + 1
         })
         notifs.set(notifsCopy)
-      })
-      .finally(() => {
-        // Do something here
       })
     }
   }

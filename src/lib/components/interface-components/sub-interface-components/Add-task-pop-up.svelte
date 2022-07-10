@@ -3,7 +3,7 @@
     import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
-    import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive } from '$lib/stores/global-store'
+    import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive, allBoards } from '$lib/stores/global-store'
     import axios from 'axios'
     import constants from '$lib/constants'
     import bcrypt from 'bcryptjs'
@@ -18,32 +18,36 @@
     let disabled = false
 
     let workspaceMembers = []
+    let workspaceMembersLocal = []
 
     userData.subscribe(value => {
-        value.subjects.map(subject => {
+        value.subjects.every(subject => {
             if(subject.id === $activeSubject.id) {
-                subject.workspaces.map(workspace => {
+                subject.workspaces.every(workspace => {
                     if(workspace.id === $activeWorkspace.id){
                         workspaceMembers = workspace.members
+                        workspaceMembersLocal = workspaceMembers.map(member => {
+                            return { name: member.name, value: member}
+                        })
+                        if(workspace.owned) {
+                            workspaceMembersLocal.push({
+                                name: `${$userData.firstName} ${$userData.lastName} (Owner)`,
+                                value: {
+                                    name: `${$userData.firstName} ${$userData.lastName}`,
+                                    email: `${$userData.email}`,
+                                    profile: `${$userData.profile}`
+                                }
+                            })
+                        }
+                        return false
                     }
+                    return true
                 })
+                return false
             }
+            return true
         })
     })
-
-    const workspaceMembersLocal = workspaceMembers.map(member => {
-        return { name: member.name, value: member}
-    })
-
-    // colors
-    const colors = [
-        {name: "primary", selected:true, hover:false},
-        {name: "link", selected:false, hover:false},
-        {name: "info", selected:false, hover:false},
-        {name: "success", selected:false, hover:false},
-        {name: "warning", selected:false, hover:false},
-        {name: "danger", selected:false, hover:false}
-    ]
 
     const levels = [
         {name: "Low", value: 1},
@@ -57,11 +61,14 @@
     let dueDateTime = ''
     const isSubtask = false
     let taskName = 'Task name'
-    const workspaceID = $activeWorkspace.id
+    let workspaceID = ''
+    activeWorkspace.subscribe(value => workspaceID = value.id)
     let level = ''
     const taskID = bcrypt.hashSync(`${workspaceID}${taskName}${new Date()}`, Math.ceil(Math.random() * 1))
-    const userID = $userData.id
-    const subjectID = $activeSubject.id
+    let userID = ''
+    userData.subscribe(value => userID = value.id)
+    let subjectID = ''
+    activeSubject.subscribe(value => subjectID = value.id)
 
     const fieldClear = () => {
 
@@ -121,18 +128,35 @@
          })
          .then(res => {
              if(res.data) {
-                 const data = res.data
-                 userData.set(data)
-                 loading = false
-                 disabled = false
-                 let notifsCopy = $notifs
-                 notifsCopy.push({
-                     msg: 'Task created',
-                     type: 'success',
-                     id: notifsCopy.length + 1
-                 })
-                 notifs.set(notifsCopy)
-                 addTaskModalActive.set(false)
+                const data = res.data
+                userData.set(data)
+                userData.subscribe(user => {
+                    user.subjects.every(subject => {
+                        if(subject.id === $activeSubject.id) {
+                            activeSubject.set(subject)
+                            subject.workspaces.every(workspace => {
+                                if(workspace.id === $activeWorkspace.id) {
+                                    activeWorkspace.set(workspace)
+                                    allBoards.set($activeWorkspace.boards)
+                                    return false
+                                }
+                                return true
+                            })
+                            return false
+                        }
+                        return true
+                    })
+                })
+                loading = false
+                disabled = false
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: 'Task created',
+                    type: 'success',
+                    id: notifsCopy.length + 1
+                })
+                notifs.set(notifsCopy)
+                addTaskModalActive.set(false)
              }
          })
          .catch(err => {
