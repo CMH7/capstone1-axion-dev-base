@@ -244,6 +244,8 @@
       goto('/MainApp', {replaceState: true})
     }
   })
+
+  let outerWidth = 0
 </script>
 
 <svelte:head>
@@ -251,7 +253,7 @@
 </svelte:head>
 
 <!-- window keyboard listener -->
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window on:keydown={onKeyDown} bind:outerWidth />
 
 <!-- Notification -->
 <NotificationContainer />
@@ -273,12 +275,24 @@
           <!-- email -->
           <div class="section py-3 px-0">
             <div class="container is-flex is-justify-content-center">
-              <input {disabled} bind:value={emailInput} class="input quicksands has-text-black has-background-light min-w-250" type="text" placeholder="Email">
+              <input
+                {disabled}
+                bind:value={emailInput}
+                class="input quicksands has-text-black has-background-light {outerWidth < 321 ? 'min-w-250': outerWidth < 376 && outerWidth > 320 ? 'min-w-300' : 'min-w-350'}"
+                type="text"
+                placeholder="Email"
+              >
             </div>
 
             <!-- password -->
             <div class="container is-flex is-justify-content-center">
-              <input {disabled} bind:value={passwordInput} class="input quicksands mt-4 has-text-black has-background-light min-w-250" type="password" placeholder="Password">
+              <input
+              {disabled}
+              bind:value={passwordInput}
+              class="input quicksands mt-4 has-text-black has-background-light {outerWidth < 321 ? 'min-w-250': outerWidth < 376 && outerWidth > 320 ? 'min-w-300' : 'min-w-350'}"
+              type="password"
+              placeholder="Password"
+            >
             </div>
 
           </div>
