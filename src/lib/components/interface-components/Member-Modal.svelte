@@ -46,10 +46,16 @@
         searchSuccess = false
         errorMsg = []
       }else{
+        let searchValueCopy = searchValue.toLowerCase()
+        for(let i = 0; i < searchValueCopy.length; i++) {
+          if(/[\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]/.test(searchValueCopy.charAt(i))) {
+            searchValueCopy = searchValueCopy.slice(0, i ? i - 1 : 0 ) + '\\' + searchValueCopy.slice(i)
+          }
+        }
         users = []
         usersCopy.forEach(prof => {
           let nameEmail = `${prof.data.name} ${prof.data.email}`.toLowerCase()
-          if(nameEmail.match(searchValue)) {
+          if(nameEmail.match(searchValueCopy)) {
             users = [...users, prof]
           }
         })

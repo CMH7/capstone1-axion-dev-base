@@ -109,7 +109,7 @@
   let firstName = "",
       lastName = "",
       age = "",
-      gender = "Female",
+      gender = "",
       email = "",
       school = "",
       course = "",
@@ -291,7 +291,11 @@
       comingSoonModalOpen = true
     }
   }
+
+  let outerWidth = 0
 </script>
+
+<svelte:window bind:outerWidth />
 
 <svelte:head>
   <title>Axion | Signup</title>
@@ -309,42 +313,48 @@
   <div class="hero-body p-0">
     <div class="columns is-mobile is-centered is-multiline">
       <!-- left side input -->
-      <div class="column is-4-tablet is-8-mobile">
+      <div class="column is-5-tablet is-10-mobile">
         <div class=" d-flex flex-wrap">
           <!-- First name -->
-          <input {disabled} required bind:value={firstName} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="First Name">
+          <input {disabled} required bind:value={firstName} class="input quicksands has-background-light maxmins-w-100p" type="text" placeholder="First Name">
           
           <!-- Last name -->
-          <input {disabled} required bind:value={lastName} class="input quicksands mt-3 has-background-light" style="width: 100%;" type="text" placeholder="Last Name">
+          <input {disabled} required bind:value={lastName} class="input quicksands mt-3 has-background-light maxmins-w-100p" type="text" placeholder="Last Name">
 
           <!-- Age -->
-          <input {disabled} required bind:value={age} class="input quicksands my-3 has-background-light" style="width: 30%; margin-right: 5%" type="text" placeholder="Age">
+          <input {disabled} required bind:value={age} class="input quicksands my-3 has-background-light {outerWidth < 426 ? 'w-100p': 'w-45p'}" style="{outerWidth < 426 ? '': 'margin-right: 5%'}" type="text" placeholder="Age">
 
           <!-- Gender -->
-          <div class="select quicksands my-3 w-65p">
-            <select bind:value={gender} class="w-100p has-background-light">
+          <div class="select quicksands {outerWidth < 426 ? 'w-100p mb-3': 'w-50p my-3'}">
+            <select bind:value={gender} class="w-100p has-background-light has-text-grey-light">
+              <option value='' disabled default selected hidden>-Select Gender-</option>
               <option value="Female">Female</option>
               <option value="Male">Male</option>
               <option value="Rather not say">Rather not say</option>
             </select>
           </div>
+          <style>
+            option {
+              color: rgb(0, 0, 0);
+            }
+          </style>
           
           <!-- E-mail -->
-          <input {disabled} required bind:value={email} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="Email">
+          <input {disabled} required bind:value={email} class="input quicksands has-background-light maxmins-w-100p" type="text" placeholder="Email">
         </div>
       </div>
 
       <!-- right side input -->
-      <div class="column is-4-tablet is-8-mobile">
+      <div class="column is-5-tablet is-10-mobile">
         <div class=" d-flex flex-wrap">
           <!-- School name -->
-          <input {disabled} required bind:value={school} class="input quicksands has-background-light" style="width: 100%;" type="text" placeholder="School/University">
+          <input {disabled} required bind:value={school} class="input quicksands has-background-light maxmins-w-100p" type="text" placeholder="School/University">
 
           <!-- Course -->
-          <input {disabled} required bind:value={course} class="input quicksands my-3 has-background-light" style="width: 100%;" type="text" placeholder="Course">
+          <input {disabled} required bind:value={course} class="input quicksands my-3 has-background-light maxmins-w-100p" type="text" placeholder="Course">
           
           <!-- Year -->
-          <input {disabled} required bind:value={year} class="input quicksands mb-3 has-background-light" style="width: 100%;" type="text" placeholder="Year">
+          <input {disabled} required bind:value={year} class="input quicksands mb-3 has-background-light maxmins-w-100p" type="text" placeholder="Year">
 
           <!-- Password -->
           <input {disabled} required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
