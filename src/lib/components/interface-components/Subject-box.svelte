@@ -87,36 +87,7 @@
   {#if deleting}
   <ProgressLinear color="red" backgroundColor="red" indeterminate />
   {/if}
-  <div>
-    <MaterialApp>
-      {#if !subject.isFavorite}
-
-        <div on:mouseenter={()=>mouseEnterStar = true} on:mouseleave={()=> mouseEnterStar = false} class="{mouseEnterStar?"undisp":""} is-clickable has-background-{subject.color} d-flex flex-row justify-end">
-          <Icon class="yellow-text text-darken-2" style="position: absolute; right: 7%; top: 10%;" path={mdiStarSettingsOutline}/>
-        </div>
-
-        <div on:mouseenter={()=>mouseEnterStar = true} on:mouseleave={()=> mouseEnterStar = false} class="{mouseEnterStar?"":"undisp"} is-clickable has-background-{subject.color} d-flex flex-row justify-end">
-          <Icon class="yellow-text text-darken-2" style="position: absolute; right: 7%; top: 10%;" path={mdiStarSettings}/>
-        </div>
-
-      {:else}
-
-        <div on:mouseenter={()=>mouseEnterStar = true} on:mouseleave={()=> mouseEnterStar = false} class="{mouseEnterStar?"undisp":""} is-clickable has-background-{subject.color} d-flex flex-row justify-end">
-          <Icon class="yellow-text text-darken-2" style="position: absolute; right: 7%; top: 10%;" path={mdiStarSettings}/>
-        </div>
-
-        <div on:mouseenter={()=>mouseEnterStar = true} on:mouseleave={()=> mouseEnterStar = false} class="{mouseEnterStar?"":"undisp"} is-clickable has-background-{subject.color} d-flex flex-row justify-end">
-          <Icon class="yellow-text text-darken-2" style="position: absolute; right: 7%; top: 10%;" path={mdiStarSettingsOutline}/>
-        </div>
-
-      {/if}
-      <style>
-        .undisp {
-          display: none;
-        }
-      </style>
-    </MaterialApp>
-  </div>
+  
   <p class="quicksands has-text-weight-semibold mb-0 is-unselectable is-absolute">
     {subject.name}
   </p>
