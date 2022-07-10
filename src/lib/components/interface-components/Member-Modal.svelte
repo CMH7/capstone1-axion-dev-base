@@ -49,7 +49,7 @@
         users = []
         usersCopy.forEach(prof => {
           let nameEmail = `${prof.data.name} ${prof.data.email}`.toLowerCase()
-          if(nameEmail.match(searchValue)) {
+          if(nameEmail.match(searchValue.toLowerCase())) {
             users = [...users, prof]
           }
         })
