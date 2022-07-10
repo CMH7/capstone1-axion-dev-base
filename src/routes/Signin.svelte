@@ -298,16 +298,16 @@
             <div class="is-flex is-justify-content-center">
               <div class="mx-3">
                 <MaterialApp>
-                  <a class="is-clickable"on:click={openComingSoon}>
+                  <div class="is-clickable"on:click={openComingSoon}>
                     <Icon class="has-text-danger-dark" size="38px" path={mdiGoogle} />
-                  </a>
+                  </div>
                 </MaterialApp>
               </div>
               <div class="mx-3">
                 <MaterialApp>
-                  <a class="" on:click={openComingSoon}>
+                  <div class="" on:click={openComingSoon}>
                     <Icon class="has-text-info" size="38px" path={mdiFacebook} />
-                  </a>
+                  </div>
                 </MaterialApp>
               </div>
             </div>
