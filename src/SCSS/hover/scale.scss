@@ -1,0 +1,8 @@
+.hover {
+  &-scale {
+    &-1 {
+      &-\.9 {scale: 1;}
+      &-\.9:hover {scale: .9;}
+    }
+  }
+}
