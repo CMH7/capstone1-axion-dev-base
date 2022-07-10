@@ -174,7 +174,11 @@
     }
 
     onDestroy(() => addTaskModalActive.set(false))
+    
+    let outerWidth = 0
 </script>
+
+<svelte:window bind:outerWidth />
 
 <MaterialApp>
 	<Dialog persistent class="maxmins-w-450-dt-to-mb-90p overflow-x-hidden pa-4 has-transition has-background-white" bind:active={$addTaskModalActive}>
@@ -196,7 +200,7 @@
         <div class="is-flex is-align-items-center is-flex-wrap-wrap is-multiline">
             <!-- input -->
             <!-- Task name -->
-            <input {disabled} class="min-w-100p py-5 pl-2 input" type="text" bind:value={taskName} />
+            <input {disabled} class="min-w-100p py-5 pl-2 input has-transition hover-border-color-black-light" type="text" bind:value={taskName} />
 
             <!-- due and level -->
             <div
@@ -212,7 +216,7 @@
                 />
     
                 <!-- Levels or priority -->
-                <div class="maxmins-w-100-dt-to-mb-100p">
+                <div class="maxmins-w-100-dt-to-mb-100p {outerWidth < 426 ? 'mt-3': ''}">
                     <Select
                         outlined
                         dense
@@ -232,7 +236,6 @@
                 outlined
                 bind:value={taskMembers}
                 class="maxmins-w-100p rounded mb-2"
-                chips
             >
                 Assignee/s
             </Select>
