@@ -448,6 +448,7 @@
 // HEIGHTS
 .maxmins-h {
   // pixels
+  &-50 {@extend .max-h-50; @extend .min-h-50;}
   &-100 {@extend .max-h-100; @extend .min-h-100;}
   &-150 {@extend .max-h-150; @extend .min-h-150;}
   &-200 {@extend .max-h-200; @extend .min-h-200;}

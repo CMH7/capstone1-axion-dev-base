@@ -49,7 +49,7 @@
           breadCrumbsItems.set(breadCrumbsItemsCopy)
         }
       }}>
-        <div class="is-size-{width < 426 ? "7": "4"} is-clickable">
+        <div class="{item.text === "Boards" ? "": "hover-txt-color-blue hover-txt-style-underline"} is-size-{width < 426 ? "7": "4"} is-clickable">
           {item.text}
         </div>
       </div>

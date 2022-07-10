@@ -1,0 +1,10 @@
+.hover {
+  &-border {
+    &-color {
+      &-black:hover {border-color: black;}
+      &-black {
+        &-light:hover {border-color: rgb(20, 20, 20);}
+      }
+    }
+  }
+}

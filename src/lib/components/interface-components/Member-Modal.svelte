@@ -33,7 +33,35 @@
     users = users.sort((a, b) => a.isAdded - b.isAdded)
   })
 
-
+  let searchValue = ''
+  let errorMsg = []
+  let searchSuccess = false
+  let searchIconClicked = false
+  const search = (e) => {
+    if((e.keyCode == 13 || searchIconClicked) && $memberModalActive) {
+      if(!searchValue) {
+        users = [...usersCopy]
+        searchSuccess = false
+        errorMsg = []
+      }else{
+        users = []
+        usersCopy.forEach(prof => {
+          let nameEmail = `${prof.data.name} ${prof.data.email}`.toLowerCase()
+          if(nameEmail.match(searchValue.toLowerCase())) {
+            users = [...users, prof]
+          }
+        })
+        if(users.length == 0) {
+          errorMsg = [`${searchValue} is not found`]
+          searchSuccess = false
+        }else{
+          errorMsg = []
+          searchSuccess = true
+        }
+        searchIconClicked = false
+      }
+    }
+  }
 </script>
 
 <MaterialApp>
