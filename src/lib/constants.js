@@ -1,3 +1,6 @@
+import schools from "$lib/collections/schools"
+import courses from "$lib/collections/courses"
+
 export default {
   subject: {
     color: "primary",
@@ -46,5 +49,7 @@ export default {
   lowerCasedLetters: new String('abcdefghijklmnopqrstuvwxyz').split(''),
   upperCasedLetters: new String('ABCDEFGHIJKLMNOPQRSTUVWXYZ').split(''),
   digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  specialCharacters: "~!$%^&*_=+}{'?-".split('')
+  specialCharacters: "~!$%^&*_=+}{'?-".split(''),
+  schools: schools,
+  courses: courses
 }
