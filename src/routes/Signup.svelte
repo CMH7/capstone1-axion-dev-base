@@ -5,7 +5,6 @@
   import { Icon, Divider, MaterialApp } from "svelte-materialify"
   import {mdiGoogle, mdiFacebook} from "@mdi/js"
   import {fade} from 'svelte/transition'
-  import axios from 'axios'
   import bcrypt from 'bcryptjs'
   import {notifs} from '$lib/stores/global-store'
   import NotificationContainer from "$lib/components/Notification-container.svelte"
@@ -340,7 +339,7 @@
           </style>
           
           <!-- E-mail -->
-          <input {disabled} required bind:value={email} class="input quicksands has-background-light maxmins-w-100p" type="text" placeholder="Email">
+          <input {disabled} required bind:value={email} class="input quicksands has-background-light maxmins-w-100p" type="email" placeholder="Email">
         </div>
       </div>
 
@@ -348,10 +347,20 @@
       <div class="column is-5-tablet is-10-mobile">
         <div class=" d-flex flex-wrap">
           <!-- School name -->
-          <input {disabled} required bind:value={school} class="input quicksands has-background-light maxmins-w-100p" type="text" placeholder="School/University">
+          <input {disabled} required list="schoolsPH" type="text" bind:value={school} class="input quicksands has-background-light maxmins-w-100p" placeholder="School/University">
+          <datalist id='schoolsPH'>
+            {#each constants.schools.school as school }
+              <option value={school}>{school}</option>
+            {/each}
+          </datalist>
 
           <!-- Course -->
-          <input {disabled} required bind:value={course} class="input quicksands my-3 has-background-light maxmins-w-100p" type="text" placeholder="Course">
+          <input {disabled} required list="coursesPH" type="text" bind:value={course} class="input quicksands my-3 has-background-light maxmins-w-100p" placeholder="Course">
+          <datalist id='coursesPH'>
+            {#each constants.courses.courses as course }
+              <option value={`${course}`}>{course}</option>
+            {/each}
+          </datalist>
           
           <!-- Year -->
           <input {disabled} required bind:value={year} class="input quicksands mb-3 has-background-light maxmins-w-100p" type="text" placeholder="Year">
