@@ -354,7 +354,7 @@
           <input {disabled} required bind:value={course} class="input quicksands my-3 has-background-light maxmins-w-100p" type="text" placeholder="Course">
           
           <!-- Year -->
-          <input {disabled} required bind:value={year} min=0 max=100 class="input quicksands mb-3 has-background-light maxmins-w-100p" type="number" placeholder="Year">
+          <input {disabled} required bind:value={year} min=1 max=15 class="input quicksands mb-3 has-background-light maxmins-w-100p" type="number" placeholder="Year">
 
           <!-- Password -->
           <input {disabled} required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
