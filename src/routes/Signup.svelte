@@ -321,7 +321,7 @@
           <input {disabled} required bind:value={lastName} class="input quicksands mt-3 has-background-light maxmins-w-100p" type="text" placeholder="Last Name">
 
           <!-- Age -->
-          <input {disabled} required bind:value={age} class="input quicksands my-3 has-background-light {outerWidth < 426 ? 'w-100p': 'w-45p'}" style="{outerWidth < 426 ? '': 'margin-right: 5%'}" type="text" placeholder="Age">
+          <input {disabled} required bind:value={age} min=12 max=70 class="input quicksands my-3 has-background-light {outerWidth < 426 ? 'w-100p': 'w-45p'}" style="{outerWidth < 426 ? '': 'margin-right: 5%'}" type="number" placeholder="Age">
 
           <!-- Gender -->
           <div class="select quicksands {outerWidth < 426 ? 'w-100p mb-3': 'w-50p my-3'}">
@@ -363,7 +363,7 @@
           </datalist>
           
           <!-- Year -->
-          <input {disabled} required bind:value={year} class="input quicksands mb-3 has-background-light maxmins-w-100p" type="text" placeholder="Year">
+          <input {disabled} required bind:value={year} min=1 max=15 class="input quicksands mb-3 has-background-light maxmins-w-100p" type="number" placeholder="Year">
 
           <!-- Password -->
           <input {disabled} required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
