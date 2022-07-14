@@ -363,7 +363,26 @@
           </datalist>
           
           <!-- Year -->
-          <input {disabled} required bind:value={year} min=1 max=15 class="input quicksands mb-3 has-background-light maxmins-w-100p" type="number" placeholder="Year">
+          <div class="select quicksands {outerWidth < 426 ? 'w-100p': 'w-100p mb-3'}">
+            <select bind:value={year} class="w-100p has-background-light has-text-grey-light">
+              <option value='' disabled default selected hidden>Year</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+            </select>
+          </div>
 
           <!-- Password -->
           <input {disabled} required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
