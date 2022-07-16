@@ -1,26 +1,27 @@
 <script>
-  import constants from '$lib/constants'
+  import uploadPics from '$lib/uploadPics'
   import { userData } from '$lib/stores/global-store'
 
-  let files = null
+  let files
   let profilepic = ''
 
-  const handleUpload = () => {
-    let file = files[0]
+  userData.subscribe(user => profilepic = user.profile)
+
+  const handleUpload = async () => {
+    const file = files[0]
     const reader = new FileReader()
+    let rawData
+    reader.onloadend = () => {
+      rawData = reader.result
+      uploadPics.uploadPic('cm/profile', rawData, file.name, {contentType: file.type})
+    }
     reader.readAsDataURL(file)
     
-    reader.onloadend = () => {
-      const encryptedStringImage = constants.encryptedString(reader.result, $userData.id)
-      console.log(encryptedStringImage)
-      const decryptedStringImage = constants.decryptedString(encryptedStringImage, $userData.id)
-      profilepic = decryptedStringImage
-    }
   }
 
 </script>
 
 <div>
   <input type="file" bind:files on:change={handleUpload}>
-  <img src={profilepic} alt="">
+  <img src={`${profilepic}`} alt="">
 </div>
