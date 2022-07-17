@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app"
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage"
 import { userData, notifs } from "$lib/stores/global-store"
 import { get } from "svelte/store"
+import constants from "$lib/constants"
 
 const firebaseConfig = {
   apiKey: "AIzaSyAeF6ZO2XXD9s4PzQ0W_4WIhMThIQwrGaw",
@@ -17,21 +18,21 @@ const app = initializeApp(firebaseConfig)
 const storage = getStorage(app)
 
 export default {
-  uploadPic: (/** @type {any} */ userName, file, /** @type {any} */ fileName, /** @type {import("@firebase/storage").UploadMetadata} */ meta) => {
+  uploadPic: (userName, file, /** @type {any} */ fileName, /** @type {import("@firebase/storage").UploadMetadata} */ meta) => {
     const userRef = ref(storage, `${userName}/${fileName}`)
 
     const ups = uploadString(userRef, file, 'data_url', meta)
 
     ups.then(snapshot => {
       getDownloadURL(userRef).then(async url => {
-        const res = await fetch('http://localhost:8008/validUser/edit/profile', {
+        const res = await fetch(`${constants.backURI}/validUser/edit/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             ids: {
-              user: '62c195f444d3c266ca97af39'
+              user: get(userData).id
             },
             user: {
               profile: url
@@ -44,7 +45,6 @@ export default {
           const userDataCopy = get(userData)
           userDataCopy.profile = profile
           userData.set(userDataCopy)
-          console.log(userDataCopy.profile)
           let notifsCopy = get(notifs)
           notifsCopy.push({
             msg: 'successfully uploaded',
