@@ -408,7 +408,7 @@
         <div class="columns is-mobile is-flex is-justify-content-center is-multiline is-align-items-centerr">
           <div class="column is-9-mobile is-size-7 has-text-centered">
             <div class="is-clickable" on:click={openComingSoon}>
-              <Checkbox checked={false}>Agree with Terms and conditions and with the Privacy policy of the Axion</Checkbox>
+              <Checkbox checked={false}>Agree with <a class="has-text-blue">Terms and conditions</a> and with the <a>Privacy policy</a> of the Axion </Checkbox>
             </div>
           </div>
         </div>
