@@ -363,7 +363,7 @@
           </datalist>
           
           <!-- Year -->
-          <div class="select quicksands {outerWidth < 426 ? 'w-100p': 'w-100p mb-3'}">
+          <div class="select quicksands {outerWidth < 426 ? 'w-100p mb-3': 'w-100p mb-3'}">
             <select bind:value={year} class="w-100p has-background-light has-text-grey-light">
               <option value='' disabled default selected hidden>Year</option>
               {#each Array(15) as _, i}
