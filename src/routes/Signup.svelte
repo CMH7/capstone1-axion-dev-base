@@ -344,7 +344,7 @@
       </div>
 
       <!-- right side input -->
-      <div class="column is-5-tablet is-10-mobile">
+      <div class="column is-5-tablet is-10-mobile mb-6">
         <div class=" d-flex flex-wrap">
           <!-- School name -->
           <input {disabled} required list="schoolsPH" type="text" bind:value={school} class="input quicksands has-background-light maxmins-w-100p" placeholder="School/University">
@@ -380,6 +380,19 @@
         </div>
       </div>
 
+      <MaterialApp>
+        <div class="columns is-mobile is-flex is-justify-content-center is-multiline is-align-items-centerr">
+          <div class="column is-9-mobile is-size-7 has-text-centered">
+            <div class="is-flex is-justify-content-center is-align-items-center">
+              <Checkbox checked={false}/>
+              <div>
+                Agree with <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon} >Terms and conditions</span> and with the <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon}>Privacy policy</span> of the Axion
+              </div>
+            </div>
+          </div>
+        </div>
+      </MaterialApp>
+
       <div class="column p-0 is-12"/>
       <div class="column p-0 is-5">
         <MaterialApp>
@@ -388,44 +401,34 @@
       </div>
       <div class="column p-0 is-12"/>
       <div class="column p-0 is-12">
-        <p class="m-0 is-size-5 has-text-black has-text-weight-semibold has-text-centered">with</p>
+        <p class="m-0 is-size-5 has-text-grey has-text-weight-semibold has-text-centered">with</p>
       </div>
 
       <div class="column p-0 is-12 py-5">
         <div class="is-flex is-justify-content-center">
-          <div class="mx-3">
+          <div class="mx-2">
             <MaterialApp>
               <div class="is-clickable" on:click={openComingSoon}>
-                <Icon class="has-text-danger-dark" size="40px" path={mdiGoogle} />
+                <Icon class="has-text-danger-dark" size="30px" path={mdiGoogle} />
               </div>
             </MaterialApp>
           </div>
 
-          <div class="mx-3">
+          <div class="mx-2">
             <MaterialApp>
               <div class="is-clickable" on:click={openComingSoon}>
-                <Icon class="has-text-info" size="40px" path={mdiFacebook} />
+                <Icon class="has-text-info" size="30px" path={mdiFacebook} />
               </div>
             </MaterialApp>
           </div>
         </div>
-      </div>
+      </div> 
 
-      <MaterialApp>
-        <div class="columns is-mobile is-flex is-justify-content-center is-multiline is-align-items-centerr">
-          <div class="column is-9-mobile is-size-7 has-text-centered">
-            <div class="is-clickable" on:click={openComingSoon}>
-              <Checkbox checked={false}>Agree with <a class="has-text-blue">Terms and conditions</a> and with the <a>Privacy policy</a> of the Axion </Checkbox>
-            </div>
-          </div>
-        </div>
-      </MaterialApp> 
-
-      <div class="column is-12 p-0 pt-3 pb-6 mb-8">
+      <div class="column is-12 p-0 pt-3 pb-6 mb-4">
         <div class="is-flex flex-column is-align-items-center">
-          <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Submit</button>
+          <button {disabled} on:click={createNewUser} class="button is-primary dm-sans has-text-weight-bold is-medium {loading ? "is-loading": ""}">Submit</button>
           
-          <p class="pt-4 pb-6 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
+          <p class="pt-4 pb-6 is-size-7 dm-sans">Already have an account? Click <a class="hover-txt-style-underline" href="/Signin">Sign in</a></p>
         </div>
       </div>
     </div>
