@@ -48,6 +48,12 @@
       <!-- Expansion-er -->
       <div class="is-flex-grow-1"/>
 
+      <div
+        on:click={() => goto('/experiment/profilePictureUpload', {replaceState: true})}
+        class="button is-danger">
+        Experiments
+      </div>
+
       <!-- Account Button -->
       <div class="is-clickable is-hidden-touch {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")}>
         <Avatar class="p-5 has-transition hover-bg-warning" size="35px">
