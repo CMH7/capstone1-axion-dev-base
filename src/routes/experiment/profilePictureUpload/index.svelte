@@ -13,7 +13,7 @@
     let rawData
     reader.onloadend = () => {
       rawData = reader.result
-      uploadPics.uploadPic('cm/profile', rawData, file.name, {contentType: file.type})
+      uploadPics.uploadPic(`profiles/${$userData.email}`, rawData, file.name, {contentType: file.type})
     }
     reader.readAsDataURL(file)
     
