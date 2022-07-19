@@ -306,7 +306,9 @@
 <SignupHeader/>
 <div in:fade class="hero is-fullheight-with-navbar">
   <div class="hero-head">
-    <p class="is-size-1-tablet is-size-2-mobile fredokaone has-text-black has-text-weight-bold has-text-centered my-6">SIGN UP</p>               
+    <p class="is-size-1-tablet is-size-2-mobile fredokaone has-text-black has-text-weight-bold has-text-centered my-6">
+      SIGN UP
+    </p>               
   </div>
 
   <div class="hero-body p-0">
