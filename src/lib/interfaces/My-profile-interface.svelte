@@ -50,7 +50,7 @@
                   <!-- profile pic -->
                   <div class="column p-0 is-2-tablet is-12-mobile">
                     <div class="min-h-100p is-flex is-justify-content-center is-align-items-center">
-                      {#if !$userData.profile}
+                      {#if $userData.profile}
                       <Avatar size='130px'>
                         <img src="{$userData.profile}" alt="">
                       </Avatar>

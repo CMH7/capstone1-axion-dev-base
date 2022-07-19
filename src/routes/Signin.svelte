@@ -27,6 +27,7 @@
   // animation
   let loading = false
   let disabled = false
+  let failed = false
 
   const isEmailValid = (email) => {
   const emailRegexp = new RegExp(
@@ -99,6 +100,7 @@
     }
     
     if(!valid) {
+      failed = true
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: invalids,
@@ -114,6 +116,7 @@
 
   const login = async () => {
     if(!isEmailValid(emailInput)) {
+      failed = true
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: 'Email is invalid',
@@ -187,6 +190,7 @@
             passwordInput = ""
           })
           .catch(err => {
+            failed = true
             let notifsCopy = $notifs
             notifsCopy.push({
               msg: `Error logging in. ${err}`,
@@ -201,6 +205,7 @@
             disabled = false
           })
         }else{
+          failed = true
           let notifsCopy = $notifs
           notifsCopy.push({
             msg: "Wrong email or password. Please try again.",
@@ -212,6 +217,7 @@
           disabled = false
         }
       }else{
+        failed = true
         let notifsCopy = $notifs
         notifsCopy.push({
           msg: "No account found.",
@@ -264,7 +270,9 @@
 <div in:fade out:fade class="hero is-fullheight-with-navbar">
   <div class="hero-body">
     <div class="container">
+
       <div class="columns is-mobile is-centered is-multiline">
+
         <div class="column is-5-desktop is-8-touch">
           <!-- Title -->
           <div class="mt-10 mb-0 is-flex is-flex-direction-column is-align-items-center">
@@ -297,6 +305,14 @@
 
           </div>
         </div>
+
+        {#if failed}
+        <div class="column is-12 has-text-centered p-0">
+          <a href='/Reset' class="is-size-7">
+            <span class="has-text-black">Forgot your password?</span> Click here
+          </a>
+        </div>
+        {/if}
 
         <!-- divider -->
         <div class="column p-0 is-12"/>
@@ -332,7 +348,7 @@
             <div class="mb-5 mt-6">
               <button on:click={login} class="button is-primary {loading? "is-loading": ""} dm-sans has-text-weight-bold is-size-5" {disabled}>Sign In</button>
             </div>
-            <p class="mb-14 is-size-7-touch is-size-6-desktop dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
+            <p class="mb-14 is-size-7 dm-sans">Don't have an account? Click <a href="/Signup">Sign up</a></p>
           </div>
 
         </div>
