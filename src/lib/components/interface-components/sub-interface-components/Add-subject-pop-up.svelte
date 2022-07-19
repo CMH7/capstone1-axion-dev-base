@@ -67,11 +67,12 @@
         })
 
         const id = $userData.id
+        const subjectID = bcrypt.hashSync(`${id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
 
         await axios.post(`${backURI}/MainApp/dashboard/create/subject`, {
             ids: {
                 user: id,
-                subject: bcrypt.hashSync(`${id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
+                subject: subjectID
             },
             subject: {
                 color: selectedColor,
@@ -80,19 +81,58 @@
                 createdBy: `${$userData.firstName} ${$userData.lastName}`
             }
         })
-        .then(res => {
-            userData.set(res.data)
-            let notifsCopy = []
-            notifsCopy = $notifs
-            notifsCopy.push(
-                {
-                    msg: "Subject created!",
-                    type: "success",
-                    id: notifsCopy.length + 1
-                }
-            )
-            notifs.set(notifsCopy)
-            addSubjectModalActive.set(false)
+        .then(async res => {
+            await fetch(`${backURI}/User/create/notification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    notification: {
+                        id: bcrypt.hashSync(`${subjectID}${id}`, Math.ceil(Math.random() * 10)),
+                        message: `${subjectName} Subject Created`,
+                        anInvitation: false,
+                        aMention: false,
+                        conversationID: "",
+                        fromInterface: {
+                            interf: "Dashboard",
+                            subInterface: "Subjects"
+                        },
+                        fromTask: "",
+                        for: {
+                            self: true,
+                            userID: `${id}`
+                        }
+                    }
+                })
+            }).then(async res => {
+                const data = await res.json()
+                userData.set(data)
+                localStorage.setItem('userData', JSON.stringify(data))
+                let notifsCopy = []
+                notifsCopy = $notifs
+                notifsCopy.push(
+                    {
+                        msg: "Subject created!",
+                        type: "success",
+                        id: notifsCopy.length + 1
+                    }
+                )
+                notifs.set(notifsCopy)
+                addSubjectModalActive.set(false)
+            }).catch(err => {
+                let notifsCopy = []
+                notifsCopy = $notifs
+                notifsCopy.push(
+                    {
+                        msg: `Subject created! but error in creating user notification, ${err}`,
+                        type: "error",
+                        id: notifsCopy.length + 1
+                    }
+                )
+                notifs.set(notifsCopy)
+                addSubjectModalActive.set(false)
+            })
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({

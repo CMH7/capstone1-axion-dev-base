@@ -13,7 +13,7 @@
   import CalendarInterface from "$lib/interfaces/Calendar-interface.svelte"
   import MyProfileInterface from "$lib/interfaces/My-profile-interface.svelte"
   import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
-  import NotificationContainer from '$lib/components/Notification-container.svelte'
+  import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
 

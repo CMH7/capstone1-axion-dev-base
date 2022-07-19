@@ -7,7 +7,7 @@
   import {fade} from 'svelte/transition'
   import bcrypt from 'bcryptjs'
   import {notifs} from '$lib/stores/global-store'
-  import NotificationContainer from "$lib/components/Notification-container.svelte"
+  import NotificationContainer from "$lib/components/System-Notification/Notification-container.svelte"
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
   import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
