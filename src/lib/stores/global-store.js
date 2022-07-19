@@ -99,3 +99,6 @@ export let breadCrumbsItems = writable([])
 
 // modal chosen colors
 export let modalChosenColor = writable('primary')
+
+// notification center open boolean
+export let notifCenterOpen = writable(false)
