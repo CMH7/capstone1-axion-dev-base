@@ -55,13 +55,15 @@
       notifs.set(notifsCopy)
       goto('/Signin')
     }else{
+      const lastData = JSON.parse(localStorage.getItem('userData'))
+
       await fetch(`${constants.backURI}/validUser`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          email: JSON.parse(localStorage.getItem('userData').email)
+          email: lastData.email
         })
       }).then(async res => {
         const data = await res.json()
