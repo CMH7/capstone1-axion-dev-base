@@ -71,10 +71,8 @@
           on:click={() => {
             if(notifCenterOpenCopy) {
               notifCenterOpen.set(false)
-              console.log('true to false');
             }else{
               notifCenterOpen.set(true)
-              console.log('false to true');
             }
           }}
           class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$notifCenterOpen? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
