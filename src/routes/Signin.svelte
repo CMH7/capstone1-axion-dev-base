@@ -30,9 +30,9 @@
   let failed = false
 
   const isEmailValid = (email) => {
-  const emailRegexp = new RegExp(
-      /^[a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1}([a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
-    )
+    const emailRegexp = new RegExp(
+        /^[a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1}([a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+      )
     return emailRegexp.test(email)
   }
 
@@ -41,6 +41,16 @@
     let invalids = 'Password must have '
     const lenInva = invalids.length
     
+    if(!pass) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Please enter your password',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+    }
+
     if(pass.length < 8) {
       valid = false
       invalids += '8 characters length'
@@ -117,13 +127,23 @@
   const login = async () => {
     if(!isEmailValid(emailInput)) {
       failed = true
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Email is invalid',
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
+      if(!emailInput) {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Please enter your email',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+      }else{
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Email is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+      }
       return false
     }
     
