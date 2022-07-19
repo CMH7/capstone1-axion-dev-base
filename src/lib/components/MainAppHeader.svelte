@@ -1,8 +1,8 @@
 <script>
   // @ts-nocheck
-  import { MaterialApp, AppBar, Button, Icon, ClickOutside } from "svelte-materialify"
+  import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge } from "svelte-materialify"
   import {mdiMenu, mdiAccount, mdiBell, mdiBellBadge } from '@mdi/js'
-  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen } from "$lib/stores/global-store"
+  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen, userData } from "$lib/stores/global-store"
   import { goto } from "$app/navigation"
   import NotificationCenter from "$lib/components/User-Notification-Center/NotificationCenter.svelte"
 
@@ -11,8 +11,15 @@
     notifCenterOpenCopy = value
   })
 
+  let allNotifications = 0
+  userData.subscribe(user => allNotifications = user.notifications.filter(notif => notif.isRead != true).length)
+
   const clickOutside = () => notifCenterOpen.set(false)
+
+  let outerWidth = 0
 </script>
+
+<svelte:window bind:outerWidth />
 
 <div class="block mb-0">
   <MaterialApp>
@@ -71,7 +78,9 @@
             }
           }}
           class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$notifCenterOpen? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
-          <Icon class='white-text' size='30px' path={mdiBell} />
+          <Badge active={allNotifications > 0} class="success-color" dot={outerWidth < 426} value={allNotifications} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
+            <Icon class='white-text' size={outerWidth < 426 ? '20px': '30px'} path={mdiBell } />
+          </Badge>
         </div>
         <NotificationCenter />
       </div>
