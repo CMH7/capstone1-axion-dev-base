@@ -1,9 +1,17 @@
 <script>
   // @ts-nocheck
-  import { MaterialApp, AppBar, Button, Icon, Avatar, Tooltip } from "svelte-materialify"
-  import {mdiMenu, mdiAccount } from '@mdi/js'
-  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack } from "$lib/stores/global-store"
+  import { MaterialApp, AppBar, Button, Icon, ClickOutside } from "svelte-materialify"
+  import {mdiMenu, mdiAccount, mdiBell, mdiBellBadge } from '@mdi/js'
+  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen } from "$lib/stores/global-store"
   import { goto } from "$app/navigation"
+  import NotificationCenter from "$lib/components/User-Notification-Center/NotificationCenter.svelte"
+
+  let notifCenterOpenCopy = false
+  notifCenterOpen.subscribe(value => {
+    notifCenterOpenCopy = value
+  })
+
+  const clickOutside = () => notifCenterOpen.set(false)
 </script>
 
 <div class="block mb-0">
@@ -49,16 +57,28 @@
       <div class="is-flex-grow-1"/>
 
       <div
-        on:click={() => goto('/experiment/profilePictureUpload', {replaceState: true})}
-        class="button is-danger">
-        Experiments
+        use:ClickOutside
+        on:clickOutside={clickOutside}
+      >
+        <div
+          on:click={() => {
+            if(notifCenterOpenCopy) {
+              notifCenterOpen.set(false)
+              console.log('true to false');
+            }else{
+              notifCenterOpen.set(true)
+              console.log('false to true');
+            }
+          }}
+          class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$notifCenterOpen? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
+          <Icon class='white-text' size='30px' path={mdiBell} />
+        </div>
+        <NotificationCenter />
       </div>
 
       <!-- Account Button -->
-      <div class="is-clickable is-hidden-touch {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")}>
-        <Avatar class="p-5 has-transition hover-bg-warning" size="35px">
-          <Icon class="white-text" path={mdiAccount}/>
-        </Avatar>
+      <div class="is-clickable is-hidden-touch hover-bg-grey-dark has-transition p-2 rounded-circle {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")}>
+        <Icon class="white-text" size='33px' path={mdiAccount}/>
       </div>
     </AppBar>
   </MaterialApp>
