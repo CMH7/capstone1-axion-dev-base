@@ -89,7 +89,7 @@
                 },
                 body: JSON.stringify({
                     notification: {
-                        id: `${subjectID}${id}`,
+                        id: bcrypt.hashSync(`${subjectID}${id}`, Math.ceil(Math.random() * 10)),
                         message: `${subjectName} Subject Created`,
                         anInvitation: false,
                         aMention: false,
@@ -108,6 +108,7 @@
             }).then(async res => {
                 const data = await res.json()
                 userData.set(data)
+                localStorage.setItem('userData', JSON.stringify(data))
                 let notifsCopy = []
                 notifsCopy = $notifs
                 notifsCopy.push(
