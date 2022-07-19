@@ -1,0 +1,28 @@
+.hover-opacity {
+  &-0 {
+    &-to {
+      &-100 {opacity: 0%;}
+    }
+  }
+  &-100 {
+    &-to {
+      &-0 {opacity: 100%;}
+    }
+  }
+
+  //hovers
+  &-0 {
+    &-to {
+      &-100:hover {
+        opacity: 100%;
+      }
+    }
+  }
+  &-100 {
+    &-to {
+      &-0:hover {
+        opacity: 0%;
+      }
+    }
+  }
+}
