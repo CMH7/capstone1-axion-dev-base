@@ -30,6 +30,7 @@
   let failed = false
 
   const isEmailValid = (email) => {
+    console.log('email checking')
     const emailRegexp = new RegExp(
         /^[a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1}([a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
       )
@@ -37,6 +38,7 @@
   }
 
   const isPassValid = (pass) => {
+    console.log('password checking')
     let valid = true
     let invalids = 'Password must have '
     const lenInva = invalids.length
@@ -125,30 +127,6 @@
   }
 
   const login = async () => {
-    if(!isEmailValid(emailInput)) {
-      failed = true
-      if(!emailInput) {
-        let notifsCopy = $notifs
-        notifsCopy.push({
-          msg: 'Please enter your email',
-          type: 'error',
-          id: $notifs.length + 1
-        })
-        notifs.set(notifsCopy)
-      }else{
-        let notifsCopy = $notifs
-        notifsCopy.push({
-          msg: 'Email is invalid',
-          type: 'error',
-          id: $notifs.length + 1
-        })
-        notifs.set(notifsCopy)
-      }
-      return false
-    }
-    
-    if(!isPassValid(passwordInput)) return false
-
     loading = true
     disabled = true
 
@@ -162,23 +140,59 @@
             type: "error",
             id: $notifs.length + 1
         })
+        notifs.set(notifsCopy)
+        emailInput = ""
+        passwordInput = ""
+        return false
       }else if(passwordInput === "" && !(emailInput === "")) {
         notifsCopy.push({
             msg: "Please input a valid password.",
             type: "error",
             id: $notifs.length + 1
         })
-      }else {
+        notifs.set(notifsCopy)
+        emailInput = ""
+        passwordInput = ""
+        return false
+      }else if(!emailInput && !passwordInput) {
         notifsCopy.push({
             msg: "Please input a valid email and password.",
             type: "error",
             id: $notifs.length + 1
         })
+        notifs.set(notifsCopy)
+        emailInput = ""
+        passwordInput = ""
+        return false
       }
-      notifs.set(notifsCopy)
-      emailInput = ""
-      passwordInput = ""
+
     }else{
+      let notifsCopy = $notifs
+      if(!isEmailValid(emailInput)) {
+        failed = true
+        notifsCopy.push({
+          msg: 'Email is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        loading = false
+        disabled = false
+      }
+      
+      if(!isPassValid(passwordInput)) {
+        failed = true
+        notifsCopy.push({
+          msg: 'Password is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        loading = false
+        disabled = false
+        return false
+      }
+
       const res = await fetch(`${backURI}/Signin?email=${emailInput}`)
       const { password } = await res.json()
       if(password) {
