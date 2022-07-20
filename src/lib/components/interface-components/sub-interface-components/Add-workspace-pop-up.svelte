@@ -2,7 +2,6 @@
     // @ts-ignore
     import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp } from 'svelte-materialify'
-    import axios from 'axios'
     import { notifs, userData, activeSubject, addWorkspaceModalActive, modalChosenColor } from '$lib/stores/global-store'
     import bcrypt from 'bcryptjs'
     import constants from '$lib/constants'
@@ -61,58 +60,96 @@
 
         const workspaceID = bcrypt.hashSync(`${curActiveSubject.id}${workspaceNameInput}${new Date()}`, Math.ceil(Math.random() * 1))
 
-        await axios.post(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
-            ids: {
-                user: id,
-                subject: curActiveSubject.id,
-                todo: bcrypt.hashSync(`${workspaceID}Todo${new Date()}`, Math.ceil(Math.random() * 1)),
-                inprog: bcrypt.hashSync(`${workspaceID}In progress${new Date()}`, Math.ceil(Math.random() * 1)),
-                done: bcrypt.hashSync(`${workspaceID}Done${new Date()}`, Math.ceil(Math.random() * 1)),
-                workspace: workspaceID
+        await fetch(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            workspace: {
-                board: {
-                    createdBy: `${$userData.firstName} ${$userData.lastName}`,
-                    createdOn: new Date()
+            body: JSON.stringify({
+                ids: {
+                    user: id,
+                    subject: curActiveSubject.id,
+                    todo: bcrypt.hashSync(`${workspaceID}Todo${new Date()}`, Math.ceil(Math.random() * 1)),
+                    inprog: bcrypt.hashSync(`${workspaceID}In progress${new Date()}`, Math.ceil(Math.random() * 1)),
+                    done: bcrypt.hashSync(`${workspaceID}Done${new Date()}`, Math.ceil(Math.random() * 1)),
+                    workspace: workspaceID
                 },
-                color: selectedColor,
-                name: workspaceNameInput,
-                createdBy: `${$userData.firstName} ${$userData.lastName}`
-            }
-        })
-        .then(res => {
-            let notifsCopy = []
-            notifsCopy = $notifs
-            notifsCopy.push(
-                {
-                    msg: "Workspace created!",
-                    type: "success"
+                workspace: {
+                    board: {
+                        createdBy: `${$userData.firstName} ${$userData.lastName}`,
+                        createdOn: new Date()
+                    },
+                    color: selectedColor,
+                    name: workspaceNameInput,
+                    createdBy: `${$userData.firstName} ${$userData.lastName}`
                 }
-            );
-            notifs.set(notifsCopy)
-            addWorkspaceModalActive.set(false)
-            axios.post(`${backURI}/validUser`, {
-                email: res.data.email
             })
-            .then(res => {
-                userData.set(res.data)
-                loading = false
-                disabled = false
-                workspaceNameInput = ""
-            })
-            .catch(err => {
+        })
+        .then(async res => {
+            await fetch(`${backURI}/User/create/notification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    notification: {
+                        id: bcrypt.hashSync(`${workspaceID}${$userData.id}`, Math.ceil(Math.random() * 10)),
+                        message: `Workspace ${workspaceNameInput} created`,
+                        anInvitation: false,
+                        aMention: false,
+                        conversationID: "",
+                        fromInterface: {
+                            interf: "Dashboard",
+                            subInterface: "Boards"
+                        },
+                        fromTask: "",
+                        for: {
+                            self: true,
+                            userID: `${$userData.id}`
+                        }
+                    }
+                })
+            }).then(async res => {
+                const { notification } = await res.json()
+                let userDataCopy = $userData
+                userDataCopy.notifications.push(notification)
+                userData.set(userDataCopy)
+                localStorage.setItem('userData', JSON.stringify($userData))
                 let notifsCopy = $notifs
                 notifsCopy.push({
-                    msg: `error in resync, ${err}`,
+                    msg: "Workspace created!",
+                    type: "success",
+                    id: notifsCopy.length + 1
+                })
+                notifs.set(notifsCopy)
+            }).catch(err => {
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: `Error in creating notification for task creation, ${err}`,
                     type: 'error',
                     id: $notifs.length + 1
                 })
                 notifs.set(notifsCopy)
             })
+
+            const workspace = await res.json()
+            let userDataCopy = $userData
+            userDataCopy.subjects.every(subject => {
+                if(subject.id === curActiveSubject.id){
+                    subject.workspaces.push(workspace)
+                    return false
+                }
+                return true
+            })
+            userData.set(userDataCopy)
+            loading = false
+            disabled = false
+            workspaceNameInput = ""
+            addWorkspaceModalActive.set(false)
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
-                msg: `error in posting workspace ${err}`,
+                msg: `error in creating workspace ${err}`,
                 type: 'error',
                 id: $notifs.length + 1
             })

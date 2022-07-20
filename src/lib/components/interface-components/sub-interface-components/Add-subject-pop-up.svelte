@@ -69,19 +69,26 @@
         const id = $userData.id
         const subjectID = bcrypt.hashSync(`${id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
 
-        await axios.post(`${backURI}/MainApp/dashboard/create/subject`, {
-            ids: {
-                user: id,
-                subject: subjectID
+        await fetch(`${backURI}/MainApp/dashboard/create/subject`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            subject: {
-                color: selectedColor,
-                name: subjectName,
-                owned: true,
-                createdBy: `${$userData.firstName} ${$userData.lastName}`
-            }
+            body: JSON.stringify({
+                ids: {
+                    user: id,
+                    subject: subjectID
+                },
+                subject: {
+                    color: selectedColor,
+                    name: subjectName,
+                    owned: true,
+                    createdBy: `${$userData.firstName} ${$userData.lastName}`
+                }
+            })
         })
         .then(async res => {
+            const { subject } = await res.json()
             await fetch(`${backURI}/User/create/notification`, {
                 method: 'POST',
                 headers: {
@@ -106,30 +113,27 @@
                     }
                 })
             }).then(async res => {
-                const data = await res.json()
-                userData.set(data)
-                localStorage.setItem('userData', JSON.stringify(data))
-                let notifsCopy = []
-                notifsCopy = $notifs
-                notifsCopy.push(
-                    {
-                        msg: "Subject created!",
-                        type: "success",
-                        id: notifsCopy.length + 1
-                    }
-                )
+                const { notification } = await res.json()
+                let userDataCopy = $userData
+                userDataCopy.subjects.push(subject)
+                userDataCopy.notifications.push(notification)
+                userData.set(userDataCopy)
+                localStorage.setItem('userData', JSON.stringify($userData))
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: "Subject created!",
+                    type: "success",
+                    id: notifsCopy.length + 1
+                })
                 notifs.set(notifsCopy)
                 addSubjectModalActive.set(false)
             }).catch(err => {
-                let notifsCopy = []
-                notifsCopy = $notifs
-                notifsCopy.push(
-                    {
-                        msg: `Subject created! but error in creating user notification, ${err}`,
-                        type: "error",
-                        id: notifsCopy.length + 1
-                    }
-                )
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: `Subject created! but error in creating user notification, ${err}`,
+                    type: "error",
+                    id: notifsCopy.length + 1
+                })
                 notifs.set(notifsCopy)
                 addSubjectModalActive.set(false)
             })

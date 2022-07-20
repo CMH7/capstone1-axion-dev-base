@@ -25,20 +25,10 @@
             if(subject.id === $activeSubject.id) {
                 subject.workspaces.every(workspace => {
                     if(workspace.id === $activeWorkspace.id){
-                        if(workspace.owned) {
-                            workspaceMembersLocal.push({
-                                name: `${$userData.firstName} ${$userData.lastName} (Owner)`,
-                                value: {
-                                    name: `${$userData.firstName} ${$userData.lastName}`,
-                                    email: `${$userData.email}`,
-                                    profile: `${$userData.profile}`
-                                }
-                            })
-                        }
                         workspaceMembers = workspace.members
                         workspaceMembers.forEach(member => {
                             workspaceMembersLocal.push({
-                                name: member.name,
+                                name: `${member.name}${member.name === `${$userData.firstName} ${$userData.lastName}`? ' (Owner)' : ''}`,
                                 value: member
                             })
                         })
@@ -112,35 +102,40 @@
         const semiDue = new Date(parseInt(year), parseInt(month), parseInt(day), parseInt(hour), parseInt(minute), 0, 0)
         const finalDueDateTime = semiDue.toISOString()
 
-        await axios.post(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
-             ids: {
-                 user: userID,
-                 subject: subjectID,
-                 workspace: workspaceID
-             },
-             task: {
-                 member: taskMembers,
-                 createdBy: createdBy,
-                 description: description,
-                 dueDateTime: finalDueDateTime,
-                 id: taskID,
-                 isSubtask: isSubtask,
-                 level: level,
-                 name: taskName
-             }
+        await fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ids: {
+                    user: userID,
+                    subject: subjectID,
+                    workspace: workspaceID
+                },
+                task: {
+                    member: taskMembers,
+                    createdBy: createdBy,
+                    description: description,
+                    dueDateTime: finalDueDateTime,
+                    id: taskID,
+                    isSubtask: isSubtask,
+                    level: level,
+                    name: taskName
+                }
+            })
          })
-         .then(res => {
-             if(res.data) {
-                const data = res.data
-                userData.set(data)
-                userData.subscribe(user => {
-                    user.subjects.every(subject => {
-                        if(subject.id === $activeSubject.id) {
-                            activeSubject.set(subject)
-                            subject.workspaces.every(workspace => {
-                                if(workspace.id === $activeWorkspace.id) {
-                                    activeWorkspace.set(workspace)
-                                    allBoards.set($activeWorkspace.boards)
+         .then(async res => {
+            const { task } = await res.json()
+             let userDataCopy = $userData
+             userDataCopy.subjects.every(subject => {
+                if(subject.id === $activeSubject.id) {
+                    subject.workspaces.every(workspace => {
+                        if(workspace.id === $activeWorkspace.id) {
+                            workspace.boards.every(board => {
+                                if(board.name === 'Todo') {
+                                    board.tasks.push(task)
+                                    allBoards.set(workspace.boards)
                                     return false
                                 }
                                 return true
@@ -149,18 +144,61 @@
                         }
                         return true
                     })
+                    return false
+                }
+                return true
+             })
+
+             userData.set(userDataCopy)
+             loading = false
+             disabled = false
+             addTaskModalActive.set(false)
+
+             await fetch(`${backURI}/User/create/notification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    notification: {
+                        id: bcrypt.hashSync(`${taskID}${$userData.id}`, Math.ceil(Math.random() * 10)),
+                        message: `Task ${taskName} created`,
+                        anInvitation: false,
+                        aMention: false,
+                        conversationID: "",
+                        fromInterface: {
+                            interf: "Dashboard",
+                            subInterface: "Boards"
+                        },
+                        fromTask: "",
+                        for: {
+                            self: true,
+                            userID: `${$userData.id}`
+                        }
+                    }
                 })
-                loading = false
-                disabled = false
+            }).then(async res => {
+                const { notification } = await res.json()
+                let userDataCopy = $userData
+                userDataCopy.notifications.push(notification)
+                userData.set(userDataCopy)
+                localStorage.setItem('userData', JSON.stringify($userData))
                 let notifsCopy = $notifs
                 notifsCopy.push({
-                    msg: 'Task created',
-                    type: 'success',
+                    msg: "Task created!",
+                    type: "success",
                     id: notifsCopy.length + 1
                 })
                 notifs.set(notifsCopy)
-                addTaskModalActive.set(false)
-             }
+            }).catch(err => {
+                let notifsCopy = $notifs
+                notifsCopy.push({
+                    msg: `Error in creating notification for task creation, ${err}`,
+                    type: 'error',
+                    id: $notifs.length + 1
+                })
+                notifs.set(notifsCopy)
+            })
          })
          .catch(err => {
              let notifsCopy = $notifs
