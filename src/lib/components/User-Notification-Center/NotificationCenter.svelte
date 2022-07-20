@@ -12,6 +12,7 @@
     allNotifications = user.notifications
   })
 
+
   const setReadNotif = async (notifID) => {
     let userDataCopy = $userData
     userDataCopy.notifications.every(notification => {
@@ -49,6 +50,7 @@
     let userDataCopy = $userData
     userDataCopy.notifications = userDataCopy.notifications.filter(notification => notification.id != notifID)
     userData.set(userDataCopy)
+
     await fetch(`${constants.backURI}/User/delete/notification`, {
       method: 'DELETE',
       headers: {
@@ -61,9 +63,11 @@
         }
       })
     }).then(async res => {
-      const data = await res.json()
-      userData.set(data)
-      localStorage.setItem('userData', JSON.stringify(data))
+      const { notifications } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.notifications = notifications
+      userData.set(userDataCopy)
+      localStorage.setItem('userData', JSON.stringify($userData))
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -75,15 +79,14 @@
     })
   }
 
-  let clearAll = 0
   const clearAllNotifs = async () => {
     setTimeout(() => {
       notifCenterOpen.set(false)
     }, (allNotifications.length * 100) + 500)
-    clearAll = 200
     let userDataCopy = $userData
     userDataCopy.notifications = []
     userData.set(userDataCopy)
+
     await fetch(`${constants.backURI}/User/delete/all/notification`, {
       method: 'DELETE',
       headers: {
@@ -150,7 +153,10 @@
                 delay: 100 * i
               }
             }
-            on:click={setReadNotif(notification.id)}
+            on:click={() => {
+                if(!notification.isRead) setReadNotif(notification.id)
+              }
+            }
             class="{notification.isRead ? 'opacity-50p': ''} column parent is-12 rounded min-h-50 mb-2 is-clickable hover-bg-grey-lighter-grey-light has-transition is-relative">
 
             <div class="is-flex is-align-items-center min-h-100p p-1">
@@ -177,7 +183,13 @@
 
             <!-- Read unread remove notif -->
             {#if !notification.isRead}
-            <div class="pos-abs maxmins-w-10 maxmins-h-10 rounded-circle has-background-success pos-t-40p pos-r-10" />
+            <div class="parent-hover-this-display-none pos-abs maxmins-w-10 maxmins-h-10 rounded-circle has-background-success pos-t-40p pos-r-10" />
+            <div
+              on:click={deleteNotif(notification.id)}
+              class="{outerWidth < 769 ? '': 'opacity-0 has-transition parent-hover-this-opacity-100'} pos-abs pos-t-35p pos-r-10 rounded-circle hover-bg-grey-lighter-grey-light is-flex is-align-items-center"
+            >
+              <Icon class='hover-txt-color-primary p-0' size='13px' path={mdiClose} />
+            </div>
             {:else}
             <div
               on:click={deleteNotif(notification.id)}

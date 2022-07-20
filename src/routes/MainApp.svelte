@@ -16,6 +16,7 @@
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
+import LoadingScreen from '$lib/components/LoadingScreen.svelte'
 
   onMount(async ()=>{
     window.onpopstate = function () {
@@ -87,7 +88,7 @@
 <svelte:window bind:outerWidth={width}/>
 
 {#if !$isLoggedIn}
-<div></div>
+<LoadingScreen />
 {:else}
 <NotificationContainer />
 <MainAppHeader/>

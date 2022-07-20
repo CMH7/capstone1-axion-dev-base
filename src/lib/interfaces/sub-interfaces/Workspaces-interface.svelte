@@ -2,7 +2,7 @@
   // @ts-nocheck
   import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte'
   import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte'
-  import { activeSubject, userData } from '$lib/stores/global-store'
+  import { activeSubject, addWorkspaceModalActive, userData } from '$lib/stores/global-store'
   import { fade } from 'svelte/transition'
 
   // Do this to retain reactivity of the elements and in sync
@@ -17,8 +17,7 @@
 
   function onKeyDown(e) {
     if(e.ctrlKey && e.altKey && e.keyCode == 87) {
-      popupActive = false
-      popupActive = true
+      if(!$addWorkspaceModalActive) addWorkspaceModalActive.set(true)
     }
   }
 
