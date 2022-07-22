@@ -38,23 +38,33 @@
 
         <!-- Section title -->
         
-        <div class="column">
-          <div class="is-6-tablet is-12-mobile mr-10">
-            <div class=" d-flex flex-wrap">
-          <div class="column quicksands has-text-weight-bold is-size-4 has-text-black">
-            Basic Information
-          </div>
-          </div>
-          </div>
-          </div>
-
-          <div class="column mb-6 pl-10">
-            <div class="is-5-tablet is-8-mobile pl-10">
-              <div class=" d-flex flex-wrap is-justify-content-end">
-                <button on:click={() => {goto('/', {replaceState: true})}} class="button red has-text-white dm-sans has-text-weight-bold is-size-5-desktop is-size-6-mobile is-size-5-tablet">Sign out</button>
+          <div class="column is-hidden-mobile">
+            <div class="is-6-tablet is-12-mobile">
+              <div class=" d-flex flex-wrap">
+                 <div class="column quicksands has-text-weight-bold is-size-4 has-text-black">
+                  Basic Information
+                  </div>
+               </div>
             </div>
           </div>
-        </div>
+  
+          <div class="column pl-10">
+            <div class="is-5-tablet is-12-mobile pl-10">
+              <div class=" d-flex flex-wrap is-justify-content-end pl-10">
+                <button on:click={() => {goto('/', {replaceState: true})}} class="button red has-text-white dm-sans has-text-weight-bold is-size-5-desktop is-size-6-mobile is-size-5-tablet">Sign out</button>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="column is-hidden-desktop is-hidden-tablet">
+            <div class="is-6-tablet is-12-mobile">
+              <div class=" d-flex flex-wrap">
+                 <div class="column quicksands has-text-weight-bold is-size-4 has-text-black">
+                  Basic Information
+                  </div>
+               </div>
+            </div>
+          </div>
 
         <!-- Card -->
         <div class="column is-12 pl-{outerWidth < 426 ? '': '16'} pr-{outerWidth < 426 ? '': '16'}">
