@@ -8,19 +8,30 @@
 
 <div class="block mb-0">
   <MaterialApp>
-    <AppBar fixed style="width: 100%;" class="py-1 has-background-primary">
+    <AppBar fixed class="maxmins-w-100p py-1 has-background-primary">
 
       <!-- Burger -->
-      <div slot="icon">
+      <div class="is-hidden-mobile" slot="icon">
         <Button disabled={!$sidebarActive} class="has-transition" depressed fab text>
           <div on:click={()=>{ismini.set(!$ismini)}}>
             <Icon size="30px" class="has-text-white" path={mdiMenu} />
           </div>
         </Button>
       </div>
+      <div
+        on:click={() => {
+          ismini.set(!$ismini)
+        }}
+        disabled={!$sidebarActive}
+        class="is-hidden-tablet pos-abs pos-l-15"
+      >
+        <Avatar size='35px'>
+          <img class="has-transition" style="transform: rotateZ({$ismini ? '0': '-37'}deg);" src="Axion_Logo2.png" alt="">
+        </Avatar>
+      </div>
 
       <!-- Title -->
-      <span class="fredokaone is-size-3" slot="title" on:click={
+      <span class="is-hidden-mobile" slot="title" on:click={
           () => {
             transitionActive.set(true);
             if($isLoggedIn){
@@ -38,10 +49,8 @@
           }
         }
       >
-        <div class="column is-7-mobile">
-          <p class="has-text-white is-unselectable mt-4 is-clickable">
-            AXION
-          </p>
+        <div class="fredokaone is-size-4 has-text-white is-clickable">
+          AXION
         </div>
       </span>
 
