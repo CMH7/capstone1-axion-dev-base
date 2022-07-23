@@ -1,11 +1,11 @@
 <script>
-  import { fade } from 'svelte/transition'
+ // @ts-nocheck 
+ import { fade } from 'svelte/transition'
   import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
   import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
   import ComingSoonModal from '$lib/components/ComingSoonModal.svelte'
-  import { userData } from '$lib/stores/global-store';
-    // @ts-ignore
-  import {goto} from '$app/navigation';
+  import { goto } from "$app/navigation" 
+  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen, userData } from "$lib/stores/global-store"
 
   let outerWidth = 0
   let switchOn = true
@@ -19,6 +19,12 @@
       comingSoonModalOpen = true
     }
   }
+
+  let allNotifications = 0
+  userData.subscribe(user => allNotifications = user.notifications.filter(notif => notif.isRead != true).length)
+
+  const clickOutside = () => notifCenterOpen.set(false)
+
 </script>
 
 <svelte:head>
@@ -51,10 +57,31 @@
           <div class="column pl-10">
             <div class="is-5-tablet is-12-mobile pl-10">
               <div class=" d-flex flex-wrap is-justify-content-end pl-10">
-                <button on:click={() => {goto('/', {replaceState: true})}} class="button red has-text-white dm-sans has-text-weight-bold is-size-5-desktop is-size-6-mobile is-size-5-tablet">Sign out</button>
-              </div>
-            </div>
-          </div>
+          <span class="fredokaone is-size-3" on:click={
+          () => {
+            transitionActive.set(true);
+            if($isLoggedIn){
+              snack.set(
+                {
+                  msg: "You will be automatically logged out. Do you want to continue?",
+                  active: true,
+                  yes: () => {
+                    localStorage.removeItem('userData')
+                    goto('/')
+                  }
+                }
+              );
+            }
+          }
+        }
+        >
+            <button class="button red has-text-white dm-sans has-text-weight-bold is-size-5-desktop is-size-6-mobile is-size-5-tablet">
+              Sign out
+            </button>
+        </span>              
+      </div>
+    </div>
+  </div>
  
           <div class="column is-hidden-desktop is-hidden-tablet">
             <div class="is-6-tablet is-12-mobile">
