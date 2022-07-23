@@ -127,7 +127,9 @@
       course = "",
       year = "",
       password = "",
-      repassword = "";
+      repassword = ""
+  
+  let termsPrivacyCheck = false 
 
   // button variables
   let loading = false, disabled = false
@@ -169,7 +171,7 @@
       notifs.set(notifsCopy)
       loading = false
       disabled = false
-    } else if(password !== repassword){
+    }else if(password !== repassword){
       let notifsCopy = $notifs
       notifsCopy.push({
           msg: 'Password does not match. Please try again.',
@@ -179,6 +181,16 @@
       notifs.set(notifsCopy)
       password = ''
       repassword = ''
+      loading = false
+      disabled = false
+    }else if(!termsPrivacyCheck) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+          msg: 'Please Agree with the Terms and Condition together with the Privacy Policy of the Axion.',
+          type: 'error',
+          id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
       loading = false
       disabled = false
     }else{
@@ -408,7 +420,7 @@
         <div class="columns is-mobile is-flex is-justify-content-center is-multiline is-align-items-centerr">
           <div class="column is-9-mobile is-size-7 has-text-centered">
             <div class="is-flex is-justify-content-center is-align-items-center">
-              <Checkbox checked={false}/>
+              <Checkbox bind:checked={termsPrivacyCheck}/>
               <div>
                 Agree with <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon} >Terms and conditions</span> and with the <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon}>Privacy policy</span> of the Axion
               </div>
