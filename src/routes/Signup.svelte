@@ -159,7 +159,7 @@
       notifs.set(notifsCopy)
       loading = false
       disabled = false
-    }else if(age < 18) {
+    }else if(parseInt(age) < 18) {
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: 'Age must be 18+',
