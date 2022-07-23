@@ -127,9 +127,8 @@
       course = "",
       year = "",
       password = "",
-      repassword = ""
-  
-  let termsPrivacyCheck = false 
+      repassword = "",
+      termsPrivacyCheck = false 
 
   // button variables
   let loading = false, disabled = false
