@@ -28,7 +28,7 @@
   }}
   on:mouseenter={() => mouseEnter = true }
   on:mouseleave={() => mouseEnter = false }
-  class="has-transition notification rounded-xl {mouseEnter?`has-background-${workspace.color}-dark`:""} is-{workspace.color}">
+  class="has-transition notification rounded {mouseEnter?`has-background-${workspace.color}-dark`:""} is-{workspace.color}">
   
   <p class="quicksands has-text-weight-semibold mb-0 is-unselectable is-absolute">
     {workspace.name}
