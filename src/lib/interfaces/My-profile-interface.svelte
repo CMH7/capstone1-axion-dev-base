@@ -117,7 +117,7 @@
 
                   <!-- Edit button -->
                   <div class="pos-abs pos-t-0 pos-r-0">
-                    <Button text size='small' class='dm-sans'>
+                    <Button on:click={openComingSoon} text size='small' class='dm-sans'>
                       Edit
                     </Button>
                   </div>
