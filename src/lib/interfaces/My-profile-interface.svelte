@@ -3,7 +3,9 @@
   import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
   import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
   import ComingSoonModal from '$lib/components/ComingSoonModal.svelte'
-  import { userData } from '$lib/stores/global-store'
+  import { userData } from '$lib/stores/global-store';
+    // @ts-ignore
+  import {goto} from '$app/navigation';
 
   let outerWidth = 0
   let switchOn = true
@@ -32,11 +34,37 @@
     
     <!-- Basic Information section -->
     <div class="column is-12 mb-6">
-      <div class="columns is-multiline">
+      <div class="columns is-multiline is-mobile">
+
         <!-- Section title -->
-        <div class="column is-12 quicksands has-text-weight-bold is-size-4 has-text-black">
-          Basic Information
-        </div>
+        
+          <div class="column is-hidden-mobile">
+            <div class="is-6-tablet is-12-mobile">
+              <div class=" d-flex flex-wrap">
+                 <div class="column quicksands has-text-weight-bold is-size-4 has-text-black">
+                  Basic Information
+                  </div>
+               </div>
+            </div>
+          </div>
+  
+          <div class="column pl-10">
+            <div class="is-5-tablet is-12-mobile pl-10">
+              <div class=" d-flex flex-wrap is-justify-content-end pl-10">
+                <button on:click={() => {goto('/', {replaceState: true})}} class="button red has-text-white dm-sans has-text-weight-bold is-size-5-desktop is-size-6-mobile is-size-5-tablet">Sign out</button>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="column is-hidden-desktop is-hidden-tablet">
+            <div class="is-6-tablet is-12-mobile">
+              <div class=" d-flex flex-wrap">
+                 <div class="column quicksands has-text-weight-bold is-size-4 has-text-black">
+                  Basic Information
+                  </div>
+               </div>
+            </div>
+          </div>
 
         <!-- Card -->
         <div class="column is-12 pl-{outerWidth < 426 ? '': '16'} pr-{outerWidth < 426 ? '': '16'}">
