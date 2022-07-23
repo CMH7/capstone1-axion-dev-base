@@ -24,6 +24,19 @@
 
   const isPassValid = (pass) => {
     let valid = true
+
+    if(!pass) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Password is invalid',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      valid = false
+      return false
+    }
+
     let invalids = 'Password must have '
     const lenInva = invalids.length
     
@@ -122,19 +135,6 @@
   
 
   const createNewUser = async () => {
-    if(!isEmailValid(email)) {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Email is invalid',
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-      return false
-    }
-
-    if(!isPassValid(password)) return false
-
     loading = true
     disabled = true
 
@@ -157,10 +157,19 @@
           id: $notifs.length + 1
       })
       notifs.set(notifsCopy)
-
       loading = false
       disabled = false
-    }else if(password !== repassword){
+    }else if(age < 18) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Age must be 18+',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      loading = false
+      disabled = false
+    } else if(password !== repassword){
       let notifsCopy = $notifs
       notifsCopy.push({
           msg: 'Password does not match. Please try again.',
@@ -173,6 +182,19 @@
       loading = false
       disabled = false
     }else{
+      if(!isEmailValid(email)) {
+      let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Email is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        return false
+      }
+
+      if(!isPassValid(password)) return false
+
       let notifss = $notifs
       notifss.push({
         msg: 'Checking account availability.',
