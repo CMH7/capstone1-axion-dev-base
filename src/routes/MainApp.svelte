@@ -13,11 +13,12 @@
   import CalendarInterface from "$lib/interfaces/Calendar-interface.svelte"
   import MyProfileInterface from "$lib/interfaces/My-profile-interface.svelte"
   import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
-  import NotificationContainer from '$lib/components/Notification-container.svelte'
+  import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
+import LoadingScreen from '$lib/components/LoadingScreen.svelte'
 
-  onMount(()=>{
+  onMount(async ()=>{
     window.onpopstate = function () {
       if(($currentInterface === 'Dashboard' || $currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
         console.log('on root')
@@ -55,8 +56,25 @@
       notifs.set(notifsCopy)
       goto('/Signin')
     }else{
-      userData.set(JSON.parse(localStorage.getItem('userData')))
-      isLoggedIn.set(true)
+      const lastData = JSON.parse(localStorage.getItem('userData'))
+
+      await fetch(`${constants.backURI}/validUser`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: lastData.email
+        })
+      }).then(async res => {
+        const data = await res.json()
+        userData.set(data)
+        isLoggedIn.set(true)
+      }).catch(err => {
+        console.error(err)
+        localStorage.removeItem('userData')
+        goto('/Signin')
+      })
     }
   })
 
@@ -70,7 +88,7 @@
 <svelte:window bind:outerWidth={width}/>
 
 {#if !$isLoggedIn}
-<div></div>
+<LoadingScreen />
 {:else}
 <NotificationContainer />
 <MainAppHeader/>

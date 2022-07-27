@@ -34,6 +34,7 @@
 .cursor {
   &-pointer {cursor: pointer;}
   &-text {cursor: text;}
+  &-def {cursor: default;}
 }
 
 .border {
@@ -208,8 +209,16 @@
 // WIDTHS
 .min-w {
   // pixels
+  &-10 {min-width: 10px;}
+  &-20 {min-width: 20px;}
+  &-30 {min-width: 30px;}
+  &-40 {min-width: 40px;}
   &-50 {min-width: 50px;}
+  &-60 {min-width: 60px;}
+  &-70 {min-width: 70px;}
   &-75 {min-width: 75px;}
+  &-80 {min-width: 80px;}
+  &-90 {min-width: 90px;}
   &-100 {min-width: 100px;}
   &-150 {min-width: 150px;}
   &-200 {min-width: 200px;}
@@ -256,8 +265,16 @@
 // HEIGHTS
 .min-h {
   // pixels
+  &-10 {min-height: 10px;}
+  &-20 {min-height: 20px;}
+  &-30 {min-height: 30px;}
+  &-40 {min-height: 40px;}
   &-50 {min-height: 50px;}
+  &-60 {min-height: 60px;}
+  &-70 {min-height: 70px;}
   &-75 {min-height: 75px;}
+  &-80 {min-height: 80px;}
+  &-90 {min-height: 90px;}
   &-100 {min-height: 100px;}
   &-150 {min-height: 150px;}
   &-200 {min-height: 200px;}
@@ -305,8 +322,16 @@
 // WIDTHS
 .max-w {
   // pixels
+  &-10 {max-width: 10px;}
+  &-20 {max-width: 20px;}
+  &-30 {max-width: 30px;}
+  &-40 {max-width: 40px;}
   &-50 {max-width: 50px;}
+  &-60 {max-width: 60px;}
+  &-70 {max-width: 70px;}
   &-75 {max-width: 75px;}
+  &-80 {max-width: 80px;}
+  &-90 {max-width: 90px;}
   &-100 {max-width: 100px;}
   &-150 {max-width: 150px;}
   &-200 {max-width: 200px;}
@@ -353,8 +378,16 @@
 // HEIGHTS
 .max-h {
   // pixels
+  &-10 {max-height: 10px;}
+  &-20 {max-height: 20px;}
+  &-30 {max-height: 30px;}
+  &-40 {max-height: 40px;}
   &-50 {max-height: 50px;}
+  &-60 {max-height: 60px;}
+  &-70 {max-height: 70px;}
   &-75 {max-height: 75px;}
+  &-80 {max-height: 80px;}
+  &-90 {max-height: 90px;}
   &-100 {max-height: 100px;}
   &-150 {max-height: 150px;}
   &-200 {max-height: 200px;}
@@ -402,6 +435,15 @@
 // WIDTHS
 .maxmins-w {
   // pixels
+  &-10 {@extend .max-w-10; @extend .min-w-10;}
+  &-20 {@extend .max-w-20; @extend .min-w-20;}
+  &-30 {@extend .max-w-30; @extend .min-w-30;}
+  &-40 {@extend .max-w-40; @extend .min-w-40;}
+  &-50 {@extend .max-w-50; @extend .min-w-50;}
+  &-60 {@extend .max-w-60; @extend .min-w-60;}
+  &-70 {@extend .max-w-70; @extend .min-w-70;}
+  &-80 {@extend .max-w-80; @extend .min-w-80;}
+  &-90 {@extend .max-w-90; @extend .min-w-90;}
   &-100 {@extend .max-w-100; @extend .min-w-100;}
   &-150 {@extend .max-w-150; @extend .min-w-150;}
   &-200 {@extend .max-w-200; @extend .min-w-200;}
@@ -448,7 +490,15 @@
 // HEIGHTS
 .maxmins-h {
   // pixels
+  &-10 {@extend .max-h-10; @extend .min-h-10;}
+  &-20 {@extend .max-h-20; @extend .min-h-20;}
+  &-30 {@extend .max-h-30; @extend .min-h-30;}
+  &-40 {@extend .max-h-40; @extend .min-h-40;}
   &-50 {@extend .max-h-50; @extend .min-h-50;}
+  &-60 {@extend .max-h-60; @extend .min-h-60;}
+  &-70 {@extend .max-h-70; @extend .min-h-70;}
+  &-80 {@extend .max-h-80; @extend .min-h-80;}
+  &-90 {@extend .max-h-90; @extend .min-h-90;}
   &-100 {@extend .max-h-100; @extend .min-h-100;}
   &-150 {@extend .max-h-150; @extend .min-h-150;}
   &-200 {@extend .max-h-200; @extend .min-h-200;}

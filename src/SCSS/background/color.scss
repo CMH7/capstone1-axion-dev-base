@@ -1,0 +1,13 @@
+.bg-color {
+  &-pastel {
+    &-white-card {background-color: #F5F4F4;}
+    &-red {background-color: #FF7B7B;}
+    &-violet {background-color: #857BFF;}
+    &-green {background-color: #7EFF8B;}
+    &-grey {
+      background-color: #CCC;
+
+      &-disbaled {background-color: #DEDEDE;}
+    }
+  }
+}

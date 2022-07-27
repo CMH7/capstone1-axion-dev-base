@@ -2,13 +2,12 @@
   // @ts-nocheck
   import HomeFooter from "$lib/components/Home-footer.svelte"
   import SignupHeader from "$lib/components/Signup-header.svelte"
-  import { Icon, Divider, MaterialApp } from "svelte-materialify"
+  import { Icon, Divider, Checkbox, MaterialApp } from "svelte-materialify"
   import {mdiGoogle, mdiFacebook} from "@mdi/js"
   import {fade} from 'svelte/transition'
-  import axios from 'axios'
   import bcrypt from 'bcryptjs'
   import {notifs} from '$lib/stores/global-store'
-  import NotificationContainer from "$lib/components/Notification-container.svelte"
+  import NotificationContainer from "$lib/components/System-Notification/Notification-container.svelte"
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
   import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
@@ -25,6 +24,19 @@
 
   const isPassValid = (pass) => {
     let valid = true
+
+    if(!pass) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Password is invalid',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      valid = false
+      return false
+    }
+
     let invalids = 'Password must have '
     const lenInva = invalids.length
     
@@ -115,7 +127,8 @@
       course = "",
       year = "",
       password = "",
-      repassword = "";
+      repassword = "",
+      termsPrivacyCheck = false 
 
   // button variables
   let loading = false, disabled = false
@@ -123,19 +136,6 @@
   
 
   const createNewUser = async () => {
-    if(!isEmailValid(email)) {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Email is invalid',
-        type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
-      return false
-    }
-
-    if(!isPassValid(password)) return false
-
     loading = true
     disabled = true
 
@@ -158,7 +158,16 @@
           id: $notifs.length + 1
       })
       notifs.set(notifsCopy)
-
+      loading = false
+      disabled = false
+    }else if(parseInt(age) < 18) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Age must be 18+',
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
       loading = false
       disabled = false
     }else if(password !== repassword){
@@ -173,7 +182,30 @@
       repassword = ''
       loading = false
       disabled = false
+    }else if(!termsPrivacyCheck) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+          msg: 'Please Agree with the Terms and Condition together with the Privacy Policy of the Axion.',
+          type: 'error',
+          id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+      loading = false
+      disabled = false
     }else{
+      if(!isEmailValid(email)) {
+      let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: 'Email is invalid',
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        return false
+      }
+
+      if(!isPassValid(password)) return false
+
       let notifss = $notifs
       notifss.push({
         msg: 'Checking account availability.',
@@ -307,7 +339,9 @@
 <SignupHeader/>
 <div in:fade class="hero is-fullheight-with-navbar">
   <div class="hero-head">
-    <p class="is-size-1-tablet is-size-2-mobile fredokaone has-text-black has-text-weight-bold has-text-centered my-6">SIGN UP</p>               
+    <p class="is-size-1-tablet is-size-2-mobile fredokaone has-text-black has-text-weight-bold has-text-centered my-6">
+      SIGN UP
+    </p>               
   </div>
 
   <div class="hero-body p-0">
@@ -322,11 +356,11 @@
           <input {disabled} required bind:value={lastName} class="input quicksands mt-3 has-background-light maxmins-w-100p" type="text" placeholder="Last Name">
 
           <!-- Age -->
-          <input {disabled} required bind:value={age} class="input quicksands my-3 has-background-light {outerWidth < 426 ? 'w-100p': 'w-45p'}" style="{outerWidth < 426 ? '': 'margin-right: 5%'}" type="text" placeholder="Age">
+          <input {disabled} required bind:value={age} min=12 max=70 class="input quicksands my-3 has-background-light {outerWidth < 426 ? 'w-100p': 'w-45p'}" style="{outerWidth < 426 ? '': 'margin-right: 5%'}" type="number" placeholder="Age">
 
           <!-- Gender -->
           <div class="select quicksands {outerWidth < 426 ? 'w-100p mb-3': 'w-50p my-3'}">
-            <select bind:value={gender} class="w-100p has-background-light has-text-grey-light">
+            <select bind:value={gender} class="w-100p has-background-light has-text-{!gender ? 'grey-light': 'black'}">
               <option value='' disabled default selected hidden>-Select Gender-</option>
               <option value="Female">Female</option>
               <option value="Male">Male</option>
@@ -340,21 +374,38 @@
           </style>
           
           <!-- E-mail -->
-          <input {disabled} required bind:value={email} class="input quicksands has-background-light maxmins-w-100p" type="text" placeholder="Email">
+          <input {disabled} required bind:value={email} class="input quicksands has-background-light maxmins-w-100p" type="email" placeholder="Email">
         </div>
       </div>
 
       <!-- right side input -->
-      <div class="column is-5-tablet is-10-mobile">
+      <div class="column is-5-tablet is-10-mobile mb-6">
         <div class=" d-flex flex-wrap">
           <!-- School name -->
-          <input {disabled} required bind:value={school} class="input quicksands has-background-light maxmins-w-100p" type="text" placeholder="School/University">
+          <input {disabled} required list="schoolsPH" type="text" bind:value={school} class="input quicksands has-background-light maxmins-w-100p" placeholder="School/University">
+          <datalist id='schoolsPH'>
+            {#each constants.schools.school as school }
+              <option value={school}>{school}</option>
+            {/each}
+          </datalist>
 
           <!-- Course -->
-          <input {disabled} required bind:value={course} class="input quicksands my-3 has-background-light maxmins-w-100p" type="text" placeholder="Course">
+          <input {disabled} required list="coursesPH" type="text" bind:value={course} class="input quicksands my-3 has-background-light maxmins-w-100p" placeholder="Course">
+          <datalist id='coursesPH'>
+            {#each constants.courses.courses as course }
+              <option value={`${course}`}>{course}</option>
+            {/each}
+          </datalist>
           
           <!-- Year -->
-          <input {disabled} required bind:value={year} class="input quicksands mb-3 has-background-light maxmins-w-100p" type="text" placeholder="Year">
+          <div class="select quicksands {outerWidth < 426 ? 'w-100p mb-3': 'w-100p mb-3'}">
+            <select bind:value={year} class="w-100p has-background-light has-text-{!year ? 'grey-light': 'black'}">
+              <option value='' disabled default selected hidden>Year</option>
+              {#each Array(15) as _, i}
+                <option value={`${i + 1}`}>{i + 1}</option>
+              {/each}
+            </select>
+          </div>
 
           <!-- Password -->
           <input {disabled} required bind:value={password} class="input quicksands has-background-light" style="width: 47%; margin-right: 5%" type="password" placeholder="Password">
@@ -364,6 +415,19 @@
         </div>
       </div>
 
+      <MaterialApp>
+        <div class="columns is-mobile is-flex is-justify-content-center is-multiline is-align-items-centerr">
+          <div class="column is-9-mobile is-size-7 has-text-centered">
+            <div class="is-flex is-justify-content-center is-align-items-center">
+              <Checkbox bind:checked={termsPrivacyCheck}/>
+              <div>
+                Agree with <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon} >Terms and conditions</span> and with the <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon}>Privacy policy</span> of the Axion
+              </div>
+            </div>
+          </div>
+        </div>
+      </MaterialApp>
+
       <div class="column p-0 is-12"/>
       <div class="column p-0 is-5">
         <MaterialApp>
@@ -372,33 +436,34 @@
       </div>
       <div class="column p-0 is-12"/>
       <div class="column p-0 is-12">
-        <p class="m-0 is-size-5 has-text-black has-text-weight-semibold has-text-centered">with</p>
+        <p class="m-0 is-size-5 has-text-grey has-text-weight-semibold has-text-centered">with</p>
       </div>
 
       <div class="column p-0 is-12 py-5">
         <div class="is-flex is-justify-content-center">
-          <div class="mx-3">
+          <div class="mx-2">
             <MaterialApp>
               <div class="is-clickable" on:click={openComingSoon}>
-                <Icon class="has-text-danger-dark" size="40px" path={mdiGoogle} />
+                <Icon class="has-text-danger-dark" size="30px" path={mdiGoogle} />
               </div>
             </MaterialApp>
           </div>
 
-          <div class="mx-3">
+          <div class="mx-2">
             <MaterialApp>
               <div class="is-clickable" on:click={openComingSoon}>
-                <Icon class="has-text-info" size="40px" path={mdiFacebook} />
+                <Icon class="has-text-info" size="30px" path={mdiFacebook} />
               </div>
             </MaterialApp>
           </div>
         </div>
-      </div>
+      </div> 
 
-      <div class="column is-12 p-0 pt-7 pb-6 mb-8">
+      <div class="column is-12 p-0 pt-3 pb-6 mb-4">
         <div class="is-flex flex-column is-align-items-center">
-          <button {disabled} on:click={createNewUser} class="button is-small rounded-xl is-primary dm-sans has-text-weight-bold is-size-4 {loading ? "is-loading": ""}">Submit</button>
-          <p class="pt-4 pb-6 is-size-6 dm-sans">Already have an account? Click <a href="/Signin">Sign in</a></p>
+          <button {disabled} on:click={createNewUser} class="button is-primary dm-sans has-text-weight-bold is-medium {loading ? "is-loading": ""}">Submit</button>
+          
+          <p class="pt-4 pb-6 is-size-7 dm-sans">Already have an account? Click <a class="hover-txt-style-underline" href="/Signin">Sign in</a></p>
         </div>
       </div>
     </div>
@@ -409,3 +474,10 @@
     <HomeFooter/>
   </div>
 </div>
+
+<style>
+  input:enabled:read-write:-webkit-any(:focus, :hover)::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    pointer-events: auto;
+  }
+</style>

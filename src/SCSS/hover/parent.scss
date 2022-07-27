@@ -1,5 +1,7 @@
 .parent {
   &:hover {
     .parent-hover-txt-color-white {color:white}
+    .parent-hover-this-opacity-100 {opacity: 100%;}
+    .parent-hover-this-display-none {display: none;}
   }
 }

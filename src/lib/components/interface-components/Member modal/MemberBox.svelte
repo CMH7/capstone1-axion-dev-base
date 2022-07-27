@@ -403,6 +403,8 @@
       class="ml-4 dm-sans text-body-2 is-clickable has-transition hover-txt-style-underline"
     >
       {user.data.name}
+      <br/>
+      {user.data.email}
     </div>
   </div>
   <div

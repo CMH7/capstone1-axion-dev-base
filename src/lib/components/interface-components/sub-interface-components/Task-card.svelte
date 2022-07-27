@@ -66,7 +66,47 @@
       break
   }
 
-  const finalHour = parseInt(hour) % 12 == 0 ? 12 : parseInt(hour) % 12
+  let finalHour = parseInt(hour)
+  switch(finalHour) {
+    case 13:
+      finalHour = 1
+      break
+    case 14:
+      finalHour = 2
+      break
+    case 15:
+      finalHour = 3
+      break
+    case 16: 
+      finalHour = 4
+      break
+    case 17:
+      finalHour = 5
+      break
+    case 18:
+      finalHour = 6
+      break
+    case 19:
+      finalHour = 7
+      break
+    case 20:
+      finalHour = 8
+      break
+    case 21:
+      finalHour = 9
+      break
+    case 22:
+      finalHour = 10
+      break
+    case 23:
+      finalHour = 11
+      break
+    case 24:
+      finalHour = 0
+      break
+    default:
+      finalHour = finalHour
+  }
 
   // Members hovering
   let show = false;

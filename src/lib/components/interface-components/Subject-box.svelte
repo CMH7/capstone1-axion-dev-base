@@ -79,7 +79,7 @@
   }}
   on:mouseenter={() => mouseEnter = true}
   on:mouseleave={() => mouseEnter = false}
-  class="has-transition notification rounded-xl {mouseEnter?`has-background-${subject.color}-dark`:""} is-{subject.color}"
+  class="has-transition notification rounded {mouseEnter?`has-background-${subject.color}-dark`:""} is-{subject.color}"
 >
   {#if deleting}
   <ProgressLinear color="red" backgroundColor="red" indeterminate />
