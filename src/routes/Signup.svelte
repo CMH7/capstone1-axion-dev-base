@@ -360,7 +360,7 @@
 
           <!-- Gender -->
           <div class="select quicksands {outerWidth < 426 ? 'w-100p mb-3': 'w-50p my-3'}">
-            <select bind:value={gender} class="w-100p has-background-light has-text-grey-light">
+            <select bind:value={gender} class="w-100p has-background-light has-text-{!gender ? 'grey-light': 'black'}">
               <option value='' disabled default selected hidden>-Select Gender-</option>
               <option value="Female">Female</option>
               <option value="Male">Male</option>
@@ -399,7 +399,7 @@
           
           <!-- Year -->
           <div class="select quicksands {outerWidth < 426 ? 'w-100p mb-3': 'w-100p mb-3'}">
-            <select bind:value={year} class="w-100p has-background-light has-text-grey-light">
+            <select bind:value={year} class="w-100p has-background-light has-text-{!year ? 'grey-light': 'black'}">
               <option value='' disabled default selected hidden>Year</option>
               {#each Array(15) as _, i}
                 <option value={`${i + 1}`}>{i + 1}</option>
@@ -474,3 +474,10 @@
     <HomeFooter/>
   </div>
 </div>
+
+<style>
+  input:enabled:read-write:-webkit-any(:focus, :hover)::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    pointer-events: auto;
+  }
+</style>
