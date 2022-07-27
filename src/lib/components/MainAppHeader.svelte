@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-  import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge } from "svelte-materialify"
+  import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge, Avatar } from "svelte-materialify"
   import {mdiMenu, mdiAccount, mdiBell, mdiBellBadge } from '@mdi/js'
   import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen, userData } from "$lib/stores/global-store"
   import { goto } from "$app/navigation"
