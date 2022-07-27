@@ -439,3 +439,10 @@
     <HomeFooter/>
   </div>
 </div>
+
+<style>
+  input:enabled:read-write:-webkit-any(:focus, :hover)::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    pointer-events: auto;
+  }
+</style>
