@@ -1,6 +1,5 @@
 <script>
-  import { Tooltip, Card, CardText, CardTitle, CardSubtitle, MaterialApp, Avatar, Divider } from 'svelte-materialify';
-  import TaskBoxPopUpModal from '$lib/components/interface-components/sub-interface-components/Task-box-pop-up-modal.svelte';
+  import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify';
 
   // Required params
 
@@ -115,7 +114,6 @@
   let taskmodalactive = false;
 </script>
 
-<TaskBoxPopUpModal {task} active={taskmodalactive}/>
 <div
   on:click={() => {
     if(taskmodalactive == true) {
