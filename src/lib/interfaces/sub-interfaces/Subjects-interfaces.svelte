@@ -1,7 +1,7 @@
 <script>
   // @ts-nocheck
   import SubjectBox from "$lib/components/interface-components/Subject-box.svelte"
-  import AddSubjectPopUp from "$lib/components/interface-components/sub-interface-components/Add-subject-pop-up.svelte"
+  import AddSubjectPopUp from "$lib/components/modals/Add-subject-pop-up.svelte"
   import { fade } from 'svelte/transition'
   import { userData, addSubjectModalActive } from '$lib/stores/global-store'
 

@@ -4,7 +4,7 @@
   import HomeHeader from "$lib/components/Home-header.svelte"
   import HomeFooter from "$lib/components/Home-footer.svelte"
   import {fade} from 'svelte/transition'
-  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+  import ComingSoonModal from "$lib/components/modals/ComingSoonModal.svelte"
 
   let comingSoonModalOpen = false
   const openComingSoon = () => {
