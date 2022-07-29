@@ -11,7 +11,7 @@
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
   import Fab from '$lib/components/FAB/FAB.svelte'
-  import AddTaskPopUp from '$lib/components/modals/Add-task-pop-up.svelte'
+  import AddTaskPopUp from '$lib/components/modals/task/Add-task-pop-up.svelte'
   import constants from '$lib/constants'
 
   onMount(() => {
@@ -42,7 +42,8 @@
 
 <div in:fade class="hero">
   <div class="hero-head px-3">
-    <Breadcrumbs large bind:items={breadCrumbsItemsCopy} class="pb-0" let:item>
+    <Breadcrumbs  large bind:items={breadCrumbsItemsCopy} class="pb-0" let:item>
+      <div slot="divider">></div>
       <div on:click={() => {
         if(item.text === $activeSubject.name) {
           currentDashboardSubInterface.set("Subjects")
