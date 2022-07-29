@@ -280,6 +280,8 @@
       const user = JSON.parse(localStorage.getItem('userData'))
       userData.set(user)
       notifs.set([])
+      loading = true
+      disabled = true
       isLoggedIn.set(true)
       goto('/MainApp', {replaceState: true})
     }
