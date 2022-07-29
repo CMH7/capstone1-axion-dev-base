@@ -17,7 +17,7 @@ export const sidebarActive = writable(true);
 export const currentInterface = writable("Dashboard");
 
 // This will be used for simple color designation in sidebar
-export let currentIndex = writable();
+export let currentIndex = writable(0);
 
 // THis will determine the active subject (users clicked subject)
 export let activeSubject = writable(
@@ -75,8 +75,7 @@ export let snack = writable(
   }
 )
 
-// Member Interface (modal) activeness
-export let memberModalActive = writable(false)
+// member interface (modal) loading state
 export let memberModalLoading = writable(true)
 
 // All users
@@ -85,6 +84,13 @@ export let allUsers = writable([])
 // All boards of the current workspace
 export let allBoards = writable([])
 
+// breadcrumbds items
+export let breadCrumbsItems = writable([])
+
+// notification center open boolean
+export let notifCenterOpen = writable(false)
+
+// ##### STORES OF ALL MODALS ######
 // add subject modal active
 export let addSubjectModalActive = writable(false)
 
@@ -94,11 +100,11 @@ export let addWorkspaceModalActive = writable(false)
 // add task modal active
 export let addTaskModalActive = writable(false)
 
-// breadcrumbds items
-export let breadCrumbsItems = writable([])
-
 // modal chosen colors
 export let modalChosenColor = writable('primary')
 
-// notification center open boolean
-export let notifCenterOpen = writable(false)
+// Member Interface (modal) activeness
+export let memberModalActive = writable(false)
+
+// task view modal active
+export let taskViewModalActive = writable(false)
