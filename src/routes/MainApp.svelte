@@ -16,11 +16,11 @@
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
-import LoadingScreen from '$lib/components/LoadingScreen.svelte'
+  import LoadingScreen from '$lib/components/LoadingScreen.svelte'
 
   onMount(async ()=>{
     window.onpopstate = function () {
-      if(($currentInterface === 'Dashboard' || $currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
+      if(($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
         console.log('on root')
         location.href = '/'
       }else if($currentDashboardSubInterface === 'Workspaces') {
@@ -30,7 +30,6 @@ import LoadingScreen from '$lib/components/LoadingScreen.svelte'
         activeWorkspace.set(constants.workspace)
         allBoards.set([])
         breadCrumbsItems.set([{text: 'Subjects'}])
-        history.forward()
       } else if($currentDashboardSubInterface === 'Boards') {
         console.log('on boards')
         currentDashboardSubInterface.set('Workspaces')
@@ -40,7 +39,6 @@ import LoadingScreen from '$lib/components/LoadingScreen.svelte'
         breadCrumbsItemsCopy.pop()
         breadCrumbsItemsCopy.pop()
         breadCrumbsItems.set(breadCrumbsItemsCopy)
-        history.forward()
       }
     }
 
