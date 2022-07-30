@@ -298,6 +298,7 @@
   &-200 {min-height: 200px;}
   &-250 {min-height: 250px;}
   &-300 {min-height: 300px;}
+  &-325 {min-height: 325px;}
   &-350 {min-height: 350px;}
   &-375 {min-height: 375px;}
   &-380 {min-height: 380px;}
@@ -415,6 +416,7 @@
   &-200 {max-height: 200px;}
   &-250 {max-height: 250px;}
   &-300 {max-height: 300px;}
+  &-325 {max-height: 325px;}
   &-330 {max-height: 330px;}
   &-350 {max-height: 350px;}
   &-400 {max-height: 400px;}
@@ -529,6 +531,7 @@
   &-200 {@extend .max-h-200; @extend .min-h-200;}
   &-250 {@extend .max-h-250; @extend .min-h-250;}
   &-300 {@extend .max-h-300; @extend .min-h-300;}
+  &-325 {@extend .max-h-325; @extend .min-h-325;}
   &-350 {@extend .max-h-350; @extend .min-h-350;}
   &-400 {@extend .max-h-400; @extend .min-h-400;}
   &-450 {@extend .max-h-450; @extend .min-h-450;}
