@@ -1,14 +1,17 @@
 <script>
   // @ts-nocheck
-  import { MaterialApp, Dialog, Icon, Button, Avatar, ClickOutside, Checkbox, Tabs, Tab, Window, WindowItem } from "svelte-materialify"
+  import { MaterialApp, Dialog, Icon, Button, Avatar, ClickOutside, Checkbox, Tabs, Tab, Window, WindowItem, Textarea } from "svelte-materialify"
   import { taskViewModalActive } from '$lib/stores/global-store'
   import { mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiMenu, mdiMessage, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiViewList } from "@mdi/js"
-  import { fly } from 'svelte/transition'
+  import SvelteMarkdown from 'svelte-markdown'
+  
 
   let outerWidth = 0
   let drop = false
   let drop1 = false
   let curTab = 'Chats'
+  let descriptionValue = ''
+  let editing = false
 </script>
 
 <svelte:window bind:outerWidth />
@@ -94,7 +97,7 @@
           </div>
           
           <!-- tabs -->
-          <div class="mt-2 min-w-100p is-flex">
+          <div class="mt-2 min-w-100p is-flex {outerWidth < 426 ? '': 'pl-3'}">
             {#if outerWidth > 425}
             <div
               on:click={() => curTab = 'Chats'}
@@ -137,7 +140,7 @@
           </div>
 
           <!-- tabs content -->
-          <div class="has-background-white min-w-100p min-h-380 rounded px-3">
+          <div class="has-background-white min-w-100p min-h-380 rounded-lg elevation-1 {curTab === 'Description' ? '': 'px-3'}">
             {#if curTab === 'Chats'}
             <!-- Chats -->
             <div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-direction-column-reverse is-justify-content-flex-end pt-1">
@@ -200,9 +203,35 @@
             </div>
             {:else if curTab === 'Description'}
             <div
-              class="maxmins-h-100p has-background-grey"
+              class="maxmins-h-100p is-flex is-flex-direction-column pb-2 overflow-y-auto"
             >
-              Description
+              {#if editing}
+              <textarea bind:value={descriptionValue} class="textarea txt-size-18 inter-reg txt-color-yaz-grey-dark textarea-resize-none border-none" placeholder="Description"></textarea>
+              {:else}
+              <div class="maxmins-h-325 txt-size-18 inter-reg txt-color-yaz-grey-dark pl-3 pr-2 pt-3 overflow-y-auto">
+                <span class="opacity-35p {descriptionValue ? 'undisp' : ''}">
+                  Description
+                </span>
+                <SvelteMarkdown source={descriptionValue} />
+              </div>
+              {/if}
+              <div class="is-flex is-justify-content-flex-end">
+                <div
+                  on:click={() => {
+                    if(editing) {
+                      editing = false
+                    }else{
+                      editing = true
+                    }
+                  }}
+                >
+                  <Button text class='m-1'>
+                    <div class="txt-size-12 fredoka-reg txt-color-yaz-grey-dark has-text-weight-semibold">
+                      {editing ? 'Save': 'Edit'}
+                    </div>
+                  </Button>
+                </div>
+              </div>
             </div>
             {:else}
             <div
