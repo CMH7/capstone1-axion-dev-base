@@ -46,24 +46,7 @@
       </div>
 
       <!-- Title -->
-      <span class="is-hidden-mobile" slot="title" on:click={
-          () => {
-            transitionActive.set(true);
-            if($isLoggedIn){
-              snack.set(
-                {
-                  msg: "You will be automatically logged out. Do you want to continue?",
-                  active: true,
-                  yes: () => {
-                    localStorage.removeItem('userData')
-                    goto('/')
-                  }
-                }
-              );
-            }
-          }
-        }
-      >
+      <span class="is-hidden-mobile" slot="title">
         <div class="fredokaone is-size-4 has-text-white is-clickable">
           AXION
         </div>
