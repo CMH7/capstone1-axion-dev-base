@@ -117,13 +117,13 @@
 // General scroll
 
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 4px;
   height: 1px
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 // === DIMENSIONS ====
@@ -299,6 +299,8 @@
   &-250 {min-height: 250px;}
   &-300 {min-height: 300px;}
   &-350 {min-height: 350px;}
+  &-375 {min-height: 375px;}
+  &-380 {min-height: 380px;}
   &-400 {min-height: 400px;}
   &-450 {min-height: 450px;}
   &-500 {min-height: 500px;}
@@ -413,6 +415,7 @@
   &-200 {max-height: 200px;}
   &-250 {max-height: 250px;}
   &-300 {max-height: 300px;}
+  &-330 {max-height: 330px;}
   &-350 {max-height: 350px;}
   &-400 {max-height: 400px;}
   &-450 {max-height: 450px;}
