@@ -135,13 +135,14 @@
             </div>
             {/if}
           </div>
+
           <!-- tabs content -->
-          <div class="has-background-white min-w-100p min-h-350 rounded py-2 px-3">
+          <div class="has-background-white min-w-100p min-h-380 rounded px-3">
             {#if curTab === 'Chats'}
             <!-- Chats -->
-            <div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-direction-column-reverse">
+            <div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-direction-column-reverse is-justify-content-flex-end pt-1">
               <!-- Chat input, tools, and send button -->
-              <div class="is-flex is-align-items-center {outerWidth < 426 ? '': 'px-5'}">
+              <div class="is-flex is-align-items-center {outerWidth < 426 ? '': 'px-5'} mt-1">
                 <!-- chat input -->
                 <input type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
 
@@ -157,8 +158,8 @@
               </div>
 
               <!-- Chats container -->
-              <div class="is-flex-grow-1 is-flex is-flex-direction-column is-justify-content-flex-end pb-3 max-h-300">
-                <div class="overflow-y-auto">
+              <div class="is-flex-grow-1 max-h-330 overflow-y-auto">
+                <div class="is-flex is-flex-direction-column-reverse">
                   <!-- LOOP HERE -->
                   {#each Array(15) as _, i}
                   <!-- chat -->
