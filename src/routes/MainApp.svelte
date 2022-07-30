@@ -53,6 +53,8 @@
       )
       notifs.set(notifsCopy)
       goto('/Signin')
+    }else if($isLoggedIn && !localStorage.getItem('userData')) {
+      localStorage.setItem("userData", JSON.stringify($userData))
     }else{
       const lastData = JSON.parse(localStorage.getItem('userData'))
 

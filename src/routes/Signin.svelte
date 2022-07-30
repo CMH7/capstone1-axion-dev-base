@@ -207,7 +207,6 @@
             })
           }).then(async resp => {
             const data = await resp.json()
-            localStorage.setItem("userData", JSON.stringify(data))
             notifs.set([])
             userData.set(data)
             useHint.set($userData.useHint)
