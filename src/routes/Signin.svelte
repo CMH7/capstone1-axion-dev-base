@@ -342,9 +342,9 @@
 
         {#if failed}
         <div class="column is-12 has-text-centered p-0">
-          <a href='/Reset' class="is-size-7">
+          <div class="is-size-7" on:click={openComingSoon}>
             <span class="has-text-black">Forgot your password?</span> Click here
-          </a>
+          </div>
         </div>
         {/if}
 
