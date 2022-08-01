@@ -1,6 +1,6 @@
 <script>
   import TaskViewModal from '$lib/components/modals/task/Task-view-modal.svelte'
-import { taskViewModalActive } from '$lib/stores/global-store';
+  import { taskViewModalActive } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
 
   // Required params
