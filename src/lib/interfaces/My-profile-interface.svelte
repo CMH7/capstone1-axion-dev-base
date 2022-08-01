@@ -3,7 +3,7 @@
  import { fade } from 'svelte/transition'
   import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
   import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
-  import ComingSoonModal from '$lib/components/ComingSoonModal.svelte'
+  import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte'
   import { goto } from "$app/navigation" 
   import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen, userData } from "$lib/stores/global-store"
 

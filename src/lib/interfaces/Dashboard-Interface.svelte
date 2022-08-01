@@ -3,15 +3,15 @@
   // @ts-ignore
   import { onMount } from 'svelte'
   import { fade } from 'svelte/transition'
-  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
+  import TaskCard from '$lib/components/interface-components/sub-interface-components/task/Task-card.svelte'
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
 	import { Breadcrumbs } from 'svelte-materialify'
-  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace, userData } from "$lib/stores/global-store"
+  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
   import Fab from '$lib/components/FAB/FAB.svelte'
-  import AddTaskPopUp from '$lib/components/interface-components/sub-interface-components/Add-task-pop-up.svelte'
+  import AddTaskPopUp from '$lib/components/modals/task/Add-task-pop-up.svelte'
   import constants from '$lib/constants'
 
   onMount(() => {
@@ -42,7 +42,8 @@
 
 <div in:fade class="hero">
   <div class="hero-head px-3">
-    <Breadcrumbs large bind:items={breadCrumbsItemsCopy} class="pb-0" let:item>
+    <Breadcrumbs  large bind:items={breadCrumbsItemsCopy} class="pb-0" let:item>
+      <div slot="divider">></div>
       <div on:click={() => {
         if(item.text === $activeSubject.name) {
           currentDashboardSubInterface.set("Subjects")

@@ -13,7 +13,7 @@
   import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import constants from '$lib/constants'
-  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+  import ComingSoonModal from "$lib/components/modals/ComingSoonModal.svelte"
 
   const backURI = constants.backURI
 
@@ -207,7 +207,6 @@
             })
           }).then(async resp => {
             const data = await resp.json()
-            localStorage.setItem("userData", JSON.stringify(data))
             notifs.set([])
             userData.set(data)
             useHint.set($userData.useHint)
@@ -280,6 +279,8 @@
       const user = JSON.parse(localStorage.getItem('userData'))
       userData.set(user)
       notifs.set([])
+      loading = true
+      disabled = true
       isLoggedIn.set(true)
       goto('/MainApp', {replaceState: true})
     }

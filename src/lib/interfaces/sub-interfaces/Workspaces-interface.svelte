@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-  import AddWorkspacePopUp from '$lib/components/interface-components/sub-interface-components/Add-workspace-pop-up.svelte'
+  import AddWorkspacePopUp from '$lib/components/modals/Add-workspace-pop-up.svelte'
   import WorkspaceBox from '$lib/components/interface-components/sub-interface-components/Workspace-box.svelte'
   import { activeSubject, addWorkspaceModalActive, userData } from '$lib/stores/global-store'
   import { fade } from 'svelte/transition'

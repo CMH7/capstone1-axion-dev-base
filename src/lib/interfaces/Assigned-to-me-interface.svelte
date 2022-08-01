@@ -1,6 +1,6 @@
 <script>
   import { fade } from 'svelte/transition'
-  import TaskCard from '$lib/components/interface-components/sub-interface-components/Task-card.svelte'
+  import TaskCard from '$lib/components/interface-components/sub-interface-components/task/Task-card.svelte'
   import { userData } from '$lib/stores/global-store'
 
   let assignedTasks = []
