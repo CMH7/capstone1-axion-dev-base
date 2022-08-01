@@ -2,7 +2,7 @@
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox} from "svelte-materialify"
   import { taskViewModalActive, chats, notifs, taskCurTab } from '$lib/stores/global-store'
-  import { mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiMenu, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiViewList } from "@mdi/js"
+  import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiMenu, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   
 
@@ -49,7 +49,7 @@
       sender: {
         email: 'brylle@gmail.com',
         name: 'Brylle Rinzel Mangulabnan',
-        profile: ''
+        profile: 'a'
       },
       message: 'I am brylee',
       sendAt: new Date().toISOString(),
@@ -273,19 +273,25 @@
                     <div class="is-flex min-w-100p hover-bg-grey-lighter cursor-def rounded p-1 parent">
                       {#if !i || chat.sender.email !== mainChats[i - 1].sender.email}
                       <!-- Profile -->
-                      <div class="is-flex is-align-items-center">
-                        <Avatar size='30px' class='has-background-info mr-2 maxmins-w-30 maxmins-h-30'>
-                          <div class="fredoka-reg has-text-white has-text-weight-semibold txt-size-12">
-                            CH
-                          </div>
-                        </Avatar>
-                      </div>
+                        {#if !chat.sender.profile}
+                        <div class="is-flex is-align-items-center">
+                          <Avatar size='30px' class='has-background-info mr-2 maxmins-w-30 maxmins-h-30'>
+                            <div class="fredoka-reg has-text-white has-text-weight-semibold txt-size-12">
+                              {chat.sender.name.toUpperCase().split(' ')[0].charAt(0)}{chat.sender.name.toUpperCase().split(' ')[chat.sender.name.toUpperCase().split(' ').length - 1].charAt(0)}
+                            </div>
+                          </Avatar>
+                        </div>
+                        {:else}
+                        <div class="is-flex is-align-items-center">
+                          <Avatar size='30px' class='has-background-info mr-2 maxmins-w-30 maxmins-h-30'>
+                            <Icon class='p-1 white-text' path={mdiAccount} />
+                          </Avatar>
+                        </div>
+                        {/if}
                       {:else}
                       <div class="is-flex is-align-items-center">
                         <Avatar class='is-invisible has-background-white mr-2 maxmins-w-30 maxmins-h-10'>
-                          <div class="fredoka-reg has-text-white has-text-weight-semibold txt-size-12">
-                            CH
-                          </div>
+                          <div class="fredoka-reg has-text-white has-text-weight-semibold txt-size-12"/>
                         </Avatar>
                       </div>
                       {/if}
