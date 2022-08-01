@@ -3,5 +3,17 @@
 @forward 'color.scss';
 
 .border {
-  &-none {border: none;}
+  &-none {
+    border: none;
+    
+    &-onfocus:focus {
+      outline: none;
+    }
+  }
+
+  &-outline {
+    &-none {
+      outline-width: 0;
+    }
+  }
 }
