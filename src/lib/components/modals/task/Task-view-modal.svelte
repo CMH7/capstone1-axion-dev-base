@@ -2,7 +2,7 @@
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
   import { taskViewModalActive, chats, notifs, taskCurTab } from '$lib/stores/global-store'
-  import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
+  import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   
 
@@ -295,24 +295,24 @@
                       {/if}
     
                       <!-- name, message and time -->
-                      <div class="is-flex-grow-1 is-flex">
+                      <div class="is-flex-grow-1 is-flex is-relative">
                         <!-- name and message -->
-                        <div class="is-flex-grow-1">
+                        <div class="is-flex-grow-1 is-flex-shrink-0">
                           {#if !i || chat.sender.email !== mainChats[i - 1].sender.email}
                           <!-- name -->
-                          <div class="inter-reg txt-size-{outerWidth < 376 ? '7': '11'}" style='color: #A4A4A4;'>
+                          <div class="inter-reg txt-size-{outerWidth < 376 ? '8': '11'}" style='color: #A4A4A4;'>
                             {chat.sender.name}
                           </div>
                           {/if}
     
                           <!-- message -->
-                          <div class="inter-reg txt-size-{outerWidth < 376 ? '10': '15'}">
+                          <div class="inter-reg txt-size-{outerWidth < 376 ? '10': '15'} min-w-100p">
                             {chat.message}
                           </div>
                         </div>
     
                         <!-- time -->
-                        <div class="opacity-0 parent-hover-this-opacity-100 fredoka-reg txt-size-10 is-italic has-text-grey is-flex-shrink-0">
+                        <div class="{outerWidth < 376 ? 'pos-abs pos-r-5 txt-size-7': 'txt-size-10'} opacity-0 parent-hover-this-opacity-100 fredoka-reg is-italic has-text-grey is-flex-shrink-0">
                           {chat.sendAt}
                         </div>
                       </div>
@@ -378,10 +378,25 @@
                     <div class="inter-reg txt-szie-11 has-text-weight-medium txt-color-yaz-grey-dark">
                       Subtask
                     </div>
-                    <!-- add icon button -->
-                    <Button icon>
-                      <Icon class='grey-text text-darken-1' path={mdiPlus} />
-                    </Button>
+
+                    <!-- filter and add icon button -->
+                    <div class="is-flex">
+                      <!-- filter -->
+                      <Button icon={outerWidth < 321 ? true: false} text={outerWidth > 320 ? true: false} size='small' >
+                        <span class="{outerWidth < 321 ? 'undisp': ''} fredoka-reg txt-size-10 grey-text text-darken-1 mr-1">
+                          filter
+                        </span>
+                        <Icon size='10px' class='grey-text text-darken-1' path={mdiFilter} />
+                      </Button>
+
+                      <!-- add -->
+                      <Button icon={outerWidth < 321 ? true: false} text={outerWidth > 320 ? true: false} size='small'>
+                        <span class="{outerWidth < 321 ? 'undisp': ''} fredoka-reg txt-size-10 grey-text text-darken-1 mr-1">
+                          Add
+                        </span>
+                        <Icon size='15px' class='grey-text text-darken-1' path={mdiPlus} />
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
@@ -390,9 +405,9 @@
                   <!-- container -->
                   <div class="is-flex is-flex-direction-column">
                     <!-- subtask card / brief details -->
-                    <div class="is-flex-grow-1 is-flex is-justify-content-space-between is-align-items-center parent is-relative hover-bg-grey-lighter rounded has-transition">
+                    <div class="is-flex-grow-1 is-flex is-justify-content-space-between is-align-items-center parent is-relative hover-bg-grey-lighter has-transition border-b-color-yaz-grey-dark border-w-b-1 border-type-b-solid">
                       <!-- subtask name -->
-                      <div class="inter-reg is-size-6 txt-color-yaz-grey-dark pl-1 is-clickable">
+                      <div class="inter-reg is-size-6 txt-color-yaz-grey-dark pl-1 is-clickable hover-txt-color-primary max-w-50p txt-overflow-ellipsis overflow-x-hidden">
                         Prepare dinner for family
                       </div>
 
@@ -407,12 +422,14 @@
                           In progress
                         </div>
 
-                        <div class="undisp ml-2 is-invisible parent-hover-this-display-block">
+                        <div class="{outerWidth < 426 ? '': 'undisp'} ml-2 is-invisible parent-hover-this-display-block">
                           <Icon size='22px' path={mdiTrashCan} />
                         </div>
                         
-                        <div class="pos-abs pos-r-5 undisp parent-hover-this-display-block">
-                          <Icon class='grey-text text-darken-1' size='22px' path={mdiTrashCan} />
+                        <div
+                          on:click={() => console.log('trash clicked')}
+                          class="pos-abs pos-r-5 z-100 {outerWidth < 426 ? '': 'undisp parent-hover-this-display-block'} is-clickable">
+                          <Icon size='22px' path={mdiTrashCan} />
                         </div>
                       </div>
                     </div>
