@@ -90,6 +90,8 @@ export let breadCrumbsItems = writable([])
 // notification center open boolean
 export let notifCenterOpen = writable(false)
 
+
+
 // ##### STORES OF ALL MODALS ######
 // add subject modal active
 export let addSubjectModalActive = writable(false)
@@ -108,3 +110,11 @@ export let memberModalActive = writable(false)
 
 // task view modal active
 export let taskViewModalActive = writable(false)
+
+
+// ##### STORE OF TASK'S CHATS #####
+// current tab of specific task
+export let taskCurTab = writable('Chats')
+
+// chats in specific task
+export let chats = writable([])
