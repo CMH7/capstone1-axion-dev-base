@@ -13,28 +13,9 @@
   let oldDescriptionValue = descriptionValue
   let editing = false
   let chatInput = ''
+  let assigneeInputValue = ''
   
   let localChats = [
-    {
-      sender: {
-        email: 'cm@gmail.com',
-        name: 'Charles Maverick Herrera',
-        profile: ''
-      },
-      message: 'Hello world',
-      sendAt: new Date().toISOString(),
-      id: '1'
-    },
-    {
-      sender: {
-        email: 'cm@gmail.com',
-        name: 'Charles Maverick Herrera',
-        profile: ''
-      },
-      message: 'I am charles Maverick',
-      sendAt: new Date().toISOString(),
-      id: '1'
-    },
     {
       sender: {
         email: 'hazel@gmail.com',
@@ -44,18 +25,35 @@
       message: 'I am hazel mejias',
       sendAt: new Date().toISOString(),
       id: '2'
+    }
+  ]
+
+  let localWorkspaceMembers = [
+    {
+      email: 'hazel@gmail.com',
+      name: 'Hazel Anne Mejias',
+      profile: 'https://scontent.fmnl9-3.fna.fbcdn.net/v/t39.30808-6/289328405_1400081307137477_6637625565139676970_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeE3fsnp_9mY7LO32q_MQ2s1JG-Hv82NOdskb4e_zY0520LNwEqgvlExA5vE9wWTXIsUUGy4VwP3NNQvyhOqOhyL&_nc_ohc=nnKBt7md6JsAX-a2Piq&_nc_pt=1&_nc_ht=scontent.fmnl9-3.fna&oh=00_AT_pL8qmMC674CykMooLUpmQojywT571rnnWRwL-q2DUgQ&oe=62EC2703'
     },
     {
-      sender: {
-        email: 'brylle@gmail.com',
-        name: 'Brylle Rinzel Mangulabnan',
-        profile: 'a'
-      },
-      message: 'I am brylee',
-      sendAt: new Date().toISOString(),
-      id: '3'
+      email: 'cm@gmail.com',
+      name: 'Charles Maverick Herrera',
+      profile: ''
     },
+    {
+      email: 'dummyAccount@gmail.com',
+      name: 'Dummy Account',
+      profile: ''
+    }
   ]
+  let workspaceMembersCopy = localWorkspaceMembers
+
+  function filterMembers() {
+    workspaceMembersCopy = localWorkspaceMembers.filter(workspaceMember => {
+      if(workspaceMember.name.toLowerCase().split(' ').join('').match(assigneeInputValue.toLowerCase()) || workspaceMember.email.toLowerCase().match(assigneeInputValue.toLowerCase())) {
+        return workspaceMember
+      }
+    })
+  }
 
   chats.set(localChats)
   let mainChats = []
@@ -461,7 +459,8 @@
   
             <!-- dropdown -->
             <div use:ClickOutside on:clickOutside={() => drop = false} class='is-relative min-h-fit-content'>
-              <div
+              <input
+                on:change={() => filterMembers()}
                 on:click={() => {
                   if(drop) {
                     drop = false
@@ -469,24 +468,25 @@
                     drop = true
                   }
                 }}
-                class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded-t is-clickable has-background-white z-95"
+                bind:value={assigneeInputValue}
+                class="input min-w-100p border-w-1 border-color-grey-light border-type-solid rounded-t has-background-white z-95"
               />
   
               <!-- dropdown content -->
               <div class="pos-abs pos-t-40 has-background-white min-w-100p has-transition elevation-1 rounded-b {drop ? 'rot-x-0': 'rot-x-90'} z-90" style="transform-origin: top center">
                 <!-- Loop here -->
-                {#each Array(5) as _, i}
+                {#each workspaceMembersCopy as workspaceMember}
                 <div class="hover-bg-grey-lighter has-transition p-3">
                   <Checkbox>
                     <div>
                       <!-- Name -->
                       <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        Charles Maverick Herrera
+                        {workspaceMember.name}
                       </div>
         
                       <!-- email -->
                       <div class="inter-reg txt-size-9 txt-color-yaz-grey-dark is-clickable">
-                        cm@gmail.com
+                        {workspaceMember.email}
                       </div>
                     </div>
                   </Checkbox>
