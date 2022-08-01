@@ -1,6 +1,5 @@
 <script>
-// @ts-nocheck
-
+  // @ts-nocheck
   import { NavigationDrawer, List, ListItem, Icon, MaterialApp, ListItemGroup, Divider } from 'svelte-materialify';
   import { mdiViewDashboard, mdiAccountCheck, mdiStarSettings, mdiCalendar, mdiAccount } from '@mdi/js';
   import { currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive } from '$lib/stores/global-store';
@@ -13,9 +12,7 @@
     {index: 4, name: "My Profile", icon: mdiAccount, color: "grey-dark"}
   ];
   
-  let dashCount = 0;
-  currentIndex.set(0)
-
+  let dashCount = 0
   let width = 0
 </script>
 
