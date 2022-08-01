@@ -335,7 +335,7 @@
                   <SvelteMarkdown source={descriptionValue} />
                 </div>
                 {/if}
-                <div class="is-flex is-justify-content-flex-end">
+                <div class="is-flex is-justify-content-flex-end mt-2">
                   {#if editing}
                   <!-- cancel button -->
                   <button
