@@ -496,24 +496,30 @@
             </div>
   
             <!-- list of assigned members -->
-            {#each Array(3) as _, i}
+            {#each workspaceMembersCopy as taskAssignee}
             <!-- container -->
             <div class="is-flex is-align-items-center m-3">
               <!-- profile -->
+              {#if !taskAssignee.profile}
               <Avatar size='47px' class='has-background-info mr-3'>
                 <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
-                  CH
+                  {taskAssignee.name.toUpperCase().split(' ')[0].charAt(0)}{taskAssignee.name.toUpperCase().split(' ')[taskAssignee.name.toUpperCase().split(' ').length - 1].charAt(0)}
                 </div>
               </Avatar>
+              {:else}
+              <Avatar size='47px' class='has-background-info mr-3'>
+                <img src={taskAssignee.profile} alt="">
+              </Avatar>
+              {/if}
   
               <!-- name and email -->
               <div>
                 <div class="inter-reg txt-size-12 tx-color-yaz-grey-dark">
-                  Charles Maverick Herrera
+                  {taskAssignee.name}
                 </div>
   
                 <div class="inter-reg txt-size-9 tx-color-yaz-grey-dark">
-                  cm@gmail.com
+                  {taskAssignee.email}
                 </div>
               </div>
             </div>
