@@ -1,8 +1,8 @@
 <script>
   // @ts-nocheck
-  import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox} from "svelte-materialify"
+  import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
   import { taskViewModalActive, chats, notifs, taskCurTab } from '$lib/stores/global-store'
-  import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiMenu, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiViewList } from "@mdi/js"
+  import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   
 
@@ -370,9 +370,54 @@
               </div>
               {:else}
               <div
-                class="maxmins-h-100p has-background-warning"
+                class="maxmins-h-100p"
               >
-                Subtasks
+                <!-- subtasks title and add icon button -->
+                <div class="min-w-100p pb-1">
+                  <div class="is-flex is-justify-content-space-between mt-1">
+                    <div class="inter-reg txt-szie-11 has-text-weight-medium txt-color-yaz-grey-dark">
+                      Subtask
+                    </div>
+                    <!-- add icon button -->
+                    <Button icon>
+                      <Icon class='grey-text text-darken-1' path={mdiPlus} />
+                    </Button>
+                  </div>
+                </div>
+
+                <!-- subtasks of task -->
+                <div class="min-w-100p">
+                  <!-- container -->
+                  <div class="is-flex is-flex-direction-column">
+                    <!-- subtask card / brief details -->
+                    <div class="is-flex-grow-1 is-flex is-justify-content-space-between is-align-items-center parent is-relative hover-bg-grey-lighter rounded has-transition">
+                      <!-- subtask name -->
+                      <div class="inter-reg is-size-6 txt-color-yaz-grey-dark pl-1 is-clickable">
+                        Prepare dinner for family
+                      </div>
+
+                      <!-- level, status and trash -->
+                      <div class="is-flex is-align-items-center p-1">
+                        <!-- level -->
+                        <Avatar tile size='22px' style="max-width: 22px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-red has-text-white fredoka-reg txt-size-9 rounded is-clickable mr-2">
+                          H
+                        </Avatar>
+
+                        <div class="tag is-success is-light fredoka-reg txt-size-9 has-text-weight-semibold ml-1">
+                          In progress
+                        </div>
+
+                        <div class="undisp ml-2 is-invisible parent-hover-this-display-block">
+                          <Icon size='22px' path={mdiTrashCan} />
+                        </div>
+                        
+                        <div class="pos-abs pos-r-5 undisp parent-hover-this-display-block">
+                          <Icon class='grey-text text-darken-1' size='22px' path={mdiTrashCan} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               {/if}
             </div>
