@@ -71,7 +71,6 @@
 
   <!-- Body -->
   <div class="hero-body pt-4">
-    <Fab/>
     <AddTaskPopUp/>
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
@@ -99,6 +98,8 @@
     {/if}
   </div>
 </div>
+<Fab/>
+
 
 <style>
   .boardcolumns {
