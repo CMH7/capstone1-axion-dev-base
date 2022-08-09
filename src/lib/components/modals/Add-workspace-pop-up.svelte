@@ -48,9 +48,20 @@
 
     const createWorkspace = async () => {
         isCreating = true
+        if(workspaceNameInput === "") {
+            let notifsCopy = []
+            notifsCopy = $notifs
+            notifsCopy.push(
+                {
+                    msg: "Workspace name is empty."
+                }
+            )
+            notifs.set(notifsCopy)
+            return false
+        }
+
         disabled = true
         loading = true
-
         let selectedColor = ""
         colors.forEach(color => {
             if(color.selected){
