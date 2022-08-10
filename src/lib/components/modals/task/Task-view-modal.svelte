@@ -1,10 +1,14 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab } from '$lib/stores/global-store'
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
+  import constants from "$lib/constants"
   
+
+  // export or pass in the task details
+  export let task = constants.task
 
   let outerWidth = 0
   let drop = false
@@ -14,6 +18,15 @@
   let editing = false
   let chatInput = ''
   let assigneeInputValue = ''
+  let viewersModalActive = false
+  let status = task.status
+
+
+  let taskViewers = [
+    'Charles Maverick Herrera',
+    'Joanne Razelle Roche',
+    'El John Matimtim'
+  ]
   
   let localChats = [
     {
@@ -55,9 +68,7 @@
     })
   }
 
-  chats.set(localChats)
-  let mainChats = []
-  chats.subscribe(value => mainChats = value)
+  chats.set(task.conversations)
 
   function insertChat() {
     let chatsCopy = $chats
@@ -266,10 +277,10 @@
                 <div class="is-flex-grow-1 max-h-330 overflow-y-auto">
                   <div class="is-flex is-flex-direction-column">
                     <!-- LOOP HERE -->
-                    {#each mainChats as chat, i}
+                    {#each task.conversations as chat, i}
                     <!-- chat -->
                     <div class="is-flex min-w-100p hover-bg-grey-lighter cursor-def rounded p-1 parent">
-                      {#if !i || chat.sender.email !== mainChats[i - 1].sender.email}
+                      {#if !i || chat.sender.email !== task.conversations[i - 1].sender.email}
                       <!-- Profile -->
                         {#if !chat.sender.profile}
                         <div class="is-flex is-align-items-center">
@@ -298,7 +309,7 @@
                       <div class="is-flex-grow-1 is-flex is-relative">
                         <!-- name and message -->
                         <div class="is-flex-grow-1 is-flex-shrink-0">
-                          {#if !i || chat.sender.email !== mainChats[i - 1].sender.email}
+                          {#if !i || chat.sender.email !== task.conversations[i - 1].sender.email}
                           <!-- name -->
                           <div class="inter-reg txt-size-{outerWidth < 376 ? '8': '11'}" style='color: #A4A4A4;'>
                             {chat.sender.name}
@@ -460,10 +471,10 @@
                         drop1 = true
                       }
                     }}
-                    class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded is-clickable has-background-white z-100 is-flex is-align-items-center pl-2"
+                    class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded is-clickable has-background-white is-flex is-align-items-center pl-2"
                   >
                     <div class="inter-reg txt-size-12 txt-color-yaz-grey-dark">
-                      In progress
+                      {status}
                     </div>
                   </div>
   
@@ -471,33 +482,66 @@
                     <!-- Loop here -->
   
                     <!-- status -->
-                    <div class="hover-bg-grey-lighter has-transition p-3">
-                      <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        To do
+                    {#each $allBoards as board}
+                      <div
+                        on:click={() => {
+                          status = board.name
+                          drop1 = false
+                        }}
+                        class="hover-bg-grey-lighter has-transition p-3 is-clickable"
+                      >
+                        <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark'>
+                          {board.name}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div class="hover-bg-grey-lighter has-transition p-3">
-                      <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        In progress
-                      </div>
-                    </div>
-                    
-                    <div class="hover-bg-grey-lighter has-transition p-3">
-                      <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        Done
-                      </div>
-                    </div>
+                    {/each}
                   </div>
                 </div>
   
                 <!-- views and viewers -->
-                <div class="is-flex is-align-items-center ml-3 is-clickable">
+                <div
+                  on:click={() => {
+                    viewersModalActive = true
+                  }}
+                  class="is-flex is-align-items-center ml-3 is-clickable"
+                >
                   <Icon class='txt-color-yaz-grey-dark mr-1' path={mdiEyeOutline} />
-                  <div class="fredoka-reg txt-size-12">
-                    3
+                  <div class="fredoka-reg txt-size-12 is-flex is-justify-content-center is-align-items-center">
+                    {task.viewers.length}
                   </div>
+
                 </div>
+                
+                <!-- viewers name modal -->
+                <Dialog persistent bind:active={viewersModalActive} class='p-2'>
+                  <!-- header -->
+                  <div class="is-flex is-justify-content-space-between is-align-items-center">
+                    <div class="fredoka-reg txt-size-16 txt-color-yaz-grey-dark">
+                      Seen by:
+                    </div>
+
+                    <!-- Close icon/button -->
+                    <div
+                      on:click={() => {
+                        viewersModalActive = false
+                      }}
+                      class='is-clickable is-flex-shrink-0'
+                    >
+                      <Avatar tile size='25px' style="max-width: 25px" class="bg-color-yaz-red has-transition hover-bg-danger has-text-white rounded">
+                        <Icon path={mdiClose} />
+                      </Avatar>
+                    </div>
+                  </div>
+
+                  <!-- seeners -->
+                  <div class="is-flex is-flex-direction-column mt-3">
+                    {#each task.viewers as viewer}
+                    <div class="inter-reg txt-size-15 hover-bg-grey-lighter pl-2 rounded mb-1 cursor-def">
+                      {viewer}
+                    </div>
+                    {/each}
+                  </div>
+                </Dialog>
               </div>
             </div>
   
@@ -531,7 +575,7 @@
                   }
                 }}
                 bind:value={assigneeInputValue}
-                class="input min-w-100p border-w-1 border-color-grey-light border-type-solid rounded-t has-background-white z-95"
+                class="input min-w-100p border-w-1 border-color-grey-light border-type-solid rounded-t has-background-white"
               />
   
               <!-- dropdown content -->

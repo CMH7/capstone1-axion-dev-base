@@ -1,5 +1,4 @@
 <script>
-  import TaskViewModal from '$lib/components/modals/task/Task-view-modal.svelte'
   import { taskViewModalActive } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
 
@@ -116,7 +115,6 @@
   let taskmodalactive = false;
 </script>
 
-<TaskViewModal />
 <div
   on:click={() => taskViewModalActive.set(true)}
   class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable rounded parent">

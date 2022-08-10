@@ -13,6 +13,7 @@
   import Fab from '$lib/components/FAB/FAB.svelte'
   import AddTaskPopUp from '$lib/components/modals/task/Add-task-pop-up.svelte'
   import constants from '$lib/constants'
+  import TaskViewModal from '$lib/components/modals/task/Task-view-modal.svelte'
 
   onMount(() => {
     if($breadCrumbsItems.length < 1) {
@@ -71,7 +72,6 @@
 
   <!-- Body -->
   <div class="hero-body pt-4">
-    <Fab/>
     <AddTaskPopUp/>
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
@@ -79,6 +79,7 @@
       <WorkspacesInterface />
     {:else if $currentDashboardSubInterface === "Boards"}
       <!-- <BoardsInterface /> -->
+      <TaskViewModal />
       <MemberModal/>
       <div class="columns is-mobile pb-5 boardcolumns">
 
@@ -99,6 +100,8 @@
     {/if}
   </div>
 </div>
+<Fab/>
+
 
 <style>
   .boardcolumns {
