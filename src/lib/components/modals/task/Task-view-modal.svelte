@@ -1,7 +1,7 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab } from '$lib/stores/global-store'
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   
@@ -15,6 +15,8 @@
   let chatInput = ''
   let assigneeInputValue = ''
   let viewersModalActive = false
+  let status = 'Todo'
+
 
   let taskViewers = [
     'Charles Maverick Herrera',
@@ -470,7 +472,7 @@
                     class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded is-clickable has-background-white is-flex is-align-items-center pl-2"
                   >
                     <div class="inter-reg txt-size-12 txt-color-yaz-grey-dark">
-                      In progress
+                      {status}
                     </div>
                   </div>
   
@@ -478,23 +480,19 @@
                     <!-- Loop here -->
   
                     <!-- status -->
-                    <div class="hover-bg-grey-lighter has-transition p-3">
-                      <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        To do
+                    {#each $allBoards as board}
+                      <div
+                        on:click={() => {
+                          status = board.name
+                          drop1 = false
+                        }}
+                        class="hover-bg-grey-lighter has-transition p-3 is-clickable"
+                      >
+                        <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark'>
+                          {board.name}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div class="hover-bg-grey-lighter has-transition p-3">
-                      <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        In progress
-                      </div>
-                    </div>
-                    
-                    <div class="hover-bg-grey-lighter has-transition p-3">
-                      <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        Done
-                      </div>
-                    </div>
+                    {/each}
                   </div>
                 </div>
   
