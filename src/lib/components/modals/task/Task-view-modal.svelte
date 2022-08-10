@@ -4,7 +4,11 @@
   import { taskViewModalActive, chats, notifs, taskCurTab, allBoards } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
+  import constants from "$lib/constants"
   
+
+  // export or pass in the task details
+  export let task = constants.task
 
   let outerWidth = 0
   let drop = false
@@ -15,7 +19,7 @@
   let chatInput = ''
   let assigneeInputValue = ''
   let viewersModalActive = false
-  let status = 'Todo'
+  let status = task.status
 
 
   let taskViewers = [
@@ -64,9 +68,7 @@
     })
   }
 
-  chats.set(localChats)
-  let mainChats = []
-  chats.subscribe(value => mainChats = value)
+  chats.set(task.conversations)
 
   function insertChat() {
     let chatsCopy = $chats
@@ -275,10 +277,10 @@
                 <div class="is-flex-grow-1 max-h-330 overflow-y-auto">
                   <div class="is-flex is-flex-direction-column">
                     <!-- LOOP HERE -->
-                    {#each mainChats as chat, i}
+                    {#each task.conversations as chat, i}
                     <!-- chat -->
                     <div class="is-flex min-w-100p hover-bg-grey-lighter cursor-def rounded p-1 parent">
-                      {#if !i || chat.sender.email !== mainChats[i - 1].sender.email}
+                      {#if !i || chat.sender.email !== task.conversations[i - 1].sender.email}
                       <!-- Profile -->
                         {#if !chat.sender.profile}
                         <div class="is-flex is-align-items-center">
@@ -307,7 +309,7 @@
                       <div class="is-flex-grow-1 is-flex is-relative">
                         <!-- name and message -->
                         <div class="is-flex-grow-1 is-flex-shrink-0">
-                          {#if !i || chat.sender.email !== mainChats[i - 1].sender.email}
+                          {#if !i || chat.sender.email !== task.conversations[i - 1].sender.email}
                           <!-- name -->
                           <div class="inter-reg txt-size-{outerWidth < 376 ? '8': '11'}" style='color: #A4A4A4;'>
                             {chat.sender.name}
@@ -505,7 +507,7 @@
                 >
                   <Icon class='txt-color-yaz-grey-dark mr-1' path={mdiEyeOutline} />
                   <div class="fredoka-reg txt-size-12 is-flex is-justify-content-center is-align-items-center">
-                    {taskViewers.length}
+                    {task.viewers.length}
                   </div>
 
                 </div>
@@ -533,7 +535,7 @@
 
                   <!-- seeners -->
                   <div class="is-flex is-flex-direction-column mt-3">
-                    {#each taskViewers as viewer}
+                    {#each task.viewers as viewer}
                     <div class="inter-reg txt-size-15 hover-bg-grey-lighter pl-2 rounded mb-1 cursor-def">
                       {viewer}
                     </div>
