@@ -14,6 +14,13 @@
   let editing = false
   let chatInput = ''
   let assigneeInputValue = ''
+  let viewersModalActive = false
+
+  let taskViewers = [
+    'Charles Maverick Herrera',
+    'Joanne Razelle Roche',
+    'El John Matimtim'
+  ]
   
   let localChats = [
     {
@@ -460,7 +467,7 @@
                         drop1 = true
                       }
                     }}
-                    class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded is-clickable has-background-white z-100 is-flex is-align-items-center pl-2"
+                    class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded is-clickable has-background-white is-flex is-align-items-center pl-2"
                   >
                     <div class="inter-reg txt-size-12 txt-color-yaz-grey-dark">
                       In progress
@@ -492,12 +499,49 @@
                 </div>
   
                 <!-- views and viewers -->
-                <div class="is-flex is-align-items-center ml-3 is-clickable">
+                <div
+                  on:click={() => {
+                    viewersModalActive = true
+                  }}
+                  class="is-flex is-align-items-center ml-3 is-clickable"
+                >
                   <Icon class='txt-color-yaz-grey-dark mr-1' path={mdiEyeOutline} />
-                  <div class="fredoka-reg txt-size-12">
-                    3
+                  <div class="fredoka-reg txt-size-12 is-flex is-justify-content-center is-align-items-center">
+                    {taskViewers.length}
                   </div>
+
                 </div>
+                
+                <!-- viewers name modal -->
+                <Dialog persistent bind:active={viewersModalActive} class='p-2'>
+                  <!-- header -->
+                  <div class="is-flex is-justify-content-space-between is-align-items-center">
+                    <div class="fredoka-reg txt-size-16 txt-color-yaz-grey-dark">
+                      Seen by:
+                    </div>
+
+                    <!-- Close icon/button -->
+                    <div
+                      on:click={() => {
+                        viewersModalActive = false
+                      }}
+                      class='is-clickable is-flex-shrink-0'
+                    >
+                      <Avatar tile size='25px' style="max-width: 25px" class="bg-color-yaz-red has-transition hover-bg-danger has-text-white rounded">
+                        <Icon path={mdiClose} />
+                      </Avatar>
+                    </div>
+                  </div>
+
+                  <!-- seeners -->
+                  <div class="is-flex is-flex-direction-column mt-3">
+                    {#each taskViewers as viewer}
+                    <div class="inter-reg txt-size-15 hover-bg-grey-lighter pl-2 rounded mb-1 cursor-def">
+                      {viewer}
+                    </div>
+                    {/each}
+                  </div>
+                </Dialog>
               </div>
             </div>
   
@@ -531,7 +575,7 @@
                   }
                 }}
                 bind:value={assigneeInputValue}
-                class="input min-w-100p border-w-1 border-color-grey-light border-type-solid rounded-t has-background-white z-95"
+                class="input min-w-100p border-w-1 border-color-grey-light border-type-solid rounded-t has-background-white"
               />
   
               <!-- dropdown content -->
