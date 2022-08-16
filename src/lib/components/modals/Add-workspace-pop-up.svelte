@@ -53,7 +53,9 @@
             notifsCopy = $notifs
             notifsCopy.push(
                 {
-                    msg: "Workspace name is empty."
+                    msg: "Workspace name is empty.",
+                    type: "error",
+                    id: $notifs.length + 1
                 }
             )
             notifs.set(notifsCopy)
