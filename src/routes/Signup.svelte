@@ -10,7 +10,7 @@
   import NotificationContainer from "$lib/components/System-Notification/Notification-container.svelte"
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
-  import ComingSoonModal from "$lib/components/ComingSoonModal.svelte"
+  import ComingSoonModal from "$lib/components/modals/ComingSoonModal.svelte"
   
 
   const backURI = constants.backURI

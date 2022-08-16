@@ -50,7 +50,9 @@
             notifsCopy = $notifs
             notifsCopy.push(
                 {
-                    msg: "Subject name is empty."
+                    msg: "Subject name is empty.",
+                    type: "error",
+                    id: $notifs.length + 1
                 }
             )
             notifs.set(notifsCopy)

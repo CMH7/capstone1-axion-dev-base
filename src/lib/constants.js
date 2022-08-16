@@ -45,6 +45,22 @@ export default {
     lastActive: new Date(),
     bio: ''
   },
+  task: {
+    members: [],
+    subtasks: [],
+    conversations: [],
+    viewers: [],
+    createdBy: '',
+    createdOn: new Date().toISOString(),
+    description: '',
+    dueDateTime: new Date().toISOString(),
+    id: '',
+    isFavorite: false,
+    isSubtask: false,
+    level: 1,
+    name: '',
+    status: 'Todo'
+  },
   backURI: "https://axion-back.herokuapp.com",
   lowerCasedLetters: new String('abcdefghijklmnopqrstuvwxyz').split(''),
   upperCasedLetters: new String('ABCDEFGHIJKLMNOPQRSTUVWXYZ').split(''),

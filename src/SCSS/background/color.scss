@@ -10,4 +10,16 @@
       &-disbaled {background-color: #DEDEDE;}
     }
   }
+
+  &-yaz {
+    &-red {background-color: #F97A7A;}
+    &-white-card {background-color: #F6F6F6;}
+    &-sky-blue {
+      &-dark {background-color: #0A72D2;}
+    }
+    &-grey {
+      &-light {background-color: #D9D9D9;}
+      &-dark {background-color: #A6A6A6;}
+    }
+  }
 }

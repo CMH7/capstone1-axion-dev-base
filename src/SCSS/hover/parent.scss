@@ -2,6 +2,10 @@
   &:hover {
     .parent-hover-txt-color-white {color:white}
     .parent-hover-this-opacity-100 {opacity: 100%;}
+    .parent-hover-this-opacity-0 {opacity: 0%;}
     .parent-hover-this-display-none {display: none;}
+    .parent-hover-this-display-block {display: block;}
+    .parent-hover-bg-color-grey {background-color: hsl(0, 0%, 48%);}
+    .parent-hover-bg-color-grey-lighter {background-color: hsl(0, 0%, 86%);}
   }
 }

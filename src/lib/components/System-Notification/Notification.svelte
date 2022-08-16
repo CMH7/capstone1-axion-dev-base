@@ -12,7 +12,7 @@
 
 </script>
 
-<div in:fade out:fade class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{type === "success"? "success": "danger"} is-light {closed ? "undisp": ""}">
+<div class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{type === "success"? "success": "danger"} is-light {closed ? "undisp": ""}">
   {msg}
   <div
     class="delete"
