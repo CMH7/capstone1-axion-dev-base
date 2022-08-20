@@ -1,5 +1,5 @@
 <script>
-  import { taskViewModalActive } from '$lib/stores/global-store'
+  import { taskViewModalActive, activeTask } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
 
   // Required params
@@ -116,7 +116,10 @@
 </script>
 
 <div
-  on:click={() => taskViewModalActive.set(true)}
+  on:click={() => {
+    taskViewModalActive.set(true)
+    activeTask.set(task)
+  }}
   class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable rounded parent">
   <Card outlined class='p-1' style="max-height: 60px; min-height: 60px; min-width: 250px">
   
