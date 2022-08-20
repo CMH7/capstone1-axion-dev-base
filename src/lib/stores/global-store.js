@@ -108,6 +108,9 @@ export let modalChosenColor = writable('primary')
 // Member Interface (modal) activeness
 export let memberModalActive = writable(false)
 
+// selected or active task
+export let activeTask = writable(constants.task)
+
 // task view modal active
 export let taskViewModalActive = writable(false)
 
