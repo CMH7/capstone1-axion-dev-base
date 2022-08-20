@@ -261,6 +261,7 @@
                         dense
                         items={levels}
                         bind:value={level}
+                        mandatory
                     >
                         Level
                     </Select>
