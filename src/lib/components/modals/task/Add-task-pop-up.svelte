@@ -51,11 +51,10 @@
     let createdBy = `${$userData.firstName} ${$userData.lastName}`
     let description = ''
     let dueDateTime = ''
-    const isSubtask = false
-    let taskName = 'Task name'
+    let taskName = ''
     let workspaceID = ''
     activeWorkspace.subscribe(value => workspaceID = value.id)
-    let level = ''
+    let level = 1
     const taskID = bcrypt.hashSync(`${workspaceID}${taskName}${new Date()}`, Math.ceil(Math.random() * 1))
     let userID = ''
     userData.subscribe(value => userID = value.id)
@@ -66,7 +65,7 @@
 
         taskName = ''
         dueDateTime = ''
-        level = ''
+        level = 1
         description = ''
         taskMembers = []
     }
@@ -118,7 +117,7 @@
                     description: description,
                     dueDateTime: finalDueDateTime,
                     id: taskID,
-                    isSubtask: isSubtask,
+                    isSubtask: false,
                     level: level,
                     name: taskName
                 }
@@ -149,9 +148,6 @@
              })
 
              userData.set(userDataCopy)
-             loading = false
-             disabled = false
-             addTaskModalActive.set(false)
 
              await fetch(`${backURI}/User/create/notification`, {
                 method: 'POST',
@@ -189,6 +185,9 @@
                     id: notifsCopy.length + 1
                 })
                 notifs.set(notifsCopy)
+                loading = false
+                disabled = false
+                addTaskModalActive.set(false)
             }).catch(err => {
                 let notifsCopy = $notifs
                 notifsCopy.push({
@@ -240,7 +239,7 @@
         <div class="is-flex is-align-items-center is-flex-wrap-wrap is-multiline">
             <!-- input -->
             <!-- Task name -->
-            <input {disabled} class="min-w-100p py-5 pl-2 input has-transition hover-border-color-black-light" type="text" bind:value={taskName} />
+            <input {disabled} class="min-w-100p py-5 pl-2 input border-color-grey border-w-1 border-type-solid" type="text" bind:value={taskName} placeholder="Task Name" />
 
             <!-- due and level -->
             <div
@@ -250,7 +249,7 @@
                 <!-- due date -->
                 <SveltyPicker
                     placeholder="Due date"
-                    inputClasses="maxmins-w-300-dt-to-mb-100p form-control rounded py-4 px-2 dmsans shadow-inside-default"
+                    inputClasses="maxmins-w-300-dt-to-mb-100p form-control rounded py-3 px-2 dmsans border-color-grey border-w-1 border-type-solid"
                     format="yyyy-mm-dd hh:ii"
                     bind:value={dueDateTime}
                 />
