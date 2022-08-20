@@ -47,7 +47,7 @@
 
       <!-- Title -->
       <span class="is-hidden-mobile" slot="title">
-        <div class="fredokaone is-size-4 has-text-white is-clickable">
+        <div class="fredokaone is-size-4 has-text-white">
           AXION
         </div>
       </span>
