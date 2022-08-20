@@ -16,7 +16,7 @@
     id: "",
     isFavorite: false,
     isSubtask: false,
-    level: 0,
+    level: 1,
     name: "",
     status: ""
   }
