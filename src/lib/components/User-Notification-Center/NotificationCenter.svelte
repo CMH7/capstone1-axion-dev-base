@@ -1,7 +1,7 @@
 <script>
   // @ts-nocheck
   import { Avatar, Icon } from "svelte-materialify"
-  import { notifCenterOpen, userData, notifs } from '$lib/stores/global-store'
+  import { notifCenterOpen, userData, notifs, currentInterface, currentDashboardSubInterface, activeTask, taskViewModalActive, activeSubject, activeWorkspace, allBoards, breadCrumbsItems } from '$lib/stores/global-store'
   import { mdiAccountOutline, mdiClose, mdiNotificationClearAll } from "@mdi/js"
   import constants from "$lib/constants"
   import { fly } from 'svelte/transition'
@@ -9,7 +9,7 @@
   let outerWidth
   let allNotifications = []
   userData.subscribe(user => {
-    allNotifications = user.notifications
+    allNotifications = user.notifications.reverse()
   })
 
 
@@ -155,6 +155,31 @@
               }
             }
             on:click={() => {
+                if(notification.fromTask || notification.aMention) {
+                  currentInterface.set(notification.fromInterface.interf)
+                  currentDashboardSubInterface.set(notification.fromInterface.subInterface)
+                  $userData.subjects.map(subject => {
+                    subject.workspaces.map(workspace => {
+                      workspace.boards.map(board => {
+                        board.tasks.every(task => {
+                          if(task.id === notification.fromTask) {
+                            activeSubject.set(subject)
+                            activeWorkspace.set(workspace)
+                            allBoards.set($activeWorkspace.boards)
+                            activeTask.set(task)
+                            breadCrumbsItems.set([])
+                            breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeSubject.name}])
+                            breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeWorkspace.name}])
+                            breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
+                            return false
+                          }
+                          return true
+                        })
+                      })
+                    })
+                  })
+                  taskViewModalActive.set(true)
+                }
                 if(!notification.isRead) setReadNotif(notification.id)
               }
             }
