@@ -47,6 +47,9 @@ export let activeWorkspace = writable(
   }
 );
 
+// This will determine the current board in which the current active task is residing
+export let activeBoard = writable('')
+
 // This will determine the current Dashboard's sub-interface (Active)
 export let currentDashboardSubInterface = writable("Subjects");
 
