@@ -1,16 +1,15 @@
 <script>
-  import { taskViewModalActive } from '$lib/stores/global-store'
+  import { taskViewModalActive, activeTask, activeBoard } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
 
   // Required params
-
   export let task = {
     members: [],
     subtasks: [],
     conversations: [],
     viewers: [],
     createdBy: "",
-    createdOn: new Date(),
+    createdOn: new Date().toISOString(),
     description: "",
     dueDateTime: '',
     id: "",
@@ -20,6 +19,8 @@
     name: "",
     status: ""
   }
+
+  export let boardID = ''
 
   const [ dateValue, timeValue ] = task.dueDateTime.split('T')
   const [ year, month, date ] = dateValue.split('-')
@@ -116,7 +117,11 @@
 </script>
 
 <div
-  on:click={() => taskViewModalActive.set(true)}
+  on:click={() => {
+    taskViewModalActive.set(true)
+    activeTask.set(task)
+    activeBoard.set(boardID)
+  }}
   class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable rounded parent">
   <Card outlined class='p-1' style="max-height: 60px; min-height: 60px; min-width: 250px">
   

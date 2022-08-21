@@ -165,7 +165,7 @@
                             interf: "Dashboard",
                             subInterface: "Boards"
                         },
-                        fromTask: "",
+                        fromTask: `${taskID}`,
                         for: {
                             self: true,
                             userID: `${$userData.id}`

@@ -47,6 +47,9 @@ export let activeWorkspace = writable(
   }
 );
 
+// This will determine the current board in which the current active task is residing
+export let activeBoard = writable('')
+
 // This will determine the current Dashboard's sub-interface (Active)
 export let currentDashboardSubInterface = writable("Subjects");
 
@@ -107,6 +110,9 @@ export let modalChosenColor = writable('primary')
 
 // Member Interface (modal) activeness
 export let memberModalActive = writable(false)
+
+// selected or active task
+export let activeTask = writable(constants.task)
 
 // task view modal active
 export let taskViewModalActive = writable(false)
