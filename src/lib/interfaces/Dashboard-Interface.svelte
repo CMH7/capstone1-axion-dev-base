@@ -89,7 +89,7 @@
             <div class="d-flex flex-row justify-center">
               <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
                 {#each board.tasks.sort((a, b) => b.level - a.level) as task}
-                <TaskCard {task} />
+                <TaskCard {task} boardID={`${board.id}`} />
                 {/each}
               </Boards>
             </div>
