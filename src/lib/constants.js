@@ -64,9 +64,9 @@ export default {
   subtask: {
     members: [],
     createdBy: "",
-    createdOn: new Date(),
+    createdOn: "",
     description: "",
-    dueDateTime: new Date(),
+    dueDateTime: "",
     id: "",
     isFavorite: false,
     name: "",
