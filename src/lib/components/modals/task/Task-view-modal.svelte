@@ -1,9 +1,13 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace } from '$lib/stores/global-store'
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
+  import constants from "$lib/constants"
+  import bcrypt from "bcryptjs"
+
+  const backURI = constants.backURI
 
   let outerWidth = 0
   let drop = false
@@ -12,7 +16,6 @@
   let chatInput = ''
   let assigneeInputValue = ''
   let viewersModalActive = false
-  let status = $activeTask.status
   
   
   let taskViewers = []
@@ -87,6 +90,139 @@
         descriptionSave(true)
       }
     }
+  }
+
+  const updateStatus = async boardName => {
+    let activeTaskCopy = $activeTask
+    activeTaskCopy.status = boardName
+    activeTask.set(activeTaskCopy)
+
+    await fetch(`${backURI}/MainApp/edit/subject/workspace/board/task/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id,
+          board: $activeBoard
+        },
+        task: {
+          members: $activeTask.members,
+          subtasks: $activeTask.subtasks,
+          conversations: $activeTask.conversations,
+          viewers: $activeTask.viewers,
+          createdBy: $activeTask.createdBy,
+          createdOn: $activeTask.createdOn,
+          description: $activeTask.description,
+          dueDateTime: $activeTask.dueDateTime,
+          id: $activeTask.id,
+          isFavorite: $activeTask.isFavorite,
+          isSubtask: $activeTask.isSubtask,
+          level: $activeTask.level,
+          name: $activeTask.name,
+          status: boardName
+        }
+      })
+    }).then(async res => {
+      let { task } = await res.json()
+      activeTask.set(task)
+      let allBoardsCopy = $allBoards
+      allBoardsCopy.every(board => {
+        if(board.id === $activeBoard) {
+          board.tasks.every(task => {
+            if(task.id === $activeTask.id) {
+              board.tasks = board.tasks.filter(task2 => task2.id !== $activeTask.id)
+              return false
+            }
+            return true
+          })
+          return false
+        }
+        return true
+      })
+
+      allBoardsCopy.every(board => {
+        if(board.name === boardName) {
+          board.tasks.push(task)
+          return false
+        }
+        return true
+      })
+      allBoards.set(allBoardsCopy)
+
+      let activeWorkspaceCopy = $activeWorkspace
+      activeWorkspaceCopy.boards = $allBoards
+      activeWorkspace.set(activeWorkspaceCopy)
+
+      let activeSubjectCopy = $activeSubject
+      activeSubjectCopy.workspaces.every(workspace => {
+        if(workspace.id === $activeWorkspace.id) {
+          workspace = $activeWorkspace
+          return false
+        }
+        return true
+      })
+      activeSubject.set(activeSubjectCopy)
+
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject = $activeSubject
+          return false
+        }
+        return true
+      })
+
+      await fetch(`${backURI}/User/create/notification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          notification: {
+            id: bcrypt.hashSync(`${$activeTask.id}0${$userData.id}`, Math.ceil(Math.random() * 10)),
+            message: `${$activeTask.name} is moved to ${boardName}`,
+            anInvitation: false,
+            aMention: false,
+            conversationID: "",
+            fromInterface: {
+              interf: "Dashboard",
+              subInterface: "Boards"
+            },
+            fromTask: $activeTask.id,
+            for: {
+              self: true,
+              userID: `${$userData.id}`
+            }
+            }
+        })
+      }).then(async res => {
+        const { notification } = await res.json()
+        let userDataCopy = $userData
+        userDataCopy.notifications.push(notification)
+        userData.set(userDataCopy)
+        localStorage.setItem('userData', JSON.stringify($userData))
+      }).catch(err => {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `Error in creating notification for task status update, ${err}`,
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+      })
+    }).catch(err => {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `Error in updating the task status, ${err}`,
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+    })
   }
 </script>
 
@@ -453,7 +589,7 @@
                     class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded is-clickable has-background-white is-flex is-align-items-center pl-2"
                   >
                     <div class="inter-reg txt-size-12 txt-color-yaz-grey-dark">
-                      {status}
+                      {$activeTask.status}
                     </div>
                   </div>
   
@@ -464,7 +600,7 @@
                     {#each $allBoards as board}
                       <div
                         on:click={() => {
-                          status = board.name
+                          updateStatus(board.name)
                           drop1 = false
                         }}
                         class="hover-bg-grey-lighter has-transition p-3 is-clickable"
