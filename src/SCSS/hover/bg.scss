@@ -1,5 +1,11 @@
 .hover {
   &-bg {
+    &-transparent {
+      &-grey {
+        &-light {background-color: rgba(0, 0, 0, 0);}
+        &-light:hover {background-color: hsl(0, 0%, 86%);}
+      }
+    }
     &-grey {
       &-light {
         &-grey {

@@ -93,6 +93,9 @@ export let breadCrumbsItems = writable([])
 // notification center open boolean
 export let notifCenterOpen = writable(false)
 
+// filter tasks in board
+export let taskBoardFilter = writable([])
+
 
 
 // ##### STORES OF ALL MODALS ######
