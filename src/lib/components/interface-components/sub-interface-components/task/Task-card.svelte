@@ -1,25 +1,26 @@
 <script>
-  import { taskViewModalActive } from '$lib/stores/global-store'
+  import { taskViewModalActive, activeTask, activeBoard } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
 
   // Required params
-
   export let task = {
     members: [],
     subtasks: [],
     conversations: [],
     viewers: [],
     createdBy: "",
-    createdOn: new Date(),
+    createdOn: new Date().toISOString(),
     description: "",
     dueDateTime: '',
     id: "",
     isFavorite: false,
     isSubtask: false,
-    level: 0,
+    level: 1,
     name: "",
     status: ""
   }
+
+  export let boardID = ''
 
   const [ dateValue, timeValue ] = task.dueDateTime.split('T')
   const [ year, month, date ] = dateValue.split('-')
@@ -110,15 +111,16 @@
 
   // Members hovering
   let show = false;
-
-  // Modal show
-  let taskmodalactive = false;
 </script>
 
 <div
-  on:click={() => taskViewModalActive.set(true)}
-  class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable rounded parent">
-  <Card outlined class='p-1' style="max-height: 60px; min-height: 60px; min-width: 250px">
+  on:click={() => {
+    taskViewModalActive.set(true)
+    activeTask.set(task)
+    activeBoard.set(boardID)
+  }}
+  class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable maxmins-w-230 overflow-x-hidden rounded parent">
+  <Card flat class='p-1 maxmins-w-230 maxmins-h-60'>
   
     <!-- UPPER PART OF THE CARD -->
   
@@ -129,7 +131,7 @@
       </div>
   
       <!-- Subtask count and level -->
-      <div class="is-flex">
+      <div class="is-flex is-align-items-center">
   
         <!-- Subtasks Counts -->
         <Avatar tile size=20px class="mr-1 is-unselectable dmsans has-text-weight-bold has-text-white has-background-primary-dark rounded text-caption">{task.subtasks.length}</Avatar>
@@ -144,7 +146,7 @@
   
     <!-- Due date -->
     <div class="d-flex is-justify-content-space-between align-end">
-      <div class="parent-hover-txt-color-white is-unselectable is-size-7 has-transition">
+      <div class="parent-hover-txt-color-white is-unselectable is-size-7 has-transition maxmins-w-250">
         {`${dueDate} ${date} ${finalHour}:${minute} ${parseInt(hour) > 12 ? 'PM': 'AM'}`}
       </div>
   
@@ -182,14 +184,14 @@
           <!-- 3 or less members -->
           <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
             <Tooltip bottom bind:active={show}>
-              {#each task.members as member}
-                <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); background-color: rgb({Math.random() * 255}, {Math.random() * 255}, {Math.random() * 255})">
+              {#each task.members as member, i}
+                <Avatar size='20px' class='has-background-{i == 0 ? 'info': i == 1 ? 'success' : 'primary'} mr-3'>
                   {#if member.profile === ''}
-                  <div class="has-text-weight-bold has-text-white">
-                    {member.name.substring(0, 1)}
-                  </div>
+                    <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
+                      {member.name.toUpperCase().split(' ')[0].charAt(0)}{member.name.toUpperCase().split(' ')[member.name.toUpperCase().split(' ').length - 1].charAt(0)}
+                    </div>
                   {:else}
-                  <img src="{member.profile}" alt="{member.name}"/>
+                    <img src="{member.profile}" alt="{member.name}"/>
                   {/if}
                 </Avatar>
               {/each}

@@ -61,7 +61,19 @@ export default {
     name: '',
     status: 'Todo'
   },
-  backURI: "https://axion-back.herokuapp.com",
+  subtask: {
+    members: [],
+    createdBy: "",
+    createdOn: "",
+    description: "",
+    dueDateTime: "",
+    id: "",
+    isFavorite: false,
+    name: "",
+    status: "",
+    level: 1  
+  },
+  backURI: "https://axion-backend.herokuapp.com",
   lowerCasedLetters: new String('abcdefghijklmnopqrstuvwxyz').split(''),
   upperCasedLetters: new String('ABCDEFGHIJKLMNOPQRSTUVWXYZ').split(''),
   digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],

@@ -6,7 +6,7 @@
   import TaskCard from '$lib/components/interface-components/sub-interface-components/task/Task-card.svelte'
 	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
 	import { Breadcrumbs } from 'svelte-materialify'
-  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
+  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace, taskBoardFilter } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
@@ -33,6 +33,18 @@
 
   let breadCrumbsItemsCopy = []
   breadCrumbsItems.subscribe(value => breadCrumbsItemsCopy = value)
+
+  currentDashboardSubInterface.subscribe(subinterface => {
+    if(subinterface === 'Boards') {
+      taskBoardFilter.set([...$activeWorkspace.boards.map(board => {
+          return {
+            boardID: board.id,
+            type: 'B1'
+          }
+        })])
+      console.log($taskBoardFilter)
+    }
+  })
 </script>
 
 <svelte:head>
@@ -87,11 +99,44 @@
         {#each $allBoards as board}
           <div class="column is-narrow-tablet is-12-mobile">
             <div class="d-flex flex-row justify-center">
-              <Boards name={board.name} color={board.color} taskCount={board.tasks.length}>
-                {#each board.tasks.sort((a, b) => b.level - a.level) as task}
-                <TaskCard {task} />
-                {/each}
-              </Boards>
+              {#each $taskBoardFilter as filter}
+                {#if filter.boardID === board.id}
+                  <Boards name={board.name} color={board.color} taskCount={board.tasks.length} id={board.id}>
+                    {#if filter.type === 'A1'}
+                      {#each board.tasks.sort((a, b) => {
+                        return ('' + a.name).localeCompare(b.name);
+                      }) as task}
+                        <TaskCard {task} boardID={`${board.id}`} />
+                      {/each}
+                    {:else if filter.type === 'A2'}
+                      {#each board.tasks.sort((a, b) => {
+                        let comparison = 0
+                        if(a.name > b.name) {
+                          comparison = 1
+                        }else{
+                          comparison = -1
+                        }
+
+                        return comparison
+                      }) as task}
+                        <TaskCard {task} boardID={`${board.id}`} />
+                      {/each}
+                    {:else if filter.type === 'B1'}
+                      {#each board.tasks.filter(task => task.level == 3) as task}
+                        <TaskCard {task} boardID={`${board.id}`} />
+                      {/each}
+                    {:else if filter.type === 'B2'}
+                      {#each board.tasks.filter(task => task.level == 2) as task}
+                        <TaskCard {task} boardID={`${board.id}`} />
+                      {/each}
+                    {:else if filter.type === 'B3'}
+                      {#each board.tasks.filter(task => task.level == 1) as task}
+                        <TaskCard {task} boardID={`${board.id}`} />
+                      {/each}
+                    {/if}
+                  </Boards>
+                {/if}
+              {/each}
             </div>
           </div>
         {/each}

@@ -1,65 +1,37 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards } from '$lib/stores/global-store'
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   import constants from "$lib/constants"
-  
+  import bcrypt from "bcryptjs"
 
-  // export or pass in the task details
-  export let task = constants.task
+  const backURI = constants.backURI
 
   let outerWidth = 0
   let drop = false
   let drop1 = false
-  let descriptionValue = ''
-  let oldDescriptionValue = descriptionValue
   let editing = false
   let chatInput = ''
   let assigneeInputValue = ''
   let viewersModalActive = false
-  let status = task.status
-
-
-  let taskViewers = [
-    'Charles Maverick Herrera',
-    'Joanne Razelle Roche',
-    'El John Matimtim'
-  ]
   
-  let localChats = [
-    {
-      sender: {
-        email: 'hazel@gmail.com',
-        name: 'Hazel Anne Mejias',
-        profile: ''
-      },
-      message: 'I am hazel mejias',
-      sendAt: new Date().toISOString(),
-      id: '2'
-    }
-  ]
-
-  let localWorkspaceMembers = [
-    {
-      email: 'hazel@gmail.com',
-      name: 'Hazel Anne Mejias',
-      profile: 'https://scontent.fmnl9-3.fna.fbcdn.net/v/t39.30808-6/289328405_1400081307137477_6637625565139676970_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeE3fsnp_9mY7LO32q_MQ2s1JG-Hv82NOdskb4e_zY0520LNwEqgvlExA5vE9wWTXIsUUGy4VwP3NNQvyhOqOhyL&_nc_ohc=nnKBt7md6JsAX-a2Piq&_nc_pt=1&_nc_ht=scontent.fmnl9-3.fna&oh=00_AT_pL8qmMC674CykMooLUpmQojywT571rnnWRwL-q2DUgQ&oe=62EC2703'
-    },
-    {
-      email: 'cm@gmail.com',
-      name: 'Charles Maverick Herrera',
-      profile: ''
-    },
-    {
-      email: 'dummyAccount@gmail.com',
-      name: 'Dummy Account',
-      profile: ''
-    }
-  ]
+  
+  let taskViewers = []
+  let taskChats = []
+  let descriptionValue = ''
+  $: oldDescriptionValue = descriptionValue
+  
+  activeTask.subscribe(task => {
+    taskViewers = task.viewers
+    taskChats = task.conversations
+    descriptionValue = task.description
+    chats.set(task.conversations)
+  })
+  
+  let localWorkspaceMembers = $activeWorkspace.members
   let workspaceMembersCopy = localWorkspaceMembers
-
   function filterMembers() {
     workspaceMembersCopy = localWorkspaceMembers.filter(workspaceMember => {
       if(workspaceMember.name.toLowerCase().split(' ').join('').match(assigneeInputValue.toLowerCase()) || workspaceMember.email.toLowerCase().match(assigneeInputValue.toLowerCase())) {
@@ -67,8 +39,6 @@
       }
     })
   }
-
-  chats.set(task.conversations)
 
   function insertChat() {
     let chatsCopy = $chats
@@ -121,6 +91,139 @@
       }
     }
   }
+
+  const updateStatus = async boardName => {
+    let activeTaskCopy = $activeTask
+    activeTaskCopy.status = boardName
+    activeTask.set(activeTaskCopy)
+
+    await fetch(`${backURI}/MainApp/edit/subject/workspace/board/task/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id,
+          board: $activeBoard
+        },
+        task: {
+          members: $activeTask.members,
+          subtasks: $activeTask.subtasks,
+          conversations: $activeTask.conversations,
+          viewers: $activeTask.viewers,
+          createdBy: $activeTask.createdBy,
+          createdOn: $activeTask.createdOn,
+          description: $activeTask.description,
+          dueDateTime: $activeTask.dueDateTime,
+          id: $activeTask.id,
+          isFavorite: $activeTask.isFavorite,
+          isSubtask: $activeTask.isSubtask,
+          level: $activeTask.level,
+          name: $activeTask.name,
+          status: boardName
+        }
+      })
+    }).then(async res => {
+      let { task } = await res.json()
+      activeTask.set(task)
+      let allBoardsCopy = $allBoards
+      allBoardsCopy.every(board => {
+        if(board.id === $activeBoard) {
+          board.tasks.every(task => {
+            if(task.id === $activeTask.id) {
+              board.tasks = board.tasks.filter(task2 => task2.id !== $activeTask.id)
+              return false
+            }
+            return true
+          })
+          return false
+        }
+        return true
+      })
+
+      allBoardsCopy.every(board => {
+        if(board.name === boardName) {
+          board.tasks.push(task)
+          return false
+        }
+        return true
+      })
+      allBoards.set(allBoardsCopy)
+
+      let activeWorkspaceCopy = $activeWorkspace
+      activeWorkspaceCopy.boards = $allBoards
+      activeWorkspace.set(activeWorkspaceCopy)
+
+      let activeSubjectCopy = $activeSubject
+      activeSubjectCopy.workspaces.every(workspace => {
+        if(workspace.id === $activeWorkspace.id) {
+          workspace = $activeWorkspace
+          return false
+        }
+        return true
+      })
+      activeSubject.set(activeSubjectCopy)
+
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject = $activeSubject
+          return false
+        }
+        return true
+      })
+
+      await fetch(`${backURI}/User/create/notification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          notification: {
+            id: bcrypt.hashSync(`${$activeTask.id}0${$userData.id}`, Math.ceil(Math.random() * 10)),
+            message: `${$activeTask.name} is moved to ${boardName}`,
+            anInvitation: false,
+            aMention: false,
+            conversationID: "",
+            fromInterface: {
+              interf: "Dashboard",
+              subInterface: "Boards"
+            },
+            fromTask: $activeTask.id,
+            for: {
+              self: true,
+              userID: `${$userData.id}`
+            }
+            }
+        })
+      }).then(async res => {
+        const { notification } = await res.json()
+        let userDataCopy = $userData
+        userDataCopy.notifications.push(notification)
+        userData.set(userDataCopy)
+        localStorage.setItem('userData', JSON.stringify($userData))
+      }).catch(err => {
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `Error in creating notification for task status update, ${err}`,
+          type: 'error',
+          id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+      })
+    }).catch(err => {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `Error in updating the task status, ${err}`,
+        type: 'error',
+        id: $notifs.length + 1
+      })
+      notifs.set(notifsCopy)
+    })
+  }
 </script>
 
 <svelte:window bind:outerWidth/>
@@ -143,23 +246,29 @@
               <div class="is-flex {outerWidth < 426 ? 'is-justify-content-space-between': 'is-align-items-center'}">
                 <!-- task name -->
                 <div class="fredoka-reg txt-size-32 is-size-4-mobile txt-color-yaz-grey-dark max-w-50p overflow-x-auto txt-overflow-nowrap-only">
-                  Task Names
+                  {$activeTask.name}
                 </div>
   
                 <!-- Utilities / tools -->
                 <div class="{outerWidth > 426 ? 'ml-6': ''} is-flex">
                   <!-- favorite icon -->
                   <div class="is-flex-shrink-0">
-                    <Avatar tile size='25px' style="max-width: 25px" class="rounded mx-2 is-clickable">
-                      <Icon class='has-text-warning' path={mdiStarOutline} />
-                    </Avatar>
+                    {#if $activeTask.isFavorite}
+                      <Avatar tile size='25px' style="max-width: 25px" class="rounded mx-2 is-clickable">
+                        <Icon class='has-text-warning' path={mdiStar} />
+                      </Avatar>
+                    {:else}
+                      <Avatar tile size='25px' style="max-width: 25px" class="rounded mx-2 is-clickable">
+                        <Icon class='has-text-warning' path={mdiStarOutline} />
+                      </Avatar>
+                    {/if}
                   </div>
     
     
                   <!-- level -->
                   <div class="is-flex-shrink-0">
-                    <Avatar tile size='25px' style="max-width: 25px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-red has-text-white fredoka-reg rounded is-clickable mr-2">
-                      H
+                    <Avatar tile size='25px' style="max-width: 25px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-{$activeTask.level == 1 ? 'green': $activeTask.level == 2 ? 'yellow': 'red'} has-text-white fredoka-reg rounded is-clickable mr-2">
+                      {$activeTask.level == 1 ? 'L': $activeTask.level == 2 ? 'M': 'H'}
                     </Avatar>
                   </div>
                   
@@ -187,7 +296,7 @@
             <div class="pl-3 min-w-100p">
               <!-- due date -->
               <div class="fredoka-reg is-size-7 opacity-60p">
-                Due: Jul-13-2022 01:30 PM
+                Due: {$activeTask.dueDateTime}
               </div>
   
               <!-- created by -->
@@ -197,11 +306,11 @@
                 </div>
                 <Avatar size='17px' class='has-background-link mx-1'>
                   <div class="fredoka-reg has-text-weight-bold has-text-white txt-size-7">
-                    YC
+                    {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
                   </div>
                 </Avatar>
                 <div class="fredoka-reg is-size-7 opacity-60p">
-                  Yazen Clarin
+                  {$activeTask.createdBy}
                 </div>
               </div>
             </div>
@@ -277,10 +386,10 @@
                 <div class="is-flex-grow-1 max-h-330 overflow-y-auto">
                   <div class="is-flex is-flex-direction-column">
                     <!-- LOOP HERE -->
-                    {#each task.conversations as chat, i}
+                    {#each $activeTask.conversations as chat, i}
                     <!-- chat -->
                     <div class="is-flex min-w-100p hover-bg-grey-lighter cursor-def rounded p-1 parent">
-                      {#if !i || chat.sender.email !== task.conversations[i - 1].sender.email}
+                      {#if !i || chat.sender.email !== $activeTask.conversations[i - 1].sender.email}
                       <!-- Profile -->
                         {#if !chat.sender.profile}
                         <div class="is-flex is-align-items-center">
@@ -309,7 +418,7 @@
                       <div class="is-flex-grow-1 is-flex is-relative">
                         <!-- name and message -->
                         <div class="is-flex-grow-1 is-flex-shrink-0">
-                          {#if !i || chat.sender.email !== task.conversations[i - 1].sender.email}
+                          {#if !i || chat.sender.email !== $activeTask.conversations[i - 1].sender.email}
                           <!-- name -->
                           <div class="inter-reg txt-size-{outerWidth < 376 ? '8': '11'}" style='color: #A4A4A4;'>
                             {chat.sender.name}
@@ -415,28 +524,33 @@
                 <div class="min-w-100p">
                   <!-- container -->
                   <div class="is-flex is-flex-direction-column">
+                    <!-- LOOP HERE -->
+                    {#each $activeTask.subtasks as subtask}
                     <!-- subtask card / brief details -->
                     <div class="is-flex-grow-1 is-flex is-justify-content-space-between is-align-items-center parent is-relative hover-bg-grey-lighter has-transition border-b-color-yaz-grey-dark border-w-b-1 border-type-b-solid">
                       <!-- subtask name -->
                       <div class="inter-reg is-size-6 txt-color-yaz-grey-dark pl-1 is-clickable hover-txt-color-primary max-w-50p txt-overflow-ellipsis overflow-x-hidden">
-                        Prepare dinner for family
+                        {subtask.name}
                       </div>
 
                       <!-- level, status and trash -->
                       <div class="is-flex is-align-items-center p-1">
                         <!-- level -->
-                        <Avatar tile size='22px' style="max-width: 22px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-red has-text-white fredoka-reg txt-size-9 rounded is-clickable mr-2">
-                          H
+                        <Avatar tile size='22px' style="max-width: 22px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-{subtask.level == 1 ? 'green': subtask.level == 2 ? 'yellow': 'red'} has-text-white fredoka-reg txt-size-9 rounded is-clickable mr-2">
+                          {subtask.level == 1 ? 'L': subtask.level == 2 ? 'M': 'H'}
                         </Avatar>
 
+                        <!-- status -->
                         <div class="tag is-success is-light fredoka-reg txt-size-9 has-text-weight-semibold ml-1">
-                          In progress
+                          {subtask.status}
                         </div>
 
+                        <!-- trash -->
                         <div class="{outerWidth < 426 ? '': 'undisp'} ml-2 is-invisible parent-hover-this-display-block">
                           <Icon size='22px' path={mdiTrashCan} />
                         </div>
                         
+                        <!-- trash 2 -->
                         <div
                           on:click={() => console.log('trash clicked')}
                           class="pos-abs pos-r-5 z-100 {outerWidth < 426 ? '': 'undisp parent-hover-this-display-block'} is-clickable">
@@ -444,6 +558,7 @@
                         </div>
                       </div>
                     </div>
+                    {/each}
                   </div>
                 </div>
               </div>
@@ -474,7 +589,7 @@
                     class="select min-w-100p border-w-1 border-color-grey-light border-type-solid rounded is-clickable has-background-white is-flex is-align-items-center pl-2"
                   >
                     <div class="inter-reg txt-size-12 txt-color-yaz-grey-dark">
-                      {status}
+                      {$activeTask.status}
                     </div>
                   </div>
   
@@ -485,7 +600,7 @@
                     {#each $allBoards as board}
                       <div
                         on:click={() => {
-                          status = board.name
+                          updateStatus(board.name)
                           drop1 = false
                         }}
                         class="hover-bg-grey-lighter has-transition p-3 is-clickable"
@@ -507,7 +622,7 @@
                 >
                   <Icon class='txt-color-yaz-grey-dark mr-1' path={mdiEyeOutline} />
                   <div class="fredoka-reg txt-size-12 is-flex is-justify-content-center is-align-items-center">
-                    {task.viewers.length}
+                    {$activeTask.viewers.length}
                   </div>
 
                 </div>
@@ -535,7 +650,7 @@
 
                   <!-- seeners -->
                   <div class="is-flex is-flex-direction-column mt-3">
-                    {#each task.viewers as viewer}
+                    {#each $activeTask.viewers as viewer}
                     <div class="inter-reg txt-size-15 hover-bg-grey-lighter pl-2 rounded mb-1 cursor-def">
                       {viewer}
                     </div>
