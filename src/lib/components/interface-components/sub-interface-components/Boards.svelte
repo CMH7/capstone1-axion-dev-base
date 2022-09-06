@@ -1,6 +1,6 @@
 <script>
   //@ts-nocheck
-  import { mdiCheck, mdiFilter } from "@mdi/js"
+  import { mdiMinus, mdiFilter } from "@mdi/js"
   import { Icon, Divider, ClickOutside } from "svelte-materialify"
   import { fade } from 'svelte/transition'
   import { taskBoardFilter } from '$lib/stores/global-store'
@@ -76,7 +76,7 @@
             class="is-flex is-align-items-center hover-bg-grey-lighter has-transition rounded is-clickable">
             <!-- check icon -->
             <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiCheck} />
+              <Icon size='13px' path={mdiMinus} />
             </div>
             <!-- type -->
             <div class="fredoka-reg txt-size-15">
@@ -101,7 +101,7 @@
             class="is-flex is-align-items-center hover-bg-grey-lighter has-transition rounded is-clickable">
             <!-- check icon -->
             <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiCheck} />
+              <Icon size='13px' path={mdiMinus} />
             </div>
             <!-- type -->
             <div class="fredoka-reg txt-size-15">
@@ -134,7 +134,7 @@
           >
             <!-- check icon -->
             <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiCheck} />
+              <Icon size='13px' path={mdiMinus} />
             </div>
             <!-- type -->
             <div class="fredoka-reg txt-size-15">
@@ -160,7 +160,7 @@
           >
             <!-- check icon -->
             <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiCheck} />
+              <Icon size='13px' path={mdiMinus} />
             </div>
             <!-- type -->
             <div class="fredoka-reg txt-size-15">
@@ -186,7 +186,7 @@
           >
             <!-- check icon -->
             <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiCheck} />
+              <Icon size='13px' path={mdiMinus} />
             </div>
             <!-- type -->
             <div class="fredoka-reg txt-size-15">
