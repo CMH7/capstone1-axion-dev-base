@@ -1,0 +1,73 @@
+.outline {
+  &-offset {
+    // positives
+    &-1pxl {outline-offset: 1px;}
+    &-2pxl {outline-offset: 2px;}
+    &-3pxl {outline-offset: 3px;}
+    &-4pxl {outline-offset: 4px;}
+    &-5pxl {outline-offset: 5px;}
+    &-6pxl {outline-offset: 6px;}
+    &-7pxl {outline-offset: 7px;}
+    &-8pxl {outline-offset: 8px;}
+    &-9pxl {outline-offset: 9px;}
+    &-10pxl {outline-offset: 10px;}
+    
+    // negatives
+    &-n1pxl {outline-offset: -1px;}
+    &-n2pxl {outline-offset: -2px;}
+    &-n3pxl {outline-offset: -3px;}
+    &-n4pxl {outline-offset: -4px;}
+    &-n5pxl {outline-offset: -5px;}
+    &-n6pxl {outline-offset: -6px;}
+    &-n7pxl {outline-offset: -7px;}
+    &-n8pxl {outline-offset: -8px;}
+    &-n9pxl {outline-offset: -9px;}
+    &-n10pxl {outline-offset: -10px;}
+  }
+
+  &-w {
+    //positives
+    &-0pxl {outline-width: 0px;}
+    &-1pxl {outline-width: 1px;}
+    &-2pxl {outline-width: 2px;}
+    &-3pxl {outline-width: 3px;}
+    &-4pxl {outline-width: 4px;}
+    &-5pxl {outline-width: 5px;}
+    &-6pxl {outline-width: 6px;}
+    &-7pxl {outline-width: 7px;}
+    &-8pxl {outline-width: 8px;}
+    &-9pxl {outline-width: 9px;}
+    &-10pxl {outline-width: 10px;}
+    
+    // negatives
+    &-n1pxl {outline-width: -1px;}
+    &-n2pxl {outline-width: -2px;}
+    &-n3pxl {outline-width: -3px;}
+    &-n4pxl {outline-width: -4px;}
+    &-n5pxl {outline-width: -5px;}
+    &-n6pxl {outline-width: -6px;}
+    &-n7pxl {outline-width: -7px;}
+    &-n8pxl {outline-width: -8px;}
+    &-n9pxl {outline-width: -9px;}
+    &-n10pxl {outline-width: -10px;}
+  }
+
+  &-style {
+    &-dashed {outline-style: dashed;}
+    &-dotted {outline-style: dotted;}
+    &-double {outline-style: double;}
+    &-groove {outline-style: groove;}
+    &-hidden {outline-style: hidden;}
+    &-inset {outline-style: inset;}
+    &-none {outline-style: none;}
+    &-outset {outline-style: outset;}
+    &-solid {outline-style: solid;}
+    &-ridge {outline-style: ridge;}
+    &-unset {outline-style: unset;}
+  }
+
+  &-color {
+    &-white {outline-color: white;}
+    &-black {outline-color: black;}
+  }
+}

@@ -1,0 +1,25 @@
+.hover\:outline-offset {
+  // positives
+  &-1pxl:hover {outline-offset: 1px;}
+  &-2pxl:hover {outline-offset: 2px;}
+  &-3pxl:hover {outline-offset: 3px;}
+  &-4pxl:hover {outline-offset: 4px;}
+  &-5pxl:hover {outline-offset: 5px;}
+  &-6pxl:hover {outline-offset: 6px;}
+  &-7pxl:hover {outline-offset: 7px;}
+  &-8pxl:hover {outline-offset: 8px;}
+  &-9pxl:hover {outline-offset: 9px;}
+  &-10pxl:hover {outline-offset: 10px;}
+  
+  // negatives
+  &-n1pxl:hover {outline-offset: -1px;}
+  &-n2pxl:hover {outline-offset: -2px;}
+  &-n3pxl:hover {outline-offset: -3px;}
+  &-n4pxl:hover {outline-offset: -4px;}
+  &-n5pxl:hover {outline-offset: -5px;}
+  &-n6pxl:hover {outline-offset: -6px;}
+  &-n7pxl:hover {outline-offset: -7px;}
+  &-n8pxl:hover {outline-offset: -8px;}
+  &-n9pxl:hover {outline-offset: -9px;}
+  &-n10pxl:hover {outline-offset: -10px;}
+}
