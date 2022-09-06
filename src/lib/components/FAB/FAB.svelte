@@ -1,10 +1,9 @@
 <script>
-  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading } from '$lib/stores/global-store';
+  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
   import constants from '$lib/constants'
-  import axios from 'axios'
 
   let width = 0
   let active = false
@@ -61,7 +60,16 @@
           Create workspace
         </div>
       </ListItem>
-      <ListItem>Subject settings</ListItem>
+      <ListItem>
+        <div
+          on:click={e => {
+            modalChosenColor.set($activeSubject.color)
+            subjectSettingsModalActive.set(true)
+          }}
+        >
+          Subject settings
+        </div>
+      </ListItem>
       {:else}
       <ListItem>
         <div
