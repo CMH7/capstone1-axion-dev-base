@@ -102,6 +102,21 @@ export let taskBoardFilter = writable([])
 // add subject modal active
 export let addSubjectModalActive = writable(false)
 
+// subject settings modal active
+export let subjectSettingsModalActive = writable(false)
+
+// the selected subject upon opening the subject settings modal
+export let selectedSubjectForSubjectSettings = writable(constants.subject)
+
+// the original isFavorite value of the selectedSubject before opening the subject settings
+export let oldFavoriteStatus = writable(false)
+
+// the subject deletion modal active
+export let subjectDeletionModalActive = writable(false)
+
+// the subject truncation modal active
+export let subjectTruncationModalActive = writable(false)
+
 // add workspace modal active
 export let addWorkspaceModalActive = writable(false)
 

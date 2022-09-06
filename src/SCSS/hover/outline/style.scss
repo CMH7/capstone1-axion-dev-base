@@ -1,0 +1,10 @@
+.hover\:outline-style {
+  &-dashed:hover {outline-style: dashed;}
+  &-dotted:hover {outline-style: dotted;}
+  &-double:hover {outline-style: double;}
+  &-groove:hover {outline-style: groove;}
+  &-hidden:hover {outline-style: hidden;}
+  &-inset:hover {outline-style: inset;}
+  &-none:hover {outline-style: none;}
+  &-outset:hover {outline-style: outset;}
+}

@@ -14,6 +14,7 @@
   import AddTaskPopUp from '$lib/components/modals/task/Add-task-pop-up.svelte'
   import constants from '$lib/constants'
   import TaskViewModal from '$lib/components/modals/task/Task-view-modal.svelte'
+import SubjectSettings from '$lib/components/modals/subject/Subject-settings.svelte';
 
   onMount(() => {
     if($breadCrumbsItems.length < 1) {
@@ -84,6 +85,7 @@
 
   <!-- Body -->
   <div class="hero-body pt-4">
+    <SubjectSettings/>
     <AddTaskPopUp/>
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />

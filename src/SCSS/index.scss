@@ -9,3 +9,9 @@
 @forward 'scale.scss';
 @forward 'rotate.scss';
 @forward 'resize.scss';
+@forward 'outline.scss';
+
+.box-sizing {
+  &-border-box {box-sizing: border-box;}
+  &-content-box {box-sizing: content-box;}
+}

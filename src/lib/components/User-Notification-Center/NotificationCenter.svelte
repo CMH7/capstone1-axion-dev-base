@@ -1,7 +1,7 @@
 <script>
   // @ts-nocheck
   import { Avatar, Icon } from "svelte-materialify"
-  import { notifCenterOpen, userData, notifs, currentInterface, currentDashboardSubInterface, activeTask, taskViewModalActive, activeSubject, activeWorkspace, allBoards, breadCrumbsItems } from '$lib/stores/global-store'
+  import { notifCenterOpen, userData, notifs, currentInterface, currentDashboardSubInterface, activeTask, taskViewModalActive, activeSubject, activeWorkspace, allBoards, breadCrumbsItems, active, selectedSubjectForSubjectSettings } from '$lib/stores/global-store'
   import { mdiAccountOutline, mdiClose, mdiNotificationClearAll } from "@mdi/js"
   import constants from "$lib/constants"
   import { fly } from 'svelte/transition'
@@ -13,7 +13,7 @@
   })
 
 
-  const setReadNotif = async (notifID) => {
+  const setReadNotif = (notifID) => {
     let userDataCopy = $userData
     userDataCopy.notifications.every(notification => {
       if(notification.id === notifID) {
@@ -24,7 +24,7 @@
     })
     userData.set(userDataCopy)
 
-    await fetch(`${constants.backURI}/User/notification?user=${$userData.id}&notification=${notifID}`, {
+   fetch(`${constants.backURI}/User/notification?user=${$userData.id}&notification=${notifID}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -46,12 +46,12 @@
     })
   }
 
-  const deleteNotif = async (notifID) => {
+  const deleteNotif = (notifID) => {
     let userDataCopy = $userData
     userDataCopy.notifications = userDataCopy.notifications.filter(notification => notification.id != notifID)
     userData.set(userDataCopy)
 
-    await fetch(`${constants.backURI}/User/delete/notification`, {
+    fetch(`${constants.backURI}/User/delete/notification`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -111,6 +111,50 @@
       notifs.set(notifsCopy)
     })
   }
+
+  const transpo = (notification) => {
+    if(notification.fromTask || notification.aMention) {
+      currentInterface.set(notification.fromInterface.interf)
+      currentDashboardSubInterface.set(notification.fromInterface.subInterface)
+      $userData.subjects.map(subject => {
+        subject.workspaces.map(workspace => {
+          workspace.boards.map(board => {
+            board.tasks.every(task => {
+              if(task.id === notification.fromTask) {
+                activeSubject.set(subject)
+                activeWorkspace.set(workspace)
+                allBoards.set($activeWorkspace.boards)
+                activeTask.set(task)
+                breadCrumbsItems.set([])
+                breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeSubject.name}])
+                breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeWorkspace.name}])
+                breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
+                return false
+              }
+              return true
+            })
+          })
+        })
+      })
+      taskViewModalActive.set(true)
+    }
+    
+    if(notification.fromInterface.subInterface === 'Workspaces'){
+      currentInterface.set(`${notification.fromInterface.interf}`)
+      $userData.subjects.every(subject => {
+        if(subject.id === notification.fromTask) {
+          activeSubject.set(subject)
+          selectedSubjectForSubjectSettings.set(subject)
+          return false
+        }
+        return true
+      })
+      currentDashboardSubInterface.set(`${notification.fromInterface.subInterface}`)
+      breadCrumbsItems.set([])
+      breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeSubject.name}])
+    }
+    if(!notification.isRead) setReadNotif(notification.id)
+  }
 </script>
 
 <svelte:window bind:outerWidth />
@@ -154,35 +198,9 @@
                 delay: 100 * i
               }
             }
-            on:click={() => {
-                if(notification.fromTask || notification.aMention) {
-                  currentInterface.set(notification.fromInterface.interf)
-                  currentDashboardSubInterface.set(notification.fromInterface.subInterface)
-                  $userData.subjects.map(subject => {
-                    subject.workspaces.map(workspace => {
-                      workspace.boards.map(board => {
-                        board.tasks.every(task => {
-                          if(task.id === notification.fromTask) {
-                            activeSubject.set(subject)
-                            activeWorkspace.set(workspace)
-                            allBoards.set($activeWorkspace.boards)
-                            activeTask.set(task)
-                            breadCrumbsItems.set([])
-                            breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeSubject.name}])
-                            breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeWorkspace.name}])
-                            breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
-                            return false
-                          }
-                          return true
-                        })
-                      })
-                    })
-                  })
-                  taskViewModalActive.set(true)
-                }
-                if(!notification.isRead) setReadNotif(notification.id)
-              }
-            }
+            on:click={e => {
+              transpo(notification)
+            }}
             class="{notification.isRead ? 'opacity-50p': ''} column parent is-12 rounded min-h-50 mb-2 is-clickable hover-bg-grey-lighter-grey-light has-transition is-relative">
 
             <div class="is-flex is-align-items-center min-h-100p p-1">
