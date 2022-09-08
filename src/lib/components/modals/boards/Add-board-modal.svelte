@@ -11,9 +11,6 @@
 
     let isCreating = false
 
-    // hover effect
-    let hovering = false;
-
     // colors
     const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
