@@ -51,23 +51,23 @@
   $: isFavorite == $oldFavoriteStatus ? favoriteChanges = false : favoriteChanges = true
 
   const updateSubject = async () => {
-    const localNotification = {
-      id: bcrypt.hashSync(`${$selectedSubjectForSubjectSettings.name} subject has been ${nameChanges && !favoriteChanges && !colorChanges ? `renamed to ${subjectName}` : !nameChanges && favoriteChanges && !colorChanges ? 'set to favorites' : !nameChanges && !favoriteChanges && colorChanges ? 'changed color': nameChanges && favoriteChanges && !colorChanges ? 'renamed and set to favorites' : nameChanges && !favoriteChanges && colorChanges ? 'renamed and changed color' : !nameChanges && favoriteChanges && colorChanges ? 'set to favorites and changed color' : 'renamed, changed color and is set to favorites'}.`, Math.ceil(Math.random() * 10)),
-      message: `${$selectedSubjectForSubjectSettings.name} subject has been ${nameChanges && !favoriteChanges && !colorChanges ? `renamed to ${subjectName}` : !nameChanges && favoriteChanges && !colorChanges ? `${isFavorite ? 'set to favorites' : 'removed from favorites'}` : !nameChanges && !favoriteChanges && colorChanges ? 'changed color': nameChanges && favoriteChanges && !colorChanges ? 'renamed and set to favorites' : nameChanges && !favoriteChanges && colorChanges ? 'renamed and changed color' : !nameChanges && favoriteChanges && colorChanges ? 'set to favorites and changed color' : 'renamed, changed color and is set to favorites'}.`,
-      isRead: false,
-      anInvitation: false,
-      aMention: false,
-      conversationID: '',
-      fromInterface: {
-        interf: `${$currentInterface}`,
-        subInterface: `Workspaces`
-      },
-      fromTask: `${$selectedSubjectForSubjectSettings.id}`,
-      for: {
-        self: true,
-        userID: `${$userData.id}`
-      }
-    }
+    // const localNotification = {
+    //   id: bcrypt.hashSync(`${$selectedSubjectForSubjectSettings.name} subject has been ${nameChanges && !favoriteChanges && !colorChanges ? `renamed to ${subjectName}` : !nameChanges && favoriteChanges && !colorChanges ? 'set to favorites' : !nameChanges && !favoriteChanges && colorChanges ? 'changed color': nameChanges && favoriteChanges && !colorChanges ? 'renamed and set to favorites' : nameChanges && !favoriteChanges && colorChanges ? 'renamed and changed color' : !nameChanges && favoriteChanges && colorChanges ? 'set to favorites and changed color' : 'renamed, changed color and is set to favorites'}.`, Math.ceil(Math.random() * 10)),
+    //   message: `${$selectedSubjectForSubjectSettings.name} subject has been ${nameChanges && !favoriteChanges && !colorChanges ? `renamed to ${subjectName}` : !nameChanges && favoriteChanges && !colorChanges ? `${isFavorite ? 'set to favorites' : 'removed from favorites'}` : !nameChanges && !favoriteChanges && colorChanges ? 'changed color': nameChanges && favoriteChanges && !colorChanges ? 'renamed and set to favorites' : nameChanges && !favoriteChanges && colorChanges ? 'renamed and changed color' : !nameChanges && favoriteChanges && colorChanges ? 'set to favorites and changed color' : 'renamed, changed color and is set to favorites'}.`,
+    //   isRead: false,
+    //   anInvitation: false,
+    //   aMention: false,
+    //   conversationID: '',
+    //   fromInterface: {
+    //     interf: `${$currentInterface}`,
+    //     subInterface: `Workspaces`
+    //   },
+    //   fromTask: `${$selectedSubjectForSubjectSettings.id}`,
+    //   for: {
+    //     self: true,
+    //     userID: `${$userData.id}`
+    //   }
+    // }
     let activeSubjectCopy = $activeSubject
     activeSubjectCopy.color = $modalChosenColor
     activeSubjectCopy.isFavorite = isFavorite
@@ -81,7 +81,7 @@
       }
       return true
     })
-    userDataCopy.notifications.push(localNotification)
+    
     userData.set(userDataCopy)
     subjectSettingsModalActive.set(false)
 
@@ -100,8 +100,7 @@
           color: $activeSubject.color,
           isFavorite: $activeSubject.isFavorite,
           name: $activeSubject.name
-        },
-        notification: localNotification
+        }
       })
     }).then(async res => {
       const { subject } = await res.json()
