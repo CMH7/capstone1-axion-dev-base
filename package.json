@@ -30,7 +30,6 @@
 		"@mdi/js": "^6.9.96",
 		"axios": "^0.27.2",
 		"bcryptjs": "^2.4.3",
-		"firebase": "^9.9.4",
 		"form-data": "^4.0.0",
 		"svelte-loading-spinners": "^0.1.7",
 		"svelte-markdown": "^0.2.2",
