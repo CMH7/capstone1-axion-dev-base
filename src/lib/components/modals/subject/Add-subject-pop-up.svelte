@@ -1,12 +1,11 @@
 <script>
     // @ts-ignore
     import { onDestroy } from 'svelte'
-    import { Dialog, MaterialApp } from 'svelte-materialify'
+    import { Dialog, Button } from 'svelte-materialify'
     import { notifs, addSubjectModalActive, modalChosenColor } from '$lib/stores/global-store'
     import constants from '$lib/constants'
     import bcrypt from 'bcryptjs'
     import { userData } from '$lib/stores/global-store'
-    import axios from 'axios'
 
     const backURI = constants.backURI
 
@@ -16,34 +15,12 @@
     let hovering = false;
 
     // colors
-    const colors = [
-        {name: "primary", selected:true, hover:false},
-        {name: "link", selected:false, hover:false},
-        {name: "info", selected:false, hover:false},
-        {name: "success", selected:false, hover:false},
-        {name: "warning", selected:false, hover:false},
-        {name: "danger", selected:false, hover:false}
-    ]
-
-    // active color
-    function activeColor (paramColor){
-        modalChosenColor.set(paramColor.name)
-        colors.forEach(color => {
-            if (color.name != paramColor.name){
-                color.selected = false;
-            }
-        })
-        paramColor.selected = true
-    }
-
-    // button animation
-    let loading = false;
-    let disabled = false;
+    const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
     // inputs
-    let subjectName = "";
+    let subjectName = ""
 
-    const createSubject = async () => {
+    const createSubject = () => {
         isCreating = true
         if(subjectName === "") {
             let notifsCopy = []
@@ -59,31 +36,44 @@
             isCreating = false
             return false
         }
-        disabled = true
-        loading = true
 
-        let selectedColor = ""
-        colors.forEach(color => {
-            if(color.selected){
-                selectedColor = color.name
-            }
+        const subjectID = bcrypt.hashSync(`${$userData.id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
+        const subject = {
+            color: $modalChosenColor,
+            id: subjectID,
+            isFavorite: false,
+            name: subjectName,
+            workspaces: [],
+            owned: true,
+            createdBy: `${$userData.firstName} ${$userData.lastName}`
+        }
+
+        let userDataCopy = $userData
+        userDataCopy.subjects.push(subject)
+        userData.set(userDataCopy)
+        let notifsCopy = $notifs
+        notifsCopy.push({
+            msg: "Subject created",
+            type: "success",
+            id: notifsCopy.length + 1
         })
+        notifs.set(notifsCopy)
+        subjectName = ''
+        isCreating = false
+        addSubjectModalActive.set(false)
 
-        const id = $userData.id
-        const subjectID = bcrypt.hashSync(`${id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
-
-        await fetch(`${backURI}/MainApp/dashboard/create/subject`, {
+        fetch(`${backURI}/MainApp/dashboard/create/subject`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 ids: {
-                    user: id,
+                    user: $userData.id,
                     subject: subjectID
                 },
                 subject: {
-                    color: selectedColor,
+                    color: $modalChosenColor,
                     name: subjectName,
                     owned: true,
                     createdBy: `${$userData.firstName} ${$userData.lastName}`
@@ -92,53 +82,6 @@
         })
         .then(async res => {
             const { subject } = await res.json()
-            await fetch(`${backURI}/User/create/notification`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    notification: {
-                        id: bcrypt.hashSync(`${subjectID}${id}`, Math.ceil(Math.random() * 10)),
-                        message: `${subjectName} Subject Created`,
-                        anInvitation: false,
-                        aMention: false,
-                        conversationID: "",
-                        fromInterface: {
-                            interf: "Dashboard",
-                            subInterface: "Subjects"
-                        },
-                        fromTask: "",
-                        for: {
-                            self: true,
-                            userID: `${id}`
-                        }
-                    }
-                })
-            }).then(async res => {
-                const { notification } = await res.json()
-                let userDataCopy = $userData
-                userDataCopy.subjects.push(subject)
-                userDataCopy.notifications.push(notification)
-                userData.set(userDataCopy)
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: "Subject created",
-                    type: "success",
-                    id: notifsCopy.length + 1
-                })
-                notifs.set(notifsCopy)
-                addSubjectModalActive.set(false)
-            }).catch(err => {
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: `Subject created! but error in creating user notification, ${err}`,
-                    type: "error",
-                    id: notifsCopy.length + 1
-                })
-                notifs.set(notifsCopy)
-                addSubjectModalActive.set(false)
-            })
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
@@ -147,12 +90,6 @@
                 id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
-        })
-        .finally(() => {
-            subjectName = ''
-            loading = false
-            disabled = false
-            isCreating = false
         })
     }
 
@@ -183,34 +120,38 @@
 
 <svelte:window on:keydown={onKeyDown} bind:outerWidth={width} />
 
-<MaterialApp>
-	<Dialog persistent={isCreating ? true : false} class="pa-4 has-transition has-background-{$modalChosenColor}" bind:active={$addSubjectModalActive}>
+<Dialog persistent={isCreating ? true : false} class="pa-4 has-transition has-background-{$modalChosenColor}" bind:active={$addSubjectModalActive}>
 
-        <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
+    <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
-            <!-- input -->
-            <div class="is-flex is-justify-content-center" style="width: 100%">
-                <!-- svelte-ignore a11y-autofocus -->
-                <input autofocus {disabled} bind:value={subjectName} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Subject name" />
-            </div>
-
-            <!-- colors -->
-            <div class="is-flex is-justify-content-center w-100p">
-                {#each colors as color}
-                <div
-                    class="{disabled && !color.selected? "is-hidden": disabled && color.selected? "button is-static": ""} has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name} {width < 426 ? "w-25 h-25": "w-40 h-40"} border-color-white border-type-solid hover:border-w-1-5"
-                    on:click={() => activeColor(color)}
-                    style="{color.name === $modalChosenColor ? "border-color: #000; border-width: 5px": "#fff"}"
-                />
-                {/each}
-            </div>
-
-            <!-- create button -->
-            <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-                <button on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} on:click={createSubject} class="button has-transition {loading? "is-loading": ""} {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;" {disabled}>
-                    <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
-                </button>
-            </div>
+        <!-- input -->
+        <div class="is-flex is-justify-content-center" style="width: 100%">
+            <!-- svelte-ignore a11y-autofocus -->
+            <input autofocus bind:value={subjectName} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Subject name" />
         </div>
-	</Dialog>
-</MaterialApp>
+
+        <!-- colors -->
+        <div class="is-flex is-justify-content-center w-100p">
+          {#each colors as color}
+          <div 
+            class="parent flex-grow-0 flex-shrink-0 button is-static has-transition is-clickable mr-1 my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": isCreating ? 'is-hidden' : "outline-w-1pxl outline-style-solid outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+            on:click={e => modalChosenColor.set(color)}
+          >
+            <!-- circle dot -->
+            <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
+          </div>
+          {/each}
+      </div>
+      
+      <!-- create button -->
+      <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
+        <Button
+          on:click={createSubject}
+          size='small'
+          class='has-background-white-bis'
+        >
+          Create
+        </Button>
+      </div>
+    </div>
+</Dialog>
