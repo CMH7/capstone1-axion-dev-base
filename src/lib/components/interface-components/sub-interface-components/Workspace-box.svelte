@@ -23,7 +23,7 @@
     activeWorkspace.set(workspace)
     allBoards.set(workspace.boards)
     currentDashboardSubInterface.set("Boards")
-    breadCrumbsItems.set([...$breadCrumbsItems, {text: workspace.name}])
+    breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeWorkspace.name}])
     breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
   }}
   on:mouseenter={() => mouseEnter = true }
