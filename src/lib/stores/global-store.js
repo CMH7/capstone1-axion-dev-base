@@ -120,6 +120,9 @@ export let subjectTruncationModalActive = writable(false)
 // add workspace modal active
 export let addWorkspaceModalActive = writable(false)
 
+// add board modal active
+export let addBoardModalActive = writable(false)
+
 // add task modal active
 export let addTaskModalActive = writable(false)
 
