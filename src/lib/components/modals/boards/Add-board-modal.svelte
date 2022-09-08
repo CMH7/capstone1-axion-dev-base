@@ -14,10 +14,6 @@
     // colors
     const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
-    // button animation
-    let loading = false;
-    let disabled = false;
-
     // inputs
     let boardName = "";
 
@@ -34,11 +30,9 @@
                 }
             )
             notifs.set(notifsCopy)
+            isCreating = false
             return false
         }
-        disabled = true
-        loading = true
-
         
         const boardID = bcrypt.hashSync(`${$activeWorkspace.id}${boardName}${new Date()}`, Math.ceil(Math.random() * 1))
         let board = {
@@ -66,12 +60,7 @@
             return true
         })
         userData.set(userDataCopy)
-
-        boardName = ''
-        loading = false
-        disabled = false
-        isCreating = false
-
+        
         let notifsCopy = $notifs
         notifsCopy.push({
             msg: 'Board created',
@@ -79,7 +68,8 @@
             id: $notifs.length + 1
         })
         notifs.set(notifsCopy)
-
+        
+        isCreating = false
         addBoardModalActive.set(false)
 
         fetch(`${backURI}/MainApp/dashboard/subject/workspace/create/board`, {
@@ -104,6 +94,7 @@
         })
         .then(async res => {
             const { board } = await res.json()
+            boardName = ''
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
@@ -164,7 +155,7 @@
           <!-- input -->
           <div class="is-flex is-justify-content-center" style="width: 100%">
               <!-- svelte-ignore a11y-autofocus -->
-              <input autofocus {disabled} bind:value={boardName} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Board name" />
+              <input autofocus bind:value={boardName} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Board name" />
           </div>
 
           <!-- colors -->
