@@ -1,5 +1,5 @@
 <script>
-  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject } from '$lib/stores/global-store';
+  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
@@ -76,6 +76,13 @@
           on:click={e => addTaskModalActive.set(true)}
         >
           Create task
+        </div>
+      </ListItem>
+      <ListItem>
+        <div
+          on:click={e => addBoardModalActive.set(true)}
+        >
+          Add board
         </div>
       </ListItem>
       <ListItem>
