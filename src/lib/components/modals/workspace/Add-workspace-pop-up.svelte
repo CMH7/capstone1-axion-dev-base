@@ -1,47 +1,22 @@
 <script>
     // @ts-ignore
     import { onDestroy } from 'svelte'
-	import { Dialog, MaterialApp } from 'svelte-materialify'
+	import { Dialog, Button } from 'svelte-materialify'
     import { notifs, userData, activeSubject, addWorkspaceModalActive, modalChosenColor } from '$lib/stores/global-store'
     import bcrypt from 'bcryptjs'
     import constants from '$lib/constants'
 
     const backURI = constants.backURI
 
-    // hover effect
-    let hovering = false
-
     // colors
-    const colors = [
-        {name: "primary", selected:true, hover:false},
-        {name: "link", selected:false, hover:false},
-        {name: "info", selected:false, hover:false},
-        {name: "success", selected:false, hover:false},
-        {name: "warning", selected:false, hover:false},
-        {name: "danger", selected:false, hover:false}
-    ]
-
-    // active color
-    function activeColor (paramColor){
-        modalChosenColor.set(paramColor.name)
-        colors.forEach(color => {
-            if (color.name != paramColor.name){
-                color.selected = false
-            }
-        })
-        paramColor.selected = true
-    }
-
-    // button animation
-    let loading = false
-    let disabled = false
+    const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
     // Inputs
     let workspaceNameInput = ""
 
     let isCreating = false
 
-    const createWorkspace = async () => {
+    const createWorkspace = () => {
         isCreating = true
         if(workspaceNameInput === "") {
             let notifsCopy = []
@@ -58,18 +33,78 @@
             return false
         }
 
-        disabled = true
-        loading = true
-        let selectedColor = ""
-        colors.forEach(color => {
-            if(color.selected){
-                selectedColor = color.name
-            }
-        })
-
         const workspaceID = bcrypt.hashSync(`${$activeSubject.id}${workspaceNameInput}${new Date()}`, Math.ceil(Math.random() * 1))
+        const creationDate = new Date().toISOString()
+        const todoID = bcrypt.hashSync(`${workspaceID}Todo${new Date()}`, Math.ceil(Math.random() * 1))
+        const inprogID = bcrypt.hashSync(`${workspaceID}In progess${new Date()}`, Math.ceil(Math.random() * 1))
+        const doneID = bcrypt.hashSync(`${workspaceID}Done${new Date()}`, Math.ceil(Math.random() * 1))
+        const creator = `${$userData.firstName} ${$userData.lastName}`
+        const workspace = {
+            members: [{
+                email: $userData.email,
+				name: creator,
+				profile: `${$userData.profile}`,
+			}],
+            boards: [
+                {
+                    color: "grey",
+                    createdBy: creator,
+                    createdOn: creationDate,
+                    id: todoID,
+                    name: "Todo",
+                    tasks: [],
+                },
+                {
+                    color: "info",
+                    createdBy: creator,
+                    createdOn: creationDate,
+                    id: inprogID,
+                    name: "In progress",
+                    tasks: [],
+                },
+                {
+                    color: "success",
+                    createdBy: creator,
+                    createdOn: creationDate,
+                    id: doneID,
+                    name: "Done",
+                    tasks: [],
+                },
+            ],
+            admins: [{
+				email: $userData.email,
+				name: creator,
+				profile: `${$userData.profile}`,
+			}],
+            color: $modalChosenColor,
+            id: workspaceID,
+            isFavorite: false,
+            name: workspaceNameInput,
+            owned: true,
+            createdBy: `${$userData.firstName} ${$userData.lastName}`
+        }
 
-        await fetch(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
+        let userDataCopy = $userData
+        userDataCopy.subjects.every(subject => {
+            if(subject.id === $activeSubject.id){
+                subject.workspaces.push(workspace)
+                return false
+            }
+            return true
+        })
+        userData.set(userDataCopy)
+
+        let notifsCopy = $notifs
+        notifsCopy.push({
+            msg: 'Workspace created',
+            type: 'success',
+            id: $notifs.length + 1
+        })
+        notifs.set(notifsCopy)
+        isCreating = false
+        addWorkspaceModalActive.set(false)
+
+        fetch(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -78,9 +113,9 @@
                 ids: {
                     user: $userData.id,
                     subject: $activeSubject.id,
-                    todo: bcrypt.hashSync(`${workspaceID}Todo${new Date()}`, Math.ceil(Math.random() * 1)),
-                    inprog: bcrypt.hashSync(`${workspaceID}In progress${new Date()}`, Math.ceil(Math.random() * 1)),
-                    done: bcrypt.hashSync(`${workspaceID}Done${new Date()}`, Math.ceil(Math.random() * 1)),
+                    todo: todoID,
+                    inprog: inprogID,
+                    done: doneID,
                     workspace: workspaceID
                 },
                 workspace: {
@@ -88,73 +123,15 @@
                         createdBy: `${$userData.firstName} ${$userData.lastName}`,
                         createdOn: new Date()
                     },
-                    color: selectedColor,
+                    color: $modalChosenColor,
                     name: workspaceNameInput,
                     createdBy: `${$userData.firstName} ${$userData.lastName}`
                 }
             })
         })
         .then(async res => {
-            await fetch(`${backURI}/User/create/notification`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    notification: {
-                        id: bcrypt.hashSync(`${workspaceID}${$userData.id}`, Math.ceil(Math.random() * 10)),
-                        message: `Workspace ${workspaceNameInput} created`,
-                        anInvitation: false,
-                        aMention: false,
-                        conversationID: "",
-                        fromInterface: {
-                            interf: "Dashboard",
-                            subInterface: "Boards"
-                        },
-                        fromTask: "",
-                        for: {
-                            self: true,
-                            userID: `${$userData.id}`
-                        }
-                    }
-                })
-            }).then(async res => {
-                const { notification } = await res.json()
-                let userDataCopy = $userData
-                userDataCopy.notifications.push(notification)
-                userData.set(userDataCopy)
-                localStorage.setItem('userData', JSON.stringify($userData))
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: "Workspace created!",
-                    type: "success",
-                    id: notifsCopy.length + 1
-                })
-                notifs.set(notifsCopy)
-            }).catch(err => {
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: `Error in creating notification for task creation, ${err}`,
-                    type: 'error',
-                    id: $notifs.length + 1
-                })
-                notifs.set(notifsCopy)
-            })
-
-            const workspace = await res.json()
-            let userDataCopy = $userData
-            userDataCopy.subjects.every(subject => {
-                if(subject.id === $activeSubject.id){
-                    subject.workspaces.push(workspace)
-                    return false
-                }
-                return true
-            })
-            userData.set(userDataCopy)
-            loading = false
-            disabled = false
+            const { workspace } = await res.json()
             workspaceNameInput = ""
-            addWorkspaceModalActive.set(false)
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
@@ -164,7 +141,6 @@
             })
             notifs.set(notifsCopy)
         })
-        .finally(() => isCreating = false)
     }
 
     /**
@@ -195,34 +171,38 @@
 
 <svelte:window on:keydown={onKeyDown} bind:outerWidth={width} />
 
-<MaterialApp>
-	<Dialog class="pa-4 has-transition has-background-{$modalChosenColor}" persistent={isCreating ? true : false } bind:active={$addWorkspaceModalActive}>
+<Dialog class="pa-4 has-transition has-background-{$modalChosenColor}" persistent={isCreating ? true : false } bind:active={$addWorkspaceModalActive}>
 
-        <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
+    <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
-            <!-- input -->
-            <div class="is-flex is-justify-content-center" style="width: 100%">
-                <!-- svelte-ignore a11y-autofocus -->
-                <input autofocus {disabled} bind:value={workspaceNameInput} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Workspace name" />
-            </div>
-
-            <!-- colors -->
-            <div class="is-flex is-justify-content-center w-100p">
-                {#each colors as color}
-                <div
-                    class="{disabled && !color.selected? "is-hidden": disabled && color.selected? "button is-static": ""} has-transition is-clickable mx-1 my-3 rounded-circle has-background-{color.name} {width < 426 ? "w-25 h-25": "w-40 h-40"} border-color-white border-type-solid hover:border-w-1-5"
-                    on:click={() => activeColor(color)}
-                    style="{color.name === $modalChosenColor ? "border-color: #000; border-width: 5px": "#fff"}"
-                />
-                {/each}
-            </div>
-
-            <!-- create button -->
-            <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-                <button {disabled} on:click={createWorkspace} on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} class="button {loading? "is-loading": ""} has-transition {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;">
-                    <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
-                </button>
-            </div>
+        <!-- input -->
+        <div class="is-flex is-justify-content-center" style="width: 100%">
+            <!-- svelte-ignore a11y-autofocus -->
+            <input autofocus bind:value={workspaceNameInput} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Workspace name" />
         </div>
-	</Dialog>
-</MaterialApp>
+
+        <!-- colors -->
+        <div class="is-flex is-justify-content-center w-100p">
+        {#each colors as color}
+        <div 
+            class="parent flex-grow-0 flex-shrink-0 button is-static has-transition is-clickable mr-1 my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": isCreating ? 'is-hidden' : "outline-w-1pxl outline-style-solid outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+            on:click={e => modalChosenColor.set(color)}
+        >
+            <!-- circle dot -->
+            <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
+        </div>
+        {/each}
+    </div>
+
+    <!-- create button -->
+    <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
+        <Button
+        on:click={createWorkspace}
+        size='small'
+        class='has-background-white-bis'
+        >
+        Create
+        </Button>
+    </div>
+    </div>
+</Dialog>

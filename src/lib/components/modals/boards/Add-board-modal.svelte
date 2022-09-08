@@ -65,25 +65,6 @@
             }
             return true
         })
-
-        let localNotification = {
-            id: bcrypt.hashSync(`"${boardName}" board is created`, Math.ceil(Math.random() * 10)),
-            message: `"${boardName}" board is created`,
-            isRead: false,
-            anInvitation: false,
-            aMention: false,
-            conversationID: '',
-            fromInterface: {
-                interf: `${$currentInterface}`,
-                subInterface: `Boards`
-            },
-            fromTask: `${$activeWorkspace.id}`,
-            for: {
-                self: true,
-                userID: `${$userData.id}`
-            }
-        }
-        userDataCopy.notifications.push(localNotification)
         userData.set(userDataCopy)
 
         boardName = ''
@@ -118,8 +99,7 @@
                     owned: $activeSubject.owned,
                     createdBy: `${$userData.firstName} ${$userData.lastName}`,
                     name: boardName
-                },
-                notification: localNotification
+                }
             })
         })
         .then(async res => {
@@ -205,12 +185,11 @@
             <Button
               depressed
               on:click={createBoard}
-              class="has-transition hover-bg-grey-light quicksands has-text-weight-bold hover-txt-color-white {loading? "is-loading": ""}"
+              class="has-transition has-background-grey-lighter quicksands has-text-weight-bold hover-txt-color-white"
               style="letter-spacing: 1px;"
-              {disabled}
             >
               Create
-          </Button>
+            </Button>
           </div>
       </div>
 </Dialog>
