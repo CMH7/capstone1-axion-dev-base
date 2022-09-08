@@ -1,15 +1,19 @@
 <script>
     // @ts-ignore
     import { onDestroy } from 'svelte'
-	import { Dialog, MaterialApp } from 'svelte-materialify'
-    import { notifs, userData, activeSubject, addWorkspaceModalActive, modalChosenColor } from '$lib/stores/global-store'
-    import bcrypt from 'bcryptjs'
+    import { Dialog, MaterialApp } from 'svelte-materialify'
+    import { notifs, addSubjectModalActive, modalChosenColor } from '$lib/stores/global-store'
     import constants from '$lib/constants'
+    import bcrypt from 'bcryptjs'
+    import { userData } from '$lib/stores/global-store'
+    import axios from 'axios'
 
     const backURI = constants.backURI
 
+    let isCreating = false
+
     // hover effect
-    let hovering = false
+    let hovering = false;
 
     // colors
     const colors = [
@@ -26,39 +30,38 @@
         modalChosenColor.set(paramColor.name)
         colors.forEach(color => {
             if (color.name != paramColor.name){
-                color.selected = false
+                color.selected = false;
             }
         })
         paramColor.selected = true
     }
 
     // button animation
-    let loading = false
-    let disabled = false
+    let loading = false;
+    let disabled = false;
 
-    // Inputs
-    let workspaceNameInput = ""
+    // inputs
+    let subjectName = "";
 
-    let isCreating = false
-
-    const createWorkspace = async () => {
+    const createSubject = async () => {
         isCreating = true
-        if(workspaceNameInput === "") {
+        if(subjectName === "") {
             let notifsCopy = []
             notifsCopy = $notifs
             notifsCopy.push(
                 {
-                    msg: "Workspace name is empty.",
+                    msg: "Subject name is empty.",
                     type: "error",
                     id: $notifs.length + 1
                 }
             )
             notifs.set(notifsCopy)
+            isCreating = false
             return false
         }
-
         disabled = true
         loading = true
+
         let selectedColor = ""
         colors.forEach(color => {
             if(color.selected){
@@ -66,34 +69,29 @@
             }
         })
 
-        const workspaceID = bcrypt.hashSync(`${$activeSubject.id}${workspaceNameInput}${new Date()}`, Math.ceil(Math.random() * 1))
+        const id = $userData.id
+        const subjectID = bcrypt.hashSync(`${id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
 
-        await fetch(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
+        await fetch(`${backURI}/MainApp/dashboard/create/subject`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 ids: {
-                    user: $userData.id,
-                    subject: $activeSubject.id,
-                    todo: bcrypt.hashSync(`${workspaceID}Todo${new Date()}`, Math.ceil(Math.random() * 1)),
-                    inprog: bcrypt.hashSync(`${workspaceID}In progress${new Date()}`, Math.ceil(Math.random() * 1)),
-                    done: bcrypt.hashSync(`${workspaceID}Done${new Date()}`, Math.ceil(Math.random() * 1)),
-                    workspace: workspaceID
+                    user: id,
+                    subject: subjectID
                 },
-                workspace: {
-                    board: {
-                        createdBy: `${$userData.firstName} ${$userData.lastName}`,
-                        createdOn: new Date()
-                    },
+                subject: {
                     color: selectedColor,
-                    name: workspaceNameInput,
+                    name: subjectName,
+                    owned: true,
                     createdBy: `${$userData.firstName} ${$userData.lastName}`
                 }
             })
         })
         .then(async res => {
+            const { subject } = await res.json()
             await fetch(`${backURI}/User/create/notification`, {
                 method: 'POST',
                 headers: {
@@ -101,92 +99,83 @@
                 },
                 body: JSON.stringify({
                     notification: {
-                        id: bcrypt.hashSync(`${workspaceID}${$userData.id}`, Math.ceil(Math.random() * 10)),
-                        message: `Workspace ${workspaceNameInput} created`,
+                        id: bcrypt.hashSync(`${subjectID}${id}`, Math.ceil(Math.random() * 10)),
+                        message: `${subjectName} Subject Created`,
                         anInvitation: false,
                         aMention: false,
                         conversationID: "",
                         fromInterface: {
                             interf: "Dashboard",
-                            subInterface: "Boards"
+                            subInterface: "Subjects"
                         },
                         fromTask: "",
                         for: {
                             self: true,
-                            userID: `${$userData.id}`
+                            userID: `${id}`
                         }
                     }
                 })
             }).then(async res => {
                 const { notification } = await res.json()
                 let userDataCopy = $userData
+                userDataCopy.subjects.push(subject)
                 userDataCopy.notifications.push(notification)
                 userData.set(userDataCopy)
-                localStorage.setItem('userData', JSON.stringify($userData))
                 let notifsCopy = $notifs
                 notifsCopy.push({
-                    msg: "Workspace created!",
+                    msg: "Subject created",
                     type: "success",
                     id: notifsCopy.length + 1
                 })
                 notifs.set(notifsCopy)
+                addSubjectModalActive.set(false)
             }).catch(err => {
                 let notifsCopy = $notifs
                 notifsCopy.push({
-                    msg: `Error in creating notification for task creation, ${err}`,
-                    type: 'error',
-                    id: $notifs.length + 1
+                    msg: `Subject created! but error in creating user notification, ${err}`,
+                    type: "error",
+                    id: notifsCopy.length + 1
                 })
                 notifs.set(notifsCopy)
+                addSubjectModalActive.set(false)
             })
-
-            const workspace = await res.json()
-            let userDataCopy = $userData
-            userDataCopy.subjects.every(subject => {
-                if(subject.id === $activeSubject.id){
-                    subject.workspaces.push(workspace)
-                    return false
-                }
-                return true
-            })
-            userData.set(userDataCopy)
-            loading = false
-            disabled = false
-            workspaceNameInput = ""
-            addWorkspaceModalActive.set(false)
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
-                msg: `error in creating workspace ${err}`,
+                msg: `Error in creating subject, ${err}`,
                 type: 'error',
                 id: $notifs.length + 1
             })
             notifs.set(notifsCopy)
         })
-        .finally(() => isCreating = false)
+        .finally(() => {
+            subjectName = ''
+            loading = false
+            disabled = false
+            isCreating = false
+        })
     }
 
-    /**
-    * @param {{ keyCode: number; }} e
-    */
     function onKeyDown(e) {
-        if(e.keyCode == 13 && $addWorkspaceModalActive) {
-            if(!(workspaceNameInput === "")) {
-                createWorkspace()
+        if(e.keyCode == 13 && $addSubjectModalActive) {
+            if(!(subjectName === "")) {
+                createSubject();
             }else{
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: "Workspace name cannot be empty.",
-                    type: 'error',
-                    id: $notifs.length + 1
-                })
-                notifs.set(notifsCopy)
+                let notifsCopy = $notifs;
+                notifsCopy.push(
+                    {
+                        msg: "Subject name cannot be empty.",
+                        type: 'error',
+                        id: notifsCopy.length + 1
+                    }
+                );
+                notifs.set(notifsCopy);
             }
         }
     }
 
     onDestroy(() => {
-        addWorkspaceModalActive.set(false)
+        addSubjectModalActive.set(false)
         modalChosenColor.set('primary')
     })
     let width = 0
@@ -195,14 +184,14 @@
 <svelte:window on:keydown={onKeyDown} bind:outerWidth={width} />
 
 <MaterialApp>
-	<Dialog class="pa-4 has-transition has-background-{$modalChosenColor}" persistent={isCreating ? true : false } bind:active={$addWorkspaceModalActive}>
+	<Dialog persistent={isCreating ? true : false} class="pa-4 has-transition has-background-{$modalChosenColor}" bind:active={$addSubjectModalActive}>
 
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-wrap-wrap">
 
             <!-- input -->
             <div class="is-flex is-justify-content-center" style="width: 100%">
                 <!-- svelte-ignore a11y-autofocus -->
-                <input autofocus {disabled} bind:value={workspaceNameInput} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Workspace name" />
+                <input autofocus {disabled} bind:value={subjectName} class="p-2 input is-{$modalChosenColor}" type="text" placeholder="Subject name" />
             </div>
 
             <!-- colors -->
@@ -218,7 +207,7 @@
 
             <!-- create button -->
             <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-                <button {disabled} on:click={createWorkspace} on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} class="button {loading? "is-loading": ""} has-transition {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;">
+                <button on:mouseenter={() => hovering = true} on:mouseleave={() => hovering = false} on:click={createSubject} class="button has-transition {loading? "is-loading": ""} {hovering ? "has-background-grey" : ""}" style="letter-spacing: 1px;" {disabled}>
                     <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
                 </button>
             </div>
