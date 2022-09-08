@@ -120,10 +120,9 @@
                 userDataCopy.subjects.push(subject)
                 userDataCopy.notifications.push(notification)
                 userData.set(userDataCopy)
-                localStorage.setItem('userData', JSON.stringify($userData))
                 let notifsCopy = $notifs
                 notifsCopy.push({
-                    msg: "Subject created!",
+                    msg: "Subject created",
                     type: "success",
                     id: notifsCopy.length + 1
                 })

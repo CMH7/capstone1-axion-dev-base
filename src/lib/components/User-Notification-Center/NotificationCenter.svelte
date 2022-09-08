@@ -31,10 +31,6 @@
       }
     }).then(async res => {
       const { notifications } = await res.json()
-      let userDataCopy = $userData
-      userDataCopy.notifications = notifications
-      userData.set(userDataCopy)
-      localStorage.setItem('userData', JSON.stringify($userData))
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({

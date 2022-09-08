@@ -39,11 +39,6 @@
     // Inputs
     let workspaceNameInput = ""
 
-    let id = $userData.id
-
-    // Active subject
-    let curActiveSubject = $activeSubject
-
     let isCreating = false
 
     const createWorkspace = async () => {
@@ -71,7 +66,7 @@
             }
         })
 
-        const workspaceID = bcrypt.hashSync(`${curActiveSubject.id}${workspaceNameInput}${new Date()}`, Math.ceil(Math.random() * 1))
+        const workspaceID = bcrypt.hashSync(`${$activeSubject.id}${workspaceNameInput}${new Date()}`, Math.ceil(Math.random() * 1))
 
         await fetch(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
             method: 'POST',
@@ -80,8 +75,8 @@
             },
             body: JSON.stringify({
                 ids: {
-                    user: id,
-                    subject: curActiveSubject.id,
+                    user: $userData.id,
+                    subject: $activeSubject.id,
                     todo: bcrypt.hashSync(`${workspaceID}Todo${new Date()}`, Math.ceil(Math.random() * 1)),
                     inprog: bcrypt.hashSync(`${workspaceID}In progress${new Date()}`, Math.ceil(Math.random() * 1)),
                     done: bcrypt.hashSync(`${workspaceID}Done${new Date()}`, Math.ceil(Math.random() * 1)),
@@ -148,7 +143,7 @@
             const workspace = await res.json()
             let userDataCopy = $userData
             userDataCopy.subjects.every(subject => {
-                if(subject.id === curActiveSubject.id){
+                if(subject.id === $activeSubject.id){
                     subject.workspaces.push(workspace)
                     return false
                 }

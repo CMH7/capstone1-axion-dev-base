@@ -11,7 +11,6 @@
   export let id = ''
 
   // variables
-  let isHoveringAddIcon = false
   let showFilter = false
 </script>
 

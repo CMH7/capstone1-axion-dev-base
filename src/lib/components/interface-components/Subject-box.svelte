@@ -1,7 +1,6 @@
 <script>
   import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, snack, subjectSettingsModalActive } from "$lib/stores/global-store"
   import { ProgressLinear } from "svelte-materialify"
-  import constants from "$lib/constants"
 
   // export the subject
   export let subject = {
