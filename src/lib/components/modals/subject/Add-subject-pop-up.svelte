@@ -56,6 +56,7 @@
                 }
             )
             notifs.set(notifsCopy)
+            isCreating = false
             return false
         }
         disabled = true
