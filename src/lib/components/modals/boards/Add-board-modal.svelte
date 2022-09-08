@@ -15,14 +15,7 @@
     let hovering = false;
 
     // colors
-    const colors = [
-        {name: "primary", selected:true, hover:false},
-        {name: "link", selected:false, hover:false},
-        {name: "info", selected:false, hover:false},
-        {name: "success", selected:false, hover:false},
-        {name: "warning", selected:false, hover:false},
-        {name: "danger", selected:false, hover:false}
-    ]
+    const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
     // button animation
     let loading = false;
@@ -201,11 +194,11 @@
           <div class="is-flex is-justify-content-center w-100p">
               {#each colors as color}
               <div 
-                class="parent flex-grow-0 flex-shrink-0 button is-static has-transition is-clickable mr-1 my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color.name} {color.name === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": isCreating ? 'is-hidden' : "outline-w-1pxl outline-style-solid outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
-                on:click={e => modalChosenColor.set(color.name)}
+                class="parent flex-grow-0 flex-shrink-0 button is-static has-transition is-clickable mr-1 my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": isCreating ? 'is-hidden' : "outline-w-1pxl outline-style-solid outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+                on:click={e => modalChosenColor.set(color)}
               >
                 <!-- circle dot -->
-                <div class="{color.name === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
+                <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
               </div>
               {/each}
           </div>
