@@ -51,23 +51,6 @@
   $: isFavorite == $oldFavoriteStatus ? favoriteChanges = false : favoriteChanges = true
 
   const updateSubject = async () => {
-    // const localNotification = {
-    //   id: bcrypt.hashSync(`${$selectedSubjectForSubjectSettings.name} subject has been ${nameChanges && !favoriteChanges && !colorChanges ? `renamed to ${subjectName}` : !nameChanges && favoriteChanges && !colorChanges ? 'set to favorites' : !nameChanges && !favoriteChanges && colorChanges ? 'changed color': nameChanges && favoriteChanges && !colorChanges ? 'renamed and set to favorites' : nameChanges && !favoriteChanges && colorChanges ? 'renamed and changed color' : !nameChanges && favoriteChanges && colorChanges ? 'set to favorites and changed color' : 'renamed, changed color and is set to favorites'}.`, Math.ceil(Math.random() * 10)),
-    //   message: `${$selectedSubjectForSubjectSettings.name} subject has been ${nameChanges && !favoriteChanges && !colorChanges ? `renamed to ${subjectName}` : !nameChanges && favoriteChanges && !colorChanges ? `${isFavorite ? 'set to favorites' : 'removed from favorites'}` : !nameChanges && !favoriteChanges && colorChanges ? 'changed color': nameChanges && favoriteChanges && !colorChanges ? 'renamed and set to favorites' : nameChanges && !favoriteChanges && colorChanges ? 'renamed and changed color' : !nameChanges && favoriteChanges && colorChanges ? 'set to favorites and changed color' : 'renamed, changed color and is set to favorites'}.`,
-    //   isRead: false,
-    //   anInvitation: false,
-    //   aMention: false,
-    //   conversationID: '',
-    //   fromInterface: {
-    //     interf: `${$currentInterface}`,
-    //     subInterface: `Workspaces`
-    //   },
-    //   fromTask: `${$selectedSubjectForSubjectSettings.id}`,
-    //   for: {
-    //     self: true,
-    //     userID: `${$userData.id}`
-    //   }
-    // }
     let activeSubjectCopy = $activeSubject
     activeSubjectCopy.color = $modalChosenColor
     activeSubjectCopy.isFavorite = isFavorite
@@ -126,7 +109,7 @@
 <SubjectDeletionsModal/>
 <SubjectTruncationModal/>
 
-<div>
+<div class="select-none">
   <Dialog class="has-background-white px-3 py-2" bind:active={$subjectSettingsModalActive} persistent >
     <!-- header -->
     <div class="min-w-100p is-flex is-justify-content-space-between">
@@ -299,3 +282,9 @@
     </div>
   </Dialog>
 </div>
+
+<style>
+  .select-none {
+    user-select: none;
+  }
+</style>
