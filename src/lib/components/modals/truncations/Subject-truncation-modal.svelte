@@ -9,7 +9,7 @@ import constants from '$lib/constants'
   <Dialog persistent bind:active={$subjectTruncationModalActive} class='has-background-white p-2' >
     <div class="maxmins-w-100p">
       <div class="txt-size-13 mb-3 inter-reg">
-        <span class="has-text-weight-bold">This action cannot be undone.</span> Doing this will reset your subject with no workspaces. Click confirm button to finally truncate the subject. <span class="tag is-danger inter-reg">truncate {`${$selectedSubjectForSubjectSettings.name}`}</span>
+        <span class="has-text-weight-bold">This action cannot be undone.</span> Doing this will reset your subject with no workspaces. Click confirm button to finally reset the subject. <span class="tag is-danger inter-reg">Reset {`${$selectedSubjectForSubjectSettings.name}`}</span>
       </div>
       <div class="maxmins-w-100p is-flex is-flex-direction-row-reverse is-justify-content-flex-start">
         <div

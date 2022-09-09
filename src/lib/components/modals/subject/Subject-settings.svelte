@@ -266,7 +266,7 @@
 
 
         <!-- buttons -->
-        <!-- truncate button -->
+        <!-- Reset button -->
         <div class="is-flex is-align-items-center is-flex-wrap-wrap maxmins-w-100p my-4 {$selectedSubjectForSubjectSettings.workspaces.length > 0 ? '': 'is-hidden'}">
           <div class="has-text-danger-dark maxmins-w-100p txt-size-12">
             Delete all workspaces under this subject.
@@ -277,7 +277,7 @@
               subjectTruncationModalActive.set(true)
             }}
           >
-            <Button size='small' depressed class='m-0 inter-reg has-background-danger-dark has-text-white'>Truncate</Button>
+            <Button size='small' depressed class='m-0 inter-reg has-background-danger-dark has-text-white'>Reset</Button>
           </div>
         </div>
 
