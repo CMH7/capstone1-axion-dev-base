@@ -71,11 +71,7 @@
                     tasks: [],
                 },
             ],
-            admins: [{
-				email: $userData.email,
-				name: creator,
-				profile: `${$userData.profile}`,
-			}],
+            admins: [`${$userData.email}`],
             color: $modalChosenColor,
             id: workspaceID,
             isFavorite: false,
