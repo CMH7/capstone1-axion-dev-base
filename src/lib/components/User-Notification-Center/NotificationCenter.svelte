@@ -4,6 +4,7 @@
   import { mdiNotificationClearAll } from "@mdi/js"
   import constants from "$lib/constants"
   import NotificationCard from "./Notification-card.svelte"
+  import bcrypt from 'bcryptjs'
 
   let outerWidth
   let allNotifications = []
@@ -19,7 +20,7 @@
     userDataCopy.notifications = []
     userData.set(userDataCopy)
 
-    await fetch(`${constants.backURI}/User/delete/all/notification`, {
+    fetch(`${constants.backURI}/User/delete/all/notification`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -32,13 +33,12 @@
       let userDataCopy = $userData
       userDataCopy.notifications = notifications
       userData.set(userDataCopy)
-      localStorage.setItem('userData', JSON.stringify($userData))
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `Error in deleting ALL the notificaton, ${err}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
     })

@@ -1,9 +1,8 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge, Avatar } from "svelte-materialify"
-  import {mdiMenu, mdiAccount, mdiBell, mdiBellBadge } from '@mdi/js'
-  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen, userData } from "$lib/stores/global-store"
-  import { goto } from "$app/navigation"
+  import {mdiMenu, mdiAccount, mdiBell } from '@mdi/js'
+  import { currentInterface, ismini, sidebarActive, notifCenterOpen, userData } from "$lib/stores/global-store"
   import NotificationCenter from "$lib/components/User-Notification-Center/NotificationCenter.svelte"
 
   let notifCenterOpenCopy = false

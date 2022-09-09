@@ -2,7 +2,6 @@
   // @ts-nocheck
   // @ts-ignore
   import { onMount } from 'svelte'
-  import { fade } from 'svelte/transition'
 	import { Breadcrumbs } from 'svelte-materialify'
   import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
@@ -13,7 +12,7 @@
   import SubjectSettings from '$lib/components/modals/subject/Subject-settings.svelte';
   import AddBoardModal from '$lib/components/modals/boards/Add-board-modal.svelte';
   import BoardsInterface from './sub-interfaces/Boards-interface.svelte'
-import ManageAdminModal from '$lib/components/modals/workspace/Manage-admin-modal.svelte';
+  import ManageAdminModal from '$lib/components/modals/workspace/Manage-admin-modal.svelte';
 
   onMount(() => {
     if($breadCrumbsItems.length < 1) {

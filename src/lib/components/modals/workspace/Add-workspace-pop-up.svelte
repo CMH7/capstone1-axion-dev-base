@@ -25,7 +25,7 @@
                 {
                     msg: "Workspace name is empty.",
                     type: "error",
-                    id: $notifs.length + 1
+                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
                 }
             )
             notifs.set(notifsCopy)
@@ -80,26 +80,6 @@
             createdBy: `${$userData.firstName} ${$userData.lastName}`
         }
 
-        let userDataCopy = $userData
-        userDataCopy.subjects.every(subject => {
-            if(subject.id === $activeSubject.id){
-                subject.workspaces.push(workspace)
-                return false
-            }
-            return true
-        })
-        userData.set(userDataCopy)
-
-        let notifsCopy = $notifs
-        notifsCopy.push({
-            msg: 'Workspace created',
-            type: 'success',
-            id: $notifs.length + 1
-        })
-        notifs.set(notifsCopy)
-        isCreating = false
-        addWorkspaceModalActive.set(false)
-
         fetch(`${backURI}/MainApp/dashboard/subject/create/workspace`, {
             method: 'POST',
             headers: {
@@ -128,12 +108,31 @@
         .then(async res => {
             const { workspace } = await res.json()
             workspaceNameInput = ""
+            let userDataCopy = $userData
+            userDataCopy.subjects.every(subject => {
+                if(subject.id === $activeSubject.id){
+                    subject.workspaces.push(workspace)
+                    return false
+                }
+                return true
+            })
+            userData.set(userDataCopy)
+
+            let notifsCopy = $notifs
+            notifsCopy.push({
+                msg: 'Workspace created',
+                type: 'success',
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            })
+            notifs.set(notifsCopy)
+            isCreating = false
+            addWorkspaceModalActive.set(false)
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
                 msg: `error in creating workspace ${err}`,
                 type: 'error',
-                id: $notifs.length + 1
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
             })
             notifs.set(notifsCopy)
         })
@@ -151,7 +150,7 @@
                 notifsCopy.push({
                     msg: "Workspace name cannot be empty.",
                     type: 'error',
-                    id: $notifs.length + 1
+                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
                 })
                 notifs.set(notifsCopy)
             }

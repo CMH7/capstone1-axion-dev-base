@@ -1,5 +1,5 @@
 <script>
-  import { memberModalActive, memberModalLoading, notifs } from '$lib/stores/global-store'
+  import { memberModalActive, memberModalLoading } from '$lib/stores/global-store'
   import { mdiMagnify } from '@mdi/js'
   import { MaterialApp, Dialog, Button, TextField, Icon, Avatar } from "svelte-materialify"
   import MemberBox from './Member modal/MemberBox.svelte'

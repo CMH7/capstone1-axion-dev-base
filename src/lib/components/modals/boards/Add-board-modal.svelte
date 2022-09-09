@@ -26,7 +26,7 @@
                 {
                     msg: "Board name cannot be empty",
                     type: "error",
-                    id: $notifs.length + 1
+                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
                 }
             )
             notifs.set(notifsCopy)
@@ -65,7 +65,7 @@
         notifsCopy.push({
             msg: 'Board created',
             type: 'success',
-            id: $notifs.length + 1
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         
@@ -100,7 +100,7 @@
             notifsCopy.push({
                 msg: `Error in creating board, ${err}`,
                 type: 'error',
-                id: $notifs.length + 1
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
             })
             notifs.set(notifsCopy)
             let userDataCopy = $userData

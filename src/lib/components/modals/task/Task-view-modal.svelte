@@ -63,7 +63,7 @@
         notifsCopy.push({
           msg: 'Message cannot be empty',
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
       }else{
@@ -97,7 +97,33 @@
     activeTaskCopy.status = boardName
     activeTask.set(activeTaskCopy)
 
-    await fetch(`${backURI}/MainApp/edit/subject/workspace/board/task/status`, {
+    // remove task from previous board
+    let allBoardsCopy = $allBoards
+    allBoardsCopy.every(board => {
+      if(board.id === $activeBoard) {
+        board.tasks.every(task => {
+          if(task.id === $activeTask.id) {
+            board.tasks = board.tasks.filter(task2 => task2.id !== $activeTask.id)
+            return false
+          }
+          return true
+        })
+        return false
+      }
+      return true
+    })
+
+    // add task to next board
+    allBoardsCopy.every(board => {
+      if(board.name === boardName) {
+        board.tasks.push(task)
+        return false
+      }
+      return true
+    })
+    allBoards.set(allBoardsCopy)
+
+    fetch(`${backURI}/MainApp/edit/subject/workspace/board/task/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -129,29 +155,6 @@
     }).then(async res => {
       let { task } = await res.json()
       activeTask.set(task)
-      let allBoardsCopy = $allBoards
-      allBoardsCopy.every(board => {
-        if(board.id === $activeBoard) {
-          board.tasks.every(task => {
-            if(task.id === $activeTask.id) {
-              board.tasks = board.tasks.filter(task2 => task2.id !== $activeTask.id)
-              return false
-            }
-            return true
-          })
-          return false
-        }
-        return true
-      })
-
-      allBoardsCopy.every(board => {
-        if(board.name === boardName) {
-          board.tasks.push(task)
-          return false
-        }
-        return true
-      })
-      allBoards.set(allBoardsCopy)
 
       let activeWorkspaceCopy = $activeWorkspace
       activeWorkspaceCopy.boards = $allBoards
@@ -176,50 +179,19 @@
         return true
       })
 
-      await fetch(`${backURI}/User/create/notification`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          notification: {
-            id: bcrypt.hashSync(`${$activeTask.id}0${$userData.id}`, Math.ceil(Math.random() * 10)),
-            message: `${$activeTask.name} is moved to ${boardName}`,
-            anInvitation: false,
-            aMention: false,
-            conversationID: "",
-            fromInterface: {
-              interf: "Dashboard",
-              subInterface: "Boards"
-            },
-            fromTask: $activeTask.id,
-            for: {
-              self: true,
-              userID: `${$userData.id}`
-            }
-            }
-        })
-      }).then(async res => {
-        const { notification } = await res.json()
-        let userDataCopy = $userData
-        userDataCopy.notifications.push(notification)
-        userData.set(userDataCopy)
-        localStorage.setItem('userData', JSON.stringify($userData))
-      }).catch(err => {
-        let notifsCopy = $notifs
-        notifsCopy.push({
-          msg: `Error in creating notification for task status update, ${err}`,
-          type: 'error',
-          id: $notifs.length + 1
-        })
-        notifs.set(notifsCopy)
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `${task.name} is moved to ${boardName}`,
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
+      notifs.set(notifsCopy)
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `Error in updating the task status, ${err}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
     })

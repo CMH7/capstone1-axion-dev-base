@@ -20,32 +20,10 @@ export const currentInterface = writable("Dashboard");
 export let currentIndex = writable(0);
 
 // THis will determine the active subject (users clicked subject)
-export let activeSubject = writable(
-  {
-    color: "primary",
-    id: "",
-    isFavorite: false,
-    name: "",
-    workspaces: [],
-    owned: true,
-    createdBy: ""
-  }
-);
+export let activeSubject = writable(constants.subject)
 
 // This will determine the current active workspace (user selected workspace)
-export let activeWorkspace = writable(
-  {
-    members: [],
-    boards: [],
-    admins: [],
-    color: "primary",
-    id: "",
-    isFavorite: false,
-    name: "",
-    owned: true,
-    createdBy: ""
-  }
-);
+export let activeWorkspace = writable(constants.workspace)
 
 // This will determine the current board in which the current active task is residing
 export let activeBoard = writable('')
@@ -62,7 +40,7 @@ export let homevisited = writable(false);
 // Use hint
 export let useHint = writable(true);
 
-// error handler array
+// system notification array
 export let notifs = writable([]);
 
 // Logged in check

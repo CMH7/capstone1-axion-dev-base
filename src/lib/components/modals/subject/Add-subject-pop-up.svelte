@@ -11,9 +11,6 @@
 
     let isCreating = false
 
-    // hover effect
-    let hovering = false;
-
     // colors
     const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
@@ -29,7 +26,7 @@
                 {
                     msg: "Subject name is empty.",
                     type: "error",
-                    id: $notifs.length + 1
+                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
                 }
             )
             notifs.set(notifsCopy)
@@ -38,29 +35,6 @@
         }
 
         const subjectID = bcrypt.hashSync(`${$userData.id}${subjectName}${new Date()}`, Math.ceil(Math.random() * 1))
-        const subject = {
-            color: $modalChosenColor,
-            id: subjectID,
-            isFavorite: false,
-            name: subjectName,
-            workspaces: [],
-            owned: true,
-            createdBy: `${$userData.firstName} ${$userData.lastName}`
-        }
-
-        let userDataCopy = $userData
-        userDataCopy.subjects.push(subject)
-        userData.set(userDataCopy)
-        let notifsCopy = $notifs
-        notifsCopy.push({
-            msg: "Subject created",
-            type: "success",
-            id: notifsCopy.length + 1
-        })
-        notifs.set(notifsCopy)
-        subjectName = ''
-        isCreating = false
-        addSubjectModalActive.set(false)
 
         fetch(`${backURI}/MainApp/dashboard/create/subject`, {
             method: 'POST',
@@ -82,12 +56,25 @@
         })
         .then(async res => {
             const { subject } = await res.json()
+            let userDataCopy = $userData
+            userDataCopy.subjects.push(subject)
+            userData.set(userDataCopy)
+            let notifsCopy = $notifs
+            notifsCopy.push({
+                msg: "Subject created",
+                type: "success",
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            })
+            notifs.set(notifsCopy)
+            subjectName = ''
+            isCreating = false
+            addSubjectModalActive.set(false)
         }).catch(err => {
             let notifsCopy = $notifs
             notifsCopy.push({
                 msg: `Error in creating subject, ${err}`,
                 type: 'error',
-                id: $notifs.length + 1
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
             })
             notifs.set(notifsCopy)
         })

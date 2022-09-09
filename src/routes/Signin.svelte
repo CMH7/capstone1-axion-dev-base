@@ -48,7 +48,7 @@
       notifsCopy.push({
         msg: 'Please enter your password',
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
     }
@@ -117,7 +117,7 @@
       notifsCopy.push({
         msg: invalids,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       return false
@@ -138,7 +138,7 @@
         notifsCopy.push({
             msg: "Please input a valid email.",
             type: "error",
-            id: $notifs.length + 1
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         emailInput = ""
@@ -148,7 +148,7 @@
         notifsCopy.push({
             msg: "Please input a valid password.",
             type: "error",
-            id: $notifs.length + 1
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         emailInput = ""
@@ -158,7 +158,7 @@
         notifsCopy.push({
             msg: "Please input a valid email and password.",
             type: "error",
-            id: $notifs.length + 1
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         emailInput = ""
@@ -175,7 +175,7 @@
         notifsCopy.push({
           msg: 'Email is invalid',
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         loading = false
@@ -187,7 +187,7 @@
         notifsCopy.push({
           msg: 'Password is invalid',
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         loading = false
@@ -218,7 +218,7 @@
             notifsCopy.push({
               msg: "Log in Successful",
               type: "success",
-              id: $notifs.length + 1
+              id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
             })
             notifs.set(notifsCopy)
             isLoggedIn.set(true)
@@ -232,7 +232,7 @@
             notifsCopy.push({
               msg: `Error logging in. ${err}`,
               type: 'error',
-              id: $notifs.length + 1
+              id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
             })
             notifs.set(notifsCopy)
 
@@ -247,7 +247,7 @@
           notifsCopy.push({
             msg: "Wrong email or password. Please try again.",
             type: 'error',
-            id: $notifs.length + 1
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
           })
           notifs.set(notifsCopy)
           loading = false
@@ -259,7 +259,7 @@
         notifsCopy.push({
           msg: "No account found.",
           type: "error",
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         loading = false
