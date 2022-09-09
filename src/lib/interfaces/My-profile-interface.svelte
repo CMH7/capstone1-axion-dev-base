@@ -1,30 +1,23 @@
 <script>
  // @ts-nocheck 
  import { fade } from 'svelte/transition'
-  import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
-  import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
-  import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte'
-  import { goto } from "$app/navigation" 
-  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen, userData } from "$lib/stores/global-store"
+ import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
+ import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
+ import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte'
+ import { goto } from "$app/navigation" 
+ import { isLoggedIn, transitionActive, snack, userData } from "$lib/stores/global-store"
 
-  let outerWidth = 0
-  let switchOn = true
-
-  let comingSoonModalOpen = false
-  const openComingSoon = () => {
-    if (!comingSoonModalOpen) {
-      comingSoonModalOpen = true
-    } else {
-      comingSoonModalOpen = false
-      comingSoonModalOpen = true
-    }
-  }
-
-  let allNotifications = 0
-  userData.subscribe(user => allNotifications = user.notifications.filter(notif => notif.isRead != true).length)
-
-  const clickOutside = () => notifCenterOpen.set(false)
-
+ let outerWidth = 0
+ let switchOn = true
+ let comingSoonModalOpen = false
+ const openComingSoon = () => {
+   if (!comingSoonModalOpen) {
+     comingSoonModalOpen = true
+   } else {
+     comingSoonModalOpen = false
+     comingSoonModalOpen = true
+   }
+ }
 </script>
 
 <svelte:head>

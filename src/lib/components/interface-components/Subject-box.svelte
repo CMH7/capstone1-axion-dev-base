@@ -1,17 +1,10 @@
 <script>
-  import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, snack, subjectSettingsModalActive } from "$lib/stores/global-store"
+  import constants from "$lib/constants"
+  import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, subjectSettingsModalActive } from "$lib/stores/global-store"
   import { ProgressLinear } from "svelte-materialify"
 
   // export the subject
-  export let subject = {
-    color: "primary",
-    id: "",
-    isFavorite: false,
-    name: "",
-    workspaces: [],
-    owned: true,
-    createdBy: ""
-  }
+  export let subject = constants.subject
 
   let mouseEnter = false
   let deleting = false
