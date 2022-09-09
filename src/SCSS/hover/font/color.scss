@@ -4,7 +4,10 @@
       &-white:hover {color: white}
       &-warning:hover {color: hsl(48, 100%, 67%);}
       &-primary:hover {color: hsl(238, 49%, 19%);}
-      &-blue:hover{color:hsl(229, 53%, 53%);}    
+      &-blue:hover {color:hsl(229, 53%, 53%);}  
+      &-danger:hover {color:hsl(0, 91%, 73%);}
+      &-danger-to-danger-dark {color: hsl(0, 91%, 73%);}
+      &-danger-to-danger-dark:hover {color: hsl(0, 64%, 39%);}
     }
   }
 }

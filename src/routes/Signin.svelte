@@ -168,8 +168,10 @@
 
     }else{
       let notifsCopy = $notifs
+      let emailValid = true
       if(!isEmailValid(emailInput)) {
         failed = true
+        emailValid = false
         notifsCopy.push({
           msg: 'Email is invalid',
           type: 'error',
@@ -192,6 +194,8 @@
         disabled = false
         return false
       }
+
+      if(!emailValid) return false
 
       const res = await fetch(`${backURI}/Signin?email=${emailInput}`)
       const { password } = await res.json()

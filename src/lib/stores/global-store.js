@@ -78,9 +78,6 @@ export let snack = writable(
   }
 )
 
-// member interface (modal) loading state
-export let memberModalLoading = writable(true)
-
 // All users
 export let allUsers = writable([])
 
@@ -119,6 +116,15 @@ export let subjectTruncationModalActive = writable(false)
 
 // add workspace modal active
 export let addWorkspaceModalActive = writable(false)
+
+// manage admins modal active
+export let manageAdminModalActive = writable(false)
+
+// is processing operations in manage admins modal
+export let isProcessing = writable(false)
+
+// member interface (modal) loading state
+export let memberModalLoading = writable(true)
 
 // add board modal active
 export let addBoardModalActive = writable(false)
