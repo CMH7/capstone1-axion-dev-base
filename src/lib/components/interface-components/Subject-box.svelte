@@ -26,10 +26,37 @@
     oldFavoriteStatus.set(subject.isFavorite)
     subjectSettingsModalActive.set(true)
   }
+
+  let timer
+  let hold = 0
+  const startTimer = () => {
+    timer = setInterval(() => {
+      if(hold >= 2) {
+        handleRightClick(null)
+        clearInterval(timer)
+        hold = 0
+      }
+      hold += 1
+    }, 50)
+  }
 </script>
 
 <div
   disabled={deleting}
+  on:touchend={e => {
+    if(hold < 2) {
+      hold = 0
+      clearInterval(timer)
+    }
+  }}
+  on:mouseup={e => {
+    if(hold < 2) {
+      hold = 0
+      clearInterval(timer)
+    }
+  }}
+  on:mousedown={startTimer}
+  on:touchstart={startTimer}
   on:contextmenu|preventDefault={handleRightClick}
   on:click={() => {
     activeSubject.set(subject)
