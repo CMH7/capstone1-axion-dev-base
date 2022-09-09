@@ -361,11 +361,11 @@
                 Danger Zone
                 <br>
                 <div class="columns is-multiline mt-3">
-                  <!-- Truncate field -->
+                  <!-- Reset field -->
                   <div class="column is-12">
                     <div class="columns is-multiline">
                       <div class="column is-3-desktop is-12-mobile dm-sans has-text-weight-normal txt-size-20 has-text-black">
-                        Truncate
+                        Reset
                       </div>
 
                       <div class="column is-6-desktop is-12-mobile">
@@ -373,7 +373,7 @@
                           <input
                             on:click={openComingSoon}
                             readonly
-                            value='Click here to truncate dashboard'
+                            value='Click here to reset dashboard'
                             class="cursor-pointer input bg-color-pastel-red dm-sans has-text-weight-normal txt-size-15 has-text-white"
                           />
                         </div>
@@ -381,7 +381,7 @@
                     </div>
                   </div>
 
-                  <!-- Truncate field -->
+                  <!-- Delete field -->
                   <div class="column pt-0 is-12">
                     <div class="columns is-multiline">
                       <div class="column is-3-desktop is-12-mobile dm-sans has-text-weight-normal txt-size-20 has-text-black">
