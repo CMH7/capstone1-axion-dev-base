@@ -2,7 +2,7 @@
   import { Dialog, Button } from 'svelte-materialify'
   import { subjectTruncationModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, activeSubject, userData, currentInterface, notifs } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
-import constants from '$lib/constants'
+  import constants from '$lib/constants'
 </script>
 
 <div>
@@ -32,28 +32,7 @@ import constants from '$lib/constants'
                 return false
               }
               return true
-            })
-
-            //local addition of notification (user)
-            const localNotification = {
-              id: bcrypt.hashSync(`${$selectedSubjectForSubjectSettings.name} subject has been truncated.`, Math.ceil(Math.random() * 10)),
-              message: `${$selectedSubjectForSubjectSettings.name} subject has been truncated.`,
-              isRead: false,
-              anInvitation: false,
-              aMention: false,
-              conversationID: '',
-              fromInterface: {
-                interf: `${$currentInterface}`,
-                subInterface: `Workspaces`
-              },
-              fromTask: `${$selectedSubjectForSubjectSettings.id}`,
-              for: {
-                self: true,
-                userID: `${$userData.id}`
-              }
-            }
-            userDataCopy.notifications.push(localNotification)
-            
+            })            
             userData.set(userDataCopy)
             subjectTruncationModalActive.set(false)
 
@@ -67,8 +46,7 @@ import constants from '$lib/constants'
                 ids: {
                   user: $userData.id,
                   subject: $selectedSubjectForSubjectSettings.id
-                },
-                notification: localNotification
+                }
               })
             }).then(async res => {
               const { subject } = await res.json()
@@ -86,7 +64,7 @@ import constants from '$lib/constants'
               notifsCopy.push({
                 msg: `Error in truncating subject, ${err}`,
                 type: 'error',
-                id: $notifs.length + 1
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
               })
               notifs.set(notifsCopy)
             })

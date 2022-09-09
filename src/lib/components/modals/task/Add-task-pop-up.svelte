@@ -16,29 +16,11 @@
     let loading = false
     let disabled = false
 
-    let workspaceMembers = []
-    let workspaceMembersLocal = []
-
-    userData.subscribe(value => {
-        value.subjects.every(subject => {
-            if(subject.id === $activeSubject.id) {
-                subject.workspaces.every(workspace => {
-                    if(workspace.id === $activeWorkspace.id){
-                        workspaceMembers = workspace.members
-                        workspaceMembers.forEach(member => {
-                            workspaceMembersLocal.push({
-                                name: `${member.name}${member.name === `${$userData.firstName} ${$userData.lastName}`? ' (Owner)' : ''}`,
-                                value: member
-                            })
-                        })
-                        return false
-                    }
-                    return true
-                })
-                return false
-            }
-            return true
-        })
+    let workspaceMembersLocal = $activeWorkspace.members.map(member => {
+        return {
+            name: `${member.name} ${member.name === `${$userData.firstName} ${$userData.lastName}` ? '(owner)': ''}`,
+            value: member
+        }
     })
 
     const levels = [
@@ -85,7 +67,7 @@
             notifsCopy.push({
                 msg: msg,
                 type: 'error',
-                id: $notifs.length + 1
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
             })
             notifs.set(notifsCopy)
 
@@ -100,7 +82,7 @@
         const semiDue = new Date(parseInt(year), parseInt(month), parseInt(day), parseInt(hour), parseInt(minute), 0, 0)
         const finalDueDateTime = semiDue.toISOString()
 
-        await fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
+        fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -125,8 +107,8 @@
          })
          .then(async res => {
             const { task } = await res.json()
-             let userDataCopy = $userData
-             userDataCopy.subjects.every(subject => {
+            let userDataCopy = $userData
+            userDataCopy.subjects.every(subject => {
                 if(subject.id === $activeSubject.id) {
                     subject.workspaces.every(workspace => {
                         if(workspace.id === $activeWorkspace.id) {
@@ -145,65 +127,25 @@
                     return false
                 }
                 return true
-             })
-
-             userData.set(userDataCopy)
-
-             await fetch(`${backURI}/User/create/notification`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    notification: {
-                        id: bcrypt.hashSync(`${taskID}${$userData.id}`, Math.ceil(Math.random() * 10)),
-                        message: `Task ${taskName} created`,
-                        anInvitation: false,
-                        aMention: false,
-                        conversationID: "",
-                        fromInterface: {
-                            interf: "Dashboard",
-                            subInterface: "Boards"
-                        },
-                        fromTask: `${taskID}`,
-                        for: {
-                            self: true,
-                            userID: `${$userData.id}`
-                        }
-                    }
-                })
-            }).then(async res => {
-                const { notification } = await res.json()
-                let userDataCopy = $userData
-                userDataCopy.notifications.push(notification)
-                userData.set(userDataCopy)
-                localStorage.setItem('userData', JSON.stringify($userData))
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: "Task created!",
-                    type: "success",
-                    id: notifsCopy.length + 1
-                })
-                notifs.set(notifsCopy)
-                loading = false
-                disabled = false
-                addTaskModalActive.set(false)
-            }).catch(err => {
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: `Error in creating notification for task creation, ${err}`,
-                    type: 'error',
-                    id: $notifs.length + 1
-                })
-                notifs.set(notifsCopy)
             })
+            userData.set(userDataCopy)
+            let notifsCopy = $notifs
+            notifsCopy.push({
+                msg: "Task created!",
+                type: "success",
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            })
+            notifs.set(notifsCopy)
+            loading = false
+            disabled = false
+            addTaskModalActive.set(false)
          })
          .catch(err => {
              let notifsCopy = $notifs
              notifsCopy.push({
                  msg: `Create task error, ${err}`,
                  type: 'error',
-                 id: $notifs.length + 1
+                 id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
              })
              notifs.set(notifsCopy)
              loading = false

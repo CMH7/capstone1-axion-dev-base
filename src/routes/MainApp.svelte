@@ -17,6 +17,7 @@
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
   import LoadingScreen from '$lib/components/LoadingScreen.svelte'
+  import bcrypt from 'bcryptjs'
 
   onMount(async ()=>{
     window.onpopstate = function () {
@@ -48,7 +49,7 @@
         {
           msg: "Please Sign in first.",
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         }
       )
       notifs.set(notifsCopy)
@@ -57,6 +58,13 @@
       localStorage.setItem("userData", JSON.stringify($userData))
     }else{
       const lastData = JSON.parse(localStorage.getItem('userData'))
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Auto login. Please wait.',
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      })
+      notifs.set(notifsCopy)
 
       await fetch(`${constants.backURI}/validUser`, {
         method: 'POST',

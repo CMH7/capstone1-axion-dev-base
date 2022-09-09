@@ -4,6 +4,7 @@
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
   import constants from '$lib/constants'
+  import bcrypt from 'bcryptjs'
 
   let width = 0
   let active = false
@@ -26,7 +27,7 @@
       notifsCopy.push({
         msg: `Getting all users failed, ${res.statusText}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       memberModalLoading.set(false)

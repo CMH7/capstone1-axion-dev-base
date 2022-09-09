@@ -1,6 +1,6 @@
 <script>
   import { Dialog, Divider, Icon, Switch, Button } from 'svelte-materialify'
-  import { subjectSettingsModalActive, selectedSubjectForSubjectSettings, modalChosenColor, subjectDeletionModalActive, activeSubject, userData, subjectTruncationModalActive, notifs, currentInterface, oldFavoriteStatus } from '$lib/stores/global-store'
+  import { subjectSettingsModalActive, selectedSubjectForSubjectSettings, modalChosenColor, subjectDeletionModalActive, activeSubject, userData, subjectTruncationModalActive, notifs, oldFavoriteStatus } from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
   import SubjectDeletionsModal from '$lib/components/modals/deletions/Subject-deletions-modal.svelte'
   import SubjectTruncationModal from '$lib/components/modals/truncations/Subject-truncation-modal.svelte'
@@ -38,7 +38,7 @@
       notifsCopy.push({
         msg: 'Name cannot be empty',
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       subjectName = $selectedSubjectForSubjectSettings.name
@@ -92,12 +92,19 @@
       activeSubjectCopy.isFavorite = subject.isFavorite
       activeSubjectCopy.name = subject.name
       activeSubject.set(activeSubjectCopy)
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `${subject.name} is updated`,
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      })
+      notifs.set(notifsCopy)
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `Error in updating the subject, ${err}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
     })

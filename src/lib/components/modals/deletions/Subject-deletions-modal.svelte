@@ -1,6 +1,6 @@
 <script>
   import { Dialog, Button } from 'svelte-materialify'
-  import { subjectDeletionModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, activeSubject, userData, notifs, currentInterface,  } from '$lib/stores/global-store'
+  import { subjectDeletionModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, userData, notifs, currentInterface,  } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
   import constants from '$lib/constants'
 </script>
@@ -64,12 +64,19 @@
               })
             }).then(async res => {
               const { error } = await res.json()
+              let notifsCopy = $notifs
+               notifsCopy.push({
+                 msg: `${$selectedSubjectForSubjectSettings.name} has been deleted`,
+                 type: 'success',
+                 id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+               })
+               notifs.set(notifsCopy)
             }).catch(err => {
              let notifsCopy = $notifs
               notifsCopy.push({
                 msg: `Error in deleting subject, ${err}`,
                 type: 'error',
-                id: $notifs.length + 1
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
               })
               notifs.set(notifsCopy)
             })

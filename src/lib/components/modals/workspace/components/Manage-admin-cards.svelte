@@ -4,6 +4,7 @@
   import { mdiAccountCircleOutline, mdiMinus, mdiPlus } from "@mdi/js"
   import { Avatar, Icon } from 'svelte-materialify'
   import { Pulse } from 'svelte-loading-spinners'
+  import bcrypt from "bcryptjs"
 
 
   export let member = constants.workspaceMember
@@ -65,7 +66,7 @@
       notifsCopy.push({
         msg: `${member.name} is assigned as admin`,
         type: 'success',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
 
@@ -77,7 +78,7 @@
       notifsCopy.push({
         msg: `Error in adding ${member.name} as admin. ${err}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       let userDataCopy = $userData
@@ -140,7 +141,7 @@
       notifsCopy.push({
         msg: `${member.name} is assigned as member`,
         type: 'success',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
 
@@ -152,7 +153,7 @@
       notifsCopy.push({
         msg: `Error in removing ${member.name} as admin. ${err}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       let userDataCopy = $userData
