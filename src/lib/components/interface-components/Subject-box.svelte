@@ -1,23 +1,10 @@
 <script>
-  import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, snack } from "$lib/stores/global-store"
-  import { ProgressLinear } from "svelte-materialify"
-  import axios from "axios"
   import constants from "$lib/constants"
-  import { userData, notifs } from '$lib/stores/global-store'
-
-  const backURI = constants.backURI
-  let userID = $userData.id
+  import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, subjectSettingsModalActive } from "$lib/stores/global-store"
+  import { ProgressLinear } from "svelte-materialify"
 
   // export the subject
-  export let subject = {
-    color: "primary",
-    id: "",
-    isFavorite: false,
-    name: "",
-    workspaces: [],
-    owned: true,
-    createdBy: ""
-  }
+  export let subject = constants.subject
 
   let mouseEnter = false
   let deleting = false
@@ -26,56 +13,51 @@
   * @param {any} e
   */
   function handleRightClick(e) {
-    snack.set(
-      {
-        msg: `Delete ${subject.name}?`,
-        active: true,
-        yes: () => {
-          deleting = true
-          axios.delete(`${backURI}/MainApp/delete/subject`, {
-            data: {
-              ids: {
-                user: userID,
-                subject: subject.id
-              }
-            }
-          })
-          .then(res => {
-            let notifsCopy = $notifs
-            notifsCopy.push({
-              msg: 'Subject deleted',
-              type: 'success',
-              id: notifsCopy.length + 1
-            })
-            notifs.set(notifsCopy)
-            const data = res.data
-            userData.set(data)
-          })
-          .catch(err => {
-            let notifsCopy = $notifs
-            notifsCopy.push({
-              msg: `Error in deleting, ${err}`,
-              type: 'error',
-              id: notifsCopy.length + 1
-            })
-            notifs.set(notifsCopy)
-          })
-        },
-        no: () => {}
-      }
-    )
+    activeSubject.set(subject)
+    selectedSubjectForSubjectSettings.set(subject)
+    modalChosenColor.set(subject.color)
+    oldFavoriteStatus.set(subject.isFavorite)
+    subjectSettingsModalActive.set(true)
+  }
 
-    return false
+  let timer
+  let hold = 0
+  const startTimer = () => {
+    timer = setInterval(() => {
+      if(hold >= 2) {
+        handleRightClick(null)
+        clearInterval(timer)
+        hold = 0
+      }
+      hold += 1
+    }, 150)
   }
 </script>
 
 <div
   disabled={deleting}
+  on:touchend={e => {
+    if(hold < 2) {
+      hold = 0
+      clearInterval(timer)
+    }
+  }}
+  on:mouseup={e => {
+    if(hold < 2) {
+      hold = 0
+      clearInterval(timer)
+    }
+  }}
+  on:mousedown={startTimer}
+  on:touchstart={startTimer}
   on:contextmenu|preventDefault={handleRightClick}
   on:click={() => {
     activeSubject.set(subject)
+    selectedSubjectForSubjectSettings.set(subject)
+    oldFavoriteStatus.set(subject.isFavorite)
+    modalChosenColor.set(subject.color)
     currentDashboardSubInterface.set("Workspaces")
-    breadCrumbsItems.set([{text: subject.name}])
+    breadCrumbsItems.set([{text: $activeSubject.name}])
   }}
   on:mouseenter={() => mouseEnter = true}
   on:mouseleave={() => mouseEnter = false}

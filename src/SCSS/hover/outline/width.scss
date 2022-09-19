@@ -1,0 +1,27 @@
+.hover\:outline-width {
+  //positive
+  &-0pxl:hover {outline-width: 0px;}
+  &-1pxl:hover {outline-width: 1px;}
+  &-2pxl:hover {outline-width: 2px;}
+  &-3pxl:hover {outline-width: 3px;}
+  &-4pxl:hover {outline-width: 4px;}
+  &-5pxl:hover {outline-width: 5px;}
+  &-6pxl:hover {outline-width: 6px;}
+  &-7pxl:hover {outline-width: 7px;}
+  &-8pxl:hover {outline-width: 8px;}
+  &-9pxl:hover {outline-width: 9px;}
+  &-10pxl:hover {outline-width: 10px;}
+
+  // negative
+  &-n0pxl:hover {outline-width: -0px;}
+  &-n1pxl:hover {outline-width: -1px;}
+  &-n2pxl:hover {outline-width: -2px;}
+  &-n3pxl:hover {outline-width: -3px;}
+  &-n4pxl:hover {outline-width: -4px;}
+  &-n5pxl:hover {outline-width: -5px;}
+  &-n6pxl:hover {outline-width: -6px;}
+  &-n7pxl:hover {outline-width: -7px;}
+  &-n8pxl:hover {outline-width: -8px;}
+  &-n9pxl:hover {outline-width: -9px;}
+  &-n10pxl:hover {outline-width: -10px;}
+}

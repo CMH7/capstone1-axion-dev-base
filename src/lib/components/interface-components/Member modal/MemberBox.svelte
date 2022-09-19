@@ -6,6 +6,7 @@
   import { userData, activeSubject, activeWorkspace, notifs } from '$lib/stores/global-store'
   import constants from '$lib/constants'
   import Skeleton from 'svelte-skeleton/Skeleton.svelte'
+  import bcrypt from 'bcryptjs'
 
   export let user = {
     isAdded: 0,
@@ -72,7 +73,7 @@
       notifsCopy.push({
         msg: `${user.data.name} is added to the workspace`,
         type: 'success',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       user.isAdded = 1
@@ -84,7 +85,7 @@
       notifsCopy.push({
         msg: `Error in adding member, ${err}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       active = false
@@ -137,7 +138,7 @@
       notifsCopy.push({
         msg: `${user.data.name} is removed in the workspace`,
         type: 'success',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       user.isAdded = 2
@@ -149,7 +150,7 @@
       notifsCopy.push({
         msg: `Error in adding member, ${err}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       active = false
@@ -197,7 +198,7 @@
         notifsCopy.push({
           msg: `Viewing user error, ${err}`,
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         isLoading = false
         viewUser = false

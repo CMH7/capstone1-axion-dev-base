@@ -2,18 +2,17 @@
   // @ts-nocheck
   // @ts-ignore
   import { onMount } from 'svelte'
-  import { fade } from 'svelte/transition'
-  import TaskCard from '$lib/components/interface-components/sub-interface-components/task/Task-card.svelte'
-	import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
 	import { Breadcrumbs } from 'svelte-materialify'
-  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace, taskBoardFilter } from "$lib/stores/global-store"
+  import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
-  import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
   import Fab from '$lib/components/FAB/FAB.svelte'
   import AddTaskPopUp from '$lib/components/modals/task/Add-task-pop-up.svelte'
   import constants from '$lib/constants'
-  import TaskViewModal from '$lib/components/modals/task/Task-view-modal.svelte'
+  import SubjectSettings from '$lib/components/modals/subject/Subject-settings.svelte';
+  import AddBoardModal from '$lib/components/modals/boards/Add-board-modal.svelte';
+  import BoardsInterface from './sub-interfaces/Boards-interface.svelte'
+  import ManageAdminModal from '$lib/components/modals/workspace/Manage-admin-modal.svelte';
 
   onMount(() => {
     if($breadCrumbsItems.length < 1) {
@@ -33,18 +32,6 @@
 
   let breadCrumbsItemsCopy = []
   breadCrumbsItems.subscribe(value => breadCrumbsItemsCopy = value)
-
-  currentDashboardSubInterface.subscribe(subinterface => {
-    if(subinterface === 'Boards') {
-      taskBoardFilter.set([...$activeWorkspace.boards.map(board => {
-          return {
-            boardID: board.id,
-            type: 'B1'
-          }
-        })])
-      console.log($taskBoardFilter)
-    }
-  })
 </script>
 
 <svelte:head>
@@ -53,7 +40,7 @@
 
 <svelte:window bind:outerWidth={width} />
 
-<div in:fade class="hero">
+<div class="hero">
   <div class="hero-head px-3">
     <Breadcrumbs  large bind:items={breadCrumbsItemsCopy} class="pb-0" let:item>
       <div slot="divider">></div>
@@ -84,81 +71,19 @@
 
   <!-- Body -->
   <div class="hero-body pt-4">
+    <SubjectSettings/>
+    <ManageAdminModal/>
+    <AddBoardModal/>
     <AddTaskPopUp/>
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
     {:else if $currentDashboardSubInterface === "Workspaces"}
       <WorkspacesInterface />
     {:else if $currentDashboardSubInterface === "Boards"}
-      <!-- <BoardsInterface /> -->
-      <TaskViewModal />
-      <MemberModal/>
-      <div class="columns is-mobile pb-5 boardcolumns">
-
-        <!-- Boards by user -->
-        {#each $allBoards as board}
-          <div class="column is-narrow-tablet is-12-mobile">
-            <div class="d-flex flex-row justify-center">
-              {#each $taskBoardFilter as filter}
-                {#if filter.boardID === board.id}
-                  <Boards name={board.name} color={board.color} taskCount={board.tasks.length} id={board.id}>
-                    {#if filter.type === 'A1'}
-                      {#each board.tasks.sort((a, b) => {
-                        return ('' + a.name).localeCompare(b.name);
-                      }) as task}
-                        <TaskCard {task} boardID={`${board.id}`} />
-                      {/each}
-                    {:else if filter.type === 'A2'}
-                      {#each board.tasks.sort((a, b) => {
-                        let comparison = 0
-                        if(a.name > b.name) {
-                          comparison = 1
-                        }else{
-                          comparison = -1
-                        }
-
-                        return comparison
-                      }) as task}
-                        <TaskCard {task} boardID={`${board.id}`} />
-                      {/each}
-                    {:else if filter.type === 'B1'}
-                      {#each board.tasks.filter(task => task.level == 3) as task}
-                        <TaskCard {task} boardID={`${board.id}`} />
-                      {/each}
-                    {:else if filter.type === 'B2'}
-                      {#each board.tasks.filter(task => task.level == 2) as task}
-                        <TaskCard {task} boardID={`${board.id}`} />
-                      {/each}
-                    {:else if filter.type === 'B3'}
-                      {#each board.tasks.filter(task => task.level == 1) as task}
-                        <TaskCard {task} boardID={`${board.id}`} />
-                      {/each}
-                    {/if}
-                  </Boards>
-                {/if}
-              {/each}
-            </div>
-          </div>
-        {/each}
-
-      </div>
+      {#key $allBoards}
+      <BoardsInterface/>
+      {/key}
     {/if}
   </div>
 </div>
 <Fab/>
-
-
-<style>
-  .boardcolumns {
-    min-height: 70vh;
-    overflow-x: scroll;
-  }
-  .boardcolumns::-webkit-scrollbar {
-    height: 5px;
-  }
-
-  .boardcolumns::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.35);
-  }
-</style>

@@ -20,32 +20,10 @@ export const currentInterface = writable("Dashboard");
 export let currentIndex = writable(0);
 
 // THis will determine the active subject (users clicked subject)
-export let activeSubject = writable(
-  {
-    color: "primary",
-    id: "",
-    isFavorite: false,
-    name: "",
-    workspaces: [],
-    owned: true,
-    createdBy: ""
-  }
-);
+export let activeSubject = writable(constants.subject)
 
 // This will determine the current active workspace (user selected workspace)
-export let activeWorkspace = writable(
-  {
-    members: [],
-    boards: [],
-    admins: [],
-    color: "primary",
-    id: "",
-    isFavorite: false,
-    name: "",
-    owned: true,
-    createdBy: ""
-  }
-);
+export let activeWorkspace = writable(constants.workspace)
 
 // This will determine the current board in which the current active task is residing
 export let activeBoard = writable('')
@@ -62,7 +40,7 @@ export let homevisited = writable(false);
 // Use hint
 export let useHint = writable(true);
 
-// error handler array
+// system notification array
 export let notifs = writable([]);
 
 // Logged in check
@@ -77,9 +55,6 @@ export let snack = writable(
     no: () => { }
   }
 )
-
-// member interface (modal) loading state
-export let memberModalLoading = writable(true)
 
 // All users
 export let allUsers = writable([])
@@ -102,8 +77,44 @@ export let taskBoardFilter = writable([])
 // add subject modal active
 export let addSubjectModalActive = writable(false)
 
+// subject settings modal active
+export let subjectSettingsModalActive = writable(false)
+
+// the selected subject upon opening the subject settings modal
+export let selectedSubjectForSubjectSettings = writable(constants.subject)
+
+// the original isFavorite value of the selectedSubject before opening the subject settings
+export let oldFavoriteStatus = writable(false)
+
+// the subject deletion modal active
+export let subjectDeletionModalActive = writable(false)
+
+// the subject truncation modal active
+export let subjectTruncationModalActive = writable(false)
+
 // add workspace modal active
 export let addWorkspaceModalActive = writable(false)
+
+// manage admins modal active
+export let manageAdminModalActive = writable(false)
+
+// the board settings modal active
+export let boardSettingsModalActive = writable(false)
+
+// the selected board for the board settings
+export let selectedBoard = writable(constants.board)
+
+// the board deletion modal active
+export let boardDeleteModalActive = writable(false)
+
+// is processing operations
+export let isProcessing = writable(false)
+
+// member interface (modal) loading state
+export let memberModalLoading = writable(true)
+
+// add board modal active
+export let addBoardModalActive = writable(false)
 
 // add task modal active
 export let addTaskModalActive = writable(false)

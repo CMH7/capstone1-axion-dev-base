@@ -1,30 +1,23 @@
 <script>
  // @ts-nocheck 
  import { fade } from 'svelte/transition'
-  import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
-  import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
-  import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte'
-  import { goto } from "$app/navigation" 
-  import { currentInterface, isLoggedIn, ismini, sidebarActive, transitionActive, snack, notifCenterOpen, userData } from "$lib/stores/global-store"
+ import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
+ import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
+ import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte'
+ import { goto } from "$app/navigation" 
+ import { isLoggedIn, transitionActive, snack, userData } from "$lib/stores/global-store"
 
-  let outerWidth = 0
-  let switchOn = true
-
-  let comingSoonModalOpen = false
-  const openComingSoon = () => {
-    if (!comingSoonModalOpen) {
-      comingSoonModalOpen = true
-    } else {
-      comingSoonModalOpen = false
-      comingSoonModalOpen = true
-    }
-  }
-
-  let allNotifications = 0
-  userData.subscribe(user => allNotifications = user.notifications.filter(notif => notif.isRead != true).length)
-
-  const clickOutside = () => notifCenterOpen.set(false)
-
+ let outerWidth = 0
+ let switchOn = true
+ let comingSoonModalOpen = false
+ const openComingSoon = () => {
+   if (!comingSoonModalOpen) {
+     comingSoonModalOpen = true
+   } else {
+     comingSoonModalOpen = false
+     comingSoonModalOpen = true
+   }
+ }
 </script>
 
 <svelte:head>
@@ -361,11 +354,11 @@
                 Danger Zone
                 <br>
                 <div class="columns is-multiline mt-3">
-                  <!-- Truncate field -->
+                  <!-- Reset field -->
                   <div class="column is-12">
                     <div class="columns is-multiline">
                       <div class="column is-3-desktop is-12-mobile dm-sans has-text-weight-normal txt-size-20 has-text-black">
-                        Truncate
+                        Reset
                       </div>
 
                       <div class="column is-6-desktop is-12-mobile">
@@ -373,7 +366,7 @@
                           <input
                             on:click={openComingSoon}
                             readonly
-                            value='Click here to truncate dashboard'
+                            value='Click here to reset dashboard'
                             class="cursor-pointer input bg-color-pastel-red dm-sans has-text-weight-normal txt-size-15 has-text-white"
                           />
                         </div>
@@ -381,7 +374,7 @@
                     </div>
                   </div>
 
-                  <!-- Truncate field -->
+                  <!-- Delete field -->
                   <div class="column pt-0 is-12">
                     <div class="columns is-multiline">
                       <div class="column is-3-desktop is-12-mobile dm-sans has-text-weight-normal txt-size-20 has-text-black">

@@ -284,6 +284,7 @@
   &-fit-content {min-height: fit-content;}
 
   // pixels
+  &-0 {min-height: 0px;}
   &-10 {min-height: 10px;}
   &-20 {min-height: 20px;}
   &-30 {min-height: 30px;}
@@ -321,6 +322,7 @@
   &-1000 {min-height: 1000px;}
 
   // percents
+  &-0p {min-height: 0%;}
   &-5p {min-height: 5%;}
   &-10p {min-height: 10%;}
   &-15p {min-height: 15%;}
@@ -406,6 +408,7 @@
 // HEIGHTS
 .max-h {
   // pixels
+  &-0 {max-height: 0px;}
   &-10 {max-height: 10px;}
   &-20 {max-height: 20px;}
   &-30 {max-height: 30px;}
@@ -442,6 +445,7 @@
   &-1000 {max-height: 1000px;}
 
   // percents
+  &-0p {max-height: 0%;}
   &-5p {max-height: 5%;}
   &-10p {max-height: 10%;}
   &-15p {max-height: 15%;}
@@ -526,6 +530,7 @@
 // HEIGHTS
 .maxmins-h {
   // pixels
+  &-0 {@extend .max-h-0; @extend .min-h-0;}
   &-10 {@extend .max-h-10; @extend .min-h-10;}
   &-20 {@extend .max-h-20; @extend .min-h-20;}
   &-30 {@extend .max-h-30; @extend .min-h-30;}
@@ -560,6 +565,7 @@
   &-1000 {@extend .max-h-1000; @extend .min-h-1000;}
 
   // percent
+  &-0p {@extend .max-h-0p; @extend .min-h-0p;}
   &-5p {@extend .max-h-5p; @extend .min-h-5p;}
   &-10p {@extend .max-h-10p; @extend .min-h-10p;}
   &-15p {@extend .max-h-15p; @extend .min-h-15p;}

@@ -1,10 +1,10 @@
 <script>
-  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading } from '$lib/stores/global-store';
+  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive, manageAdminModalActive } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
   import constants from '$lib/constants'
-  import axios from 'axios'
+  import bcrypt from 'bcryptjs'
 
   let width = 0
   let active = false
@@ -27,7 +27,7 @@
       notifsCopy.push({
         msg: `Getting all users failed, ${res.statusText}`,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       memberModalLoading.set(false)
@@ -61,13 +61,36 @@
           Create workspace
         </div>
       </ListItem>
-      <ListItem>Subject settings</ListItem>
+      <ListItem>
+        <div
+          on:click={e => {
+            modalChosenColor.set($activeSubject.color)
+            subjectSettingsModalActive.set(true)
+          }}
+        >
+          Subject settings
+        </div>
+      </ListItem>
       {:else}
       <ListItem>
         <div
           on:click={e => addTaskModalActive.set(true)}
         >
           Create task
+        </div>
+      </ListItem>
+      <ListItem>
+        <div
+          on:click={e => addBoardModalActive.set(true)}
+        >
+          Add board
+        </div>
+      </ListItem>
+      <ListItem>
+        <div
+          on:click={e => manageAdminModalActive.set(true)}
+        >
+          Manage admins
         </div>
       </ListItem>
       <ListItem>

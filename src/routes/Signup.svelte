@@ -30,7 +30,7 @@
       notifsCopy.push({
         msg: 'Password is invalid',
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       valid = false
@@ -103,7 +103,7 @@
       notifsCopy.push({
         msg: invalids,
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       return false
@@ -155,7 +155,7 @@
       notifsCopy.push({
           msg: msg,
           type: "error",
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       loading = false
@@ -165,7 +165,7 @@
       notifsCopy.push({
         msg: 'Age must be 18+',
         type: 'error',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       loading = false
@@ -175,7 +175,7 @@
       notifsCopy.push({
           msg: 'Password does not match. Please try again.',
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       password = ''
@@ -187,7 +187,7 @@
       notifsCopy.push({
           msg: 'Please Agree with the Terms and Condition together with the Privacy Policy of the Axion.',
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       loading = false
@@ -198,7 +198,7 @@
         notifsCopy.push({
           msg: 'Email is invalid',
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
         return false
@@ -210,7 +210,7 @@
       notifss.push({
         msg: 'Checking account availability.',
         type: 'success',
-        id: $notifs.length + 1
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifss)
 
@@ -230,7 +230,7 @@
           notifsCopy.push({
             msg: 'Email used has an existing account.',
             type: 'error',
-            id: $notifs.length + 1
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
           })
           notifs.set(notifsCopy)
 
@@ -268,7 +268,7 @@
                 notifsCopy.push({
                     msg: "Creation successful",
                     type: "success",
-                    id: $notifs.length + 1
+                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
                 })
                 notifs.set(notifsCopy)
                 loading = false
@@ -280,7 +280,7 @@
                 notifsCopy.push({
                     msg: "Creation failed. Please try again",
                     type: "error",
-                    id: $notifs.length + 1
+                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
                 })
                 notifs.set(notifsCopy)
                 loading = false
@@ -293,7 +293,7 @@
               {
                 msg: `Database error, ${err}`,
                 type: "error",
-                id: $notifs.length + 1
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
               }
             );
             notifs.set(notifsCopy)
@@ -307,7 +307,7 @@
         notifsCopy.push({
           msg: `Error checking existing account. ${err}`,
           type: 'error',
-          id: $notifs.length + 1
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
         notifs.set(notifsCopy)
       })

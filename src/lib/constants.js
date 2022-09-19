@@ -22,6 +22,14 @@ export default {
     owned: true,
     createdBy: ""
   },
+  board: {
+    tasks: [],
+    color: '',
+    createdBy: '',
+    createdOn: new Date().toISOString(),
+    id: '',
+    name: ''
+  },
   workspaceMember: {
     email: "",
     name: "",
