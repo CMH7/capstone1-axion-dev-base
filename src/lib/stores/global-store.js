@@ -98,7 +98,16 @@ export let addWorkspaceModalActive = writable(false)
 // manage admins modal active
 export let manageAdminModalActive = writable(false)
 
-// is processing operations in manage admins modal
+// the board settings modal active
+export let boardSettingsModalActive = writable(false)
+
+// the selected board for the board settings
+export let selectedBoard = writable(constants.board)
+
+// the board deletion modal active
+export let boardDeleteModalActive = writable(false)
+
+// is processing operations
 export let isProcessing = writable(false)
 
 // member interface (modal) loading state

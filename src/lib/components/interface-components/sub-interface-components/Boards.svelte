@@ -3,23 +3,29 @@
   import { mdiMinus, mdiFilter } from "@mdi/js"
   import { Icon, Divider, ClickOutside } from "svelte-materialify"
   import { fade } from 'svelte/transition'
-  import { taskBoardFilter } from '$lib/stores/global-store'
+  import { boardSettingsModalActive, modalChosenColor, selectedBoard, taskBoardFilter } from '$lib/stores/global-store'
+  import constants from "$lib/constants"
 
-  export let color = ""
-  export let name = ""
-  export let taskCount = 0
-  export let id = ''
+  export let board = constants.board
 
   // variables
   let showFilter = false
 </script>
 
-<div in:fade class="notification py-1 maxmins-w-250 max-h-550 px-2 rounded elevation-3 has-background-{color}-light">
+<div in:fade class="notification py-1 maxmins-w-250 max-h-550 px-2 rounded elevation-3 has-background-{board.color}-light">
   <!-- board header -->
   <div class="maxmins-w-100p is-flex is-align-items-center is-justify-content-space-between mb-3 pt-1">
     <!-- Board Title -->
-    <div class="fredokaone is-unselectable tag is-{color} is-medium">
-      {name}
+    <div
+      on:click={e => {
+        if(board.name === 'Todo' || board.name === 'In progress' || board.name === 'Done') return false
+        selectedBoard.set(board)
+        modalChosenColor.set(board.color)
+        boardSettingsModalActive.set(true)
+      }}
+      class="fredoka-reg is-unselectable {board.name === 'Todo' || board.name === 'In progress' || board.name === 'Done' ? '': 'is-clickable'} tag is-{board.color} is-small"
+    >
+      {board.name}
     </div>
 
     <!-- task count and filter button -->
@@ -27,7 +33,7 @@
 
       <!-- Task Count Text -->
       <div class="quicksands txt-size-13 is-unselectable">
-        {taskCount} {taskCount > 1 ? "Tasks" : "Task"}
+        {board.tasks.length} {board.tasks.length > 1 ? "Tasks" : "Task"}
       </div>
 
       <!-- filter icon -->
@@ -63,7 +69,7 @@
             on:click={() => {
               let taskBoardFilterCopy = $taskBoardFilter
               taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === id) {
+                if(filter.boardID === board.id) {
                   filter.type = 'A1'
                   return false
                 }
@@ -88,7 +94,7 @@
             on:click={() => {
               let taskBoardFilterCopy = $taskBoardFilter
               taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === id) {
+                if(filter.boardID === board.id) {
                   filter.type = 'A2'
                   return false
                 }
@@ -120,7 +126,7 @@
             on:click={() => {
               let taskBoardFilterCopy = $taskBoardFilter
               taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === id) {
+                if(filter.boardID === board.id) {
                   filter.type = 'B1'
                   return false
                 }
@@ -146,7 +152,7 @@
             on:click={() => {
               let taskBoardFilterCopy = $taskBoardFilter
               taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === id) {
+                if(filter.boardID === board.id) {
                   filter.type = 'B2'
                   return false
                 }
@@ -172,7 +178,7 @@
             on:click={() => {
               let taskBoardFilterCopy = $taskBoardFilter
               taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === id) {
+                if(filter.boardID === board.id) {
                   filter.type = 'B3'
                   return false
                 }

@@ -4,6 +4,8 @@
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
   import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'
   import TaskCard from '$lib/components/interface-components/sub-interface-components/task/Task-card.svelte'
+  import BoardSettings from '$lib/components/modals/boards/Board-settings.svelte'
+  import BoardDeletion from '$lib/components/modals/deletions/Board-deletion.svelte'
 
   let boards = []
   activeWorkspace.subscribe(workspace => boards = workspace.boards)
@@ -24,6 +26,8 @@
 <!-- <BoardsInterface /> -->
 <TaskViewModal />
 <MemberModal/>
+<BoardSettings />
+<BoardDeletion />
 <div class="columns is-mobile pb-5 overflow-x-scroll boardcolumns">
   <!-- Boards by user -->
   {#each boards as board}
@@ -31,7 +35,7 @@
       <div class="d-flex flex-row justify-center">
         {#each $taskBoardFilter as filter}
           {#if filter.boardID === board.id}
-            <Boards name={board.name} color={board.color} taskCount={board.tasks.length} id={board.id}>
+            <Boards {board}>
               {#if filter.type === 'A1'}
                 {#each board.tasks.sort((a, b) => {
                   return ('' + a.name).localeCompare(b.name);
