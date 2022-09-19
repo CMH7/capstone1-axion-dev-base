@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
   import { boardDeleteModalActive, selectedBoard, boardSettingsModalActive, userData, notifs, activeSubject, activeWorkspace, isProcessing } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
@@ -67,6 +68,7 @@
                  id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
                })
                notifs.set(notifsCopy)
+               selectedBoard.set(constants.board)
             }).catch(err => {
              let notifsCopy = $notifs
               notifsCopy.push({
