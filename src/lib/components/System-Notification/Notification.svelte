@@ -11,7 +11,7 @@
   setTimeout(() => {
     let newNotifs = $notifs.filter(notif => notif.id !== notif.id)
     notifs.set(newNotifs)
-  }, 3000)
+  }, 5000)
 
 </script>
 
