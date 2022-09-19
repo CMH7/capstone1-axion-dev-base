@@ -66,7 +66,7 @@
       })
       notifs.set(notifsCopy)
 
-      await fetch(`${constants.backURI}/validUser`, {
+      fetch(`${constants.backURI}/validUser`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
