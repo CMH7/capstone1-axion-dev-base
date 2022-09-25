@@ -1,11 +1,12 @@
 <script>
   //@ts-nocheck
   import { Dialog, Divider, Icon, Switch, Button } from 'svelte-materialify'
-  import { workspaceSettingsModalActive, selectedWorkspace, modalChosenColor, activeSubject, activeWorkspace, userData, notifs, oldFavoriteStatus, isProcessing } from '$lib/stores/global-store'
+  import { workspaceSettingsModalActive, selectedWorkspace, modalChosenColor, activeSubject, activeWorkspace, userData, notifs, oldFavoriteStatus, isProcessing, workspaceDeletionModalActive } from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
   import constants from '$lib/constants'
   import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
+	import WorkspaceDeletion from '../deletions/Workspace-deletion.svelte';
 
   let nameChanges = false
   let colorChanges = false
@@ -128,6 +129,8 @@
 </script>
 
 <svelte:window bind:outerWidth={width} />
+
+<WorkspaceDeletion/>
 
 <div class="select-none">
   <Dialog class="has-background-white px-3 py-2" bind:active={$workspaceSettingsModalActive} persistent >
@@ -282,6 +285,7 @@
             <div
               on:click={e => {
                 workspaceSettingsModalActive.set(false)
+                workspaceDeletionModalActive.set(true)
               }}
             >
               <Button size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Delete</Button>
