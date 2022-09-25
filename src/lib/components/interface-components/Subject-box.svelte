@@ -1,13 +1,11 @@
 <script>
   import constants from "$lib/constants"
   import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, subjectSettingsModalActive } from "$lib/stores/global-store"
-  import { ProgressLinear } from "svelte-materialify"
 
   // export the subject
   export let subject = constants.subject
 
   let mouseEnter = false
-  let deleting = false
   
   /**
   * @param {any} e
@@ -35,7 +33,6 @@
 </script>
 
 <div
-  disabled={deleting}
   on:touchend={e => {
     if(hold < 2) {
       hold = 0
@@ -62,11 +59,7 @@
   on:mouseenter={() => mouseEnter = true}
   on:mouseleave={() => mouseEnter = false}
   class="has-transition notification rounded {mouseEnter?`has-background-${subject.color}-dark`:""} is-{subject.color}"
->
-  {#if deleting}
-  <ProgressLinear color="red" backgroundColor="red" indeterminate />
-  {/if}
-  
+>  
   <p class="quicksands has-text-weight-semibold mb-0 is-unselectable is-absolute">
     {subject.name}
   </p>

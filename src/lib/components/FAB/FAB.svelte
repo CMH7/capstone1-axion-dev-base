@@ -1,5 +1,6 @@
 <script>
-  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive, manageAdminModalActive } from '$lib/stores/global-store';
+  //@ts-nocheck
+  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive, manageAdminModalActive, workspaceSettingsModalActive } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
@@ -100,7 +101,13 @@
           Manage members
         </div>
       </ListItem>
-      <ListItem>Workspace settings</ListItem>
+      <ListItem>
+        <div
+          on:click={e => workspaceSettingsModalActive.set(true)}
+        >
+          Workspace settings
+        </div>
+      </ListItem>
       {/if}
     </List>
   </Menu>

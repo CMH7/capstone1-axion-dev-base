@@ -9,10 +9,11 @@
   import Fab from '$lib/components/FAB/FAB.svelte'
   import AddTaskPopUp from '$lib/components/modals/task/Add-task-pop-up.svelte'
   import constants from '$lib/constants'
-  import SubjectSettings from '$lib/components/modals/subject/Subject-settings.svelte';
-  import AddBoardModal from '$lib/components/modals/boards/Add-board-modal.svelte';
+  import SubjectSettings from '$lib/components/modals/subject/Subject-settings.svelte'
+  import AddBoardModal from '$lib/components/modals/boards/Add-board-modal.svelte'
   import BoardsInterface from './sub-interfaces/Boards-interface.svelte'
-  import ManageAdminModal from '$lib/components/modals/workspace/Manage-admin-modal.svelte';
+  import ManageAdminModal from '$lib/components/modals/workspace/Manage-admin-modal.svelte'
+	import WorkspaceSettings from '$lib/components/modals/workspace/Workspace-settings.svelte'
 
   onMount(() => {
     if($breadCrumbsItems.length < 1) {
@@ -71,6 +72,7 @@
 
   <!-- Body -->
   <div class="hero-body pt-4">
+    <WorkspaceSettings/>
     <SubjectSettings/>
     <ManageAdminModal/>
     <AddBoardModal/>
