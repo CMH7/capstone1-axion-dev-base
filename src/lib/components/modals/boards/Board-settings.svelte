@@ -19,13 +19,16 @@
   })
 
   const changeName = (/** @type {string} */ newName) => {
+    editing = false
+    const tempName = newName
+    newName = newName.split(" ").join("")
     if($selectedBoard.name === newName) {
       nameChanges = false
       boardName = $selectedBoard.name
     }
-    if($selectedBoard.name !== newName && newName !== "") {
+    if($selectedBoard.name.split(" ").join("") !== newName && newName !== "") {
       nameChanges = true
-      boardName = newName
+      boardName = tempName
     }else if(newName === "") {
       nameChanges = false
       let notifsCopy = $notifs
@@ -39,11 +42,26 @@
     }
   }
 
-  const updateBoard = () => {
-    changeName(boardName)
+  const nameChecker = name => {
+    return name ? true : false
+  }
 
+  const updateBoard = () => {
+    if(!nameChecker(boardName)) {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Name cannot be empty',
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      })
+      notifs.set(notifsCopy)
+      boardName = $selectedBoard.name
+      return false
+    }
+
+    changeName(boardName)
     isProcessing.set(true)
-    editing = false
+
     let notifsCopy = $notifs
     notifsCopy.push({
       msg: 'Updating board...Please wait',
@@ -72,8 +90,6 @@
     }).then(async res => {
       const { board } = await res.json()
 
-      isProcessing.set(false)
-
       let userDataCopy = $userData
       userDataCopy.subjects.every(subject => {
         if(subject.id === $activeSubject.id) {
@@ -84,10 +100,11 @@
                   boarda.name = board.name
                   boarda.color = board.color
                   selectedBoard.set(boarda)
+                  return false
                 }
-                activeWorkspace.set(workspace)
                 return true
               })
+              activeWorkspace.set(workspace)
               return false
             }
             return true
@@ -98,7 +115,9 @@
         return true
       })
       userData.set(userDataCopy)
-      modalChosenColor.set($selectedBoard.color)
+      modalChosenColor.set(board.color)
+      boardSettingsModalActive.set(false)
+      isProcessing.set(false)
 
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -107,8 +126,9 @@
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
-
-      boardSettingsModalActive.set(false)
+      
+      nameChanges = false
+      colorChanges = false
     }).catch(err => {
       isProcessing.set(false)
 
@@ -125,7 +145,6 @@
   const keyDown = e => {
     if(editing && e.keyCode == 13 && $boardSettingsModalActive) {
       changeName(boardName)
-      editing = false
     }
   }
 
@@ -193,8 +212,7 @@
         {:else}
         <div
           on:click={e => {
-            changeName(boardName)
-            editing = false
+            if(!$isProcessing) changeName(boardName)
           }}
           class="ml-3 is-clickable hover-txt-style-underline"
         >
@@ -216,9 +234,10 @@
         
         <!-- colors -->
         <div class="is-flex">
-            {#each colors as color, i}
+            {#each colors as color}
             <div
               on:click={e => {
+                if($isProcessing) return false
                 modalChosenColor.set(color)
                 if($selectedBoard.color !== $modalChosenColor) {
                   colorChanges = true
@@ -226,7 +245,7 @@
                   colorChanges = false
                 }
               }}
-              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition is-clickable { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition {$isProcessing ? "" : "is-clickable"} { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
             >
               <!-- circle dot -->
               <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
@@ -240,7 +259,7 @@
         <!-- delete board -->
         <div
           on:click={e => {
-            if($isProcessing) return
+            if($isProcessing) return false
             boardSettingsModalActive.set(false)
             boardDeleteModalActive.set(true)
           }}
