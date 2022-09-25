@@ -98,6 +98,9 @@ export let workspaceSettingsModalActive = writable(false)
 // the selected workspace upon opening or holdig a workspace box and workspace settings modal
 export let selectedWorkspace = writable(constants.workspace)
 
+// the workspace deletion modal active
+export let workspaceDeletionModalActive = writable(false)
+
 // add workspace modal active
 export let addWorkspaceModalActive = writable(false)
 
