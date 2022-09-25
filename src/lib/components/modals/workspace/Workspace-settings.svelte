@@ -24,9 +24,15 @@
 
   const changeName = (/** @type {string} */ newName) => {
     editing = false
-    if($selectedWorkspace.name !== newName && newName !== "") {
+    const tempName = newName
+    newName = newName.split(" ").join("")
+    if($selectedWorkspace.name === newName) {
+      nameChanges = false
+      workspaceName = $selectedWorkspace.name
+    }
+    if($selectedWorkspace.name.split(" ").join("") !== newName && newName !== "") {
       nameChanges = true
-      workspaceName = newName
+      workspaceName = tempName
     }else if(newName === "") {
       nameChanges = false
       let notifsCopy = $notifs
@@ -63,6 +69,15 @@
     }
     changeName(workspaceName)
     isProcessing.set(true)
+
+    let notifsCopy = $notifs
+    notifsCopy.push({
+      msg: 'Updating workspace...Please wait',
+      type: 'success',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+    })
+    notifs.set(notifsCopy)
+
     // do http requests here
     fetch(`${constants.backURI}/MainApp/subject/workspace/edit`, {
       method: 'PUT',
@@ -93,7 +108,7 @@
               workspacea.isFavorite = workspace.isFavorite
               workspacea.name = workspace.name
               activeWorkspace.set(workspacea)
-              selectedWorkspace.set($activeWorkspace)
+              selectedWorkspace.set(workspacea)
               return false
             }
             return true
@@ -105,7 +120,8 @@
       })
       userData.set(userDataCopy)
       workspaceSettingsModalActive.set(false)
-
+      modalChosenColor.set(workspace.color)
+      oldFavoriteStatus.set(workspace.isFavorite)
       isProcessing.set(false)
 
       let notifsCopy = $notifs
@@ -115,8 +131,16 @@
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
+
+      nameChanges = false
+      colorChanges = false
+      favoriteChanges = false
     }).catch(err => {
       isProcessing.set(false)
+
+      nameChanges = false
+      colorChanges = false
+      favoriteChanges = false
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `Error in updating the workspace, ${err}`,
@@ -126,9 +150,15 @@
       notifs.set(notifsCopy)
     })
   }
+
+  const keyDown = e => {
+    if(editing && e.keyCode == 13 && $workspaceSettingsModalActive) {
+      changeName(boardName)
+    }
+  }
 </script>
 
-<svelte:window bind:outerWidth={width} />
+<svelte:window bind:outerWidth={width} on:keydown={keyDown} />
 
 <WorkspaceDeletion/>
 
@@ -188,14 +218,18 @@
           {:else}
             <Pulse color='#fddd3f' size={20} />
           {/if}
-        {:else}
+         {:else}
         <div
           on:click={e => {
-            changeName(workspaceName)
+            if(!$isProcessing) changeName(workspaceName)
           }}
           class="ml-3 is-clickable hover-txt-style-underline"
         >
+          {#if $isProcessing}
+          <Pulse color='#fddd3f' size={20} />
+          {:else}
           Done
+          {/if}
         </div>
         {/if}
       </div>
@@ -212,6 +246,7 @@
             {#each colors as color}
             <div
               on:click={e => {
+                if($isProcessing) return false
                 modalChosenColor.set(color)
                 if($selectedWorkspace.color !== $modalChosenColor) {
                   colorChanges = true
@@ -219,7 +254,7 @@
                   colorChanges = false
                 }
               }}
-              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition is-clickable { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition {$isProcessing ? "" : "is-clickable"} { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
             >
               <!-- circle dot -->
               <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
@@ -237,7 +272,7 @@
         
         <!-- switch -->
         <div class="is-flex is-align-items-center">
-            <Switch class='p-0 m-0' color='green' bind:checked={isFavorite} inset />
+            <Switch class='p-0 m-0' color='green' disabled={$isProcessing} bind:checked={isFavorite} inset />
         </div>
       </div>
 
@@ -284,11 +319,12 @@
           </div>
             <div
               on:click={e => {
+                if($isProcessing) return false
                 workspaceSettingsModalActive.set(false)
                 workspaceDeletionModalActive.set(true)
               }}
             >
-              <Button size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Delete</Button>
+              <Button disabled={$isProcessing} size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Delete</Button>
             </div>
         </div>
       </div>
