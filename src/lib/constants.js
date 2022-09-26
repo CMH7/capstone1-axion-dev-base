@@ -36,6 +36,7 @@ export default {
     profile: ""
   },
   user: {
+    invitations: [],
     subjects: [],
     notifications: [],
     id: '',
