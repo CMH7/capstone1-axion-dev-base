@@ -244,6 +244,7 @@
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+              invitations: [],
               subjects: [],
               notifications: [],
               age: parseInt(age),
