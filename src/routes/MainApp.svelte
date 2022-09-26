@@ -19,6 +19,28 @@
   import LoadingScreen from '$lib/components/LoadingScreen.svelte'
   import bcrypt from 'bcryptjs'
 
+  setInterval(() => {
+    fetch(`${constants.backURI}/validUser`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: $userData.email
+      })
+    }).then(async res => {
+      const user = await res.json()
+      userData.set(user)
+    }).catch(err => {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `Error in auto refresh state, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      })
+      notifs.set(notifsCopy)
+    })
+  }, 8000)
   onMount(async ()=>{
     window.onpopstate = function () {
       if(($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
