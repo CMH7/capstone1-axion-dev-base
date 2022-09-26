@@ -1,15 +1,17 @@
 <script>
+  //@ts-nocheck
   //@ts-ignore
   import { browser } from '$app/env'
   import { Avatar, Icon, Dialog, Button } from 'svelte-materialify'
   import { mdiAccountCircle, mdiClose } from '@mdi/js'
-  import { userData, activeSubject, activeWorkspace, notifs } from '$lib/stores/global-store'
+  import { userData, activeSubject, activeWorkspace, notifs, isProcessing } from '$lib/stores/global-store'
   import constants from '$lib/constants'
   import Skeleton from 'svelte-skeleton/Skeleton.svelte'
   import bcrypt from 'bcryptjs'
 
   export let user = {
     isAdded: 0,
+    id: '',
     data: {
       email: '',
       name: '',
@@ -19,7 +21,6 @@
 
   let active = false
   let viewUser = false
-  let isLoading = false
   let profile = ''
   let firstName = ''
   let lastName = ''
@@ -30,80 +31,75 @@
   let course = ''
 
 
-  const addMember = async () => {
-    isLoading = true
-    await fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/create/member`, {
+  const inviteMember = () => {
+    isProcessing.set(true)
+
+    fetch(`${constants.backURI}/MainApp/subject/workspace/invite`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(
-        {
-          ids: {
-            user: $userData.id,
-            subject: $activeSubject.id,
-            workspace: $activeWorkspace.id
+      body: JSON.stringify({
+        invitation: {
+          id: bcrypt.hashSync(`${$userData.id}${new Date().getMilliseconds()}${$activeWorkspace.id}${user.id}`),
+          message: `${$userData.firstName} ${$userData.lastName} has invited you to join ${$userData.gender === "Male" ? "his": $userData.gender === "Female" ? "her" : "their"} workspace \`${$activeWorkspace.name}\``,
+          subjectID: $activeSubject.id,
+          accepted: false,
+          to: {
+            id: user.id,
+            name: user.data.name
+          },
+          from: {
+            id: $userData.id,
+            name: `${$userData.firstName} ${$userData.lastName}`,
+            email: $userData.email,
+            profile: $userData.profile
           },
           workspace: {
-            member: user.data
+            id: $activeWorkspace.id,
+            name: $activeWorkspace.name
           }
         }
-      )
+      })
     })
     .then(async res => {
-      const data = await res.json()
-      userData.set(data)
-      userData.subscribe(user => {
-          user.subjects.every(subject => {
-              if(subject.id === $activeSubject.id) {
-                  activeSubject.set(subject)
-                  subject.workspaces.every(workspace => {
-                      if(workspace.id === $activeWorkspace.id) {
-                          activeWorkspace.set(workspace)
-                          return false
-                      }
-                      return true
-                  })
-                  return false
-              }
-              return true
-          })
-      })
+      const { invitation } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.invitations.push(invitation)
+      userData.set(userDataCopy)
+      isProcessing.set(false)
       let notifsCopy = $notifs
       notifsCopy.push({
-        msg: `${user.data.name} is added to the workspace`,
+        msg: `${user.data.name} is invited to the workspace`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
-      user.isAdded = 1
       active = false
-      isLoading = false
+      $isProcessing = false
     })
     .catch(err => {
       let notifsCopy = $notifs
+      isProcessing.set(false)
       notifsCopy.push({
-        msg: `Error in adding member, ${err}`,
+        msg: `Error in inviting member, ${err}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
       active = false
-      isLoading = false
+      $isProcessing = false
     })
   }
 
-  const removeMember = async () => {
-    isLoading = true
-    const res = await fetch(
-      `${constants.backURI}/MainApp/subject/workspace/delete/member`,
-      {
+  const removeMember = () => {
+    isProcessing.set(true)
+    fetch(`${constants.backURI}/MainApp/subject/workspace/member/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(
-          {
+        body: JSON.stringify({
             ids: {
               user: $userData.id,
               subject: $activeSubject.id
@@ -112,28 +108,25 @@
               id: $activeWorkspace.id,
               member: user.data
             }
-          }
-        )
+        })
       }
     ).then(async res => {
-      const data = await res.json()
-      userData.set(data)
-      userData.subscribe(user => {
-          user.subjects.every(subject => {
-              if(subject.id === $activeSubject.id) {
-                  activeSubject.set(subject)
-                  subject.workspaces.every(workspace => {
-                      if(workspace.id === $activeWorkspace.id) {
-                          activeWorkspace.set(workspace)
-                          return false
-                      }
-                      return true
-                  })
-                  return false
-              }
-              return true
+      const { members } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject.workspaces.every(workspace => {
+            if(workspace.id === $activeWorkspace.id) {
+              workspace.members = members
+              return false
+            }
+            return true
           })
+          return false
+        }
+        return true
       })
+
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `${user.data.name} is removed in the workspace`,
@@ -143,9 +136,10 @@
       notifs.set(notifsCopy)
       user.isAdded = 2
       active = false
-      isLoading = false
+      isProcessing.set(false)
     })
     .catch(err => {
+      isProcessing.set(false)
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `Error in adding member, ${err}`,
@@ -154,12 +148,11 @@
       })
       notifs.set(notifsCopy)
       active = false
-      isLoading = false
     })
   }
 
-  const view = async () => {
-    isLoading = true
+  const view = () => {
+    isProcessing.set(true)
     viewUser = true
     if(browser && sessionStorage.getItem(`${user.data.email}`)) {
       const userV = JSON.parse(sessionStorage.getItem(`${user.data.email}`))
@@ -171,9 +164,9 @@
       school = userV.school
       course = userV.course
       email = userV.email
-      isLoading = false
+      $isProcessing = false
     } else {
-      await fetch(`${constants.backURI}/validUser`, {
+      fetch(`${constants.backURI}/validUser`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -192,7 +185,7 @@
         school = userV.school
         course = userV.course
         email = userV.email
-        isLoading = false
+        isProcessing.set(false)
       }).catch(err => {
         let notifsCopy = $notifs
         notifsCopy.push({
@@ -200,7 +193,7 @@
           type: 'error',
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         })
-        isLoading = false
+        isProcessing.set(false)
         viewUser = false
       })
     }
@@ -217,6 +210,7 @@
 
 <svelte:window bind:outerWidth />
 
+<!-- View User Modal -->
 <Dialog
   persistent
   bind:active={viewUser}
@@ -226,7 +220,7 @@
   <div class="is-flex">
     <!-- profile -->
     <div class="is-flex is-align-items-center">
-      {#if isLoading}
+      {#if $isProcessing}
         <div class="p-2">
           <Skeleton height={90} width={90} >
             <circle cx={45} cy={45} r={45} />
@@ -257,7 +251,7 @@
           bind:clientWidth={nameContainerWidth}
           class="dm-sans txt-weight-400 is-size-3-desktop is-size-4-tablet is-size-5-mobile"
         >
-          {#if isLoading}
+          {#if $isProcessing}
           <div class="mt-1"/>
           <Skeleton width={nameContainerWidth} height={36}>
             <rect width={nameContainerWidth} height={36} />
@@ -272,7 +266,7 @@
           bind:clientWidth={ageContainerWidth}
           class="is-size-7-mobile"
         >
-          {#if isLoading}
+          {#if $isProcessing}
           <Skeleton width={ageContainerWidth} height={15}>
             <rect width={ageContainerWidth} height={15} />
           </Skeleton>
@@ -286,7 +280,7 @@
           bind:clientWidth={ageContainerWidth}
           class="is-size-7-mobile"
         >
-          {#if isLoading}
+          {#if $isProcessing}
           <Skeleton width={ageContainerWidth} height={15}>
             <rect width={ageContainerWidth} height={15} />
           </Skeleton>
@@ -300,7 +294,7 @@
           bind:clientWidth={courseContainerWidth}
           class="is-size-7-mobile"
         >
-          {#if isLoading}
+          {#if $isProcessing}
           <Skeleton width={courseContainerWidth} height={15}>
             <rect width={courseContainerWidth} height={15} />
           </Skeleton>
@@ -314,7 +308,7 @@
           bind:clientWidth={schoolContainerWidth}
           class="is-size-7-mobile"
         >
-          {#if isLoading}
+          {#if $isProcessing}
           <Skeleton width={schoolContainerWidth} height={15}>
             <rect width={schoolContainerWidth} height={15} />
           </Skeleton>
@@ -340,7 +334,7 @@
     bind:clientHeight={bioContainerHeight}
     class="maxmins-w-100p maxmins-h-100 is-flex is-justify-content-center is-align-items-center"
   >
-    {#if isLoading}
+    {#if $isProcessing}
       <Skeleton width={bioContainerWidth} height={bioContainerHeight}>
         <rect width={bioContainerWidth} height={bioContainerHeight} />
       </Skeleton>
@@ -360,24 +354,24 @@
     <div class="is-flex is-justify-content-flex-end">
       <div
         on:click={() => {
-          if(isLoading) return false
+          if($isProcessing) return false
           if(user.isAdded == 1) removeMember()
-          if(user.isAdded != 1) addMember()
+          if(user.isAdded != 1) inviteMember()
         }}
         class="mx-1"
       >
-        <Button disabled={isLoading} text class="has-background-{user.isAdded == 1 ? 'danger' : 'success'} has-text-white button {isLoading? 'is-loading': ''}">
+        <Button disabled={$isProcessing} text class="has-background-{user.isAdded == 1 ? 'danger' : 'success'} has-text-white button {$isProcessing? 'is-loading': ''}">
           {user.isAdded == 1 ? 'Remove' : 'Invite'}
         </Button>
       </div>
       <div
         on:click={e => {
-          if(isLoading) return false
+          if($isProcessing) return false
           active = false
         }}
         class="mx-1"
       >
-        <Button disabled={isLoading} text class="has-background-danger-dark has-text-white button {isLoading? 'is-loading': ''}">
+        <Button disabled={$isProcessing} text class="has-background-danger-dark has-text-white button {$isProcessing? 'is-loading': ''}">
           Cancel
         </Button>
       </div>
