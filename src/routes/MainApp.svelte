@@ -17,30 +17,35 @@
   import { goto } from '$app/navigation'
   import constants from '$lib/constants'
   import LoadingScreen from '$lib/components/LoadingScreen.svelte'
+  import Invitations from '$lib/components/modals/invitations/invitations.svelte'
+  import Pusher from 'pusher-js'
   import bcrypt from 'bcryptjs'
 
-  setInterval(() => {
-    fetch(`${constants.backURI}/validUser`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: $userData.email
-      })
-    }).then(async res => {
-      const user = await res.json()
-      userData.set(user)
-    }).catch(err => {
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: `Error in auto refresh state, ${err}`,
-        type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+  let pusher = new Pusher('8e02120d4843c3a07489', {
+    cluster: 'ap1'
+  })
+
+  let channel = pusher.subscribe(`${$userData.id}`)
+
+  // ON LOGGED IN
+  channel.bind('loggedIn', function(data) {
+    let notifsCopy = $notifs
+    notifsCopy.push({
+      msg: `${data.message} from server`,
+      type: 'success',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
     })
-  }, 8000)
+    notifs.set(notifsCopy)
+  })
+
+  // ON NEW INCOMING INVATION
+  channel.bind('newInvitation', function(data) {
+    let userDataCopy = $userData
+    userDataCopy.invitations.push(data.invitation)
+    userDataCopy.notifications.push(data.notification)
+    userData.set(userDataCopy)
+  })
+
   onMount(async ()=>{
     window.onpopstate = function () {
       if(($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
@@ -124,6 +129,7 @@
 <MainAppHeader/>
 <MainAppDrawerSidebar/>
 <Overlay/>
+<Invitations />
 
 <!-- Snackbar -->
 <Snackbar class="flex-column" active={$snack.active} absolute bottom center>
