@@ -3,7 +3,7 @@
   import { Dialog, Button } from 'svelte-materialify'
   import { cancelInvModalActive, invModalActive, selectedInvitation, isProcessing, userData, notifs } from '$lib/stores/global-store'
 	import constants from '$lib/constants'
-	import bcrypt from 'bcryptjs/dist/bcrypt'
+	import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
 
   const cancelInvitation = async () => {
