@@ -10,8 +10,7 @@
     notifCenterOpenCopy = value
   })
 
-  let allNotifications = 0
-  userData.subscribe(user => allNotifications = user.notifications.filter(notif => notif.isRead != true).length)
+  let allNotifications = $userData.notifications.filter(notification => notification.isRead != true).length
 
   const clickOutside = () => notifCenterOpen.set(false)
 

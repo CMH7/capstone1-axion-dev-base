@@ -8,10 +8,7 @@
   import bcrypt from 'bcryptjs'
 
   let outerWidth
-  let allNotifications = []
-  userData.subscribe(user => {
-    allNotifications = user.notifications
-  })
+  let allNotifications = $userData.notifications
 
   const clearAllNotifs = async () => {
     setTimeout(() => {
