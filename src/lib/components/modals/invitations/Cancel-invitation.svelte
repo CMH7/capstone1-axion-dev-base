@@ -9,7 +9,7 @@
   const cancelInvitation = async () => {
     isProcessing.set(true)
 
-    fetch(`${$userData.id}/${$selectedInvitation.id}/${$selectedInvitation.to.id}/cancel`, {
+    fetch(`${constants.backURI}/${$userData.id}/${$selectedInvitation.id}/${$selectedInvitation.to.id}/cancel`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
