@@ -20,6 +20,7 @@
   import Invitations from '$lib/components/modals/invitations/invitations.svelte'
   import Pusher from 'pusher-js'
   import bcrypt from 'bcryptjs'
+	import CancelInvitation from '$lib/components/modals/invitations/Cancel-invitation.svelte';
 
   let pusher = new Pusher('8e02120d4843c3a07489', {
     cluster: 'ap1'
@@ -38,11 +39,19 @@
     notifs.set(notifsCopy)
   })
 
-  // ON NEW INCOMING INVATION
+  // ON NEW INCOMING INVITATION
   channel.bind('newInvitation', function(data) {
     let userDataCopy = $userData
     userDataCopy.invitations.push(data.invitation)
-    userDataCopy.notifications.push(data.notification)
+    userDataCopy.notifications.unshift(data.notification)
+    userData.set(userDataCopy)
+  })
+
+  // ON NEW CANCELLED INVITATION
+  channel.bind('invitationCancelled', function(data) {
+    let userDataCopy = $userData
+    userDataCopy.invitations = data.invitations
+    userDataCopy.notifications.unshift(data.notification)
     userData.set(userDataCopy)
   })
 
@@ -129,6 +138,7 @@
 <MainAppHeader/>
 <MainAppDrawerSidebar/>
 <Overlay/>
+<CancelInvitation/>
 <Invitations />
 
 <!-- Snackbar -->
