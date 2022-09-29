@@ -9,11 +9,18 @@
   const cancelInvitation = async () => {
     isProcessing.set(true)
 
-    fetch(`${constants.backURI}/${$userData.id}/${$selectedInvitation.id}/${$selectedInvitation.to.id}/cancel`, {
+    fetch(`${constants.backURI}/MainApp/subject/workspace/invitation/cancel`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          toUser: $selectedInvitation.to.id,
+          invitation: $selectedInvitation.id
+        }
+      })
     }).then(async res => {
       const { invitations } = await res.json()
       let userDataCopy = $userData
@@ -21,6 +28,8 @@
       userData.set(userDataCopy)
 
       isProcessing.set(false)
+      selectedInvitation.set(constants.invitation)
+      cancelInvModalActive.set(false)
       
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -30,6 +39,7 @@
       })
       notifs.set(notifsCopy)
     }).catch(err => {
+      console.log(err)
       isProcessing.set(false)
       let notifsCopy = $notifs
       notifsCopy.push({
