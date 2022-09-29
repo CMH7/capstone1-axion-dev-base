@@ -48,10 +48,11 @@
   })
 
   // ON NEW CANCELLED INVITATION
-  channel.bind('invitationCancelled', function(data) {
+  channel.bind('invitationCancelled', async function(data) {
+    const allNotifications = await fetch(`${constants.backURI}/${$userData.id}/notifications`)
     let userDataCopy = $userData
     userDataCopy.invitations = data.invitations
-    userDataCopy.notifications.unshift(data.notification)
+    userDataCopy.notifications = allNotifications
     userData.set(userDataCopy)
   })
 
