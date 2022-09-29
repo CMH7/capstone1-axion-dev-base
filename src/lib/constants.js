@@ -82,6 +82,26 @@ export default {
     status: "",
     level: 1  
   },
+  invitation: {
+    id: '',
+    message: '',
+    subjectID: '',
+    accepted: false,
+    to: {
+      id: '',
+      name: ''
+    },
+    from: {
+      id: '',
+      name: '',
+      email: '',
+      profile: '',
+    },
+    workspace: {
+      id: '',
+      name: ''
+    }
+  },
   backURI: "https://axion-back.herokuapp.com",
   lowerCasedLetters: new String('abcdefghijklmnopqrstuvwxyz').split(''),
   upperCasedLetters: new String('ABCDEFGHIJKLMNOPQRSTUVWXYZ').split(''),

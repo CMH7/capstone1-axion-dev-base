@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { Icon } from "svelte-materialify"
   import { notifCenterOpen, userData, notifs } from '$lib/stores/global-store'
   import { mdiNotificationClearAll } from "@mdi/js"

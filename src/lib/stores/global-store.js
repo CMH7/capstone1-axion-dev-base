@@ -143,6 +143,12 @@ export let taskViewModalActive = writable(false)
 // invitations/collaboration modal active
 export let invModalActive = writable(false)
 
+// cancel invitation modal active
+export let cancelInvModalActive = writable(false)
+
+// selected invitation
+export let selectedInvitation = writable(constants.invitation)
+
 
 // ##### STORE OF TASK'S CHATS #####
 // current tab of specific task

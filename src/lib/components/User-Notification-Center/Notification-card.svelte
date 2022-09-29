@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { fly } from 'svelte/transition'
   import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, selectedSubjectForSubjectSettings } from '$lib/stores/global-store'
   import constants from '$lib/constants'
@@ -113,21 +114,7 @@
       })
       taskViewModalActive.set(true)
     }
-    
-    if(notification.fromInterface.subInterface === 'Workspaces'){
-      currentInterface.set(`${notification.fromInterface.interf}`)
-      $userData.subjects.every(subject => {
-        if(subject.id === notification.fromTask) {
-          activeSubject.set(subject)
-          selectedSubjectForSubjectSettings.set(subject)
-          return false
-        }
-        return true
-      })
-      currentDashboardSubInterface.set(`${notification.fromInterface.subInterface}`)
-      breadCrumbsItems.set([])
-      breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeSubject.name}])
-    }
+
     if(!notification.isRead) setReadNotif(notification.id)
   }
 
