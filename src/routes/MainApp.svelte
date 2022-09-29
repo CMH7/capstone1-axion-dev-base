@@ -26,36 +26,6 @@
     cluster: 'ap1'
   })
 
-  let channel = pusher.subscribe(`${$userData.id}`)
-
-  // ON LOGGED IN
-  channel.bind('loggedIn', function(data) {
-    let notifsCopy = $notifs
-    notifsCopy.push({
-      msg: `${data.message} from server`,
-      type: 'success',
-      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    })
-    notifs.set(notifsCopy)
-  })
-
-  // ON NEW INCOMING INVITATION
-  channel.bind('newInvitation', function(data) {
-    let userDataCopy = $userData
-    userDataCopy.invitations.push(data.invitation)
-    userDataCopy.notifications.unshift(data.notification)
-    userData.set(userDataCopy)
-  })
-
-  // ON NEW CANCELLED INVITATION
-  channel.bind('invitationCancelled', async function(data) {
-    const allNotifications = await fetch(`${constants.backURI}/${$userData.id}/notifications`)
-    let userDataCopy = $userData
-    userDataCopy.invitations = data.invitations
-    userDataCopy.notifications = allNotifications
-    userData.set(userDataCopy)
-  })
-
   onMount(async ()=>{
     window.onpopstate = function () {
       if(($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
@@ -114,6 +84,41 @@
       }).then(async res => {
         const data = await res.json()
         userData.set(data)
+        
+        let channel = pusher.subscribe(`${$userData.id}`)
+
+        // ON LOGGED IN
+        channel.bind('loggedIn', function(data) {
+          let notifsCopy = $notifs
+          notifsCopy.push({
+            msg: `${data.message} from server`,
+            type: 'success',
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          })
+          notifs.set(notifsCopy)
+        })
+
+        // ON NEW INCOMING INVITATION
+        channel.bind('newInvitation', function(data) {
+          console.log('event: newInvitation received')
+          let userDataCopy = $userData
+          userDataCopy.invitations.push(data.invitation)
+          userDataCopy.notifications.unshift(data.notification)
+          userData.set(userDataCopy)
+        })
+
+        // ON NEW CANCELLED INVITATION
+        channel.bind('invitationCancelled', async function(data) {
+          console.log('event: invitationCancelled received')
+          const { notifications } = await fetch(`${constants.backURI}/${$userData.id}/notifications`)
+          console.log('notification fetched')
+          let userDataCopy = $userData
+          userDataCopy.invitations = userDataCopy.invitations.filter(invitation => invitation.id !== data.invitation.id)
+          userDataCopy.notifications = notifications
+          userData.set(userDataCopy)
+        })
+
+
         isLoggedIn.set(true)
       }).catch(err => {
         console.error(err)
