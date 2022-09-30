@@ -11,6 +11,7 @@
   export let outgoing = true
 
   const acceptInvite = async e => {
+    selectedInvitation.set(invitation)
     isProcessing.set(true)
 
     fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/create/member`, {
@@ -23,7 +24,8 @@
           userA: $userData.id,
           userB: invitation.from.id,
           subject: invitation.subjectID,
-          workspace: invitation.workspace.id
+          workspace: invitation.workspace.id,
+          invitation: $selectedInvitation.id
         },
         workspace: {
           member: {
@@ -34,9 +36,10 @@
         }
       })
     }).then(async res => {
-      const { subject } = await res.json()
+      const { subject, invitationID } = await res.json()
       let userDataCopy = $userData
       userDataCopy.subjects.push(subject)
+      userDataCopy.invitations = userDataCopy.invitations.filter(invitationa => invitationa.id !== invitationID)
       userData.set(userDataCopy)
 
       isProcessing.set(false)
@@ -102,7 +105,7 @@
         if(!$isProcessing) acceptInvite()
       }}
     >
-      {#if $isProcessing}
+      {#if $isProcessing && invitation.id === $selectedInvitation.id}
       <Pulse size={20} color='#191a48' />
       {:else}
       <Button depressed text size='x-small' class='has-background-success-dark has-text-white'>Accept</Button>
@@ -110,7 +113,7 @@
     </div>
     <div
       on:click={e=>{}}
-      class='{$isProcessing ? 'undisp': ''} ml-3'
+      class='{$isProcessing && invitation.id === $selectedInvitation.id? 'undisp': ''} ml-3'
     >
       <Button depressed text size='x-small' class='has-background-danger-light'>Reject</Button>
     </div>
