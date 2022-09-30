@@ -3,6 +3,7 @@
   import { Dialog, Divider, Icon, Radio, Button } from 'svelte-materialify'
   import { cancelInvModalActive, invModalActive, selectedInvitation, userData } from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
+	import InvitationBox from './components/Invitation-box.svelte';
 
   let group = 1
 
@@ -43,42 +44,15 @@
     <!-- invitations -->
     <div class="maxmins-h-300 overflow-y-auto px-1">
       {#if group == 1}
-      {#each $userData.invitations.reverse() as invitation, i}
+      {#each $userData.invitations as invitation, i}
       {#if invitation.from.id === $userData.id}
-      <div class="hover-bg-grey-lighter-grey-light has-transition py-1 px-2 mb-1 rounded">
-        <span class="txt-size-15 has-text-weight-semibold">
-          Invitation for {invitation.to.name}
-        </span>
-        <br>
-        <div class="is-flex is-justify-content-space-between is-align-items-center">
-          <div class="txt-size-13">
-            status: <span class="is-italic">pending</span>
-          </div>
-          <div
-            on:click={e => {
-              selectedInvitation.set(invitation)
-              invModalActive.set(false)
-              cancelInvModalActive.set(true)
-            }}
-          >
-            <Button depressed text size='x-small'>Cancel</Button>
-          </div>
-        </div>
-      </div>
+      <InvitationBox {invitation} outgoing={true} />
       {/if}
       {/each}
       {:else}
       {#each $userData.invitations as invitation, i}
       {#if invitation.to.id === $userData.id}
-      <div class="bg-color-yaz-grey-light py-1 px-2 mb-1 rounded">
-        <span class="txt-size-15 has-text-weight-semibold">
-          Invitation from {invitation.from.name}
-        </span>
-        <br>
-        <span class="txt-size-13">
-          {invitation.message}
-        </span>
-      </div>
+      <InvitationBox {invitation} outgoing={false} />
       {/if}
       {/each}
       {/if}

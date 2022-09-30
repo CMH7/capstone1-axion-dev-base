@@ -7,7 +7,7 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData } from "$lib/stores/global-store"
+  import { breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, modalChosenColor, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
   import CalendarInterface from "$lib/interfaces/Calendar-interface.svelte"
@@ -102,7 +102,7 @@
         channel.bind('newInvitation', function(data) {
           console.log('event: newInvitation received')
           let userDataCopy = $userData
-          userDataCopy.invitations.push(data.invitation)
+          userDataCopy.invitations.unshift(data.invitation)
           userDataCopy.notifications.unshift(data.notification)
           userData.set(userDataCopy)
         })
@@ -118,7 +118,39 @@
           userData.set(userDataCopy)
         })
 
+        // ON INVITATION ACCEPT
+        channel.bind('invitationAccepted', function(data) {
+          console.log('event: invitationAccepted recevied')
+          let userDataCopy = $userData
+          userDataCopy.subjects.every(subjecta => {
+            if(subjecta.id === data.subjectID) {
+              subjecta.workspace.every(workspace => {
+                if(workspace.id === data.workspaceID) {
+                  workspace.members.push(data.member)
+                  return false
+                }
+                return true
+              })
+              return false
+            }
+            return true
+          })
+        })
 
+        
+        currentInterface.set('Dashboard')
+        currentDashboardSubInterface.set('Subjects')
+        activeSubject.set(constants.subject)
+        activeWorkspace.set(constants.workspace)
+        activeBoard.set(constants.board)
+        selectedSubjectForSubjectSettings.set(constants.subject)
+        selectedWorkspace.set(constants.workspace)
+        selectedBoard.set(constants.board)
+        selectedInvitation.set(constants.invitation)
+        activeTask.set(constants.task)
+        allBoards.set([])
+        modalChosenColor.set('')
+        isProcessing.set(false)
         isLoggedIn.set(true)
       }).catch(err => {
         console.error(err)
