@@ -124,9 +124,10 @@
           let userDataCopy = $userData
           userDataCopy.subjects.every(subjecta => {
             if(subjecta.id === data.subjectID) {
-              subjecta.workspace.every(workspace => {
+              subjecta.workspaces.every(workspace => {
                 if(workspace.id === data.workspaceID) {
                   workspace.members.push(data.member)
+                  activeWorkspace.set(workspace)
                   return false
                 }
                 return true
@@ -135,9 +136,11 @@
             }
             return true
           })
+          userDataCopy.invitations = userDataCopy.invitations.filter(invitationa => invitationa.id !== data.invitationID)
+          userData.set(userDataCopy)
         })
 
-        
+
         currentInterface.set('Dashboard')
         currentDashboardSubInterface.set('Subjects')
         activeSubject.set(constants.subject)
