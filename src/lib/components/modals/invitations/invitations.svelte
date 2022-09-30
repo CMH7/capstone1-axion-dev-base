@@ -44,13 +44,13 @@
     <!-- invitations -->
     <div class="maxmins-h-300 overflow-y-auto px-1">
       {#if group == 1}
-      {#each $userData.invitations as invitation, i}
+      {#each $userData.invitations as invitation}
       {#if invitation.from.id === $userData.id}
       <InvitationBox {invitation} outgoing={true} />
       {/if}
       {/each}
       {:else}
-      {#each $userData.invitations as invitation, i}
+      {#each $userData.invitations as invitation}
       {#if invitation.to.id === $userData.id}
       <InvitationBox {invitation} outgoing={false} />
       {/if}
