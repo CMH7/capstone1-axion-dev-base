@@ -63,20 +63,31 @@
       })
     })
     .then(async res => {
-      const { invitation } = await res.json()
-      let userDataCopy = $userData
-      userDataCopy.invitations.push(invitation)
-      userData.set(userDataCopy)
-      isProcessing.set(false)
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: `${user.data.name} is invited to the workspace`,
-        type: 'success',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
-      active = false
-      $isProcessing = false
+      const { existing, invitation } = await res.json()
+
+      if(existing) {
+        isProcessing.set(false)
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `${user.data.name} is existing to the workspace`,
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        })
+        notifs.set(notifsCopy)
+      } else {
+        let userDataCopy = $userData
+        userDataCopy.invitations.push(invitation)
+        userData.set(userDataCopy)
+        isProcessing.set(false)
+        let notifsCopy = $notifs
+        notifsCopy.push({
+          msg: `${user.data.name} is invited to the workspace`,
+          type: 'success',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        })
+        notifs.set(notifsCopy)
+        active = false
+      }
     })
     .catch(err => {
       let notifsCopy = $notifs
