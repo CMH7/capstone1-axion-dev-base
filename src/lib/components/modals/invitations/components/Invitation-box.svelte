@@ -38,10 +38,62 @@
     }).then(async res => {
       const { subject, invitationID } = await res.json()
       let userDataCopy = $userData
-      userDataCopy.subjects.push(subject)
+
+      // check if subject is existing if not create it else check if workspace is existing if not add it else update it.
+      let sExisting = false, wExisting = false
+      userDataCopy.subjects.every(subjecta => {
+        if(subjecta.id === subject.id) {
+          sExisting = true
+          return false
+        }
+        return true
+      })
+
+      if(sExisting) {
+        userDataCopy.subjects.every(subjecta => {
+          if(subjecta.id === subject.id) {
+            subjecta.workspaces.every(workspace => {
+              if(workspace.id === workspaceID) {
+                wExisting = true
+                return false
+              }
+              return true
+            })
+            return false
+          }
+          return true
+        })
+
+        if(wExisting) {
+          let newWorkspace = constants.workspace
+          subject.workspaces.every(workspace => {
+            if(workspace.id === workspaceID) {
+              newWorkspace = workspace
+              return false
+            }
+            return true
+          })
+
+          userDataCopy.subjects.every(subjecta => {
+            if(subjecta.id === subject.id) {
+              subjecta.workspaces.every(workspace => {
+                if(workspace.id === workspaceID) {
+                  workspace = newWorkspace
+                  return false
+                }
+                return true
+              })
+              return false
+            }
+            return true
+          })
+        }
+      } else {
+        userDataCopy.subjects.push(subject)
+      }
       userDataCopy.invitations = userDataCopy.invitations.filter(invitationa => invitationa.id !== invitationID)
       userData.set(userDataCopy)
-
+      
       isProcessing.set(false)
 
       let notifsCopy = $notifs
