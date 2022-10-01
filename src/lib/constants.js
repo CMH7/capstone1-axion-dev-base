@@ -86,7 +86,7 @@ export default {
     id: '',
     message: '',
     subjectID: '',
-    accepted: false,
+    status: '',
     to: {
       id: '',
       name: ''
