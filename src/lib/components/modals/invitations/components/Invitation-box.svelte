@@ -113,6 +113,8 @@
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
+
+      console.error(err)
     })
   }
 
@@ -170,8 +172,13 @@
   </span>
   <br>
   <div class="is-flex is-justify-content-space-between is-align-items-center">
-    <div class="txt-size-{outerWidth < 376 ? '11': '13'}">
-      status: <span class="is-italic">{invitation.status}</span>
+    <div class="is-flex">
+      <div class="txt-size-{outerWidth < 376 ? '11': '13'}">
+        status: <span class="is-italic">{invitation.status}</span>
+      </div>
+      <div class="ml-3 txt-size-{outerWidth < 376 ? '11': '13'}">
+        Workspace: <span class="is-italic">{invitation.workspace.name}</span>
+      </div>
     </div>
     <div
       on:click={e => {
@@ -179,6 +186,7 @@
         invModalActive.set(false)
         cancelInvModalActive.set(true)
       }}
+      class='{invitation.status === 'accepted' ? 'undisp': ''}'
     >
       <Button depressed text size='x-small' class='has-background-danger has-text-white'>Cancel</Button>
     </div>
