@@ -64,15 +64,8 @@
     } else if($isLoggedIn && !localStorage.getItem('email')) {
       localStorage.setItem("email", $userData.email)
     } else if(!$isLoggedIn && localStorage.getItem('email')) {
+      console.log(`logged in: ${$isLoggedIn}`)
       const email = localStorage.getItem('email')
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: 'Auto login. Please wait.',
-        type: 'success',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
-
       fetch(`${constants.backURI}/validUser`, {
         method: 'POST',
         headers: {
@@ -84,6 +77,73 @@
       }).then(async res => {
         const { user } = await res.json()
         userData.set(user)
+
+        let channel = pusher.subscribe(`${$userData.id}`)
+
+        // ON NEW INCOMING INVITATION
+        channel.bind('newInvitation', function(data) {
+          console.log('event: newInvitation received')
+          let userDataCopy = $userData
+          userDataCopy.invitations.unshift(data.invitation)
+          userDataCopy.notifications.unshift(data.notification)
+          userData.set(userDataCopy)
+        })
+
+        // ON NEW CANCELLED INVITATION
+        channel.bind('invitationCanceled', async function(data) {
+          console.log('event: invitationCanceled received')
+          const { notification } = await fetch(`${constants.backURI}/${$userData.id}/notifications/${data.notificationID}`)
+          console.log('notification fetched')
+          let userDataCopy = $userData
+          userDataCopy.invitations = userDataCopy.invitations.filter(invitation => invitation.id !== data.invitation.id)
+          userDataCopy.notifications.unshift(notification)
+          userData.set(userDataCopy)
+        })
+
+        // ON INVITATION ACCEPT
+        channel.bind('invitationAccepted', async function(data) {
+          console.log('event: invitationAccepted recevied')
+          const { notification } = await fetch(`${constants.backURI}/${$userData.id}/notification/${data.notificationID}`)
+          if(notification) console.log('notification updated')
+          let userDataCopy = $userData
+          userDataCopy.subjects.every(subjecta => {
+            if(subjecta.id === data.subjectID) {
+              subjecta.workspaces.every(workspace => {
+                if(workspace.id === data.workspaceID) {
+                  workspace.members.push(data.member)
+                  activeWorkspace.set(workspace)
+                  return false
+                }
+                return true
+              })
+              return false
+            }
+            return true
+          })
+          userDataCopy.invitations.every(invitation => {
+            if(invitation.id === data.invitationID) {
+              invitation.status = 'accepted'
+              return false
+            }
+            return true
+          })
+          userDataCopy.notifications.unshift(notification)
+          userData.set(userDataCopy)
+        })
+
+        // ON INVITATION REJECTED
+        channel.bind('invitationRejected', function(data) {
+          console.log('event: invitationRejected received')
+          let userDataCopy = $userData
+          userDataCopy.invitations.every(invitation => {
+            if(invitation.id === data.invitationID) {
+              invitation.status = 'rejected'
+              return false
+            }
+            return true
+          })
+          userData.set(userDataCopy)
+        })
         
         currentInterface.set('Dashboard')
         currentDashboardSubInterface.set('Subjects')
@@ -104,74 +164,10 @@
         goto('/Signin')
       })
     }
+  })
 
-    onDestroy(() => {
-      if($isLoggedIn) localStorage.setItem('email', $userData.email)
-    })
-
-    let channel = pusher.subscribe(`${$userData.id}`)
-
-    // ON NEW INCOMING INVITATION
-    channel.bind('newInvitation', function(data) {
-      console.log('event: newInvitation received')
-      let userDataCopy = $userData
-      userDataCopy.invitations.unshift(data.invitation)
-      userDataCopy.notifications.unshift(data.notification)
-      userData.set(userDataCopy)
-    })
-
-    // ON NEW CANCELLED INVITATION
-    channel.bind('invitationCanceled', async function(data) {
-      console.log('event: invitationCanceled received')
-      const { notification } = await fetch(`${constants.backURI}/${$userData.id}/notifications/${data.notificationID}`)
-      console.log('notification fetched')
-      let userDataCopy = $userData
-      userDataCopy.invitations = userDataCopy.invitations.filter(invitation => invitation.id !== data.invitation.id)
-      userDataCopy.notifications.unshift(notification)
-      userData.set(userDataCopy)
-    })
-
-    // ON INVITATION ACCEPT
-    channel.bind('invitationAccepted', function(data) {
-      console.log('event: invitationAccepted recevied')
-      let userDataCopy = $userData
-      userDataCopy.subjects.every(subjecta => {
-        if(subjecta.id === data.subjectID) {
-          subjecta.workspaces.every(workspace => {
-            if(workspace.id === data.workspaceID) {
-              workspace.members.push(data.member)
-              activeWorkspace.set(workspace)
-              return false
-            }
-            return true
-          })
-          return false
-        }
-        return true
-      })
-      userDataCopy.invitations.every(invitation => {
-        if(invitation.id === data.invitationID) {
-          invitation.status = 'accepted'
-          return false
-        }
-        return true
-      })
-      userData.set(userDataCopy)
-    })
-
-    // ON INVITATION REJECTED
-    channel.bind('invitationRejected', function(data) {
-      console.log('event: invitationRejected received')
-      let userDataCopy = $userData
-      userDataCopy.invitations.every(invitation => {
-        if(invitation.id === data.invitationID) {
-          invitation.status = 'rejected'
-          return false
-        }
-        return true
-      })
-      userData.set(userDataCopy)
-    })
+  onDestroy(() => {
+    if($isLoggedIn) localStorage.setItem('email', $userData.email)
   })
 
   let width = 0

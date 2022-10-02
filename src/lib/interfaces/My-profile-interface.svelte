@@ -5,7 +5,8 @@
  import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
  import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte'
  import { goto } from "$app/navigation" 
- import { isLoggedIn, transitionActive, snack, userData } from "$lib/stores/global-store"
+ import { isLoggedIn, transitionActive, snack, userData, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, breadCrumbsItems, activeBoard, activeTask, modalChosenColor, isProcessing } from "$lib/stores/global-store"
+	import constants from '$lib/constants';
 
  let outerWidth = 0
  let switchOn = true
@@ -59,7 +60,18 @@
                   msg: "You will be automatically logged out. Do you want to continue?",
                   active: true,
                   yes: () => {
-                    localStorage.removeItem('userData')
+                    localStorage.removeItem('email')
+                    userData.set(constants.user)
+                    isLoggedIn.set(false)
+                    currentInterface.set('Dashboard')
+                    currentDashboardSubInterface.set('Subjects')
+                    activeSubject.set(constants.subject)
+                    activeWorkspace.set(constants.workspace)
+                    activeBoard.set(constants.board)
+                    breadCrumbsItems.set([{text: 'Subjects'}])
+                    activeTask.set(constants.task)
+                    modalChosenColor.set('primary')
+                    isProcessing.set(false)
                     goto('/')
                   }
                 }
