@@ -206,6 +206,7 @@
       on:click={e => {
         if(!$isProcessing) acceptInvite()
       }}
+      class='{$isProcessing && invitation.id === $selectedInvitation.id? 'undisp': ''} ml-3'
     >
       {#if $isProcessing && invitation.id === $selectedInvitation.id}
       <Pulse size={20} color='#191a48' />
@@ -219,7 +220,11 @@
       }}
       class='{$isProcessing && invitation.id === $selectedInvitation.id? 'undisp': ''} ml-3'
     >
+      {#if $isProcessing && invitation.id === $selectedInvitation.id}
+      <Pulse size={20} color='#191a48' />
+      {:else}
       <Button depressed text size='x-small' class='has-background-danger-light'>Reject</Button>
+      {/if}
     </div>
   </div>
 </div>
