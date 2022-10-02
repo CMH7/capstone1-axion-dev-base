@@ -8,15 +8,13 @@
   import bcrypt from 'bcryptjs'
 
   let outerWidth
-  let allNotifications = $userData.notifications
 
-  const clearAllNotifs = async () => {
-    setTimeout(() => {
-      notifCenterOpen.set(false)
-    }, (allNotifications.length * 100) + 500)
+  const clearAllNotifs = () => {
     let userDataCopy = $userData
     userDataCopy.notifications = []
     userData.set(userDataCopy)
+
+    notifCenterOpen.set(false)
 
     fetch(`${constants.backURI}/User/delete/all/notification`, {
       method: 'DELETE',
@@ -39,6 +37,7 @@
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
+      console.error(err)
     })
   }
 </script>
@@ -59,7 +58,7 @@
         </div>
 
         <!-- Clear all button -->
-        {#if allNotifications.length > 0}
+        {#if $userData.notifications.length > 0}
         <div
           on:click={clearAllNotifs}
           class="is-flex is-justify-content-center is-align-items-center is-clickable"
@@ -74,9 +73,9 @@
     <div class="column is-12 p-0">
       <div class="columns is-gapless is-multiline">
 
-        {#each allNotifications as notification, i}
+        {#each $userData.notifications as notification}
           <!-- Notification Card -->
-          <NotificationCard {notification} {i} />
+          <NotificationCard {notification} />
         {/each}
       </div>
     </div>
