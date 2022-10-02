@@ -210,9 +210,9 @@
               email: emailInput
             })
           }).then(async resp => {
-            const data = await resp.json()
+            const { user } = await resp.json()
             notifs.set([])
-            userData.set(data)
+            userData.set(user)
             useHint.set($userData.useHint)
             let notifsCopy = $notifs
             notifsCopy.push({
@@ -222,6 +222,7 @@
             })
             notifs.set(notifsCopy)
             isLoggedIn.set(true)
+            localStorage.setItem('email', user.email)
             goto('/MainApp', {replaceState: true})
             emailInput = ""
             passwordInput = ""
