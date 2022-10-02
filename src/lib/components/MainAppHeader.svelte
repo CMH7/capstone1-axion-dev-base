@@ -10,8 +10,6 @@
     notifCenterOpenCopy = value
   })
 
-  let allNotifications = $userData.notifications.filter(notification => notification.isRead != true).length
-
   const clickOutside = () => notifCenterOpen.set(false)
 
   let outerWidth = 0
@@ -78,7 +76,7 @@
             }
           }}
           class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$notifCenterOpen? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
-          <Badge active={allNotifications > 0} class="success-color" dot={outerWidth < 426} value={allNotifications} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
+          <Badge active={$userData.notifications.filter(notification => notification.isRead != true).length > 0} class="success-color" dot={outerWidth < 426} value={$userData.notifications.filter(notification => notification.isRead != true).length} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
             <Icon class='white-text' size={outerWidth < 426 ? '20px': '30px'} path={mdiBell } />
           </Badge>
         </div>

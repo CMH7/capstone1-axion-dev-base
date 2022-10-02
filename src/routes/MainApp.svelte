@@ -84,27 +84,24 @@
         channel.bind('newInvitation', function(data) {
           console.log('event: newInvitation received')
           let userDataCopy = $userData
-          userDataCopy.invitations.unshift(data.invitation)
           userDataCopy.notifications.unshift(data.notification)
+          userDataCopy.invitations.unshift(data.invitation)
           userData.set(userDataCopy)
         })
 
         // ON NEW CANCELLED INVITATION
         channel.bind('invitationCanceled', async function(data) {
           console.log('event: invitationCanceled received')
-          const { notification } = await fetch(`${constants.backURI}/${$userData.id}/notifications/${data.notificationID}`)
-          console.log('notification fetched')
           let userDataCopy = $userData
           userDataCopy.invitations = userDataCopy.invitations.filter(invitation => invitation.id !== data.invitation.id)
           userDataCopy.notifications.unshift(notification)
+          userDataCopy.notifications.unshift(data.notification)
           userData.set(userDataCopy)
         })
 
         // ON INVITATION ACCEPT
         channel.bind('invitationAccepted', async function(data) {
           console.log('event: invitationAccepted recevied')
-          const { notification } = await fetch(`${constants.backURI}/${$userData.id}/notification/${data.notificationID}`)
-          if(notification) console.log('notification updated')
           let userDataCopy = $userData
           userDataCopy.subjects.every(subjecta => {
             if(subjecta.id === data.subjectID) {
@@ -127,15 +124,13 @@
             }
             return true
           })
-          userDataCopy.notifications.unshift(notification)
+          userDataCopy.notifications.unshift(data.notification)
           userData.set(userDataCopy)
         })
 
         // ON INVITATION REJECTED
         channel.bind('invitationRejected', async function(data) {
           console.log('event: invitationRejected received')
-          const { notification } = await fetch(`${constants.backURI}/${$userData.id}/notification/${data.notificationID}`)
-          console.log('updated notification')
           let userDataCopy = $userData
           userDataCopy.invitations.every(invitation => {
             if(invitation.id === data.invitationID) {
@@ -144,6 +139,7 @@
             }
             return true
           })
+          userDataCopy.notifications.unshift(data.notification)
           userData.set(userDataCopy)
         })
         
