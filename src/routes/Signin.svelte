@@ -37,6 +37,12 @@
     return emailRegexp.test(email)
   }
 
+  onMount(() => {
+    if(localStorage.getItem('email')) {
+      emailInput = localStorage.getItem('email')
+    }
+  })
+
   const isPassValid = (pass) => {
     console.log('password checking')
     let valid = true
@@ -222,6 +228,7 @@
             })
             notifs.set(notifsCopy)
             isLoggedIn.set(true)
+            console.log(`logged in: ${$isLoggedIn}`)
             localStorage.setItem('email', user.email)
             goto('/MainApp', {replaceState: true})
             emailInput = ""
