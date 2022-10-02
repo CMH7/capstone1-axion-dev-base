@@ -37,12 +37,6 @@
     return emailRegexp.test(email)
   }
 
-  onMount(() => {
-    if(localStorage.getItem('email')) {
-      emailInput = localStorage.getItem('email')
-    }
-  })
-
   const isPassValid = (pass) => {
     console.log('password checking')
     let valid = true
@@ -287,14 +281,8 @@
   }
 
   onMount(() => {
-    if(browser && localStorage.getItem('userData')) {
-      const user = JSON.parse(localStorage.getItem('userData'))
-      userData.set(user)
-      notifs.set([])
-      loading = true
-      disabled = true
-      isLoggedIn.set(true)
-      goto('/MainApp', {replaceState: true})
+    if(localStorage.getItem('email')) {
+      emailInput = localStorage.getItem('email')
     }
   })
 
