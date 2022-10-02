@@ -44,7 +44,7 @@
           id: bcrypt.hashSync(`${$userData.id}${new Date().getMilliseconds()}${$activeWorkspace.id}${user.id}`),
           message: `${$userData.firstName} ${$userData.lastName} has invited you to join ${$userData.gender === "Male" ? "his": $userData.gender === "Female" ? "her" : "their"} workspace \`${$activeWorkspace.name}\``,
           subjectID: $activeSubject.id,
-          accepted: false,
+          status: "pending",
           to: {
             id: user.id,
             name: user.data.name

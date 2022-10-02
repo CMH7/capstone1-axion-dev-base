@@ -196,6 +196,11 @@
       notifs.set(notifsCopy)
     })
   }
+
+  $: month = parseInt($activeTask.dueDateTime.split('T')[0].split('-')[1])
+  $: hour = parseInt($activeTask.dueDateTime.split('T')[1].split('-')[0])
+
+  $: console.log($activeTask.dueDateTime)
 </script>
 
 <svelte:window bind:outerWidth/>
@@ -268,7 +273,7 @@
             <div class="pl-3 min-w-100p">
               <!-- due date -->
               <div class="fredoka-reg is-size-7 opacity-60p">
-                Due: {$activeTask.dueDateTime}
+                Due: {`${month == 1 ? 'Jan' : month == 2 ? 'Feb' : month == 3 ? 'Mar' : month == 4 ? 'Apr' : month == 5 ? 'May' : month == 6 ? 'Jun' : month == 7 ? 'Jul' : month == 8 ? 'Aug' : month == 9 ? 'Sep' : month == 10 ? 'Oct' : month == 11 ? 'Nov' : month == 12 ? 'Dec' : ''} ${$activeTask.dueDateTime.split('T')[0].split('-')[2]}, ${$activeTask.dueDateTime.split('T')[0].split('-')[0]} ${hour == 13 ? '01' : hour == 14 ? '02' : hour == 15 ? '03' : hour == 16 ? '04' : hour == 17 ? '05' : hour == 18 ? '06' : hour == 19 ? '07' : hour == 20 ? '08' : hour == 21 ? '09' : hour == 22 ? '10' : hour == 23 ? '11' : hour == 24 || hour == 0 ? '12' : hour}:${$activeTask.dueDateTime.split('T')[1].split(':')[1]} ${parseInt($activeTask.dueDateTime.split('T')[1].split('-')[0]) > 11 ? 'PM': 'AM'}`}
               </div>
   
               <!-- created by -->

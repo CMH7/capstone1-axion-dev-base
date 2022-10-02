@@ -22,9 +22,9 @@
         }
       })
     }).then(async res => {
-      const { invitations } = await res.json()
+      const { invitationID } = await res.json()
       let userDataCopy = $userData
-      userDataCopy.invitations = invitations
+      userDataCopy.invitations = userDataCopy.invitations.filter(invitation => invitation.id !== invitationID)
       userData.set(userDataCopy)
 
       isProcessing.set(false)

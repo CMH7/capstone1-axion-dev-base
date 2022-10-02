@@ -116,7 +116,49 @@
     })
   }
 
+  const rejectInvite = () => {
+    let notifsCopy = $notifs
+    notifsCopy.push({
+      msg: 'Rejecting invitation. Please wait.',
+      type: 'wait',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+    })
+    notifs.set(notifsCopy)
+
+    isProcessing.set(true)
+    fetch(`${constants.backURI}/MainApp/subject/workspace/invitation/reject`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          userA: $userData.id,
+          userB: invitation.from.id,
+          invitation: invitation.id
+        }
+      })
+    }).then(async res => {
+      const { invitationID } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.invitations = userDataCopy.invitations.filter(invitation => invitation.id !== invitationID)
+      userData.set(userDataCopy)
+      isProcessing.set(false)
+    }).catch(err => {
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: `Error in rejecting invitation, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      })
+      notifs.set(notifsCopy)
+      console.error(err)
+      isProcessing.set(false)
+    })
+  }
+
   let outerWidth
+  const number = Math.floor(Math.random() * 6) + 1
 </script>
 
 <svelte:window bind:outerWidth />
@@ -129,7 +171,7 @@
   <br>
   <div class="is-flex is-justify-content-space-between is-align-items-center">
     <div class="txt-size-{outerWidth < 376 ? '11': '13'}">
-      status: <span class="is-italic">pending</span>
+      status: <span class="is-italic">{invitation.status}</span>
     </div>
     <div
       on:click={e => {
@@ -143,7 +185,7 @@
   </div>
 </div>
 {:else}
-<div class="hover-bg-grey-lighter-grey-light has-transition py-1 px-2 mb-1 rounded">
+<div class="notification is-{number == 1 ? 'primary': number == 2 ? 'link': number == 3 ? 'info': number == 4 ? 'warning': number == 5 ? 'danger': number == 6 ? 'success': ''} is-light has-transition">
   <span class="txt-size-{outerWidth < 376 ? '13': '15'} has-text-weight-semibold">
     Invitation from {invitation.from.name}
   </span>
@@ -164,7 +206,9 @@
       {/if}
     </div>
     <div
-      on:click={e=>{}}
+      on:click={e=>{
+        if(!$isProcessing) rejectInvite()
+      }}
       class='{$isProcessing && invitation.id === $selectedInvitation.id? 'undisp': ''} ml-3'
     >
       <Button depressed text size='x-small' class='has-background-danger-light'>Reject</Button>

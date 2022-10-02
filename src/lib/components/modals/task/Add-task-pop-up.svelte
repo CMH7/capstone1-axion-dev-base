@@ -1,4 +1,5 @@
 <script>
+    //@ts-nocheck
     // @ts-ignore
     import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
@@ -76,11 +77,18 @@
             return false
         }
 
-        const [ dateValue, timeValue ] = dueDateTime.split(' ')
-        const [ year, month, day ] = dateValue.split('-')
-        const [ hour, minute ] = timeValue.split(':')
-        const semiDue = new Date(parseInt(year), parseInt(month), parseInt(day), parseInt(hour), parseInt(minute), 0, 0)
-        const finalDueDateTime = semiDue.toISOString()
+        // 2022-07-07 11:59
+        let [ dateValue, timeValue ] = dueDateTime.split(' ')
+        // [2022-07-07, 11:59]
+
+        let [ year, month, day ] = dateValue.split('-')
+        // [2022, 07, 07]
+
+        let [ hour, minute ] = timeValue.split(':')
+        // [11, 59]
+        
+        //@ts-ignore
+        const finalDueDateTime = new Date(`${year}-${month}-${day}T${hour}:${minute}:00Z`).toISOString()
 
         fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
             method: 'POST',
