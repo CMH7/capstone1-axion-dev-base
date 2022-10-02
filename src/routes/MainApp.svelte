@@ -132,8 +132,10 @@
         })
 
         // ON INVITATION REJECTED
-        channel.bind('invitationRejected', function(data) {
+        channel.bind('invitationRejected', async function(data) {
           console.log('event: invitationRejected received')
+          const { notification } = await fetch(`${constants.backURI}/${$userData.id}/notification/${data.notificationID}`)
+          console.log('updated notification')
           let userDataCopy = $userData
           userDataCopy.invitations.every(invitation => {
             if(invitation.id === data.invitationID) {
