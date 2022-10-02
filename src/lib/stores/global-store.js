@@ -92,6 +92,15 @@ export let subjectDeletionModalActive = writable(false)
 // the subject truncation modal active
 export let subjectTruncationModalActive = writable(false)
 
+// workspace settings modal active
+export let workspaceSettingsModalActive = writable(false)
+
+// the selected workspace upon opening or holdig a workspace box and workspace settings modal
+export let selectedWorkspace = writable(constants.workspace)
+
+// the workspace deletion modal active
+export let workspaceDeletionModalActive = writable(false)
+
 // add workspace modal active
 export let addWorkspaceModalActive = writable(false)
 
@@ -130,6 +139,15 @@ export let activeTask = writable(constants.task)
 
 // task view modal active
 export let taskViewModalActive = writable(false)
+
+// invitations/collaboration modal active
+export let invModalActive = writable(false)
+
+// cancel invitation modal active
+export let cancelInvModalActive = writable(false)
+
+// selected invitation
+export let selectedInvitation = writable(constants.invitation)
 
 
 // ##### STORE OF TASK'S CHATS #####

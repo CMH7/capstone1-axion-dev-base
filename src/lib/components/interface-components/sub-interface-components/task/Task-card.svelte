@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { taskViewModalActive, activeTask, activeBoard } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
 
@@ -119,14 +120,14 @@
     activeTask.set(task)
     activeBoard.set(boardID)
   }}
-  class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable maxmins-w-230 overflow-x-hidden rounded parent">
-  <Card flat class='p-1 maxmins-w-230 maxmins-h-60'>
+  class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable maxmins-w-230 maxmins-h-60 overflow-x-hidden rounded parent">
+  <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between'>
   
     <!-- UPPER PART OF THE CARD -->
   
-    <!-- Task Name and Task Labels: level and how many subtitles it has -->
-    <div class="d-flex is-justify-content-space-between">
-      <div class="parent-hover-txt-color-white has-transition has-text-weight-semibold is-unselectable text-body-2 max-w-60p txt-overflow-ellipsis overflow-x-hidden">
+    <!-- Task Name and Task Labels: level and how many subtasks it has -->
+    <div class="is-flex is-justify-content-space-between maxmins-w-100p">
+      <div class="parent-hover-txt-color-white has-transition has-text-weight-semibold is-unselectable txt-size-12 max-w-60p txt-overflow-ellipsis overflow-x-hidden">
         {task.name}
       </div>
   
@@ -134,10 +135,12 @@
       <div class="is-flex is-align-items-center">
   
         <!-- Subtasks Counts -->
-        <Avatar tile size=20px class="mr-1 is-unselectable dmsans has-text-weight-bold has-text-white has-background-primary-dark rounded text-caption">{task.subtasks.length}</Avatar>
+        {#if task.subtasks.length != 0}
+        <Avatar tile class="mr-1 maxmins-h-20 maxmins-w-{task.subtasks.length > 0 && task.subtasks.lastIndexOf < 100 ? "20": task.subtasks.length > 99 ? "30": ""} is-unselectable dmsans has-text-weight-bold has-text-white has-background-primary-dark rounded txt-size-9">{task.subtasks.length}</Avatar>
+        {/if}
   
         <!-- Level -->
-        <Avatar tile size=20px style="min-width: fit-content" class="is-unselectable dmsans has-text-weight-bold has-text-white {task.level == 1?"has-background-success": task.level == 2?"has-background-warning has-text-black":"has-background-danger"} rounded text-caption px-1">{task.level == 1? "Low": task.level == 2? "Medium": "High"}</Avatar>
+        <Avatar tile style="max-width: fit-content" class="is-unselectable maxmins-h-20 dmsans has-text-weight-bold has-text-white {task.level == 1?"has-background-success": task.level == 2?"has-background-warning has-text-black":"has-background-danger"} rounded txt-size-9 px-1">{task.level == 1? "Low": task.level == 2? "Medium": "High"}</Avatar>
       </div>
     </div>
   
@@ -145,29 +148,34 @@
     <!-- BOTTOM PART OF THE CARD -->
   
     <!-- Due date -->
-    <div class="d-flex is-justify-content-space-between align-end">
-      <div class="parent-hover-txt-color-white is-unselectable is-size-7 has-transition maxmins-w-250">
-        {`${dueDate} ${date} ${finalHour}:${minute} ${parseInt(hour) > 12 ? 'PM': 'AM'}`}
+    <div class="is-flex is-justify-content-space-between is-align-items-end">
+      <div class="parent-hover-txt-color-white is-unselectable txt-size-10 has-transition">
+        {`${dueDate} ${date} ${finalHour}:${minute} ${parseInt(hour) > 11 ? 'PM': 'AM'}`}
       </div>
   
       <!-- Members part -->
       <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
         {#if task.members.length > 3}
-          <Tooltip class="mt-1" bottom bind:active={show}>
-            <!-- Icon of how many members are there other than 3 most members -->
-            <Avatar size=20px class="is-unselectable has-background-success text-caption" style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); position: absolute; right: 1%; bottom: 5%;">+{task.members.length - 3}</Avatar>
-  
+          <Tooltip class='px-1 py-1' bottom bind:active={show}>
             <!-- 3 most members -->
-            {#each Array(3) as _, i}
-                <Avatar size=20px style="box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2); position: absolute; right: {(i + 1) * 5}%; bottom: 5%; background-color: rgb({Math.random() * 255}, {Math.random() * 255}, {Math.random() * 255})">
-                  {#if task.members[i].profile === ''}
-                  <div class="has-text-weight-bold has-text-white">
-                    {task.members[i].name.substring(0, 1)}
-                  </div>
-                  {:else}
-                  <img src="{task.members[i].profile}" alt="{task.members[i].name}"/>
-                  {/if}
-                </Avatar>
+            {#each Array(4) as _, i}
+            {#if i == 4}
+            <!-- Icon of how many members are there other than 3 most members -->
+            <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
+              <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
+                +{task.members.length - 3}
+              </div>
+            </Avatar>
+            {/if}
+            <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
+              {#if task.members[i].profile === ''}
+              <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
+                {task.members[i].name.toUpperCase().split(' ')[0].charAt(0)}{task.members[i].name.toUpperCase().split(' ')[task.members[i].name.toUpperCase().split(' ').length - 1].charAt(0)}
+              </div>
+              {:else}
+              <img src="{task.members[i].profile}" alt="{task.members[i].name}"/>
+              {/if}
+            </Avatar>
             {/each}
             <span slot="tip">
               <p class="has-text-left mb-0">
@@ -180,29 +188,28 @@
             </span>
           </Tooltip>
         {:else}
-  
           <!-- 3 or less members -->
           <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
-            <Tooltip bottom bind:active={show}>
+            <Tooltip class='px-1 py-1' bottom bind:active={show}>
               {#each task.members as member, i}
-                <Avatar size='20px' class='has-background-{i == 0 ? 'info': i == 1 ? 'success' : 'primary'} mr-3'>
-                  {#if member.profile === ''}
-                    <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
-                      {member.name.toUpperCase().split(' ')[0].charAt(0)}{member.name.toUpperCase().split(' ')[member.name.toUpperCase().split(' ').length - 1].charAt(0)}
-                    </div>
-                  {:else}
-                    <img src="{member.profile}" alt="{member.name}"/>
-                  {/if}
-                </Avatar>
+              <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
+                {#if member.profile === ''}
+                <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
+                  {member.name.toUpperCase().split(' ')[0].charAt(0)}{member.name.toUpperCase().split(' ')[member.name.toUpperCase().split(' ').length - 1].charAt(0)}
+                </div>
+                {:else}
+                <img src="{member.profile}" alt="{member.name}"/>
+                {/if}
+              </Avatar>
               {/each}
               <span slot="tip">
-                <p class="has-text-left mb-0">
+                <div class="has-text-left p-0">
                   Assigned Members:
                   <Divider class="p-0 mt-1 mb-2" />
                   {#each task.members as member}
                     {member.name} <br>
                   {/each}
-                </p>
+                </div>
               </span>
             </Tooltip>
           </div>

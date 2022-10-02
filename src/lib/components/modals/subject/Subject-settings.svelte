@@ -1,11 +1,13 @@
 <script>
+  //@ts-nocheck
   import { Dialog, Divider, Icon, Switch, Button } from 'svelte-materialify'
-  import { subjectSettingsModalActive, selectedSubjectForSubjectSettings, modalChosenColor, subjectDeletionModalActive, activeSubject, userData, subjectTruncationModalActive, notifs, oldFavoriteStatus } from '$lib/stores/global-store'
+  import { subjectSettingsModalActive, selectedSubjectForSubjectSettings, modalChosenColor, subjectDeletionModalActive, activeSubject, userData, subjectTruncationModalActive, notifs, oldFavoriteStatus, isProcessing } from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
   import SubjectDeletionsModal from '$lib/components/modals/deletions/Subject-deletions-modal.svelte'
   import SubjectTruncationModal from '$lib/components/modals/truncations/Subject-truncation-modal.svelte'
   import constants from '$lib/constants'
   import bcrypt from 'bcryptjs'
+  import { Pulse } from 'svelte-loading-spinners'
 
   let nameChanges = false
   let colorChanges = false
@@ -19,19 +21,19 @@
   })
 
   // colors
-  const colors = [
-      {name: "primary", selected:true, hover:false},
-      {name: "link", selected:false, hover:false},
-      {name: "info", selected:false, hover:false},
-      {name: "success", selected:false, hover:false},
-      {name: "warning", selected:false, hover:false},
-      {name: "danger", selected:false, hover:false}
-  ]
+  const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
   const changeName = (/** @type {string} */ newName) => {
-    if($selectedSubjectForSubjectSettings.name !== newName && newName !== "") {
+    editing = false
+    const tempName = newName
+    newName = newName.split(" ").join("")
+    if($selectedSubjectForSubjectSettings.name === newName) {
+      nameChanges = false
+      subjectName = $selectedSubjectForSubjectSettings.name
+    }
+    if($selectedSubjectForSubjectSettings.name.split(" ").join("") !== newName && newName !== "") {
       nameChanges = true
-      subjectName = newName
+      subjectName = tempName
     }else if(newName === "") {
       nameChanges = false
       let notifsCopy = $notifs
@@ -50,23 +52,34 @@
 
   $: isFavorite == $oldFavoriteStatus ? favoriteChanges = false : favoriteChanges = true
 
+
+  function nameChecker(name) {
+    return name ? true : false
+  }
+
   const updateSubject = async () => {
-    let activeSubjectCopy = $activeSubject
-    activeSubjectCopy.color = $modalChosenColor
-    activeSubjectCopy.isFavorite = isFavorite
-    activeSubjectCopy.name = subjectName
-    activeSubject.set(activeSubjectCopy)
-    let userDataCopy = $userData
-    userDataCopy.subjects.every(subject => {
-      if(subject.id === $activeSubject.id) {
-        subject = $activeSubject
-        return false
-      }
-      return true
+    if(!nameChecker(subjectName)) {
+      nameChanges = false
+      let notifsCopy = $notifs
+      notifsCopy.push({
+        msg: 'Name cannot be empty',
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      })
+      notifs.set(notifsCopy)
+      subjectName = $selectedSubjectForSubjectSettings.name
+      return false
+    }
+    changeName(subjectName)
+    isProcessing.set(true)
+
+    let notifsCopy = $notifs
+    notifsCopy.push({
+      msg: 'Updating subject...Please wait',
+      type: 'success',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
     })
-    
-    userData.set(userDataCopy)
-    subjectSettingsModalActive.set(false)
+    notifs.set(notifsCopy)
 
     // do http requests here
     fetch(`${constants.backURI}/MainApp/edit/subject`, {
@@ -79,19 +92,33 @@
           user: $userData.id
         },
         subject: {
-          id: $activeSubject.id,
-          color: $activeSubject.color,
-          isFavorite: $activeSubject.isFavorite,
-          name: $activeSubject.name
+          id: $selectedSubjectForSubjectSettings.id,
+          color: $modalChosenColor,
+          isFavorite: isFavorite,
+          name: subjectName
         }
       })
     }).then(async res => {
       const { subject } = await res.json()
-      let activeSubjectCopy = $activeSubject
-      activeSubjectCopy.color = subject.color,
-      activeSubjectCopy.isFavorite = subject.isFavorite
-      activeSubjectCopy.name = subject.name
-      activeSubject.set(activeSubjectCopy)
+
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subjecta => {
+        if(subjecta.id === $activeSubject.id) {
+          subjecta.color = subject.color
+          subjecta.isFavorite = subject.isFavorite
+          subjecta.name = subject.name
+          activeSubject.set(subjecta)
+          selectedSubjectForSubjectSettings.set(subjecta)
+          return false
+        }
+        return true
+      })
+      userData.set(userDataCopy)
+      subjectSettingsModalActive.set(false)
+      modalChosenColor.set(subject.color)
+      oldFavoriteStatus.set(subject.isFavorite)
+      isProcessing.set(false)
+
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `${subject.name} is updated`,
@@ -99,7 +126,16 @@
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
+
+      nameChanges = false
+      colorChanges = false
+      favoriteChanges = false
     }).catch(err => {
+      isProcessing.set(false)
+
+      nameChanges = false
+      colorChanges = false
+      favoriteChanges = false
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: `Error in updating the subject, ${err}`,
@@ -109,9 +145,15 @@
       notifs.set(notifsCopy)
     })
   }
+
+  const keyDown = e => {
+    if(editing && e.keyCode == 13 && $subjectSettingsModalActive) {
+      changeName(subjectName)
+    }
+  }
 </script>
 
-<svelte:window bind:outerWidth={width} />
+<svelte:window bind:outerWidth={width} on:keydown={keyDown} />
 
 <SubjectDeletionsModal/>
 <SubjectTruncationModal/>
@@ -127,8 +169,10 @@
 
       <!-- close icon/button -->
       <div
-        on:click={e => subjectSettingsModalActive.set(false)}
-        class='is-clickable rounded-circle hover-bg-grey-light maxmins-w-30 maxmins-h-30 is-flex is-align-items-center is-justify-content-center has-transition'
+        on:click={e => {
+          if(!$isProcessing) subjectSettingsModalActive.set(false)
+        }}
+        class='{$isProcessing ? "": "is-clickable"} rounded-circle hover-bg-grey-light maxmins-w-30 maxmins-h-30 is-flex is-align-items-center is-justify-content-center has-transition'
       >
         <Icon class='has-text-danger' path={mdiClose} />
       </div>
@@ -159,23 +203,30 @@
 
         <!-- edit button -->
         {#if !editing}
-        <div
-          on:click={e => {
-            editing = true
-          }}
-          class="ml-3 is-clickable hover-txt-style-underline"
-        >
-          Edit
-        </div>
+          {#if !$isProcessing}
+            <div
+              on:click={e => {
+                if(!$isProcessing) editing = true
+              }}
+              class="ml-3  {$isProcessing ? '': 'is-clickable'} hover-txt-style-underline"
+            >
+              Edit
+            </div>
+          {:else}
+            <Pulse color='#fddd3f' size={20} />
+          {/if}
         {:else}
         <div
           on:click={e => {
-            changeName(subjectName)
-            editing = false
+            if(!$isProcessing) changeName(subjectName)
           }}
           class="ml-3 is-clickable hover-txt-style-underline"
         >
+          {#if $isProcessing}
+          <Pulse color='#fddd3f' size={20} />
+          {:else}
           Done
+          {/if}
         </div>
         {/if}
       </div>
@@ -189,20 +240,21 @@
         
         <!-- colors -->
         <div class="is-flex">
-            {#each colors as color, i}
+            {#each colors as color}
             <div
               on:click={e => {
-                modalChosenColor.set(color.name)
+                if($isProcessing) return false
+                modalChosenColor.set(color)
                 if($selectedSubjectForSubjectSettings.color !== $modalChosenColor) {
                   colorChanges = true
                 }else{
                   colorChanges = false
                 }
               }}
-              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition is-clickable { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color.name} {color.name === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition {$isProcessing ? "" : "is-clickable"} { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
             >
               <!-- circle dot -->
-              <div class="{color.name === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
+              <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
             </div>
             {/each}
         </div>
@@ -217,7 +269,7 @@
         
         <!-- switch -->
         <div class="is-flex is-align-items-center">
-            <Switch class='p-0 m-0' color='green' bind:checked={isFavorite} inset />
+            <Switch class='p-0 m-0' color='green' disabled={$isProcessing} bind:checked={isFavorite} inset />
         </div>
       </div>
 
@@ -235,12 +287,16 @@
           <Button size='small' depressed class='inter-reg'>Advance settings</Button>
         </div>
 
-        {#if nameChanges || colorChanges || favoriteChanges}
+        {#if (nameChanges || colorChanges || favoriteChanges) && !$isProcessing}
         <div
           on:click={updateSubject}
         >
           <Button size='small' outlined>Save</Button>
         </div>
+        {:else if $isProcessing}
+        <Pulse size={20} color='#fddd3f' />
+        {:else}
+        <div></div>
         {/if}
       </div>
       
@@ -262,11 +318,12 @@
           </div>
           <div
             on:click={e => {
+              if($isProcessing) return false
               subjectSettingsModalActive.set(false)
               subjectTruncationModalActive.set(true)
             }}
           >
-            <Button size='small' depressed class='m-0 inter-reg has-background-danger-dark has-text-white'>Reset</Button>
+            <Button disabled={$isProcessing} size='small' depressed class='m-0 inter-reg has-background-danger-dark has-text-white'>Reset</Button>
           </div>
         </div>
 
@@ -277,11 +334,12 @@
           </div>
             <div
               on:click={e => {
+                if($isProcessing) return false
                 subjectSettingsModalActive.set(false)
                 subjectDeletionModalActive.set(true)
               }}
             >
-              <Button size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Delete</Button>
+              <Button disabled={$isProcessing} size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Delete</Button>
             </div>
         </div>
       </div>

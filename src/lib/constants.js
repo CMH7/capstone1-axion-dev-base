@@ -36,6 +36,7 @@ export default {
     profile: ""
   },
   user: {
+    invitations: [],
     subjects: [],
     notifications: [],
     id: '',
@@ -81,7 +82,27 @@ export default {
     status: "",
     level: 1  
   },
-  backURI: "https://axion-backend.herokuapp.com",
+  invitation: {
+    id: '',
+    message: '',
+    subjectID: '',
+    status: '',
+    to: {
+      id: '',
+      name: ''
+    },
+    from: {
+      id: '',
+      name: '',
+      email: '',
+      profile: '',
+    },
+    workspace: {
+      id: '',
+      name: ''
+    }
+  },
+  backURI: "https://axion-back.herokuapp.com",
   lowerCasedLetters: new String('abcdefghijklmnopqrstuvwxyz').split(''),
   upperCasedLetters: new String('ABCDEFGHIJKLMNOPQRSTUVWXYZ').split(''),
   digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],

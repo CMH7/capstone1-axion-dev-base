@@ -1,34 +1,38 @@
 <script>
   //@ts-nocheck
-  import { Dialog, Icon, Divider, Button } from 'svelte-materialify'
-  import { userData, activeSubject, activeWorkspace, boardDeleteModalActive, boardSettingsModalActive, modalChosenColor, selectedBoard, notifs, isProcessing } from '$lib/stores/global-store'
+  import { Dialog, Divider, Icon, Switch, Button } from 'svelte-materialify'
+  import { workspaceSettingsModalActive, selectedWorkspace, modalChosenColor, activeSubject, activeWorkspace, userData, notifs, oldFavoriteStatus, isProcessing, workspaceDeletionModalActive } from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
+  import constants from '$lib/constants'
   import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
-	import constants from '$lib/constants';
+	import WorkspaceDeletion from '../deletions/Workspace-deletion.svelte';
 
-  let width = 0
-  let editing = false
   let nameChanges = false
   let colorChanges = false
-  const colors = ["primary", "info", "warning", "danger", "grey"]
-  let boardName = ''
-  const OGName = $selectedBoard.name
-  selectedBoard.subscribe(board => {
-    boardName = board.name
+  let favoriteChanges = false
+  let editing = false
+  let workspaceName = $selectedWorkspace.name
+  let isFavorite = false
+  selectedWorkspace.subscribe(workspace => {
+    workspaceName = workspace.name
+    isFavorite = workspace.isFavorite
   })
+
+  // colors
+  const colors = ["primary", "link", "info", "success", "warning", "danger"]
 
   const changeName = (/** @type {string} */ newName) => {
     editing = false
     const tempName = newName
     newName = newName.split(" ").join("")
-    if($selectedBoard.name === newName) {
+    if($selectedWorkspace.name === newName) {
       nameChanges = false
-      boardName = $selectedBoard.name
+      workspaceName = $selectedWorkspace.name
     }
-    if($selectedBoard.name.split(" ").join("") !== newName && newName !== "") {
+    if($selectedWorkspace.name.split(" ").join("") !== newName && newName !== "") {
       nameChanges = true
-      boardName = tempName
+      workspaceName = tempName
     }else if(newName === "") {
       nameChanges = false
       let notifsCopy = $notifs
@@ -38,16 +42,21 @@
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
-      boardName = $selectedBoard.name
+      workspaceName = $selectedWorkspace.name
     }
   }
 
-  const nameChecker = name => {
-    return name ? true : false
+  function nameChecker(name) {
+    return name ? true : false;
   }
 
-  const updateBoard = () => {
-    if(!nameChecker(boardName)) {
+  let showAdvanceSettings = false
+  let width = 0
+
+  $: isFavorite == $oldFavoriteStatus ? favoriteChanges = false : favoriteChanges = true
+
+  const updateWorkspace = async () => {
+    if(!nameChecker(workspaceName)) {
       let notifsCopy = $notifs
       notifsCopy.push({
         msg: 'Name cannot be empty',
@@ -55,22 +64,22 @@
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
-      boardName = $selectedBoard.name
+      workspaceName = $selectedWorkspace.name
       return false
     }
-
-    changeName(boardName)
+    changeName(workspaceName)
     isProcessing.set(true)
 
     let notifsCopy = $notifs
     notifsCopy.push({
-      msg: 'Updating board...Please wait',
+      msg: 'Updating workspace...Please wait',
       type: 'success',
       id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
     })
     notifs.set(notifsCopy)
 
-    fetch(`${constants.backURI}/MainApp/subject/workspace/board/edit`, {
+    // do http requests here
+    fetch(`${constants.backURI}/MainApp/subject/workspace/edit`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -78,33 +87,28 @@
       body: JSON.stringify({
         ids: {
           user: $userData.id,
-          subject: $activeSubject.id,
-          workspace: $activeWorkspace.id
+          subject: $activeSubject.id
         },
-        board: {
-          id: $selectedBoard.id,
-          name: boardName,
-          color: $modalChosenColor
+        workspace: {
+          id: $selectedWorkspace.id,
+          color: $modalChosenColor,
+          isFavorite: isFavorite,
+          name: workspaceName
         }
       })
     }).then(async res => {
-      const { board } = await res.json()
+      const { workspace } = await res.json()
 
       let userDataCopy = $userData
       userDataCopy.subjects.every(subject => {
         if(subject.id === $activeSubject.id) {
-          subject.workspaces.every(workspace => {
-            if(workspace.id === $activeWorkspace.id) {
-              workspace.boards.every(boarda => {
-                if(boarda.id === $selectedBoard.id) {
-                  boarda.name = board.name
-                  boarda.color = board.color
-                  selectedBoard.set(boarda)
-                  return false
-                }
-                return true
-              })
-              activeWorkspace.set(workspace)
+          subject.workspaces.every(workspacea => {
+            if(workspacea.id === $activeWorkspace.id) {
+              workspacea.color = workspace.color
+              workspacea.isFavorite = workspace.isFavorite
+              workspacea.name = workspace.name
+              activeWorkspace.set(workspacea)
+              selectedWorkspace.set(workspacea)
               return false
             }
             return true
@@ -115,26 +119,31 @@
         return true
       })
       userData.set(userDataCopy)
-      modalChosenColor.set(board.color)
-      boardSettingsModalActive.set(false)
+      workspaceSettingsModalActive.set(false)
+      modalChosenColor.set(workspace.color)
+      oldFavoriteStatus.set(workspace.isFavorite)
       isProcessing.set(false)
 
       let notifsCopy = $notifs
       notifsCopy.push({
-        msg: `${nameChanges && colorChanges ? `${OGName} board has been renamed and changed color`: nameChanges ? `${OGName} board is renamed to ${boardName}` : `${OGName} board has been changed color`}`,
+        msg: `${workspace.name} is updated`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
       notifs.set(notifsCopy)
-      
+
       nameChanges = false
       colorChanges = false
+      favoriteChanges = false
     }).catch(err => {
       isProcessing.set(false)
 
+      nameChanges = false
+      colorChanges = false
+      favoriteChanges = false
       let notifsCopy = $notifs
       notifsCopy.push({
-        msg: `Error in updating the board, ${err}`,
+        msg: `Error in updating the workspace, ${err}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
@@ -143,30 +152,31 @@
   }
 
   const keyDown = e => {
-    if(editing && e.keyCode == 13 && $boardSettingsModalActive) {
+    if(editing && e.keyCode == 13 && $workspaceSettingsModalActive) {
       changeName(boardName)
     }
   }
-
 </script>
 
 <svelte:window bind:outerWidth={width} on:keydown={keyDown} />
 
+<WorkspaceDeletion/>
+
 <div class="select-none">
-  <Dialog class="has-background-white px-3 py-2" bind:active={$boardSettingsModalActive} persistent>
+  <Dialog class="has-background-white px-3 py-2" bind:active={$workspaceSettingsModalActive} persistent >
     <!-- header -->
     <div class="min-w-100p is-flex is-justify-content-space-between">
       <!-- title -->
       <div class="inter-reg txt-size-20 has-text-weight-bold">
-        Board settings
+        Workspace Settings
       </div>
 
       <!-- close icon/button -->
       <div
         on:click={e => {
-          if(!$isProcessing) boardSettingsModalActive.set(false)
+          if(!$isProcessing) workspaceSettingsModalActive.set(false)
         }}
-        class='is-clickable rounded-circle hover-bg-grey-light maxmins-w-30 maxmins-h-30 is-flex is-align-items-center is-justify-content-center has-transition'
+        class='{$isProcessing ? "": "is-clickable"} rounded-circle hover-bg-grey-light maxmins-w-30 maxmins-h-30 is-flex is-align-items-center is-justify-content-center has-transition'
       >
         <Icon class='has-text-danger' path={mdiClose} />
       </div>
@@ -187,15 +197,14 @@
         <div
           class="has-text-weight-medium flex-grow-1 rounded p-1"
         >
-          {boardName}
+          {workspaceName}
         </div>
         {:else}
         <div class="flex-grow-1">
-          <input bind:value={boardName} type="text" class="border-w-1 border-color-grey-light border-type-solid maxmins-w-100p rounded p-1">
+          <input bind:value={workspaceName} type="text" class="border-w-1 border-color-grey-light border-type-solid maxmins-w-100p rounded p-1">
         </div>
         {/if}
 
-        <!-- edit button -->
         {#if !editing}
           {#if !$isProcessing}
             <div
@@ -209,10 +218,10 @@
           {:else}
             <Pulse color='#fddd3f' size={20} />
           {/if}
-        {:else}
+         {:else}
         <div
           on:click={e => {
-            if(!$isProcessing) changeName(boardName)
+            if(!$isProcessing) changeName(workspaceName)
           }}
           class="ml-3 is-clickable hover-txt-style-underline"
         >
@@ -239,7 +248,7 @@
               on:click={e => {
                 if($isProcessing) return false
                 modalChosenColor.set(color)
-                if($selectedBoard.color !== $modalChosenColor) {
+                if($selectedWorkspace.color !== $modalChosenColor) {
                   colorChanges = true
                 }else{
                   colorChanges = false
@@ -253,23 +262,37 @@
             {/each}
         </div>
       </div>
+      
+      <!-- favorite -->
+      <div class="is-flex is-align-items-center">
+        <!-- label -->
+        <div class="inter-reg mr-3 {width < 321 ? 'maxmins-w-15p txt-size-11' : 'maxmins-w-20p txt-size-16'}">
+          Favorite
+        </div>
+        
+        <!-- switch -->
+        <div class="is-flex is-align-items-center">
+            <Switch class='p-0 m-0' color='green' disabled={$isProcessing} bind:checked={isFavorite} inset />
+        </div>
+      </div>
 
       <!-- advance settings -->
-      <div class="maxmins-w-100p is-flex is-align-items-center is-justify-content-space-between mt-3">
-        <!-- delete board -->
+      <div class="maxmins-w-100p is-flex is-align-items-center is-justify-content-space-between mt-10">
         <div
           on:click={e => {
-            if($isProcessing) return false
-            boardSettingsModalActive.set(false)
-            boardDeleteModalActive.set(true)
+            if(showAdvanceSettings) {
+              showAdvanceSettings = false
+            }else{
+              showAdvanceSettings = true
+            }
           }}
         >
-          <Button size='small' depressed disabled={$isProcessing} class='inter-reg'>Delete board</Button>
+          <Button size='small' depressed class='inter-reg'>Advance settings</Button>
         </div>
 
-        {#if (nameChanges || colorChanges) && !$isProcessing}
+        {#if (nameChanges || colorChanges || favoriteChanges) && !$isProcessing}
         <div
-          on:click={updateBoard}
+          on:click={updateWorkspace}
         >
           <Button size='small' outlined>Save</Button>
         </div>
@@ -279,6 +302,39 @@
         <div></div>
         {/if}
       </div>
+      
+      <!-- danger zone section -->
+      <div
+        class="is-flex is-align-items-center is-flex-wrap-wrap mt-3 px-2 pb-1 has-background-danger-light rounded has-transition {showAdvanceSettings ? '': 'is-hidden'}"
+        style="transform-origin: top center"
+      >
+        <div class="maxmins-w-100p has-text-danger-dark txt-size-20 has-text-weight-semibold">
+          Danger Zone
+        </div> 
+
+        <!-- delete button -->
+        <div class="is-flex is-align-items-center is-flex-wrap-wrap maxmins-w-100p">
+          <div class="has-text-danger-dark maxmins-w-100p txt-size-12">
+            Delete this workspace.
+          </div>
+            <div
+              on:click={e => {
+                if($isProcessing) return false
+                workspaceSettingsModalActive.set(false)
+                workspaceDeletionModalActive.set(true)
+              }}
+            >
+              <Button disabled={$isProcessing} size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Delete</Button>
+            </div>
+        </div>
+      </div>
+
     </div>
   </Dialog>
 </div>
+
+<style>
+  .select-none {
+    user-select: none;
+  }
+</style>

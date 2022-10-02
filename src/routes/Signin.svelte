@@ -210,9 +210,9 @@
               email: emailInput
             })
           }).then(async resp => {
-            const data = await resp.json()
+            const { user } = await resp.json()
             notifs.set([])
-            userData.set(data)
+            userData.set(user)
             useHint.set($userData.useHint)
             let notifsCopy = $notifs
             notifsCopy.push({
@@ -222,6 +222,8 @@
             })
             notifs.set(notifsCopy)
             isLoggedIn.set(true)
+            console.log(`logged in: ${$isLoggedIn}`)
+            localStorage.setItem('email', user.email)
             goto('/MainApp', {replaceState: true})
             emailInput = ""
             passwordInput = ""
@@ -279,14 +281,8 @@
   }
 
   onMount(() => {
-    if(browser && localStorage.getItem('userData')) {
-      const user = JSON.parse(localStorage.getItem('userData'))
-      userData.set(user)
-      notifs.set([])
-      loading = true
-      disabled = true
-      isLoggedIn.set(true)
-      goto('/MainApp', {replaceState: true})
+    if(localStorage.getItem('email')) {
+      emailInput = localStorage.getItem('email')
     }
   })
 

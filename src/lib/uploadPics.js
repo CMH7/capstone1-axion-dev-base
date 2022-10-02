@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig)
 const storage = getStorage(app)
 
 export default {
-  uploadPic: (userName, file, /** @type {any} */ fileName, /** @type {import("@firebase/storage").UploadMetadata} */ meta) => {
+  uploadPic: (userName, file, fileName, /** @type {import("@firebase/storage").UploadMetadata} */ meta) => {
     const userRef = ref(storage, `${userName}/${fileName}`)
 
     const ups = uploadString(userRef, file, 'data_url', meta)

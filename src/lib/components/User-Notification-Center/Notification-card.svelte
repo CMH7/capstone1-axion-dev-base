@@ -1,5 +1,5 @@
 <script>
-  import { fly } from 'svelte/transition'
+  //@ts-nocheck
   import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, selectedSubjectForSubjectSettings } from '$lib/stores/global-store'
   import constants from '$lib/constants'
   import { Avatar, Icon } from 'svelte-materialify'
@@ -22,10 +22,8 @@
       userID: ''
     }
   }
-  
-  export let i = 0
 
-  const setReadNotif = (notifID) => {
+  const setReadNotif = () => {
     let userDataCopy = $userData
     userDataCopy.notifications.every(notification => {
       if(notification.id === notifID) {
@@ -36,7 +34,7 @@
     })
     userData.set(userDataCopy)
 
-   fetch(`${constants.backURI}/User/notification?user=${$userData.id}&notification=${notifID}`, {
+   fetch(`${constants.backURI}/User/notification?user=${$userData.id}&notification=${notification.id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -51,12 +49,13 @@
         id: $notifs.length + 1
       })
       notifs.set(notifsCopy)
+      console.error(err)
     })
   }
 
-  const deleteNotif = (notifID) => {
+  const deleteNotif = () => {
     let userDataCopy = $userData
-    userDataCopy.notifications = userDataCopy.notifications.filter(notification => notification.id != notifID)
+    userDataCopy.notifications = userDataCopy.notifications.filter(notificationa => notificationa.id != notification.id)
     userData.set(userDataCopy)
 
     fetch(`${constants.backURI}/User/delete/notification`, {
@@ -67,7 +66,7 @@
       body: JSON.stringify({
         ids: {
           user: $userData.id,
-          notification: notifID
+          notification: notification.id
         }
       })
     }).then(async res => {
@@ -75,7 +74,6 @@
       let userDataCopy = $userData
       userDataCopy.notifications = notifications
       userData.set(userDataCopy)
-      localStorage.setItem('userData', JSON.stringify($userData))
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -84,10 +82,11 @@
         id: $notifs.length + 1
       })
       notifs.set(notifsCopy)
+      console.error(err)
     })
   }
 
-  const transpo = (notification) => {
+  const transpo = () => {
     if(notification.fromTask || notification.aMention) {
       currentInterface.set(notification.fromInterface.interf)
       currentDashboardSubInterface.set(notification.fromInterface.subInterface)
@@ -113,22 +112,8 @@
       })
       taskViewModalActive.set(true)
     }
-    
-    if(notification.fromInterface.subInterface === 'Workspaces'){
-      currentInterface.set(`${notification.fromInterface.interf}`)
-      $userData.subjects.every(subject => {
-        if(subject.id === notification.fromTask) {
-          activeSubject.set(subject)
-          selectedSubjectForSubjectSettings.set(subject)
-          return false
-        }
-        return true
-      })
-      currentDashboardSubInterface.set(`${notification.fromInterface.subInterface}`)
-      breadCrumbsItems.set([])
-      breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeSubject.name}])
-    }
-    if(!notification.isRead) setReadNotif(notification.id)
+
+    if(!notification.isRead) setReadNotif()
   }
 
   let outerWidth = 0
@@ -137,16 +122,7 @@
 <svelte:window bind:outerWidth />
 
 <div
-  out:fly={
-    {
-      x: 200,
-      duration: 600,
-      delay: 100 * i
-    }
-  }
-  on:click={e => {
-    transpo(notification)
-  }}
+  on:click={transpo}
   class="{notification.isRead ? 'opacity-50p': ''} column parent is-12 rounded min-h-50 mb-2 is-clickable hover-bg-grey-lighter-grey-light has-transition is-relative">
 
   <div class="is-flex is-align-items-center min-h-100p p-1">

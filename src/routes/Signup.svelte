@@ -214,6 +214,7 @@
       })
       notifs.set(notifss)
 
+      // Check if the email is existing in the database else create account
       await fetch(`${backURI}/validUser`, {
         method: 'POST',
         headers: {
@@ -222,10 +223,9 @@
         body: JSON.stringify({
           email: email
         })
-      })
-      .then( async res => {
-        const data = await res.json()
-        if(data?.id) {
+      }).then( async res => {
+        const { user } = await res.json()
+        if(user?.id) {
           let notifsCopy = $notifs
           notifsCopy.push({
             msg: 'Email used has an existing account.',
@@ -244,6 +244,7 @@
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+              invitations: [],
               subjects: [],
               notifications: [],
               age: parseInt(age),
@@ -261,31 +262,28 @@
               bio: ''
             })
           }).then(async res=>{
-            if(res.ok) {
-              const { valid } = await res.json()
-              if(valid) {
-                let notifsCopy = $notifs
-                notifsCopy.push({
-                    msg: "Creation successful",
-                    type: "success",
-                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-                })
-                notifs.set(notifsCopy)
-                loading = false
-                disabled = false 
-                goto('/Signin', {replaceState: true})
-              }
-              if(!valid) {
-                let notifsCopy = $notifs;
-                notifsCopy.push({
-                    msg: "Creation failed. Please try again",
-                    type: "error",
-                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-                })
-                notifs.set(notifsCopy)
-                loading = false
-                disabled = false
-              }
+            const { valid } = await res.json()
+            if(valid) {
+              let notifsCopy = $notifs
+              notifsCopy.push({
+                  msg: "Creation successful",
+                  type: "success",
+                  id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+              })
+              notifs.set(notifsCopy)
+              loading = false
+              disabled = false 
+              goto('/Signin', {replaceState: true})
+            } else {
+              let notifsCopy = $notifs;
+              notifsCopy.push({
+                  msg: "Creation failed. Please try again",
+                  type: "error",
+                  id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+              })
+              notifs.set(notifsCopy)
+              loading = false
+              disabled = false
             }
           }).catch(err=>{
             let notifsCopy = $notifs

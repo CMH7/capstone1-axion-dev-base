@@ -1,17 +1,14 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge, Avatar } from "svelte-materialify"
-  import {mdiMenu, mdiAccount, mdiBell } from '@mdi/js'
-  import { currentInterface, ismini, sidebarActive, notifCenterOpen, userData } from "$lib/stores/global-store"
+  import {mdiMenu, mdiAccount, mdiBell, mdiAccountGroup } from '@mdi/js'
+  import { currentInterface, ismini, sidebarActive, notifCenterOpen, userData, invModalActive } from "$lib/stores/global-store"
   import NotificationCenter from "$lib/components/User-Notification-Center/NotificationCenter.svelte"
 
   let notifCenterOpenCopy = false
   notifCenterOpen.subscribe(value => {
     notifCenterOpenCopy = value
   })
-
-  let allNotifications = 0
-  userData.subscribe(user => allNotifications = user.notifications.filter(notif => notif.isRead != true).length)
 
   const clickOutside = () => notifCenterOpen.set(false)
 
@@ -54,6 +51,18 @@
       <!-- Expansion-er -->
       <div class="is-flex-grow-1"/>
 
+      <!-- invitations inbox -->
+      <div
+        on:click={e => {
+          invModalActive.set(true)
+          console.log('clicked')
+        }}
+        class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$invModalActive? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
+        <Badge active={$userData.invitations.filter(invitation => invitation.to.id === $userData.id ).length > 0} class="success-color" dot={outerWidth < 426} value={$userData.invitations.filter(invitation => invitation.to.id === $userData.id ).length} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
+          <Icon class='white-text' size={outerWidth < 426 ? '20px': '30px'} path={mdiAccountGroup} />
+        </Badge>
+      </div>
+
       <div
         use:ClickOutside
         on:clickOutside={clickOutside}
@@ -67,7 +76,7 @@
             }
           }}
           class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$notifCenterOpen? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
-          <Badge active={allNotifications > 0} class="success-color" dot={outerWidth < 426} value={allNotifications} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
+          <Badge active={$userData.notifications.filter(notification => notification.isRead != true).length > 0} class="success-color" dot={outerWidth < 426} value={$userData.notifications.filter(notification => notification.isRead != true).length} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
             <Icon class='white-text' size={outerWidth < 426 ? '20px': '30px'} path={mdiBell } />
           </Badge>
         </div>

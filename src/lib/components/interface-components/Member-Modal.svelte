@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { memberModalActive, memberModalLoading } from '$lib/stores/global-store'
   import { mdiMagnify } from '@mdi/js'
   import { MaterialApp, Dialog, Button, TextField, Icon, Avatar } from "svelte-materialify"
@@ -16,6 +17,7 @@
     users = users.map(user => {
       return {
         isAdded: 2,
+        id: user.id,
         data: {
           email: user.email,
           name: `${user.firstName} ${user.lastName}`,
@@ -27,6 +29,7 @@
     $activeWorkspace.members.forEach(member => {
       users.push({
         isAdded: 1,
+        id: "",
         data: member
       })
     })
