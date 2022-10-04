@@ -425,7 +425,7 @@
             <div class="is-flex is-justify-content-center is-align-items-center">
               <Checkbox bind:checked={termsPrivacyCheck}/>
               <div>
-                Agree with <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon} >Terms and conditions</span> and with the <span class="has-text-link is-clickable hover-txt-style-underline" on:click={openComingSoon}>Privacy policy</span> of the Axion
+                Agree with <a class="has-text-link is-clickable hover-txt-style-underline" href="/Terms&Conditions" >Terms and conditions</a> and with the <a class="has-text-link is-clickable hover-txt-style-underline" href="/Privacy_Policy">Privacy policy</a> of the Axion
               </div>
             </div>
           </div>
