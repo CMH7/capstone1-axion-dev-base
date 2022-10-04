@@ -259,7 +259,8 @@
               useHint: true,
               year: parseInt(year),
               lastActive: new Date(),
-              bio: ''
+              bio: '',
+              verified: false
             })
           }).then(async res=>{
             const { valid } = await res.json()
@@ -269,6 +270,11 @@
                   msg: "Creation successful",
                   type: "success",
                   id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+              })
+              notifsCopy.push({
+                msg: 'Check your email inbox to verify your email!',
+                type: 'wait',
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() + 13 * (Math.random() * 1)}`, 13) 
               })
               notifs.set(notifsCopy)
               loading = false
