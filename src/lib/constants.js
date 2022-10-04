@@ -52,7 +52,8 @@ export default {
     useHint: true,
     year: 0,
     lastActive: new Date(),
-    bio: ''
+    bio: '',
+    verified: false
   },
   task: {
     members: [],
