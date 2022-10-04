@@ -52,16 +52,17 @@
       <div class="is-flex-grow-1"/>
 
       <!-- invitations inbox -->
+      {#if $userData.verified}
       <div
         on:click={e => {
           invModalActive.set(true)
-          console.log('clicked')
         }}
         class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$invModalActive? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
         <Badge active={$userData.invitations.filter(invitation => invitation.to.id === $userData.id ).length > 0} class="success-color" dot={outerWidth < 426} value={$userData.invitations.filter(invitation => invitation.to.id === $userData.id ).length} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
           <Icon class='white-text' size={outerWidth < 426 ? '20px': '30px'} path={mdiAccountGroup} />
         </Badge>
       </div>
+      {/if}
 
       <div
         use:ClickOutside

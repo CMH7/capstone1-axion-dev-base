@@ -13,7 +13,7 @@
   const getAllUsers = async () => {
     memberModalLoading.set(true)
     memberModalActive.set(true)
-    const res = await fetch(`${constants.backURI}/`)
+    const res = await fetch(`${constants.backURI}/verifiedUsers`)
     const users = await res.json()
     if(res.ok) {
       const wsMembers = $activeWorkspace.members
@@ -26,7 +26,7 @@
     } else {
       let notifsCopy = $notifs
       notifsCopy.push({
-        msg: `Getting all users failed, ${res.statusText}`,
+        msg: `Getting all verified users failed, ${res.statusText}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
@@ -87,6 +87,7 @@
           Add board
         </div>
       </ListItem>
+      {#if $userData.verified}
       <ListItem>
         <div
           on:click={e => manageAdminModalActive.set(true)}
@@ -101,6 +102,7 @@
           Manage members
         </div>
       </ListItem>
+      {/if}
       <ListItem>
         <div
           on:click={e => workspaceSettingsModalActive.set(true)}

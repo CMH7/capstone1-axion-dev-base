@@ -142,6 +142,21 @@
           userDataCopy.notifications.unshift(data.notification)
           userData.set(userDataCopy)
         })
+
+        // ON EMAIL VERIFIED
+        channel.bind('emailVerified', function(data) {
+          let userDataCopy = $userData
+          userDataCopy.verified = data.verified
+          userData.set(userDataCopy)
+
+          let notifsCopy = $notifs
+          notifsCopy.push({
+            msg: 'Email verified!',
+            type: 'success',
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          })
+          notifs.set(notifsCopy)
+        })
         
         currentInterface.set('Dashboard')
         currentDashboardSubInterface.set('Subjects')
