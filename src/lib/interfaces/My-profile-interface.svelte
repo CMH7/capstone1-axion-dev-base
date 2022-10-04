@@ -331,12 +331,14 @@
                       <input readonly value={$userData.email} class="cursor-def input has-background-grey-lighter dm-sans txt-size-15 has-text-grey"/>
 
                       <!-- Not veified -->
+                      {#if !$userData.verified}
                       <button
                         on:click={openComingSoon}
                         class="button is-small bg-color-pastel-red pos-abs pos-t-5 pos-r-5 dm-sans is-size-7 has-text-white"
                       >
                         not verified
                       </button>
+                      {/if}
                     </div>
                   </div>
                 </div>
