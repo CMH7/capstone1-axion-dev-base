@@ -60,7 +60,7 @@
   on:mouseleave={() => mouseEnter = false}
   class="has-transition notification rounded {mouseEnter?`has-background-${subject.color}-dark`:""} is-{subject.color}"
 >  
-  <p class="quicksands has-text-weight-semibold mb-0 is-unselectable is-absolute">
+  <p class="parent-hover-txt-color-white quicksands has-transition has-text-weight-semibold is-unselectable txt-size-12 max-w-60p txt-overflow-ellipsis overflow-x-hidden">
     {subject.name}
   </p>
 </div>
