@@ -1,4 +1,5 @@
 <script>
+    //@ts-nocheck
     // @ts-ignore
     import { onDestroy } from 'svelte'
 	import { Dialog, Button } from 'svelte-materialify'
