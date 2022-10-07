@@ -1,7 +1,8 @@
 <script>
   // @ts-nocheck
+  import { goto } from '$app/navigation'
   import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge, Avatar } from "svelte-materialify"
-  import {mdiMenu, mdiAccount, mdiBell, mdiAccountGroup } from '@mdi/js'
+  import {mdiMenu, mdiAccount, mdiBell, mdiAccountGroup, mdiBolt } from '@mdi/js'
   import { currentInterface, ismini, sidebarActive, notifCenterOpen, userData, invModalActive } from "$lib/stores/global-store"
   import NotificationCenter from "$lib/components/User-Notification-Center/NotificationCenter.svelte"
 
@@ -50,6 +51,12 @@
 
       <!-- Expansion-er -->
       <div class="is-flex-grow-1"/>
+
+      <div class="is-clickable" on:click={ () => {
+        goto('/experiment/profilePictureUpload' , {replaceState: true})
+      }}>
+        <Icon path={mdiBolt} />
+      </div>
 
       <!-- invitations inbox -->
       {#if $userData.verified}
