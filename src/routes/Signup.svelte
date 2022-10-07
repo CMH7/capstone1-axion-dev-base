@@ -396,7 +396,7 @@
           <!-- Course -->
           <input {disabled} required list="coursesPH" type="text" bind:value={course} class="input quicksands my-3 has-background-light maxmins-w-100p" placeholder="Course">
           <datalist id='coursesPH'>
-            {#each constants.courses.courses as course }
+            {#each constants.courses.courses.sort() as course }
               <option value={`${course}`}>{course}</option>
             {/each}
           </datalist>
