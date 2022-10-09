@@ -11,9 +11,9 @@
   const remove = () => {
     $notifs = $notifs.filter(notif => notif.id !== notif.id)
   }
-
+  
   setTimeout(() => {
-    remove()
+    $notifs = $notifs.filter(notif => notif.id !== notif.id)
   }, 5000)
 
 </script>
