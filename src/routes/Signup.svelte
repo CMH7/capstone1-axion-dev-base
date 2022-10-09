@@ -104,6 +104,8 @@
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
+      isProcessing.set(false)
+      disabled = false
     }else if(password !== repassword){
       $notifs = [...$notifs, {
         msg: 'Password does not match. Please try again.',
