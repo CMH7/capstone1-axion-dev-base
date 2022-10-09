@@ -38,7 +38,7 @@
         class="is-hidden-tablet pos-abs pos-l-15"
       >
         <Avatar size='35px'>
-          <img class="has-transition" style="transform: rotateZ({$ismini ? '0': '-37'}deg);" src="Axion_Logo2.png" alt="">
+          <img class="has-transition" style="transform: rotateZ({$ismini ? '0': '-37'}deg);" src="axionFinalLogo.png" alt="">
         </Avatar>
       </div>
 
