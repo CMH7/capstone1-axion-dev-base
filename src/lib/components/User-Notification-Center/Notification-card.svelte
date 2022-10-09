@@ -1,6 +1,6 @@
 <script>
   //@ts-nocheck
-  import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, selectedSubjectForSubjectSettings } from '$lib/stores/global-store'
+  import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive } from '$lib/stores/global-store'
   import constants from '$lib/constants'
   import { Avatar, Icon } from 'svelte-materialify'
   import { mdiAccountOutline, mdiClose } from '@mdi/js'
@@ -54,10 +54,6 @@
   }
 
   const deleteNotif = () => {
-    let userDataCopy = $userData
-    userDataCopy.notifications = userDataCopy.notifications.filter(notificationa => notificationa.id != notification.id)
-    userData.set(userDataCopy)
-
     fetch(`${constants.backURI}/User/delete/notification`, {
       method: 'DELETE',
       headers: {
@@ -70,18 +66,25 @@
         }
       })
     }).then(async res => {
-      const { notifications } = await res.json()
+      const { error, notification } = await res.json()
+      if(error) {
+        $notifs = [...$notifs, {
+          msg: `Error in deleting the notificaton A, ${err}`,
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+        return
+      }
+
       let userDataCopy = $userData
-      userDataCopy.notifications = notifications
+      userDataCopy.notifications = userDataCopy.notifications.filter(notificationa => notificationa.id != notification.id)
       userData.set(userDataCopy)
     }).catch(err => {
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in deleting the notificaton, ${err}`,
         type: 'error',
         id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
+      }]
       console.error(err)
     })
   }
