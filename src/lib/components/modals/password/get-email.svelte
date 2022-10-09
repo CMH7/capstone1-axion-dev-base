@@ -5,7 +5,7 @@
   import { emailModalActive, isSearching, resetModalActive, userID } from "$lib/stores/reset-password-store"
   import { mdiSquareEditOutline, mdiClose } from '@mdi/js'
   import { Pulse } from 'svelte-loading-spinners'
-  import validators from '$lib/validators'
+  import validators from '$lib/config/validators'
   import constants from '$lib/config/constants'
   import Pusher from "pusher-js"
 

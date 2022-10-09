@@ -14,7 +14,7 @@
 	import { emailModalActive } from '$lib/stores/reset-password-store';
 	import GetEmail from '$lib/components/modals/password/get-email.svelte';
 	import Reset from '$lib/components/modals/password/reset.svelte'
-  import validators from '$lib/validators'
+  import validators from '$lib/config/validators'
 
   const backURI = constants.backURI
 

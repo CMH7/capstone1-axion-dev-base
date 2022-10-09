@@ -11,7 +11,7 @@
   import { fade } from 'svelte/transition'
   import { isProcessing } from '$lib/stores/global-store'
   import { Pulse } from 'svelte-loading-spinners'
-	import validators from "$lib/validators";
+	import validators from "$lib/config/validators";
 
   const backURI = constants.backURI
 
