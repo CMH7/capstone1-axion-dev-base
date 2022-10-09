@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app"
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage"
 import { userData, notifs } from "$lib/stores/global-store"
 import { get } from "svelte/store"
-import constants from "$lib/constants"
+import constants from "$lib/config/constants"
 
 const firebaseConfig = {
   apiKey: "AIzaSyAeF6ZO2XXD9s4PzQ0W_4WIhMThIQwrGaw",
