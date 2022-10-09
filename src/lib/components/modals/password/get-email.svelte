@@ -1,6 +1,7 @@
 <script>
   //@ts-nocheck
 	import { Dialog, Icon, Button } from "svelte-materialify"
+  import { notifs } from "$lib/stores/global-store"
   import { emailModalActive, isSearching, resetModalActive, userID } from "$lib/stores/reset-password-store"
   import { mdiSquareEditOutline, mdiClose } from '@mdi/js'
   import { Pulse } from 'svelte-loading-spinners'
@@ -44,6 +45,11 @@
 
       isSearching.set(false)
     } else {
+      $notifs = [...$notifs, {
+        msg: 'There is no account related to this email.',
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
       message = 'There is no account related to this email.'
       isSearching.set(false)
       return
