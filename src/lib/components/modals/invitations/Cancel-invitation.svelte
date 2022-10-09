@@ -2,7 +2,7 @@
   //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
   import { cancelInvModalActive, invModalActive, selectedInvitation, isProcessing, userData, notifs } from '$lib/stores/global-store'
-	import constants from '$lib/constants'
+	import constants from '$lib/config/constants'
 	import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
 

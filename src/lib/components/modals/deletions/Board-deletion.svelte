@@ -3,7 +3,7 @@
   import { Dialog, Button } from 'svelte-materialify'
   import { boardDeleteModalActive, selectedBoard, boardSettingsModalActive, userData, notifs, activeSubject, activeWorkspace, isProcessing } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import { Pulse } from 'svelte-loading-spinners'
 </script>
 

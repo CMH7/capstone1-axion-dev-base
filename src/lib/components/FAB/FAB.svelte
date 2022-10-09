@@ -4,7 +4,7 @@
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
 
   let width = 0

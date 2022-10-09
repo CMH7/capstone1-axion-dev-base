@@ -3,7 +3,7 @@
   import { Dialog, Divider, Icon, Switch, Button } from 'svelte-materialify'
   import { workspaceSettingsModalActive, selectedWorkspace, modalChosenColor, activeSubject, activeWorkspace, userData, notifs, oldFavoriteStatus, isProcessing, workspaceDeletionModalActive } from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
 	import WorkspaceDeletion from '../deletions/Workspace-deletion.svelte';

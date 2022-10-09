@@ -8,7 +8,7 @@
   import WorkspacesInterface from "$lib/interfaces/sub-interfaces/Workspaces-interface.svelte"
   import Fab from '$lib/components/FAB/FAB.svelte'
   import AddTaskPopUp from '$lib/components/modals/task/Add-task-pop-up.svelte'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import SubjectSettings from '$lib/components/modals/subject/Subject-settings.svelte'
   import AddBoardModal from '$lib/components/modals/boards/Add-board-modal.svelte'
   import BoardsInterface from './sub-interfaces/Boards-interface.svelte'

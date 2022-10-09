@@ -15,7 +15,7 @@
   import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import { goto } from '$app/navigation'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import LoadingScreen from '$lib/components/LoadingScreen.svelte'
   import Invitations from '$lib/components/modals/invitations/invitations.svelte'
   import Pusher from 'pusher-js'

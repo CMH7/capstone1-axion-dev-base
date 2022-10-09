@@ -6,7 +6,7 @@
   import { mdiSquareEditOutline, mdiClose } from '@mdi/js'
   import { Pulse } from 'svelte-loading-spinners'
   import validators from '$lib/validators'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import Pusher from "pusher-js"
 
   let pusher = new Pusher('8e02120d4843c3a07489', {

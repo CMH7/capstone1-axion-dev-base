@@ -1,9 +1,9 @@
 <script>
-  //@ts-check
+  //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
   import { subjectTruncationModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, activeSubject, userData, currentInterface, notifs } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
 </script>
 
 <div>

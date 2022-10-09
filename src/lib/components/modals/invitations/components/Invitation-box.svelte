@@ -1,6 +1,6 @@
 <script>
   //@ts-nocheck
-	import constants from '$lib/constants';
+	import constants from '$lib/config/constants';
   import { selectedInvitation, invModalActive, cancelInvModalActive, userData, notifs, isProcessing } from '$lib/stores/global-store'
   import { Button } from 'svelte-materialify'
   import bcrypt from 'bcryptjs'

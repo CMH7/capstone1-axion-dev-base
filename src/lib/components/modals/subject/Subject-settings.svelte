@@ -5,7 +5,7 @@
   import { mdiClose } from '@mdi/js'
   import SubjectDeletionsModal from '$lib/components/modals/deletions/Subject-deletions-modal.svelte'
   import SubjectTruncationModal from '$lib/components/modals/truncations/Subject-truncation-modal.svelte'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
 

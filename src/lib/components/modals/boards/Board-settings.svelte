@@ -5,7 +5,7 @@
   import { mdiClose } from '@mdi/js'
   import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
-	import constants from '$lib/constants';
+	import constants from '$lib/config/constants';
 
   let width = 0
   let editing = false

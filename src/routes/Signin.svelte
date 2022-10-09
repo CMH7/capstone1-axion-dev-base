@@ -9,7 +9,7 @@
   import bcrypt from 'bcryptjs'
   import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import ComingSoonModal from "$lib/components/modals/ComingSoonModal.svelte"
 	import { emailModalActive } from '$lib/stores/reset-password-store';
 	import GetEmail from '$lib/components/modals/password/get-email.svelte';

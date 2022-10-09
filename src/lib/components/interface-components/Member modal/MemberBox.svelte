@@ -5,7 +5,7 @@
   import { Avatar, Icon, Dialog, Button } from 'svelte-materialify'
   import { mdiAccountCircle, mdiClose } from '@mdi/js'
   import { userData, activeSubject, activeWorkspace, notifs, isProcessing } from '$lib/stores/global-store'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import Skeleton from 'svelte-skeleton/Skeleton.svelte'
   import bcrypt from 'bcryptjs'
 

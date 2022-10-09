@@ -7,7 +7,7 @@
   import {notifs} from '$lib/stores/global-store'
   import NotificationContainer from "$lib/components/System-Notification/Notification-container.svelte"
   import { goto } from '$app/navigation'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import { fade } from 'svelte/transition'
   import { isProcessing } from '$lib/stores/global-store'
   import { Pulse } from 'svelte-loading-spinners'

@@ -1,7 +1,7 @@
 <script>
   //@ts-nocheck
   import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive } from '$lib/stores/global-store'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import { Avatar, Icon } from 'svelte-materialify'
   import { mdiAccountOutline, mdiClose } from '@mdi/js'
 

@@ -5,7 +5,7 @@
 	import { Dialog, Button } from 'svelte-materialify'
     import { notifs, userData, activeSubject, addWorkspaceModalActive, modalChosenColor } from '$lib/stores/global-store'
     import bcrypt from 'bcryptjs'
-    import constants from '$lib/constants'
+    import constants from '$lib/config/constants'
 
     const backURI = constants.backURI
 

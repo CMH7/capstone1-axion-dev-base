@@ -5,7 +5,7 @@
 	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
     import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive, allBoards } from '$lib/stores/global-store'
-    import constants from '$lib/constants'
+    import constants from '$lib/config/constants'
     import bcrypt from 'bcryptjs'
     import { mdiClose } from '@mdi/js'
 

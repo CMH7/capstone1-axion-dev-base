@@ -4,7 +4,7 @@
   import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
-  import constants from "$lib/constants"
+  import constants from "$lib/config/constants"
   import bcrypt from "bcryptjs"
 
   const backURI = constants.backURI

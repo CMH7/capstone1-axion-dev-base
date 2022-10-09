@@ -1,5 +1,5 @@
 import { writable } from "svelte/store"
-import constants from "$lib/constants"
+import constants from "$lib/config/constants"
 
 // User data and information
 export let userData = writable(constants.user)

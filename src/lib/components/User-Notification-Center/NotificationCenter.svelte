@@ -3,7 +3,7 @@
   import { Icon } from "svelte-materialify"
   import { notifCenterOpen, userData, notifs } from '$lib/stores/global-store'
   import { mdiNotificationClearAll } from "@mdi/js"
-  import constants from "$lib/constants"
+  import constants from "$lib/config/constants"
   import NotificationCard from "./Notification-card.svelte"
   import bcrypt from 'bcryptjs'
 

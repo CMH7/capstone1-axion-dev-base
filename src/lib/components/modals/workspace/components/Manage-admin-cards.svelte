@@ -1,5 +1,6 @@
 <script>
-  import constants from "$lib/constants"
+  //@ts-nocheck
+  import constants from "$lib/config/constants"
   import { activeWorkspace, userData, activeSubject, notifs, isProcessing } from '$lib/stores/global-store'
   import { mdiAccountCircleOutline, mdiMinus, mdiPlus } from "@mdi/js"
   import { Avatar, Icon } from 'svelte-materialify'

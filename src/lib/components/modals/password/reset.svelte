@@ -6,7 +6,7 @@
   import { Pulse } from 'svelte-loading-spinners'
   import { notifs } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
-	import constants from '$lib/constants';
+	import constants from '$lib/config/constants';
 
   const backURI = constants.backURI
 

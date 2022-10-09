@@ -1,5 +1,5 @@
 <script>
-  import constants from "$lib/constants"
+  import constants from "$lib/config/constants"
   import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, subjectSettingsModalActive } from "$lib/stores/global-store"
 
   // export the subject

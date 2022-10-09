@@ -5,7 +5,7 @@
   import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
   import { goto } from "$app/navigation" 
   import { isLoggedIn, transitionActive, snack, userData, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, breadCrumbsItems, activeBoard, activeTask, modalChosenColor, isProcessing } from "$lib/stores/global-store"
-  import constants from '$lib/constants';
+  import constants from '$lib/config/constants';
   import ReSendEmailVerifcation from '$lib/components/modals/my profile/re-send-email-verifcation.svelte';
  
   let resendEmail = false
