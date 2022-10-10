@@ -15,12 +15,12 @@
     }
   }
 
-  let width = 0
+  let outerWidth = 0
 </script>
 
-<svelte:window bind:outerWidth={width} on:keydown={onKeyDown}/>
+<svelte:window bind:outerWidth on:keydown={onKeyDown}/>
 
-<div class="columns is-multiline is-variable is-2 {width < 426 ? "pl-4": ""}">
+<div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-wrap-wrap {outerWidth < 571 ? "is-justify-content-center": ""}">
   <AddSubjectPopUp/>
   <!-- Other Subjects -->
   {#if allSubjects.length < 1}
@@ -33,7 +33,7 @@
     </div>
   {:else}
   {#each allSubjects as subject}
-    <div in:fade class="column is-narrow">
+    <div in:fade class="maxmins-w-{outerWidth < 571 && outerWidth >= 473 ? '200' : '230'} flex-shrink-0 mr-3 mb-3">
       <SubjectBox subject={subject}/>
     </div>
   {/each}
