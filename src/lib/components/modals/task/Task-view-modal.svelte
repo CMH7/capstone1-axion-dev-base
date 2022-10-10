@@ -200,7 +200,86 @@
   $: month = parseInt($activeTask.dueDateTime.split('T')[0].split('-')[1])
   $: hour = parseInt($activeTask.dueDateTime.split('T')[1].split('-')[0])
 
-  $: console.log($activeTask.dueDateTime)
+  let hovering = false
+
+  const setFavorite = e => {
+    fetch(`${constants.backURI}/MainApp/subject/workspace/board/task/edit`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id,
+          board: $activeBoard
+        },
+        task: {
+          id: $activeTask.id,
+          name: $activeTask.name,
+          isFavorite: $activeTask.isFavorite ? false : true,
+          level: $activeTask.level
+        }
+      })
+    }).then(async res => {
+      const {error, task} = await res.json()
+      if(error) {
+        $notifs = [...$notifs, {
+          msg: 'Response received but error in updating task',
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+        return 
+      }
+
+      $notifs = [...$notifs, {
+        msg: `${$activeTask.name} is ${task.isFavorite ? 'marked as': 'removed from'} favorites`,
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject.workspaces.every(workspace => {
+            if(workspace.id === $activeWorkspace.id) {
+              workspace.boards.every(board => {
+                if(board.id === $activeBoard) {
+                  board.tasks.every(taska => {
+                    if(taska.id === $activeTask.id) {
+                      taska.name = task.name
+                      taska.isFavorite = task.isFavorite
+                      taska.level = task.level
+                      activeTask.set(taska)
+                      return false
+                    }
+                    return true
+                  })
+                  return false
+                }
+                return true
+              })
+              activeWorkspace.set(workspace)
+              return false
+            }
+            return true
+          })
+          activeSubject.set(subject)
+          return false
+        }
+        return true
+      })
+      userData.set(userDataCopy)
+    }).catch(err => {
+      $notifs = [...$notifs, {
+        msg: `Error in marking as favorite task, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      console.error(err)
+    })
+  }
 </script>
 
 <svelte:window bind:outerWidth/>
@@ -216,28 +295,32 @@
       <!-- Container -->
       <div class="is-flex maxmins-h-500">
         <!-- ##### RIGHT SIDE ##### -->
-        <div class="maxmins-w-{outerWidth < 426 ? '100': '65'}p">
+        <div class="maxmins-w-{outerWidth < 571 ? '100': '65'}p">
           <div class="is-flex is-flex-wrap-wrap">
             <!-- task name, favorite, level -->
             <div class="pl-3 min-w-100p">
-              <div class="is-flex {outerWidth < 426 ? 'is-justify-content-space-between': 'is-align-items-center'}">
+              <div class="is-flex {outerWidth < 571 ? 'is-justify-content-space-between': 'is-align-items-center'}">
                 <!-- task name -->
                 <div class="fredoka-reg txt-size-32 is-size-4-mobile txt-color-yaz-grey-dark max-w-50p overflow-x-auto txt-overflow-nowrap-only">
                   {$activeTask.name}
                 </div>
   
                 <!-- Utilities / tools -->
-                <div class="{outerWidth > 426 ? 'ml-6': ''} is-flex">
+                <div class="{outerWidth > 571 ? 'ml-6': ''} is-flex">
                   <!-- favorite icon -->
-                  <div class="is-flex-shrink-0">
+                  <div
+                    on:mouseenter={e => hovering = true}
+                    on:mouseleave={e => hovering = false}
+                    on:click={setFavorite}
+                    class="is-flex-shrink-0 is-clickable mr-3">
                     {#if $activeTask.isFavorite}
-                      <Avatar tile size='25px' style="max-width: 25px" class="rounded mx-2 is-clickable">
-                        <Icon class='has-text-warning' path={mdiStar} />
-                      </Avatar>
+                    <Avatar tile size='25px' style="max-width: 25px">
+                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={hovering ? mdiStarOutline : mdiStar} />
+                    </Avatar>
                     {:else}
-                      <Avatar tile size='25px' style="max-width: 25px" class="rounded mx-2 is-clickable">
-                        <Icon class='has-text-warning' path={mdiStarOutline} />
-                      </Avatar>
+                    <Avatar tile size='25px' style="max-width: 25px">
+                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={hovering ? mdiStar : mdiStarOutline} />
+                    </Avatar>
                     {/if}
                   </div>
     
@@ -259,7 +342,7 @@
                   <!-- tablet Close icon -->
                   <div
                     on:click={() => taskViewModalActive.set(false)}
-                    class="{outerWidth > 426 ? 'undisp': ''} is-clickable"
+                    class="{outerWidth > 571 ? 'undisp': ''} is-clickable"
                   >
                     <Avatar tile size='25px' style="max-width: 25px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-red has-text-white fredoka-reg rounded is-clickable">
                       <Icon path={mdiClose} />
@@ -293,7 +376,7 @@
             </div>
             
             <!-- tabs -->
-            <div class="mt-2 min-w-100p is-flex {outerWidth < 426 ? '': 'pl-3'}">
+            <div class="mt-2 min-w-100p is-flex {outerWidth < 571 ? '': 'pl-3'}">
               {#if outerWidth > 425}
               <div
                 on:click={() => {if($taskCurTab !== 'Chats') taskCurTab.set('Chats')}}
@@ -341,7 +424,7 @@
               <!-- Chats -->
               <div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-direction-column-reverse is-justify-content-flex-end pt-1">
                 <!-- Chat input, tools, and send button -->
-                <div class="is-flex is-align-items-center {outerWidth < 426 ? '': 'px-5'} mt-1">
+                <div class="is-flex is-align-items-center {outerWidth < 571 ? '': 'px-5'} mt-1">
                   <!-- chat input -->
                   <input on:keydown={onKeyDownHandler} bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
   
@@ -523,14 +606,14 @@
                         </div>
 
                         <!-- trash -->
-                        <div class="{outerWidth < 426 ? '': 'undisp'} ml-2 is-invisible parent-hover-this-display-block">
+                        <div class="{outerWidth < 571 ? '': 'undisp'} ml-2 is-invisible parent-hover-this-display-block">
                           <Icon size='22px' path={mdiTrashCan} />
                         </div>
                         
                         <!-- trash 2 -->
                         <div
                           on:click={() => console.log('trash clicked')}
-                          class="pos-abs pos-r-5 z-100 {outerWidth < 426 ? '': 'undisp parent-hover-this-display-block'} is-clickable">
+                          class="pos-abs pos-r-5 z-100 {outerWidth < 571 ? '': 'undisp parent-hover-this-display-block'} is-clickable">
                           <Icon size='22px' path={mdiTrashCan} />
                         </div>
                       </div>
@@ -545,7 +628,7 @@
         </div>
     
         <!-- ##### LEFT SIDE ##### -->
-        <div class="{outerWidth < 426 ? 'undisp': ''} maxmins-w-35p border-w-l-2 border-l-color-yaz-grey border-type-l-solid">
+        <div class="{outerWidth < 571 ? 'undisp': ''} maxmins-w-35p border-w-l-2 border-l-color-yaz-grey border-type-l-solid">
           <!-- status, views & viewers, close button -->
   
           <div class="pl-3 pb-3 is-flex is-justify-content-space-between border-w-b-3 border-b-color-yaz-grey border-type-b-solid">
@@ -640,7 +723,7 @@
             <!-- close button -->
             <div
               on:click={() => taskViewModalActive.set(false)}
-              class='is-clickable is-flex-shrink-0 {outerWidth < 426 ? 'undisp': ''}'
+              class='is-clickable is-flex-shrink-0 {outerWidth < 571 ? 'undisp': ''}'
             >
               <Avatar tile size='25px' style="max-width: 25px" class="bg-color-yaz-red has-transition hover-bg-danger has-text-white rounded">
                 <Icon path={mdiClose} />
