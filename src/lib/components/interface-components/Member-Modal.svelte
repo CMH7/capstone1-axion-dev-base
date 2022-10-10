@@ -73,59 +73,61 @@
       }
     }
   }
+
+  let outerWidth
 </script>
 
-<svelte:window on:keydown={search} />
+<svelte:window bind:outerWidth on:keydown={search} />
 
-<MaterialApp>
+<Dialog persistent active={$memberModalActive} class="p-3 has-background-white min-w-fit-content">
+  <!-- search bar -->
   <div>
-    <Dialog persistent active={$memberModalActive} class="p-5 maxmins-w-65p-dt-to-mb-95p maxmins-h-70p">
-      <div>
-        <TextField
-          messages={errorMsg}
-          error={users.length == 0}
-          success={searchSuccess}
-          bind:value={searchValue}
-          color="#000"
-          outlined
-          dense
-          class="maxmins-w-100p"
-        >
-          Name or Email
-          <div
-            slot='append'
-            class="is-clickable"
-            on:click={e => {
-              searchIconClicked = true
-              search(e)
-            }}
-          >
-            <Icon path={mdiMagnify}/>
-          </div>
-        </TextField>
+    <TextField
+      messages={errorMsg}
+      error={users.length == 0}
+      success={searchSuccess}
+      bind:value={searchValue}
+      color="#000"
+      outlined
+      dense
+      class="maxmins-w-100p input"
+    >
+      <div class='has-background-white has-text-grey rounded {outerWidth < 483 && outerWidth > 375 ? 'txt-size-12' : outerWidth < 376 ? 'txt-size-10' : 'text-body-2'}'>
+        Name or Email
       </div>
 
-      <div class="columns is-multiline mx-1 mt-1 maxmins-h-400 py-3 overflow-y-auto mb-3">
-        {#if $memberModalLoading}
-          {#each Array(12) as _, i}
-            <div class="column is-6-dekstop is-12-touch">
-              <MemberBoxLoading/>
-            </div>
-          {/each}
-        {:else}
-          {#each users as user}
-            <div class="column is-6-desktop is-12-touch">
-              <MemberBox {user} />
-            </div>
-          {/each}
-        {/if}
+      <div
+        slot='append'
+        class="is-clickable"
+        on:click={e => {
+          searchIconClicked = true
+          search(e)
+        }}
+      >
+        <Icon class='has-text-grey-light' path={mdiMagnify}/>
       </div>
-
-      <div on:click={() => memberModalActive.set(false)} style="float: right">
-        <Button text class="fredokaone" >
-          Done
-        </Button>
-      </div>
-    </Dialog>
+    </TextField>
   </div>
-</MaterialApp>
+
+  <!-- container -->
+  <div class="mt-1 py-2 is-flex {outerWidth < 686 ? 'is-justify-content-center' : ''} is-flex-wrap-wrap maxmins-w-100p maxmins-h-450 overflow-y-auto">
+    {#if $memberModalLoading}
+      {#each Array(12) as _, i}
+      <MemberBoxLoading/>
+      {/each}
+    {:else}
+      {#each users as user}
+      <MemberBox {user} />
+      {/each}
+    {/if}
+  </div>
+
+  <div
+    on:click={() => memberModalActive.set(false)}
+    class='maxmins-w-100p is-flex is-justify-content-end mt-6'
+  >
+    <Button depressed class="fredoka-reg" >
+      Done
+    </Button>
+  </div>
+</Dialog>

@@ -315,11 +315,11 @@
                     class="is-flex-shrink-0 is-clickable mr-3">
                     {#if $activeTask.isFavorite}
                     <Avatar tile size='25px' style="max-width: 25px">
-                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={hovering ? mdiStarOutline : mdiStar} />
+                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={mdiStar} />
                     </Avatar>
                     {:else}
                     <Avatar tile size='25px' style="max-width: 25px">
-                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={hovering ? mdiStar : mdiStarOutline} />
+                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={mdiStarOutline} />
                     </Avatar>
                     {/if}
                   </div>

@@ -45,7 +45,7 @@
 <svelte:window bind:outerWidth />
 
 <div
-  class="overflow-x-hidden has-transition z-100 pos-fix p-2 pos-t-65 pos-r-{outerWidth < 426? '0': '20'} maxmins-w-300-dt-to-mb-100p bg-color-pastel-white-card maxmins-h-600 {!$notifCenterOpen? 'rot-x-90': 'rot-x-0'} rounded elevation-4"
+  class="overflow-x-hidden has-transition z-100 pos-fix p-2 pos-t-65 pos-r-{outerWidth < 426 ? '0': '20'} maxmins-w-300-dt-to-mb-100p bg-color-pastel-white-card maxmins-h-600 {!$notifCenterOpen? 'rot-x-90': 'rot-x-0'} rounded elevation-4"
   style='transform-origin: top center'
 >
   <div class="columns is-gapless is-multiline">

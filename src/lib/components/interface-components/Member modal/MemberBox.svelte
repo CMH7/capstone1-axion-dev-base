@@ -357,6 +357,7 @@
   </div>
 </Dialog>
 
+<!-- Invite or remove modal -->
 <Dialog persistent bind:active>
   <div class="is-flex is-flex-direction-column p-2">
     <div class="has-text-weight-semibold is-size-5-desktop is-size-4-tablet mb-13">
@@ -390,44 +391,53 @@
   </div>
 </Dialog>
 
-<div class="box shadow-inside-default p-4 is-flex is-align-items-center is-justify-content-space-between has-transition hover-bg-grey-lighter">
-  <div class="is-flex is-align-items-center">
-    <div
-      on:click={view}
-      class="is-clickable"
-    >
-      <Avatar size="30px" class="blue white-text">
-        {#if user.data.profile === ""}
-        <Icon path={mdiAccountCircle} />
-        {:else}
-        <img src={user.data.profile} alt={user.data.name} />
-        {/if}
-      </Avatar>
+<!-- member box -->
+<div class="box shadow-inside-default maxmins-h-60 mx-1 my-1 p-{outerWidth < 483 ? '2' : '4'} is-flex is-align-items-center is-justify-content-space-between has-transition hover-bg-grey-lighter maxmins-w-{outerWidth < 853 && outerWidth > 375 ? '300' : outerWidth < 376 ? '230' : '350'}">
+  <div class="is-flex is-align-items-center is-justify-content-space-between maxmins-w-100p">
+    <div class="is-flex is-align-items-center flex-grow-1 overflow-x-hidden">
+      <!-- profile pic -->
+      <div
+        on:click={view}
+        class="is-clickable"
+      >
+        <Avatar size="30px" class="blue white-text">
+          {#if user.data.profile === ""}
+          <Icon path={mdiAccountCircle} />
+          {:else}
+          <img src={user.data.profile} alt={user.data.name} />
+          {/if}
+        </Avatar>
+      </div>
+
+      <!-- name and email -->
+      <div
+        on:click={view}
+        class="ml-{483 > outerWidth ? '2' : '4'} inter-reg {outerWidth < 483 && outerWidth > 375 ? 'txt-size-12' : outerWidth < 376 ? 'txt-size-10' : 'text-body-2'} is-clickable has-transition hover-txt-style-underline flex-grow-1 txt-overflow-ellipsis overflow-x-hidden"
+      >
+        {user.data.name}
+        <br/>
+        {user.data.email}
+      </div>
     </div>
+
+    <!-- invite or remove -->
     <div
-      on:click={view}
-      class="ml-4 dm-sans text-body-2 is-clickable has-transition hover-txt-style-underline"
+      class="{outerWidth < 483 && outerWidth > 375 ? 'txt-size-12' : outerWidth < 376 ? 'txt-size-10' : 'text-body-2'} is-clickable has-transition hover-txt-style-underline"
+      on:click={() => {
+        if(active) active = false
+        active= true
+      }}
     >
-      {user.data.name}
-      <br/>
-      {user.data.email}
+      {#if user.isAdded == 1 && user.data.email !== $userData.email}
+      <div class="is-italic">
+        Remove
+      </div>
+      {:else if user.data.email !== $userData.email}
+      <div>
+        Invite
+      </div>
+      {/if}
     </div>
   </div>
-  <div
-    class="is-size-7 is-clickable has-transition hover-txt-style-underline"
-    on:click={() => {
-      if(active) active = false
-      active= true
-    }}
-  >
-    {#if user.isAdded == 1}
-    <div class="is-italic">
-      Added
-    </div>
-    {:else}
-    <div>
-      Invite
-    </div>
-    {/if}
-  </div>
+
 </div>
