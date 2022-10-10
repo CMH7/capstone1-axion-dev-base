@@ -60,26 +60,22 @@
   const updateSubject = async () => {
     if(!nameChecker(subjectName)) {
       nameChanges = false
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: 'Name cannot be empty',
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
       subjectName = $selectedSubjectForSubjectSettings.name
       return false
     }
     changeName(subjectName)
     isProcessing.set(true)
 
-    let notifsCopy = $notifs
-    notifsCopy.push({
+    $notifs = [...$notifs, {
       msg: 'Updating subject...Please wait',
       type: 'success',
       id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    })
-    notifs.set(notifsCopy)
+    }]
 
     // do http requests here
     fetch(`${constants.backURI}/MainApp/edit/subject`, {
@@ -119,14 +115,11 @@
       oldFavoriteStatus.set(subject.isFavorite)
       isProcessing.set(false)
 
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `${subject.name} is updated`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
-
+      }]
       nameChanges = false
       colorChanges = false
       favoriteChanges = false
@@ -136,13 +129,11 @@
       nameChanges = false
       colorChanges = false
       favoriteChanges = false
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in updating the subject, ${err}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     })
   }
 

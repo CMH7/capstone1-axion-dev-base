@@ -21,12 +21,12 @@
     }
   }
 
-  let width = 0
+  let outerWidth
 </script>
 
-<svelte:window on:keydown={onKeyDown} bind:outerWidth={width}/>
+<svelte:window on:keydown={onKeyDown} bind:outerWidth/>
 
-<div class="columns is-multiline is-variable is-2 {width < 426 ? "pl-4": ""}">
+<div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-wrap-wrap {outerWidth < 571 ? "is-justify-content-center": ""}">
   <AddWorkspacePopUp/>
   {#if allworkspaces.length < 1}
     <div class="section">
@@ -38,7 +38,7 @@
     </div>
   {:else}
     {#each allworkspaces as workspace}
-    <div in:fade class="column is-narrow">
+    <div in:fade class="maxmins-w-{outerWidth < 571 && outerWidth >= 473 ? '200' : '230'} flex-shrink-0 mr-3 mb-3">
       <WorkspaceBox {workspace}/>
     </div>
     {/each}

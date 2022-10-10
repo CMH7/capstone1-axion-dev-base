@@ -51,20 +51,15 @@
     // }
 
     if(!$isLoggedIn && !localStorage.getItem('email')) {
-      let notifsCopy = $notifs;
-      notifsCopy.push(
-        {
-          msg: "Please Sign in first.",
-          type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        }
-      )
-      notifs.set(notifsCopy)
-      goto('/Signin')
+      $notifs = [...$notifs, {
+        msg: "Please Sign in first.",
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      goto('/Signin', {replaceState: true})
     } else if($isLoggedIn && !localStorage.getItem('email')) {
       localStorage.setItem("email", $userData.email)
     } else if(!$isLoggedIn && localStorage.getItem('email')) {
-      console.log(`logged in: ${$isLoggedIn}`)
       const email = localStorage.getItem('email')
       fetch(`${constants.backURI}/validUser`, {
         method: 'POST',
@@ -149,13 +144,11 @@
           userDataCopy.verified = data.verified
           userData.set(userDataCopy)
 
-          let notifsCopy = $notifs
-          notifsCopy.push({
+          $notifs = [...$notifs, {
             msg: 'Email verified!',
             type: 'success',
             id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-          })
-          notifs.set(notifsCopy)
+          }]
         })
         
         currentInterface.set('Dashboard')
@@ -238,7 +231,7 @@
     </Button>
   </div>
 </Snackbar>
-<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 426 && $ismini ? "pl-16" : ""}`:""}">
+<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 571 && $ismini ? "pl-16" : ""}`:""}">
   {#if $currentInterface === "Dashboard"}
     <DashboardInterface />
   {:else if $currentInterface === "Assigned to me"}
