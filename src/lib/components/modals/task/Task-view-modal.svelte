@@ -366,7 +366,11 @@
                 </div>
                 <Avatar size='17px' class='has-background-link mx-1 is-flex is-justify-content-center is-align-items-center'>
                   <div class="fredoka-reg has-text-weight-bold has-text-white txt-size-7 is-flex is-justify-content-center is-align-items-center">
+                    {#if !$userData.profile}
                     {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                    {:else}
+                    <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                    {/if}
                   </div>
                 </Avatar>
                 <div class="fredoka-reg is-size-7 opacity-60p">
