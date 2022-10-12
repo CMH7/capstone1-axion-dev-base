@@ -47,69 +47,69 @@
     </div>
     <List>
       {#if $currentDashboardSubInterface === "Subjects"}
+      <div
+        on:click={e => addSubjectModalActive.set(true)}
+      >
       <ListItem>
-        <div
-          on:click={e => addSubjectModalActive.set(true)}
-        >
           Create subject
-        </div>
-      </ListItem>
+        </ListItem>
+      </div>
       {:else if $currentDashboardSubInterface === "Workspaces"}
-      <ListItem>
-        <div
-          on:click={e => addWorkspaceModalActive.set(true)}
-        >
+      <div
+        on:click={e => addWorkspaceModalActive.set(true)}
+      >
+        <ListItem>
           Create workspace
-        </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={e => {
-            modalChosenColor.set($activeSubject.color)
-            subjectSettingsModalActive.set(true)
-          }}
-        >
+        </ListItem>
+      </div>
+      <div
+        on:click={e => {
+          modalChosenColor.set($activeSubject.color)
+          subjectSettingsModalActive.set(true)
+        }}
+      >
+        <ListItem>
           Subject settings
-        </div>
-      </ListItem>
+        </ListItem>
+      </div>
       {:else}
-      <ListItem>
-        <div
-          on:click={e => addTaskModalActive.set(true)}
-        >
+      <div
+        on:click={e => addTaskModalActive.set(true)}
+      >
+        <ListItem>
           Create task
-        </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={e => addBoardModalActive.set(true)}
-        >
+        </ListItem>
+      </div>
+      <div
+        on:click={e => addBoardModalActive.set(true)}
+      >
+        <ListItem>
           Add board
-        </div>
-      </ListItem>
+        </ListItem>
+      </div>
       {#if $userData.verified}
-      <ListItem>
-        <div
-          on:click={e => manageAdminModalActive.set(true)}
-        >
+      <div
+        on:click={e => manageAdminModalActive.set(true)}
+      >
+        <ListItem>
           Manage admins
-        </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={getAllUsers}
-        >
+        </ListItem>
+      </div>
+      <div
+        on:click={getAllUsers}
+      >
+        <ListItem>
           Manage members
-        </div>
-      </ListItem>
+        </ListItem>
+      </div>
       {/if}
-      <ListItem>
-        <div
-          on:click={e => workspaceSettingsModalActive.set(true)}
-        >
+      <div
+        on:click={e => workspaceSettingsModalActive.set(true)}
+      >
+        <ListItem>
           Workspace settings
-        </div>
-      </ListItem>
+        </ListItem>
+      </div>
       {/if}
     </List>
   </Menu>
