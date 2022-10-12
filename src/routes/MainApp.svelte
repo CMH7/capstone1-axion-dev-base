@@ -7,10 +7,9 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, modalChosenColor, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing } from "$lib/stores/global-store"
+  import { currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
-  import CalendarInterface from "$lib/interfaces/Calendar-interface.svelte"
   import MyProfileInterface from "$lib/interfaces/My-profile-interface.svelte"
   import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
@@ -238,8 +237,6 @@
     <AssignedToMeInterface />
   {:else if $currentInterface === "Favorites"}
     <FavoritesInterface />
-  {:else if $currentInterface === "Calendar"}
-    <CalendarInterface />
   {:else}
     <MyProfileInterface />
   {/if}
