@@ -8,7 +8,6 @@
     {index: 0, name: "Dashboard", icon: mdiViewDashboard, color: "info"},
     {index: 1, name: "Assigned to me", icon: mdiAccountCheck, color: "success"},
     {index: 2, name: "Favorites", icon: mdiStar, color: "yellow-text text-darken-2"},
-    {index: 3, name: "Calendar", icon: mdiCalendar, color: "danger"},
     {index: 4, name: "My Profile", icon: mdiAccount, color: "grey-dark"}
   ];
   
