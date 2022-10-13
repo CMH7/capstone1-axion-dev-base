@@ -19,13 +19,8 @@
     {name: 'Tasks', i: 3}
   ]
   let index = 1
-  $favorites = $userData.subjects.filter(subject => subject.isFavorite == true).sort(function(a, b) {
-    if(a.name < b.name) { return -1; }
-    if(a.name > b.name) { return 1; }
-    return 0;
-  });
 
-  $: tabClicked = tab => {
+  const tabClicked = tab => {
     if(tab.i == 1 || tab.i == 2) {
       filters = [
         'Owned'
@@ -49,7 +44,8 @@
         'Assigned',
         'To do',
         'In progress',
-        'Done'
+        'Done',
+        'Other statuses'
       ]
       $favorites = []
       $userData.subjects.map(subject => {
@@ -75,6 +71,49 @@
   let searchSuccess = false
   let searchIconClicked = false
 
+  const search2 = () => {
+    if(!searchValue) {
+      index++
+      tabClicked(tabs[index - 2])
+      errorMsg = []
+    }else{
+        let searchValueCopy = searchValue.toLowerCase()
+
+        if(index == 1) {
+          $favorites = [...$favorites.filter(subject => {
+            if(subject.name.toLowerCase().match(searchValueCopy)) {
+              return subject
+            }
+          })]
+          searchSuccess = $favorites.length ? true : false
+          errorMsg = searchSuccess ? [] : ['No match']
+        }
+
+        if(index == 2) {
+          $favorites = [...$favorites.filter(workspace => {
+            if(workspace.name.toLowerCase().match(searchValueCopy)) {
+              return workspace
+            }
+          })]
+
+          searchSuccess = $favorites.length ? true : false
+          errorMsg = searchSuccess ? [] : ['No match']
+        }
+
+        if(index == 3) {
+          $favorites = [...$favorites.filter(data => {
+            if(data.task.name.toLowerCase().match(searchValueCopy)) {
+              return data
+            }
+          })]
+          searchSuccess = $favorites.length ? true : false
+          errorMsg = searchSuccess ? [] : ['No match']
+        }
+
+        searchIconClicked = false
+      }
+  }
+
   const search = (e) => {
     if(e.keyCode == 13 || searchIconClicked) {
       if(!searchValue) {
@@ -82,16 +121,43 @@
         tabClicked(tabs[index - 2])
         errorMsg = []
       }else{
-        console.log('has value');
         let searchValueCopy = searchValue.toLowerCase()
-        $favorites = []
+
         if(index == 1) {
-          $favorites = [...$userData.subjects.filter(subject => subject.name.toLowerCase().match(searchValueCopy))]
+          $favorites = [...$favorites.filter(subject => {
+            if(subject.name.toLowerCase().match(searchValueCopy)) {
+              return subject
+            }
+          })]
           searchSuccess = $favorites.length ? true : false
           errorMsg = searchSuccess ? [] : ['No match']
         }
+
+        if(index == 2) {
+          $favorites = [...$favorites.filter(workspace => {
+            if(workspace.name.toLowerCase().match(searchValueCopy)) {
+              return workspace
+            }
+          })]
+
+          searchSuccess = $favorites.length ? true : false
+          errorMsg = searchSuccess ? [] : ['No match']
+        }
+
+        if(index == 3) {
+          $favorites = [...$favorites.filter(data => {
+            if(data.task.name.toLowerCase().match(searchValueCopy)) {
+              return data
+            }
+          })]
+          searchSuccess = $favorites.length ? true : false
+          errorMsg = searchSuccess ? [] : ['No match']
+        }
+
         searchIconClicked = false
       }
+    }else{
+      return false
     }
   }
 
@@ -117,13 +183,13 @@
         if(a.task.name < b.task.name) return -1
         return 0
       }
-
+      
       if(sortGroup == 1) {
-        if(a.task.name > b.task.name) return -1
-        if(a.task.name < b.task.name) return 1
-        return 0
-      }
-    }
+         if(a.task.name > b.task.name) return -1
+         if(a.task.name < b.task.name) return 1
+         return 0
+       }
+     }
 
     if(sortGroup == 0) {
       if(a.name > b.name) return 1
@@ -138,9 +204,10 @@
     }
   })
 
-  $: if(filterGroup.length) {
+  $: if(filterGroup.length || !filterGroup) {
     index++
     tabClicked(tabs[index - 2])
+    search2()
 
     filterGroup.map(indexa => {
 
@@ -185,11 +252,31 @@
             return paborits.task.status === 'Todo'
           })
         }
+        
+        // In progress
+        if(indexa == 3) {
+          $favorites = $favorites.filter(paborits => {
+            return paborits.task.status === 'In progress'
+          })
+        }
+        
+        // Done
+        if(indexa == 4) {
+          $favorites = $favorites.filter(paborits => {
+            return paborits.task.status === 'Done'
+          })
+        }
+
+        // other statuses
+        if(indexa == 5) {
+          $favorites = $favorites.filter(paborits => {
+            if(paborits.task.status !== 'Todo' && paborits.task.status !== 'In progress' && paborits.task.status !== 'Done') {
+              return paborits
+            }
+          })
+        }
       }
     })
-  }else{
-    index++
-    tabClicked(tabs[index - 2])
   }
 </script>
 
@@ -264,7 +351,7 @@
   </div>
 
   <div class="is-flex is-flex-direction-{outerWidth < 571 ? 'column': ''}">
-    <!-- left sife / filter -->
+    <!-- left side / filter -->
     <div class="{outerWidth < 571 ? '': 'border-w-r-3 border-r-color-yaz-grey border-type-r-solid'} pr-3 maxmins-w-{outerWidth < 571 ? '100p' : '20p mr-3'}">
       <div
         use:ClickOutside
@@ -305,7 +392,7 @@
       <div class="is-flex is-flex-direction-column mt-3 {outerWidth < 571 ? '': 'a'}rot-x-{filterClicked ? '0' : '90'} {outerWidth < 571 ? '': 'a'}max-h-{filterClicked ? '' : '0'} has-transition" style='transform-origin: top'>
         <!-- sorters -->
         <div class="min-h-fit-content is-flex is-flex-direction-column pl-3 mb-3">
-          <div class="fredoka-reg txt-size-20">
+          <div class="fredoka-reg txt-size-{outerWidth < 571 ? '15': '20'}">
             Sort by:
           </div>
 
@@ -317,14 +404,18 @@
         </div>
 
         <!-- filters -->
-        <div class="min-h-fit-content pl-3 is-flex is-flex-direction-column">
-          <div class="fredoka-reg txt-size-20">
+        <div class="min-h-fit-content pl-3 is-flex is-flex-direction-column {outerWidth < 571 ? 'mb-6': ''}">
+          <div class="fredoka-reg txt-size-{outerWidth < 571 ? '15': '20'}">
             Filters
           </div>
 
           <div class="is-flex is-flex-direction-column pl-3">
             {#each filters as filter, i}
-            <Checkbox bind:group={filterGroup} value={i}>{filter}</Checkbox>
+            <Checkbox
+              disabled={
+                i == 2 && (filterGroup.includes(3) || filterGroup.includes(4) || filterGroup.includes(5)) ? true : i == 3 && (filterGroup.includes(2) || filterGroup.includes(4) || filterGroup.includes(5)) ? true : i == 4 && (filterGroup.includes(2) || filterGroup.includes(3) || filterGroup.includes(5)) ? true : i == 5 && (filterGroup.includes(3) || filterGroup.includes(4) || filterGroup.includes(2)) ? true : false
+              }
+              bind:group={filterGroup} value={i}>{filter}</Checkbox>
             {/each}
           </div>
         </div>      
