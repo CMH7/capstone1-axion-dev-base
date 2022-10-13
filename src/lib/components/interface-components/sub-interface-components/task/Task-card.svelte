@@ -187,7 +187,7 @@
     if($currentInterface !== 'Dashboard') setActives()
     activeTask.set(task)
     activeBoard.set(boardID)
-    taskViewModalActive.set(true)
+    if($currentInterface !== 'Assigned to me') taskViewModalActive.set(true)
   }}
   class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable maxmins-w-230 maxmins-h-60 overflow-x-hidden rounded parent">
   <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between'>

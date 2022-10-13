@@ -42,34 +42,47 @@
   }
 
   function insertChat() {
-    let chatsCopy = $chats
-    chatsCopy.push({
+    if(!chatInput) {
+      $notifs = [...$notifs, {
+        msg: 'Message cannot be empty jkjk',
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      return false
+    }
+    
+    let activeTaskCopy = $activeTask
+    activeTaskCopy.conversations.push({
       sender: {
-        email: 'cm@gmail.com',
-        name: 'Charles Maverick Herrera',
-        profile: ''
+        email: $userData.email,
+        name: `${$userData.firstName} ${$userData.lastName}`,
+        profile: $userData.profile
       },
       message: chatInput,
       sendAt: new Date().toISOString(),
-      id: '3'
+      id: bcrypt.hashSync(`${$userData.email}${new Date()}${chatInput.substring(0, chatInput.length > 13 ? 13 : chatInput.length)}`)
     })
-    chats.set(chatsCopy)
+    activeTask.set(activeTaskCopy)
     chatInput = ''
   }
 
   function onKeyDownHandler(e) {
     if(e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Chats') {
       if(!chatInput) {
-        let notifsCopy = $notifs
-        notifsCopy.push({
+        $notifs = [...$notifs, {
           msg: 'Message cannot be empty',
           type: 'error',
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        })
-        notifs.set(notifsCopy)
+        }]
       }else{
         insertChat()
       }
+    }
+    
+    if(e.ctrlKey && e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Description') {
+      descriptionSave(descriptionValue != oldDescriptionValue)
+    }else if(e.keyCode == 27 && $taskCurTab === 'Description' && editing) {
+      descriptionSave(false)
     }
   }
 
@@ -338,7 +351,7 @@
   }
 </script>
 
-<svelte:window bind:outerWidth/>
+<svelte:window bind:outerWidth on:keydown={onKeyDownHandler}/>
 
 <div>
   <MaterialApp>
@@ -422,11 +435,27 @@
                 </div>
                 <Avatar size='17px' class='has-background-link mx-1 is-flex is-justify-content-center is-align-items-center'>
                   <div class="fredoka-reg has-text-weight-bold has-text-white txt-size-7 is-flex is-justify-content-center is-align-items-center">
-                    {#if !$userData.profile}
-                    {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
-                    {:else}
-                    <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                    {#if !$activeTask.createdBy}
+                    O
                     {/if}
+
+                    {#if $activeTask.createdBy === `${$userData.firstName} ${$userData.lastName}`}
+                      {#if !$userData.profile}
+                        {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                      {:else}
+                        <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                      {/if}
+                    {/if}
+
+                    {#each $activeWorkspace.members as member}
+                      {#if member.name === $activeTask.createdBy}
+                        {#if !member.profile}
+                          {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                        {:else}
+                          <img src={member.profile} alt={`${member.name}`}>
+                        {/if}
+                      {/if}
+                    {/each}
                   </div>
                 </Avatar>
                 <div class="fredoka-reg is-size-7 opacity-60p">
@@ -486,7 +515,7 @@
                 <!-- Chat input, tools, and send button -->
                 <div class="is-flex is-align-items-center {outerWidth < 571 ? '': 'px-5'} mt-1">
                   <!-- chat input -->
-                  <input on:keydown={onKeyDownHandler} bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
+                  <input bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
   
                   <!-- tools -->
                   <div class="is-flex is-align-items-center is-clickable mx-2">
@@ -522,7 +551,7 @@
                         {:else}
                         <div class="is-flex is-align-items-center">
                           <Avatar size='30px' class='has-background-info mr-2 maxmins-w-30 maxmins-h-30'>
-                            <Icon class='p-1 white-text' path={mdiAccount} />
+                            <img src={chat.sender.profile} alt={chat.sender.name}>
                           </Avatar>
                         </div>
                         {/if}

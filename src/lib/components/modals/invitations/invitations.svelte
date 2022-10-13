@@ -1,13 +1,11 @@
 <script>
   //@ts-nocheck
-  import { Dialog, Divider, Icon, Radio, Button } from 'svelte-materialify'
-  import { cancelInvModalActive, invModalActive, selectedInvitation, userData } from '$lib/stores/global-store'
+  import { Dialog, Divider, Icon, Radio} from 'svelte-materialify'
+  import { invModalActive,  userData} from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
-	import InvitationBox from './components/Invitation-box.svelte';
+	import InvitationBox from './components/Invitation-box.svelte'
 
   let group = 1
-
-  $: $invModalActive ? console.log('opened') : console.log('closed')
 </script>
 
 <Dialog persistent class="has-background-white px-2 py-1 is-flex is-flex-direction-column" bind:active={$invModalActive}>

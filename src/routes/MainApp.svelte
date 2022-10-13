@@ -7,7 +7,7 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing } from "$lib/stores/global-store"
+  import { modalChosenColor, breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing, currentIndex } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
   import MyProfileInterface from "$lib/interfaces/My-profile-interface.svelte"
@@ -26,28 +26,68 @@
   })
 
   onMount(async ()=>{
-    // window.onpopstate = function () {
-    //   if(($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
-    //     console.log('on root')
-    //     location.href = '/'
-    //   }else if($currentDashboardSubInterface === 'Workspaces') {
-    //     console.log('on workspace')
-    //     currentDashboardSubInterface.set('Subjects')
-    //     activeSubject.set(constants.subject)
-    //     activeWorkspace.set(constants.workspace)
-    //     allBoards.set([])
-    //     breadCrumbsItems.set([{text: 'Subjects'}])
-    //   } else if($currentDashboardSubInterface === 'Boards') {
-    //     console.log('on boards')
-    //     currentDashboardSubInterface.set('Workspaces')
-    //     activeWorkspace.set(constants.workspace)
-    //     allBoards.set([])
-    //     let breadCrumbsItemsCopy = $breadCrumbsItems
-    //     breadCrumbsItemsCopy.pop()
-    //     breadCrumbsItemsCopy.pop()
-    //     breadCrumbsItems.set(breadCrumbsItemsCopy)
-    //   }
-    // }
+    history.pushState(null, document.title, location.href);
+    history.back()
+    history.forward()
+    window.onpopstate = function () {
+      if($currentInterface === 'Dashboard') {
+        if($breadCrumbsItems.length == 3) {
+          currentDashboardSubInterface.set("Workspaces")
+          activeWorkspace.set(constants.workspace)
+          allBoards.set([])
+          $breadCrumbsItems = [...$breadCrumbsItems.filter(item => {
+            if(item.text === $activeSubject.name) {
+              return item
+            }
+          })]
+          return
+        }
+  
+        if($breadCrumbsItems.length == 1 && $breadCrumbsItems[0].text !== 'Subjects') {          
+          currentDashboardSubInterface.set("Subjects")
+          activeSubject.set(constants.subject)
+          activeWorkspace.set(constants.workspace)
+          allBoards.set([])
+          breadCrumbsItems.set([{text: 'Subjects'}])
+          return
+        }
+
+        // if($breadCrumbsItems.length == 1 && $breadCrumbsItems[0].text === 'Subjects') {
+        //   snack.set({
+        //     msg: "You will be logged out. Do you want to continue?",
+        //     active: true,
+        //     yes: () => {
+        //       localStorage.removeItem('email')
+        //       userData.set(constants.user)
+        //       isLoggedIn.set(false)
+        //       currentInterface.set('Dashboard')
+        //       currentDashboardSubInterface.set('Subjects')
+        //       activeSubject.set(constants.subject)
+        //       activeWorkspace.set(constants.workspace)
+        //       activeBoard.set(constants.board)
+        //       breadCrumbsItems.set([{text: 'Subjects'}])
+        //       activeTask.set(constants.task)
+        //       modalChosenColor.set('primary')
+        //       isProcessing.set(false)
+        //       goto('/')
+        //     }
+        //   })
+        // }
+      }
+
+      if($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'My Profile') {
+        currentInterface.set('Dashboard')
+        currentIndex.set(0)
+        currentDashboardSubInterface.set("Subjects")
+        activeSubject.set(constants.subject)
+        activeWorkspace.set(constants.workspace)
+        allBoards.set([])
+        breadCrumbsItems.set([{text: 'Subjects'}])
+        return
+      }
+
+      history.go(1)
+    }
 
     if(!$isLoggedIn && !localStorage.getItem('email')) {
       $notifs = [...$notifs, {

@@ -62,13 +62,12 @@
           <div class="column pl-10">
             <div class="is-5-tablet is-12-mobile pl-10">
               <div class=" d-flex flex-wrap is-justify-content-end pl-10">
-          <span class="fredokaone is-size-3" on:click={
-          () => {
+          <span class="fredoka-reg is-size-3" on:click={() => {
             transitionActive.set(true);
             if($isLoggedIn){
               snack.set(
                 {
-                  msg: "You will be automatically logged out. Do you want to continue?",
+                  msg: "You will be logged out. Do you want to continue?",
                   active: true,
                   yes: () => {
                     localStorage.removeItem('email')
