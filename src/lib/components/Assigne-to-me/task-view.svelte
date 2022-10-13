@@ -1,7 +1,7 @@
 <script>
   //@ts-nocheck
   import { Icon, Avatar, Ripple, Button } from 'svelte-materialify'
-  import { breadCrumbsItems, currentInterface, activeTask, userData, activeSubject, activeWorkspace, activeBoard, notifs, taskViewModalActive, taskCurTab } from '$lib/stores/global-store'
+  import { breadCrumbsItems, currentInterface, activeTask, userData, activeSubject, activeWorkspace, activeBoard, notifs, taskViewModalActive, taskCurTab, currentIndex, currentDashboardSubInterface } from '$lib/stores/global-store'
   import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
   import { mdiStar, mdiFilter, mdiPlus, mdiTrashCan, mdiStarOutline, mdiMenu, mdiClose, mdiChat, mdiText, mdiViewList, mdiDotsVertical, mdiSend, mdiAccount, mdiApplicationExport } from '@mdi/js'
@@ -174,7 +174,7 @@
   <!-- Container -->
   <div class="is-flex is-justify-content-center is-align-items-center maxmins-h-500">
     <!-- ##### RIGHT SIDE ##### -->
-    <div class="maxmins-w-{outerWidth < 571 ? '100': '65'}p">
+    <div class="maxmins-w-100p">
       <div class="is-flex is-flex-wrap-wrap">
         <!-- task name, favorite, level -->
         <div class="pl-3 min-w-100p">
@@ -215,7 +215,9 @@
 
               <div class="is-flex">
                 <!-- close -->
-                <div class="maxmins-w-25 maxmins-h-25 is-clickable mr-3">
+                <div
+                  on:click={e => activeTask.set(constants.task)}
+                  class="maxmins-w-25 maxmins-h-25 is-clickable mr-3">
                   <Icon class="has-text-danger" path={mdiClose}/>
                 </div>
 
@@ -244,11 +246,27 @@
             </div>
             <Avatar size='17px' class='has-background-link mx-1 is-flex is-justify-content-center is-align-items-center'>
               <div class="fredoka-reg has-text-weight-bold has-text-white txt-size-7 is-flex is-justify-content-center is-align-items-center">
-                {#if !$userData.profile}
-                {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
-                {:else}
-                <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                {#if !$activeTask.createdBy}
+                O
                 {/if}
+
+                {#if $activeTask.createdBy === `${$userData.firstName} ${$userData.lastName}`}
+                  {#if !$userData.profile}
+                    {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                  {:else}
+                    <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                  {/if}
+                {/if}
+
+                {#each $activeWorkspace.members as member}
+                  {#if member.name === $activeTask.createdBy}
+                    {#if !member.profile}
+                      {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                    {:else}
+                      <img src={member.profile} alt={`${member.name}`}>
+                    {/if}
+                  {/if}
+                {/each}
               </div>
             </Avatar>
             <div class="fredoka-reg is-size-7 opacity-60p">
@@ -388,9 +406,9 @@
             class="maxmins-h-100p is-flex is-flex-direction-column pb-2 overflow-y-auto"
           >
             {#if editing}
-            <textarea on:keydown={descKeydownHandler} bind:value={descriptionValue} class="textarea maxmins-h-325 txt-size-18 inter-reg txt-color-yaz-grey-dark textarea-resize-none border-none" placeholder="Description" rows="10" />
+            <textarea on:keydown={descKeydownHandler} bind:value={descriptionValue} class="textarea maxmins-h-100p txt-size-18 inter-reg txt-color-yaz-grey-dark textarea-resize-none border-none" placeholder="Description" rows="10" />
             {:else}
-            <div class="maxmins-h-325 txt-size-18 inter-reg txt-color-yaz-grey-dark pl-3 pr-2 pt-3 overflow-y-auto">
+            <div class="maxmins-h-325 maxmins-w-100p txt-size-18 inter-reg txt-color-yaz-grey-dark pl-3 pr-2 pt-3 overflow-y-auto">
               <span class="opacity-35p {descriptionValue ? 'undisp' : ''}">
                 Description
               </span>
