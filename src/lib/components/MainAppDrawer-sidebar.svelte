@@ -2,13 +2,14 @@
   // @ts-nocheck
   import { NavigationDrawer, List, ListItem, Icon, MaterialApp, ListItemGroup, Divider } from 'svelte-materialify';
   import { mdiViewDashboard, mdiAccountCheck, mdiStar, mdiCalendar, mdiAccount } from '@mdi/js';
-  import { breadCrumbsItems, currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive } from '$lib/stores/global-store';
+  import { activeBoard, activeSubject, activeWorkspace, breadCrumbsItems, currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive } from '$lib/stores/global-store';
+	import constants from '$lib/config/constants';
 
   const navs = [
     {index: 0, name: "Dashboard", icon: mdiViewDashboard, color: "info"},
     {index: 1, name: "Assigned to me", icon: mdiAccountCheck, color: "success"},
     {index: 2, name: "Favorites", icon: mdiStar, color: "yellow-text text-darken-2"},
-    {index: 4, name: "My Profile", icon: mdiAccount, color: "grey-dark"}
+    {index: 3, name: "My Profile", icon: mdiAccount, color: "grey-dark"}
   ];
   
   let dashCount = 0
@@ -33,6 +34,12 @@
             disabled={$currentInterface === navItem.name?true:false}
             on:click={
               () => {
+                if(navItem.name !== 'Dashboard') {
+                  $activeSubject = constants.subject
+                  $activeWorkspace = constants.workspace
+                  $activeBoard = ''
+                  $breadCrumbsItems = [{text: 'Subjects'}]
+                }
                 currentInterface.set(navItem.name);
                 currentIndex.set(navItem.index);
                 if($currentInterface === "Dashboard") {
@@ -49,7 +56,7 @@
             <span slot="prepend">
               <Icon size="35px" path={navItem.icon} />
             </span>
-            <span class="quicksands font-weight-black">{navItem.name}</span>
+            <span class="fredoka-reg font-weight-black">{navItem.name}</span>
           </ListItem>
           {/each}
 
