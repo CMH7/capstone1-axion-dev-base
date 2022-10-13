@@ -6,6 +6,7 @@
   import TaskCard from '$lib/components/interface-components/sub-interface-components/task/Task-card.svelte'
   import BoardSettings from '$lib/components/modals/boards/Board-settings.svelte'
   import BoardDeletion from '$lib/components/modals/deletions/Board-deletion.svelte'
+	import LeaveWorkspace from '$lib/components/modals/workspace/Leave-workspace.svelte';
 
   let boards = []
   activeWorkspace.subscribe(workspace => boards = workspace.boards)
@@ -28,6 +29,7 @@
 <MemberModal/>
 <BoardSettings />
 <BoardDeletion />
+<LeaveWorkspace />
 <div class="columns is-mobile pb-5 overflow-x-scroll boardcolumns">
   <!-- Boards by user -->
   {#each boards as board}
