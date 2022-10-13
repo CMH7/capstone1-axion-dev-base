@@ -15,6 +15,7 @@
   import ManageAdminModal from '$lib/components/modals/workspace/Manage-admin-modal.svelte'
 	import WorkspaceSettings from '$lib/components/modals/workspace/Workspace-settings.svelte'
 	import { mdiChevronLeft } from '@mdi/js';
+	import LeaveWorkspace from '$lib/components/modals/workspace/Leave-workspace.svelte';
 
   let width = 0
 
@@ -94,6 +95,7 @@
     <ManageAdminModal/>
     <AddBoardModal/>
     <AddTaskPopUp/>
+    <LeaveWorkspace/>
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
     {:else if $currentDashboardSubInterface === "Workspaces"}

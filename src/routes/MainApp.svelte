@@ -192,6 +192,7 @@
 
         // ON MEMBER LEAVED WORKSPACE
         channel.bind('memberLeaved', function(data) {
+          console.log('event: memberLeaved received');
           let userDataCopy = $userData
           userDataCopy.subjects.every(subject => {
             subject.workspaces.every(workspacea => {
