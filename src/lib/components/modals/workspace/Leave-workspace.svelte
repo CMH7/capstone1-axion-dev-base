@@ -43,6 +43,7 @@
         }
       })
 
+      leaveWorkspaceActiveModal.set(false)
       currentInterface.set('Dashboard')
       currentIndex.set(0)
       currentDashboardSubInterface.set("Subjects")
