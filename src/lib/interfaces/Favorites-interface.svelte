@@ -12,6 +12,8 @@
   import { TextField, Icon, MaterialApp, ClickOutside, Radio, Checkbox } from 'svelte-materialify'
   import { mdiFilter, mdiMagnify } from '@mdi/js'
 
+  $favorites = $userData.subjects.filter(subject => subject.isFavorite == true)
+
   let outerWidth
   let tabs = [
     {name: 'Subjects', i: 1},
