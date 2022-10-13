@@ -266,6 +266,7 @@
 
       <!-- advance settings -->
       <div class="maxmins-w-100p is-flex is-align-items-center is-justify-content-space-between mt-10">
+        {#if $selectedSubjectForSubjectSettings.owned}
         <div
           on:click={e => {
             if(showAdvanceSettings) {
@@ -277,6 +278,9 @@
         >
           <Button size='small' depressed class='inter-reg'>Advance settings</Button>
         </div>
+        {:else}
+        <div></div>
+        {/if}
 
         {#if (nameChanges || colorChanges || favoriteChanges) && !$isProcessing}
         <div
@@ -292,6 +296,7 @@
       </div>
       
       <!-- danger zone section -->
+      {#if $selectedSubjectForSubjectSettings.owned}
       <div
         class="is-flex is-align-items-center is-flex-wrap-wrap mt-3 px-2 pb-1 has-background-danger-light rounded has-transition {showAdvanceSettings ? '': 'is-hidden'}"
         style="transform-origin: top center"
@@ -334,7 +339,7 @@
             </div>
         </div>
       </div>
-
+      {/if}
     </div>
   </Dialog>
 </div>
