@@ -7,6 +7,7 @@
   import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
 	import WorkspaceDeletion from '../deletions/Workspace-deletion.svelte';
+	import { leaveWorkspaceActiveModal } from '$lib/stores/workspace';
 
   let nameChanges = false
   let colorChanges = false
@@ -310,9 +311,34 @@
       >
         <div class="maxmins-w-100p has-text-danger-dark txt-size-20 has-text-weight-semibold">
           Danger Zone
-        </div> 
+        </div>
+
+        <!-- leave workspace -->
+        {#each $userData.subjects as subject}
+          {#if !subject.owned}
+            {#each subject.workspaces as workspace}
+              {#if workspace.id === $selectedWorkspace.id}
+                <div class="is-flex is-align-items-center is-flex-wrap-wrap maxmins-w-100p mb-3">
+                  <div class="has-text-danger-dark maxmins-w-100p txt-size-12">
+                    Leave workspace.
+                  </div>
+                  <div
+                    on:click={e => {
+                      if($isProcessing) return false
+                      workspaceSettingsModalActive.set(false)
+                      leaveWorkspaceActiveModal.set(true)
+                    }}
+                  >
+                    <Button disabled={$isProcessing} size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Leave</Button>
+                  </div>
+                </div>
+              {/if}
+            {/each}
+          {/if}
+        {/each}
 
         <!-- delete button -->
+        {#if $selectedWorkspace.owned}
         <div class="is-flex is-align-items-center is-flex-wrap-wrap maxmins-w-100p">
           <div class="has-text-danger-dark maxmins-w-100p txt-size-12">
             Delete this workspace.
@@ -327,6 +353,7 @@
               <Button disabled={$isProcessing} size='small' outlined class='m-0 inter-reg has-text-danger-dark'>Delete</Button>
             </div>
         </div>
+        {/if}
       </div>
 
     </div>

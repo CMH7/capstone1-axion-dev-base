@@ -189,6 +189,31 @@
             id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
           }]
         })
+
+        // ON MEMBER LEAVED WORKSPACE
+        channel.bind('memberLeaved', function(data) {
+          let userDataCopy = $userData
+          userDataCopy.subjects.every(subject => {
+            subject.workspaces.every(workspacea => {
+              if(workspacea.id === data.workspace.id) {
+                workspacea.members = workspacea.members.filter(member => {
+                  if(member.email !== data.workspace.member.email) {
+                    return member
+                  }
+                })
+
+                if(workspacea.admins.includes(data.workspace.member.email)) {
+                  workspacea.admins = workspacea.admins.filter(admin => admin !== data.workspace.member.email)
+                }
+                return false
+              }
+              return true
+            })
+            return true
+          })
+          userDataCopy.notifications.unshift(data.notification)
+          userData.set(userDataCopy)
+        })
         
         currentInterface.set('Dashboard')
         currentDashboardSubInterface.set('Subjects')
