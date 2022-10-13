@@ -7,7 +7,7 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing } from "$lib/stores/global-store"
+  import { breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
   import MyProfileInterface from "$lib/interfaces/My-profile-interface.svelte"
@@ -20,34 +20,39 @@
   import Pusher from 'pusher-js'
   import bcrypt from 'bcryptjs'
 	import CancelInvitation from '$lib/components/modals/invitations/Cancel-invitation.svelte';
+  
+  history.pushState(null, document.title, location.href);
+  history.back()
+  history.forward()
+  window.onpopstate = function () {
+    if($breadCrumbsItems.length == 3) {
+      currentDashboardSubInterface.set("Workspaces")
+      activeWorkspace.set(constants.workspace)
+      allBoards.set([])
+      $breadCrumbsItems = [...$breadCrumbsItems.filter(item => {
+        if(item.text === $activeSubject.name) {
+          return item
+        }
+      })]
+      return
+    }
+
+    if($breadCrumbsItems.length == 1 && $breadCrumbsItems[0].text !== 'Subjects') {          
+      currentDashboardSubInterface.set("Subjects")
+      activeSubject.set(constants.subject)
+      activeWorkspace.set(constants.workspace)
+      allBoards.set([])
+      breadCrumbsItems.set([{text: 'Subjects'}])
+    }
+
+    history.go(1)
+  }
 
   let pusher = new Pusher('8e02120d4843c3a07489', {
     cluster: 'ap1'
   })
 
   onMount(async ()=>{
-    // window.onpopstate = function () {
-    //   if(($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
-    //     console.log('on root')
-    //     location.href = '/'
-    //   }else if($currentDashboardSubInterface === 'Workspaces') {
-    //     console.log('on workspace')
-    //     currentDashboardSubInterface.set('Subjects')
-    //     activeSubject.set(constants.subject)
-    //     activeWorkspace.set(constants.workspace)
-    //     allBoards.set([])
-    //     breadCrumbsItems.set([{text: 'Subjects'}])
-    //   } else if($currentDashboardSubInterface === 'Boards') {
-    //     console.log('on boards')
-    //     currentDashboardSubInterface.set('Workspaces')
-    //     activeWorkspace.set(constants.workspace)
-    //     allBoards.set([])
-    //     let breadCrumbsItemsCopy = $breadCrumbsItems
-    //     breadCrumbsItemsCopy.pop()
-    //     breadCrumbsItemsCopy.pop()
-    //     breadCrumbsItems.set(breadCrumbsItemsCopy)
-    //   }
-    // }
 
     if(!$isLoggedIn && !localStorage.getItem('email')) {
       $notifs = [...$notifs, {
