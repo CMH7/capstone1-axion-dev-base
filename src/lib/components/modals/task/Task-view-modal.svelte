@@ -44,7 +44,7 @@
   function insertChat() {
     if(!chatInput) {
       $notifs = [...$notifs, {
-        msg: 'Message cannot be empty',
+        msg: 'Message cannot be empty jkjk',
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
@@ -435,11 +435,27 @@
                 </div>
                 <Avatar size='17px' class='has-background-link mx-1 is-flex is-justify-content-center is-align-items-center'>
                   <div class="fredoka-reg has-text-weight-bold has-text-white txt-size-7 is-flex is-justify-content-center is-align-items-center">
-                    {#if !$userData.profile}
-                    {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
-                    {:else}
-                    <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                    {#if !$activeTask.createdBy}
+                    O
                     {/if}
+
+                    {#if $activeTask.createdBy === `${$userData.firstName} ${$userData.lastName}`}
+                      {#if !$userData.profile}
+                        {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                      {:else}
+                        <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                      {/if}
+                    {/if}
+
+                    {#each $activeWorkspace.members as member}
+                      {#if member.name === $activeTask.createdBy}
+                        {#if !member.profile}
+                          {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                        {:else}
+                          <img src={member.profile} alt={`${member.name}`}>
+                        {/if}
+                      {/if}
+                    {/each}
                   </div>
                 </Avatar>
                 <div class="fredoka-reg is-size-7 opacity-60p">
@@ -499,7 +515,7 @@
                 <!-- Chat input, tools, and send button -->
                 <div class="is-flex is-align-items-center {outerWidth < 571 ? '': 'px-5'} mt-1">
                   <!-- chat input -->
-                  <input on:keydown={onKeyDownHandler} bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
+                  <input bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
   
                   <!-- tools -->
                   <div class="is-flex is-align-items-center is-clickable mx-2">
@@ -535,7 +551,7 @@
                         {:else}
                         <div class="is-flex is-align-items-center">
                           <Avatar size='30px' class='has-background-info mr-2 maxmins-w-30 maxmins-h-30'>
-                            <Icon class='p-1 white-text' path={mdiAccount} />
+                            <img src={chat.sender.profile} alt={chat.sender.name}>
                           </Avatar>
                         </div>
                         {/if}
