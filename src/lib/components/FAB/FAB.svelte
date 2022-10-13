@@ -80,7 +80,7 @@
           </ListItem>
         </div>
         {#if $userData.verified}
-          {#if $activeWorkspace.members.includes($userData.email)}
+          {#if $activeSubject.owned || $activeWorkspace.admins.includes($userData.email)}
             <div on:click={e => addBoardModalActive.set(true)}>
               <ListItem>
                 Add board
