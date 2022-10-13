@@ -8,8 +8,7 @@
   import { leaveWorkspaceActiveModal } from '$lib/stores/workspace'
 
   const leaveWorkspace = async e => {
-    const res = await fetch(`${constants.backURI}/id?email=${$activeWorkspace.admins[0]}`)
-    const { id } = await res.json()
+    const { id } = await fetch(`${constants.backURI}/id?email=${$activeWorkspace.admins[0]}`)
 
     fetch(`${constants.backURI}/MainApp/subject/workspace/leave`, {
       method: 'PUT',
