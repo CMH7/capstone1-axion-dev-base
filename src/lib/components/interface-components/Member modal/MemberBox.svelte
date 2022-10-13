@@ -225,7 +225,7 @@
 <Dialog
   persistent
   bind:active={viewUser}
-  class='p-4 {outerWidth < 426 ?  'maxmins-w-90p' : outerWidth < 769 && outerWidth > 426 ? 'maxmins-w-50p': 'maxmins-w-40p'}'
+  class='has-background-white-bis p-4 {outerWidth < 426 ?  'maxmins-w-90p' : outerWidth < 769 && outerWidth > 426 ? 'maxmins-w-50p': 'maxmins-w-40p'}'
 >
   <!-- porfile and infos -->
   <div class="is-flex">
@@ -358,7 +358,7 @@
 </Dialog>
 
 <!-- Invite or remove modal -->
-<Dialog persistent bind:active>
+<Dialog class='has-background-white-bis' persistent bind:active>
   <div class="is-flex is-flex-direction-column p-2">
     <div class="has-text-weight-semibold is-size-5-desktop is-size-4-tablet mb-13">
       {user.isAdded == 1 ? 'Remove' : 'Invite'} {user.data.name} to the workspace?
