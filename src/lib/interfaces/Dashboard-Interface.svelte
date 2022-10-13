@@ -16,17 +16,6 @@
 	import WorkspaceSettings from '$lib/components/modals/workspace/Workspace-settings.svelte'
 	import { mdiChevronLeft } from '@mdi/js';
 
-  onMount(() => {
-    if($breadCrumbsItems.length < 1) {
-      breadCrumbsItems.set([
-        ...$breadCrumbsItems, 
-        {
-          text: 'Subjects'
-        }
-      ])
-    }
-  })
-
   let width = 0
 
   const subjectDef = constants.subject
