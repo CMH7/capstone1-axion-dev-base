@@ -63,7 +63,7 @@ export let allUsers = writable([])
 export let allBoards = writable([])
 
 // breadcrumbds items
-export let breadCrumbsItems = writable([])
+export let breadCrumbsItems = writable([{text: 'Subjects'}])
 
 // notification center open boolean
 export let notifCenterOpen = writable(false)
