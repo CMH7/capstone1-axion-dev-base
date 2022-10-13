@@ -42,34 +42,47 @@
   }
 
   function insertChat() {
-    let chatsCopy = $chats
-    chatsCopy.push({
+    if(!chatInput) {
+      $notifs = [...$notifs, {
+        msg: 'Message cannot be empty',
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      return false
+    }
+    
+    let activeTaskCopy = $activeTask
+    activeTaskCopy.conversations.push({
       sender: {
-        email: 'cm@gmail.com',
-        name: 'Charles Maverick Herrera',
-        profile: ''
+        email: $userData.email,
+        name: `${$userData.firstName} ${$userData.lastName}`,
+        profile: $userData.profile
       },
       message: chatInput,
       sendAt: new Date().toISOString(),
-      id: '3'
+      id: bcrypt.hashSync(`${$userData.email}${new Date()}${chatInput.substring(0, chatInput.length > 13 ? 13 : chatInput.length)}`)
     })
-    chats.set(chatsCopy)
+    activeTask.set(activeTaskCopy)
     chatInput = ''
   }
 
   function onKeyDownHandler(e) {
     if(e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Chats') {
       if(!chatInput) {
-        let notifsCopy = $notifs
-        notifsCopy.push({
+        $notifs = [...$notifs, {
           msg: 'Message cannot be empty',
           type: 'error',
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        })
-        notifs.set(notifsCopy)
+        }]
       }else{
         insertChat()
       }
+    }
+    
+    if(e.ctrlKey && e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Description') {
+      descriptionSave(descriptionValue != oldDescriptionValue)
+    }else if(e.keyCode == 27 && $taskCurTab === 'Description' && editing) {
+      descriptionSave(false)
     }
   }
 
@@ -338,7 +351,7 @@
   }
 </script>
 
-<svelte:window bind:outerWidth/>
+<svelte:window bind:outerWidth on:keydown={onKeyDownHandler}/>
 
 <div>
   <MaterialApp>
