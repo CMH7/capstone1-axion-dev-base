@@ -30,7 +30,11 @@
         {name: "High", value: 3}
     ]
     
-    let taskMembers = []
+    let taskMembers = $userData.verified ? [] : [{
+        email: $userData.email,
+        name: `${$userData.firstName} ${$userData.lastName}`,
+        profile: $userData.profile
+    }]
     let createdBy = `${$userData.firstName} ${$userData.lastName}`
     let description = ''
     let dueDateTime = ''
@@ -219,6 +223,7 @@
             </div>
 
             <!-- members -->
+            {#if $userData.verified}
             <Select
                 {disabled}
                 multiple
@@ -229,6 +234,7 @@
             >
                 Assignee/s
             </Select>
+            {/if}
 
             <!-- description -->
             <Textarea

@@ -175,7 +175,7 @@
       <!-- subject name  -->
       <div class="is-flex is-align-items-center">
         <!-- label -->
-        <div class="inter-reg mr-3 {width < 321 ? 'maxmins-w-15p txt-size-14' : 'maxmins-w-20p txt-size-16'}">
+        <div class="inter-reg mr-3 {width < 376 ? 'undisp' : ''} maxmins-w-20p txt-size-16">
           Name
         </div>
         
@@ -225,12 +225,12 @@
       <!-- Color -->
       <div class="is-flex is-align-items-center my-3 ">
         <!-- label -->
-        <div class="inter-reg mr-3 {width < 321 ? 'maxmins-w-15p txt-size-14' : 'maxmins-w-20p txt-size-16'}">
+        <div class="inter-reg mr-3 {width < 376 ? 'undisp' : ''} maxmins-w-20p txt-size-16">
           Color
         </div>
         
         <!-- colors -->
-        <div class="is-flex">
+        <div class="is-flex {width < 376 ? 'maxmins-w-100p is-justify-content-center' : ''}">
             {#each colors as color}
             <div
               on:click={e => {
@@ -242,7 +242,7 @@
                   colorChanges = false
                 }
               }}
-              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition {$isProcessing ? "" : "is-clickable"} { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition {$isProcessing ? "" : "is-clickable"} mr-1 my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-40 maxmins-h-30"
             >
               <!-- circle dot -->
               <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
@@ -254,12 +254,12 @@
       <!-- favorite -->
       <div class="is-flex is-align-items-center">
         <!-- label -->
-        <div class="inter-reg mr-3 {width < 321 ? 'maxmins-w-15p txt-size-11' : 'maxmins-w-20p txt-size-16'}">
+        <div class="inter-reg mr-3 maxmins-w-20p txt-size-16 flex-shrink-0">
           Favorite
         </div>
         
         <!-- switch -->
-        <div class="is-flex is-align-items-center">
+        <div class="is-flex is-align-items-center {width < 376 ? 'ml-3' : ''}">
             <Switch class='p-0 m-0' color='green' disabled={$isProcessing} bind:checked={isFavorite} inset />
         </div>
       </div>

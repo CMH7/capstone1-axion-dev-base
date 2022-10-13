@@ -3,8 +3,9 @@
   import constants from "$lib/config/constants"
   import { Icon } from 'svelte-materialify'
   import { mdiStar, mdiStarOutline } from '@mdi/js'
-  import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, subjectSettingsModalActive, userData, notifs } from "$lib/stores/global-store"
+  import { activeSubject, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus, selectedSubjectForSubjectSettings, subjectSettingsModalActive, userData, notifs, currentIndex, currentInterface } from "$lib/stores/global-store"
   import bcrypt from "bcryptjs";
+	import { favorites } from "$lib/stores/favorites";
 
   // export the subject
   export let subject = constants.subject
@@ -74,6 +75,7 @@
         return true
       })
       userData.set(userDataCopy)
+      $favorites = $currentInterface === 'Favorites' ? $userData.subjects.filter(subject => subject.isFavorite == true)  : []
 
       $notifs = [...$notifs, {
         msg: `${subject.name} is ${subject.isFavorite ? 'set to' : 'removed from'} favorites`,
@@ -120,6 +122,9 @@
   on:contextmenu|preventDefault={handleRightClick}
   on:click={() => {
     if(hovering) return
+    currentInterface.set('Dashboard')
+    currentDashboardSubInterface.set('Workspaces')
+    currentIndex.set(0)
     activeSubject.set(subject)
     selectedSubjectForSubjectSettings.set(subject)
     oldFavoriteStatus.set(subject.isFavorite)

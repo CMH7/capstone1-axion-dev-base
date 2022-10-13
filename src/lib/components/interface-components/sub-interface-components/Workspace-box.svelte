@@ -1,10 +1,11 @@
 <script>
   //@ts-nocheck
-  import { activeWorkspace, allBoards, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus,selectedWorkspace, workspaceSettingsModalActive, userData, activeSubject, notifs} from "$lib/stores/global-store"
+  import { activeWorkspace, allBoards, breadCrumbsItems, currentDashboardSubInterface, modalChosenColor, oldFavoriteStatus,selectedWorkspace, workspaceSettingsModalActive, userData, activeSubject, notifs, currentInterface, currentIndex} from "$lib/stores/global-store"
   import constants from "$lib/config/constants"
   import bcrypt from "bcryptjs"
   import { Icon } from 'svelte-materialify'
   import { mdiStar, mdiStarOutline } from '@mdi/js'
+	import { favorites } from "$lib/stores/favorites";
 
   // export only the active workspace
   export let workspace = {
@@ -45,6 +46,19 @@
   }
 
   const setFavorite = e => {
+    if($currentInterface === 'Favorites') {
+      $userData.subjects.every(subject => {
+        subject.workspaces.every(workspacea => {
+          if(workspacea.id === workspace.id) {
+            activeSubject.set(subject)
+            return false
+          }
+          return true
+        })
+        return true
+      })
+    }
+
     selectedWorkspace.set(workspace)
     modalChosenColor.set(workspace.color)
 
@@ -86,6 +100,11 @@
         return true
       })
       userData.set(userDataCopy)
+
+      $currentInterface === 'Favorites' ? $favorites = [] : null
+      $currentInterface === 'Favorites' ? $userData.subjects.map(subject => {
+        $favorites = [...$favorites, ...subject.workspaces.filter(workspace => workspace.isFavorite == true)]
+      })  : null
 
       $notifs = [...$notifs, {
         msg: `${workspace.name} is ${workspace.isFavorite ? 'set to' : 'removed from'} favorites`,
@@ -135,14 +154,28 @@
   on:contextmenu|preventDefault={handleRightClick}
   on:click={e => {
     if(hovering) return
+    currentInterface.set('Dashboard')
+    currentDashboardSubInterface.set('Boards')
+    currentIndex.set(0)
+    $userData.subjects.every(subject => {
+      subject.workspaces.every(workspacea => {
+        if(workspacea.id === workspace.id) {
+          activeSubject.set(subject)
+          return false
+        }
+        return true
+      })
+      return true
+    })
     activeWorkspace.set(workspace)
     allBoards.set(workspace.boards)
     selectedWorkspace.set(workspace)
     oldFavoriteStatus.set(workspace.isFavorite)
     modalChosenColor.set(workspace.color)
     currentDashboardSubInterface.set("Boards")
-    breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeWorkspace.name}])
-    breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
+    $breadCrumbsItems.length == 1 ? $breadCrumbsItems = [{text: $activeSubject.name}] : null
+    $breadCrumbsItems = [...$breadCrumbsItems, {text: $activeWorkspace.name}]
+    $breadCrumbsItems = [...$breadCrumbsItems, {text: 'Boards'}]
   }}
   on:mouseenter={e => mouseEnter = true }
   on:mouseleave={e => mouseEnter = false }

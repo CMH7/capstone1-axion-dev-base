@@ -34,7 +34,7 @@
   {:else}
   {#each allSubjects as subject}
     <div in:fade class="maxmins-w-{outerWidth < 571 && outerWidth >= 473 ? '200' : '230'} flex-shrink-0 mr-3 mb-3">
-      <SubjectBox subject={subject}/>
+      <SubjectBox {subject}/>
     </div>
   {/each}
   {/if}

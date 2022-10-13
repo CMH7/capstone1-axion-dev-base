@@ -1,6 +1,6 @@
 <script>
   //@ts-nocheck
-  import { taskViewModalActive, activeTask, activeBoard } from '$lib/stores/global-store'
+  import { taskViewModalActive, activeTask, activeBoard, userData, activeWorkspace, activeSubject, currentInterface, currentDashboardSubInterface, breadCrumbsItems, currentIndex, allBoards } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
 
   // Required params
@@ -111,14 +111,83 @@
   }
 
   // Members hovering
-  let show = false;
+  let show = false
+
+  const setActives = e => {
+    $userData.subjects.every(subject => {
+      subject.workspaces.every(workspace => {
+        workspace.boards.every(board => {
+          board.tasks.every(taska => {
+            if(taska.id === task.id) {
+              activeSubject.set(subject)
+              activeWorkspace.set(workspace)
+              allBoards.set(workspace.boards)
+              activeBoard.set(board.id)
+              return false
+            }
+            return true
+          })
+          return true
+        })
+        return true
+      })
+      return true
+    })
+  }
+
+  let hold = 0
+  let timer
+  let outerWidth
+
+  const handleRightClick = e => {
+    if($currentInterface === 'Dashboard') return false
+    currentInterface.set('Dashboard')
+    currentIndex.set(0)
+    currentDashboardSubInterface.set('Boards')
+    setActives()
+    breadCrumbsItems.set([{text: $activeSubject.name}, {text: $activeWorkspace.name}, {text: 'Boards'}])
+  }
+
+  const startTimer = e => {
+    timer = setInterval(() => {
+      if(hold >= 2) {
+        hold = 0
+        handleRightClick()
+        clearInterval(timer)
+      }
+      hold += 1
+    }, 200)
+  }
+
 </script>
 
+<svelte:window bind:outerWidth />
+
 <div
+  on:touchend={e => {
+    if(hold < 2) {
+      hold = 0
+      clearInterval(timer)
+    }
+  }}
+  on:mouseup={e => {
+    if(hold < 2) {
+      hold = 0
+      clearInterval(timer)
+    }
+  }}
+  on:mousedown={e => {
+    startTimer()
+  }}
+  on:touchstart={e => {
+    startTimer()
+  }}
+  on:contextmenu|preventDefault={handleRightClick}
   on:click={() => {
-    taskViewModalActive.set(true)
+    if($currentInterface !== 'Dashboard') setActives()
     activeTask.set(task)
     activeBoard.set(boardID)
+    taskViewModalActive.set(true)
   }}
   class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable maxmins-w-230 maxmins-h-60 overflow-x-hidden rounded parent">
   <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between'>
