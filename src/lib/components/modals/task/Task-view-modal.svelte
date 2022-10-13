@@ -180,6 +180,22 @@
         return true
       })
 
+      if($currentInterface !== 'Dashboard') {
+        $favorites = []
+        $userData.subjects.map(subject => {
+          subject.workspaces.map(workspace => {
+            workspace.boards.map(board => {
+              $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
+                return {
+                  boardID: board.id,
+                  task: data
+                }
+              })]
+            })
+          })
+        })
+      }
+
       $notifs = [...$notifs, {
         msg: `${task.name} is moved to ${boardName}`,
         type: 'success',
