@@ -1,7 +1,7 @@
 <script>
   //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
-  import { userData, notifs, activeSubject, activeWorkspace, isProcessing, currentInterface, currentIndex, currentDashboardSubInterface, allBoards, breadCrumbsItems } from '$lib/stores/global-store'
+  import { userData, notifs, activeSubject, activeWorkspace, isProcessing, currentInterface, currentIndex, currentDashboardSubInterface, allBoards, breadCrumbsItems, workspaceSettingsModalActive } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
   import constants from '$lib/config/constants'
   import { Pulse } from 'svelte-loading-spinners'
@@ -73,6 +73,7 @@
         <div
           on:click={e => {
             leaveWorkspaceActiveModal.set(false)
+            workspaceSettingsModalActive.set(true)
           }}
           class='{$isProcessing ? 'undisp': ''}'
         >
