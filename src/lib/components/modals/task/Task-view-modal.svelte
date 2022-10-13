@@ -1,11 +1,12 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard } from '$lib/stores/global-store'
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard, currentInterface } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   import constants from "$lib/config/constants"
   import bcrypt from "bcryptjs"
+	import { favorites } from "$lib/stores/favorites";
 
   const backURI = constants.backURI
 
@@ -116,7 +117,7 @@
     // add task to next board
     allBoardsCopy.every(board => {
       if(board.name === boardName) {
-        board.tasks.push(task)
+        board.tasks.push($activeTask)
         return false
       }
       return true
@@ -179,13 +180,11 @@
         return true
       })
 
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `${task.name} is moved to ${boardName}`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -203,6 +202,25 @@
   let hovering = false
 
   const setFavorite = e => {
+    if($currentInterface === 'Favorites') {
+      $userData.subjects.every(subject => {
+        subject.workspaces.every(workspace => {
+          workspace.boards.every(board => {
+            board.tasks.every(task => {
+              if(task.id === $activeTask.id) {
+                activeSubject.set(subject)
+                activeWorkspace.set(workspace)
+              }
+              return true
+            })
+            return true
+          })
+          return true
+        })
+        return true
+      })
+    }
+
     fetch(`${constants.backURI}/MainApp/subject/workspace/board/task/edit`, {
       method: 'PUT',
       headers: {
@@ -252,6 +270,8 @@
                       taska.isFavorite = task.isFavorite
                       taska.level = task.level
                       activeTask.set(taska)
+                      activeWorkspace.set(workspace)
+                      activeSubject.set(subject)
                       return false
                     }
                     return true
@@ -260,17 +280,37 @@
                 }
                 return true
               })
-              activeWorkspace.set(workspace)
               return false
             }
             return true
           })
-          activeSubject.set(subject)
           return false
         }
         return true
       })
       userData.set(userDataCopy)
+
+      if($currentInterface === 'Favorites' && !$activeTask.isFavorite) {
+        taskViewModalActive.set(false)
+        activeTask.set(constants.task)
+      }
+
+      if($currentInterface !== 'Dashboard') {
+        $favorites = []
+        $userData.subjects.map(subject => {
+          subject.workspaces.map(workspace => {
+            workspace.boards.map(board => {
+              $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
+                return {
+                  boardID: board.id,
+                  task: data
+                }
+              })]
+            })
+          })
+        })
+      }
+
     }).catch(err => {
       $notifs = [...$notifs, {
         msg: `Error in marking as favorite task, ${err}`,
@@ -333,7 +373,7 @@
                   </div>
                   
                   <!-- tablet menu icon -->
-                  <div class="{outerWidth > 425 ? 'undisp': ''} is-clickable">
+                  <div class="{outerWidth > 570 ? 'undisp': ''} is-clickable">
                     <Avatar tile size='25px' style="max-width: 25px" class="mr-2">
                       <Icon path={mdiMenu} />
                     </Avatar>
@@ -678,6 +718,7 @@
                 </div>
   
                 <!-- views and viewers -->
+                {#if $userData.verified}
                 <div
                   on:click={() => {
                     viewersModalActive = true
@@ -721,6 +762,7 @@
                     {/each}
                   </div>
                 </Dialog>
+                {/if}
               </div>
             </div>
   
@@ -743,6 +785,7 @@
             </div>
   
             <!-- dropdown -->
+            {#if $userData.verified}
             <div use:ClickOutside on:clickOutside={() => drop = false} class='is-relative min-h-fit-content'>
               <input
                 on:change={() => filterMembers()}
@@ -779,20 +822,21 @@
                 {/each}
               </div>
             </div>
+            {/if}
   
             <!-- list of assigned members -->
-            {#each workspaceMembersCopy as taskAssignee}
+            {#each $activeTask.members as taskAssignee}
             <!-- container -->
             <div class="is-flex is-align-items-center m-3">
               <!-- profile -->
               {#if !taskAssignee.profile}
-              <Avatar size='47px' class='has-background-info mr-3'>
+              <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
                 <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
                   {taskAssignee.name.toUpperCase().split(' ')[0].charAt(0)}{taskAssignee.name.toUpperCase().split(' ')[taskAssignee.name.toUpperCase().split(' ').length - 1].charAt(0)}
                 </div>
               </Avatar>
               {:else}
-              <Avatar size='47px' class='has-background-info mr-3'>
+              <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
                 <img src={taskAssignee.profile} alt="">
               </Avatar>
               {/if}
