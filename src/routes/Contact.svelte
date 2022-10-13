@@ -68,9 +68,9 @@
                         </div>
                         
                         <div class="mx-2">
-                          <div class="is-clickable"on:click={openComingSoon}>
+                          <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=charlesm.herrera0700@gmail.com" target="_blank">
                             <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                          </div>
+                          </a>
                         </div>
                       </div>
                   </Card>
@@ -107,9 +107,9 @@
                         </div>
                                
                         <div class="mx-2">
-                          <div class="is-clickable"on:click={openComingSoon}>
+                          <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=rochejoannerazelle@gmail.com" target="_blank">
                             <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                          </div>
+                          </a>
                         </div>
                       </div>  
                     </Card>
@@ -146,9 +146,9 @@
                           </div>
 
                           <div class="mx-2">
-                            <div class="is-clickable"on:click={openComingSoon}>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=yazenclarin@gmail.com" target="_blank">
                               <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                            </div>
+                            </a>
                           </div>
                         </div>
                     </Card>   
@@ -185,9 +185,9 @@
                             </div>
 
                             <div class="mx-2">
-                              <div class="is-clickable"on:click={openComingSoon}>
+                              <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=matimtimeljohn@gmail.com" target="_blank">
                                 <Icon class="has-text-danger-dark" size="32px" path={mdiGoogle} />
-                              </div>
+                              </a>
                             </div>
                           </div>  
                       </Card>
