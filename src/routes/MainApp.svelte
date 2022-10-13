@@ -230,7 +230,7 @@
     </Button>
   </div>
 </Snackbar>
-<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 571 && $ismini ? "pl-16" : ""}`:""}">
+<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 570 && $ismini ? "pl-16" : ""}`:""}">
   {#if $currentInterface === "Dashboard"}
     <DashboardInterface />
   {:else if $currentInterface === "Assigned to me"}
@@ -242,9 +242,3 @@
   {/if}
 </div>
 {/if}
-
-<style>
-  div {
-    overflow: hidden;
-  }
-</style>
