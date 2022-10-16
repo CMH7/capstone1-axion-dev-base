@@ -162,6 +162,27 @@
           userData.set(userDataCopy)
         })
 
+        // ON NEW MEMBER => invitation accepted from owner
+        channel.bind('newMember', function(data) {
+          console.log('event: newMember received')
+          let userDataCopy = $userData
+          userDataCopy.subjects.every(subject => {
+            if(subject.id === data.subjectID) {
+              subject.workspaces.every(workspace => {
+                if(workspace.id === data.workspaceID) {
+                  workspace.members.push(data.member)
+                  return false
+                }
+                return true
+              })
+              return false
+            }
+            return true
+          })
+          userDataCopy.notifications.unshift(data.notification)
+          userData.set(userDataCopy)
+        })
+
         // ON INVITATION REJECTED
         channel.bind('invitationRejected', async function(data) {
           console.log('event: invitationRejected received')
