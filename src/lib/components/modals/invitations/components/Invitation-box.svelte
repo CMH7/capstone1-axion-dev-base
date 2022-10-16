@@ -31,7 +31,8 @@
           member: {
             email: $userData.email,
             name: `${$userData.firstName} ${$userData.lastName}`,
-            profile: $userData.profile
+            profile: $userData.profile,
+            id: $userData.id
           }
         }
       })
@@ -40,7 +41,7 @@
       let userDataCopy = $userData
 
       // check if subject is existing if not create it else check if workspace is existing if not add it else update it.
-      let sExisting = false, wExisting = false
+      let sExisting = false
       userDataCopy.subjects.every(subjecta => {
         if(subjecta.id === subject.id) {
           sExisting = true
@@ -52,42 +53,11 @@
       if(sExisting) {
         userDataCopy.subjects.every(subjecta => {
           if(subjecta.id === subject.id) {
-            subjecta.workspaces.every(workspace => {
-              if(workspace.id === workspaceID) {
-                wExisting = true
-                return false
-              }
-              return true
-            })
+            subjecta = subject
             return false
           }
           return true
         })
-
-        if(wExisting) {
-          let newWorkspace = constants.workspace
-          subject.workspaces.every(workspace => {
-            if(workspace.id === workspaceID) {
-              newWorkspace = workspace
-              return false
-            }
-            return true
-          })
-
-          userDataCopy.subjects.every(subjecta => {
-            if(subjecta.id === subject.id) {
-              subjecta.workspaces.every(workspace => {
-                if(workspace.id === workspaceID) {
-                  workspace = newWorkspace
-                  return false
-                }
-                return true
-              })
-              return false
-            }
-            return true
-          })
-        }
       } else {
         userDataCopy.subjects.push(subject)
       }
