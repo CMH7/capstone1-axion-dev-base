@@ -3,7 +3,7 @@ import courses from "$lib/collections/courses"
 
 export default {
   subject: {
-    color: "primary",
+    color: "",
     id: "",
     isFavorite: false,
     name: "",
@@ -15,7 +15,7 @@ export default {
     members: [],
     boards: [],
     admins: [],
-    color: "primary",
+    color: "",
     id: "",
     isFavorite: false,
     name: "",
@@ -33,7 +33,8 @@ export default {
   workspaceMember: {
     email: "",
     name: "",
-    profile: ""
+    profile: "",
+    id: ''
   },
   user: {
     invitations: [],
