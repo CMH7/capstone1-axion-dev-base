@@ -17,7 +17,7 @@
 
         <div class="column is-4-desktop is-10-touch">
           <div class="container is-flex is-flex-direction-column is-justify-content-space-between is-align-items-center">
-            <img src="Axion_Logo2.png" alt="Axion Logo">
+            <img src="axionFinalLogo.png" alt="Axion Logo">
             <p class="fredokaone mb-0 has-text-primary mt-2">
               AXION
             </p>

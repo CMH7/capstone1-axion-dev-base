@@ -1,6 +1,6 @@
 <script>
   //@ts-nocheck
-	import constants from '$lib/constants';
+	import constants from '$lib/config/constants';
   import { selectedInvitation, invModalActive, cancelInvModalActive, userData, notifs, isProcessing } from '$lib/stores/global-store'
   import { Button } from 'svelte-materialify'
   import bcrypt from 'bcryptjs'
@@ -31,7 +31,8 @@
           member: {
             email: $userData.email,
             name: `${$userData.firstName} ${$userData.lastName}`,
-            profile: $userData.profile
+            profile: $userData.profile,
+            id: $userData.id
           }
         }
       })
@@ -40,7 +41,7 @@
       let userDataCopy = $userData
 
       // check if subject is existing if not create it else check if workspace is existing if not add it else update it.
-      let sExisting = false, wExisting = false
+      let sExisting = false
       userDataCopy.subjects.every(subjecta => {
         if(subjecta.id === subject.id) {
           sExisting = true
@@ -52,42 +53,11 @@
       if(sExisting) {
         userDataCopy.subjects.every(subjecta => {
           if(subjecta.id === subject.id) {
-            subjecta.workspaces.every(workspace => {
-              if(workspace.id === workspaceID) {
-                wExisting = true
-                return false
-              }
-              return true
-            })
+            subjecta = subject
             return false
           }
           return true
         })
-
-        if(wExisting) {
-          let newWorkspace = constants.workspace
-          subject.workspaces.every(workspace => {
-            if(workspace.id === workspaceID) {
-              newWorkspace = workspace
-              return false
-            }
-            return true
-          })
-
-          userDataCopy.subjects.every(subjecta => {
-            if(subjecta.id === subject.id) {
-              subjecta.workspaces.every(workspace => {
-                if(workspace.id === workspaceID) {
-                  workspace = newWorkspace
-                  return false
-                }
-                return true
-              })
-              return false
-            }
-            return true
-          })
-        }
       } else {
         userDataCopy.subjects.push(subject)
       }
@@ -96,24 +66,19 @@
       
       isProcessing.set(false)
 
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: 'Invitation accepted',
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     }).catch(err => {
       isProcessing.set(false)
       
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in invitation accepting, ${err}`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
-
+      }]
       console.error(err)
     })
   }
@@ -121,13 +86,11 @@
   const rejectInvite = () => {
     selectedInvitation.set(invitation)
 
-    let notifsCopy = $notifs
-    notifsCopy.push({
+    $notifs = [...$notifs, {
       msg: 'Rejecting invitation. Please wait.',
       type: 'wait',
       id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    })
-    notifs.set(notifsCopy)
+    }]
 
     isProcessing.set(true)
     fetch(`${constants.backURI}/MainApp/subject/workspace/invitation/reject`, {
@@ -149,13 +112,11 @@
       userData.set(userDataCopy)
       isProcessing.set(false)
     }).catch(err => {
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in rejecting invitation, ${err}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
       console.error(err)
       isProcessing.set(false)
     })
@@ -165,13 +126,11 @@
     selectedInvitation.set(invitation)
     isProcessing.set(true)
     
-    let notifsCopy = $notifs
-    notifsCopy.push({
+    $notifs = [...$notifs, {
       msg: 'Invitation removing, please wait',
       type: 'wait',
       id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    })
-    notifs.set(notifsCopy)
+    }]
 
     fetch(`${constants.backURI}/MainApp/subject/workspace/invitation/remove`, {
       method: 'DELETE',
@@ -190,22 +149,18 @@
       userDataCopy.invitations = userDataCopy.invitations.filter(invitation => invitation.id !== invitationID)
       userData.set(userDataCopy)
       isProcessing.set(false)
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: 'Invitation removed',
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     }).catch(err => {
       isProcessing.set(false)
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: 'Error in Invitation removed',
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
       console.error(err)
     })
   }

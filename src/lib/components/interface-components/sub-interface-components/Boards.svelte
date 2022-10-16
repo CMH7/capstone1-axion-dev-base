@@ -4,7 +4,7 @@
   import { Icon, Divider, ClickOutside } from "svelte-materialify"
   import { fade } from 'svelte/transition'
   import { boardSettingsModalActive, modalChosenColor, selectedBoard, taskBoardFilter } from '$lib/stores/global-store'
-  import constants from "$lib/constants"
+  import constants from "$lib/config/constants"
 
   export let board = constants.board
 

@@ -1,5 +1,5 @@
 import { writable } from "svelte/store"
-import constants from "$lib/constants"
+import constants from "$lib/config/constants"
 
 // User data and information
 export let userData = writable(constants.user)
@@ -63,7 +63,7 @@ export let allUsers = writable([])
 export let allBoards = writable([])
 
 // breadcrumbds items
-export let breadCrumbsItems = writable([])
+export let breadCrumbsItems = writable([{text: 'Subjects'}])
 
 // notification center open boolean
 export let notifCenterOpen = writable(false)

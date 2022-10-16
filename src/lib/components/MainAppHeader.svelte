@@ -1,7 +1,8 @@
 <script>
   // @ts-nocheck
+  import { goto } from '$app/navigation'
   import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge, Avatar } from "svelte-materialify"
-  import {mdiMenu, mdiAccount, mdiBell, mdiAccountGroup } from '@mdi/js'
+  import {mdiMenu, mdiAccount, mdiBell, mdiAccountGroup, mdiBolt } from '@mdi/js'
   import { currentInterface, ismini, sidebarActive, notifCenterOpen, userData, invModalActive } from "$lib/stores/global-store"
   import NotificationCenter from "$lib/components/User-Notification-Center/NotificationCenter.svelte"
 
@@ -37,7 +38,7 @@
         class="is-hidden-tablet pos-abs pos-l-15"
       >
         <Avatar size='35px'>
-          <img class="has-transition" style="transform: rotateZ({$ismini ? '0': '-37'}deg);" src="Axion_Logo2.png" alt="">
+          <img class="has-transition" style="transform: rotateZ({$ismini ? '0': '-37'}deg);" src="axionFinalLogo.png" alt="">
         </Avatar>
       </div>
 
@@ -51,17 +52,24 @@
       <!-- Expansion-er -->
       <div class="is-flex-grow-1"/>
 
+      <div class="is-clickable" on:click={ () => {
+        goto('/experiment/profilePictureUpload' , {replaceState: true})
+      }}>
+        <Icon path={mdiBolt} />
+      </div>
+
       <!-- invitations inbox -->
+      {#if $userData.verified}
       <div
         on:click={e => {
           invModalActive.set(true)
-          console.log('clicked')
         }}
         class="is-clickable mr-3 rounded-circle has-transition hover-bg-grey-dark has-background-grey-{$invModalActive? 'dark': ''} p-2 is-flex is-justify-content-center is-align-items-center">
         <Badge active={$userData.invitations.filter(invitation => invitation.to.id === $userData.id ).length > 0} class="success-color" dot={outerWidth < 426} value={$userData.invitations.filter(invitation => invitation.to.id === $userData.id ).length} offsetX={outerWidth < 426 ? 10 : 16} offsetY={outerWidth < 426 ? 10 : 16}>
           <Icon class='white-text' size={outerWidth < 426 ? '20px': '30px'} path={mdiAccountGroup} />
         </Badge>
       </div>
+      {/if}
 
       <div
         use:ClickOutside

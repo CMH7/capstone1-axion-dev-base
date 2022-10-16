@@ -5,7 +5,7 @@
   import { mdiClose } from '@mdi/js'
   import SubjectDeletionsModal from '$lib/components/modals/deletions/Subject-deletions-modal.svelte'
   import SubjectTruncationModal from '$lib/components/modals/truncations/Subject-truncation-modal.svelte'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
   import { Pulse } from 'svelte-loading-spinners'
 
@@ -60,26 +60,22 @@
   const updateSubject = async () => {
     if(!nameChecker(subjectName)) {
       nameChanges = false
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: 'Name cannot be empty',
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
       subjectName = $selectedSubjectForSubjectSettings.name
       return false
     }
     changeName(subjectName)
     isProcessing.set(true)
 
-    let notifsCopy = $notifs
-    notifsCopy.push({
+    $notifs = [...$notifs, {
       msg: 'Updating subject...Please wait',
       type: 'success',
       id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    })
-    notifs.set(notifsCopy)
+    }]
 
     // do http requests here
     fetch(`${constants.backURI}/MainApp/edit/subject`, {
@@ -119,14 +115,11 @@
       oldFavoriteStatus.set(subject.isFavorite)
       isProcessing.set(false)
 
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `${subject.name} is updated`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
-
+      }]
       nameChanges = false
       colorChanges = false
       favoriteChanges = false
@@ -136,13 +129,11 @@
       nameChanges = false
       colorChanges = false
       favoriteChanges = false
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in updating the subject, ${err}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     })
   }
 
@@ -184,7 +175,7 @@
       <!-- subject name  -->
       <div class="is-flex is-align-items-center">
         <!-- label -->
-        <div class="inter-reg mr-3 {width < 321 ? 'maxmins-w-15p txt-size-14' : 'maxmins-w-20p txt-size-16'}">
+        <div class="inter-reg mr-3 {width < 376 ? 'undisp' : ''} maxmins-w-20p txt-size-16">
           Name
         </div>
         
@@ -234,12 +225,12 @@
       <!-- Color -->
       <div class="is-flex is-align-items-center my-3 ">
         <!-- label -->
-        <div class="inter-reg mr-3 {width < 321 ? 'maxmins-w-15p txt-size-14' : 'maxmins-w-20p txt-size-16'}">
+        <div class="inter-reg mr-3 {width < 376 ? 'undisp' : ''} maxmins-w-20p txt-size-16">
           Color
         </div>
         
         <!-- colors -->
-        <div class="is-flex">
+        <div class="is-flex {width < 376 ? 'maxmins-w-100p is-justify-content-center' : ''}">
             {#each colors as color}
             <div
               on:click={e => {
@@ -251,7 +242,7 @@
                   colorChanges = false
                 }
               }}
-              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition {$isProcessing ? "" : "is-clickable"} { width < 321 ? '': 'mr-1'} my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-{width < 376 ? '20': '40'} maxmins-h-{width < 426 ? '30': '30'}"
+              class="parent flex-grow-0 flex-shrink-0 button is-static has-transition {$isProcessing ? "" : "is-clickable"} mr-1 my-3 box-sizing-border-box hover:outline-width-3pxl hover:outline-offset-n3pxl hover:outline-color-black has-background-{color} {color === $modalChosenColor ? "outline-w-3pxl outline-style-solid outline-color-black outline-offset-n3pxl": "outline-w-1pxl outline-style-solid outline-color-black outline-offset-n1pxl"} maxmins-w-40 maxmins-h-30"
             >
               <!-- circle dot -->
               <div class="{color === $modalChosenColor ? "": "undisp"} parent-hover-this-display-block rounded-circle maxmins-w-10 maxmins-h-10 has-background-white"/>
@@ -263,18 +254,19 @@
       <!-- favorite -->
       <div class="is-flex is-align-items-center">
         <!-- label -->
-        <div class="inter-reg mr-3 {width < 321 ? 'maxmins-w-15p txt-size-11' : 'maxmins-w-20p txt-size-16'}">
+        <div class="inter-reg mr-3 maxmins-w-20p txt-size-16 flex-shrink-0">
           Favorite
         </div>
         
         <!-- switch -->
-        <div class="is-flex is-align-items-center">
+        <div class="is-flex is-align-items-center {width < 376 ? 'ml-3' : ''}">
             <Switch class='p-0 m-0' color='green' disabled={$isProcessing} bind:checked={isFavorite} inset />
         </div>
       </div>
 
       <!-- advance settings -->
       <div class="maxmins-w-100p is-flex is-align-items-center is-justify-content-space-between mt-10">
+        {#if $selectedSubjectForSubjectSettings.owned}
         <div
           on:click={e => {
             if(showAdvanceSettings) {
@@ -286,6 +278,9 @@
         >
           <Button size='small' depressed class='inter-reg'>Advance settings</Button>
         </div>
+        {:else}
+        <div></div>
+        {/if}
 
         {#if (nameChanges || colorChanges || favoriteChanges) && !$isProcessing}
         <div
@@ -301,6 +296,7 @@
       </div>
       
       <!-- danger zone section -->
+      {#if $selectedSubjectForSubjectSettings.owned}
       <div
         class="is-flex is-align-items-center is-flex-wrap-wrap mt-3 px-2 pb-1 has-background-danger-light rounded has-transition {showAdvanceSettings ? '': 'is-hidden'}"
         style="transform-origin: top center"
@@ -343,7 +339,7 @@
             </div>
         </div>
       </div>
-
+      {/if}
     </div>
   </Dialog>
 </div>

@@ -1,11 +1,12 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard } from '$lib/stores/global-store'
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard, currentInterface } from '$lib/stores/global-store'
   import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
-  import constants from "$lib/constants"
+  import constants from "$lib/config/constants"
   import bcrypt from "bcryptjs"
+	import { favorites } from "$lib/stores/favorites";
 
   const backURI = constants.backURI
 
@@ -41,34 +42,47 @@
   }
 
   function insertChat() {
-    let chatsCopy = $chats
-    chatsCopy.push({
+    if(!chatInput) {
+      $notifs = [...$notifs, {
+        msg: 'Message cannot be empty jkjk',
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      return false
+    }
+    
+    let activeTaskCopy = $activeTask
+    activeTaskCopy.conversations.push({
       sender: {
-        email: 'cm@gmail.com',
-        name: 'Charles Maverick Herrera',
-        profile: ''
+        email: $userData.email,
+        name: `${$userData.firstName} ${$userData.lastName}`,
+        profile: $userData.profile
       },
       message: chatInput,
       sendAt: new Date().toISOString(),
-      id: '3'
+      id: bcrypt.hashSync(`${$userData.email}${new Date()}${chatInput.substring(0, chatInput.length > 13 ? 13 : chatInput.length)}`)
     })
-    chats.set(chatsCopy)
+    activeTask.set(activeTaskCopy)
     chatInput = ''
   }
 
   function onKeyDownHandler(e) {
     if(e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Chats') {
       if(!chatInput) {
-        let notifsCopy = $notifs
-        notifsCopy.push({
+        $notifs = [...$notifs, {
           msg: 'Message cannot be empty',
           type: 'error',
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        })
-        notifs.set(notifsCopy)
+        }]
       }else{
         insertChat()
       }
+    }
+    
+    if(e.ctrlKey && e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Description') {
+      descriptionSave(descriptionValue != oldDescriptionValue)
+    }else if(e.keyCode == 27 && $taskCurTab === 'Description' && editing) {
+      descriptionSave(false)
     }
   }
 
@@ -116,7 +130,7 @@
     // add task to next board
     allBoardsCopy.every(board => {
       if(board.name === boardName) {
-        board.tasks.push(task)
+        board.tasks.push($activeTask)
         return false
       }
       return true
@@ -179,13 +193,27 @@
         return true
       })
 
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      if($currentInterface !== 'Dashboard') {
+        $favorites = []
+        $userData.subjects.map(subject => {
+          subject.workspaces.map(workspace => {
+            workspace.boards.map(board => {
+              $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
+                return {
+                  boardID: board.id,
+                  task: data
+                }
+              })]
+            })
+          })
+        })
+      }
+
+      $notifs = [...$notifs, {
         msg: `${task.name} is moved to ${boardName}`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     }).catch(err => {
       let notifsCopy = $notifs
       notifsCopy.push({
@@ -200,10 +228,130 @@
   $: month = parseInt($activeTask.dueDateTime.split('T')[0].split('-')[1])
   $: hour = parseInt($activeTask.dueDateTime.split('T')[1].split('-')[0])
 
-  $: console.log($activeTask.dueDateTime)
+  let hovering = false
+
+  const setFavorite = e => {
+    if($currentInterface === 'Favorites') {
+      $userData.subjects.every(subject => {
+        subject.workspaces.every(workspace => {
+          workspace.boards.every(board => {
+            board.tasks.every(task => {
+              if(task.id === $activeTask.id) {
+                activeSubject.set(subject)
+                activeWorkspace.set(workspace)
+              }
+              return true
+            })
+            return true
+          })
+          return true
+        })
+        return true
+      })
+    }
+
+    fetch(`${constants.backURI}/MainApp/subject/workspace/board/task/edit`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id,
+          board: $activeBoard
+        },
+        task: {
+          id: $activeTask.id,
+          name: $activeTask.name,
+          isFavorite: $activeTask.isFavorite ? false : true,
+          level: $activeTask.level
+        }
+      })
+    }).then(async res => {
+      const {error, task} = await res.json()
+      if(error) {
+        $notifs = [...$notifs, {
+          msg: 'Response received but error in updating task',
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+        return 
+      }
+
+      $notifs = [...$notifs, {
+        msg: `${$activeTask.name} is ${task.isFavorite ? 'marked as': 'removed from'} favorites`,
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject.workspaces.every(workspace => {
+            if(workspace.id === $activeWorkspace.id) {
+              workspace.boards.every(board => {
+                if(board.id === $activeBoard) {
+                  board.tasks.every(taska => {
+                    if(taska.id === $activeTask.id) {
+                      taska.name = task.name
+                      taska.isFavorite = task.isFavorite
+                      taska.level = task.level
+                      activeTask.set(taska)
+                      activeWorkspace.set(workspace)
+                      activeSubject.set(subject)
+                      return false
+                    }
+                    return true
+                  })
+                  return false
+                }
+                return true
+              })
+              return false
+            }
+            return true
+          })
+          return false
+        }
+        return true
+      })
+      userData.set(userDataCopy)
+
+      if($currentInterface === 'Favorites' && !$activeTask.isFavorite) {
+        taskViewModalActive.set(false)
+        activeTask.set(constants.task)
+      }
+
+      if($currentInterface !== 'Dashboard') {
+        $favorites = []
+        $userData.subjects.map(subject => {
+          subject.workspaces.map(workspace => {
+            workspace.boards.map(board => {
+              $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
+                return {
+                  boardID: board.id,
+                  task: data
+                }
+              })]
+            })
+          })
+        })
+      }
+
+    }).catch(err => {
+      $notifs = [...$notifs, {
+        msg: `Error in marking as favorite task, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      console.error(err)
+    })
+  }
 </script>
 
-<svelte:window bind:outerWidth/>
+<svelte:window bind:outerWidth on:keydown={onKeyDownHandler}/>
 
 <div>
   <MaterialApp>
@@ -216,28 +364,32 @@
       <!-- Container -->
       <div class="is-flex maxmins-h-500">
         <!-- ##### RIGHT SIDE ##### -->
-        <div class="maxmins-w-{outerWidth < 426 ? '100': '65'}p">
+        <div class="maxmins-w-{outerWidth < 571 ? '100': '65'}p">
           <div class="is-flex is-flex-wrap-wrap">
             <!-- task name, favorite, level -->
             <div class="pl-3 min-w-100p">
-              <div class="is-flex {outerWidth < 426 ? 'is-justify-content-space-between': 'is-align-items-center'}">
+              <div class="is-flex {outerWidth < 571 ? 'is-justify-content-space-between': 'is-align-items-center'}">
                 <!-- task name -->
                 <div class="fredoka-reg txt-size-32 is-size-4-mobile txt-color-yaz-grey-dark max-w-50p overflow-x-auto txt-overflow-nowrap-only">
                   {$activeTask.name}
                 </div>
   
                 <!-- Utilities / tools -->
-                <div class="{outerWidth > 426 ? 'ml-6': ''} is-flex">
+                <div class="{outerWidth > 571 ? 'ml-6': ''} is-flex">
                   <!-- favorite icon -->
-                  <div class="is-flex-shrink-0">
+                  <div
+                    on:mouseenter={e => hovering = true}
+                    on:mouseleave={e => hovering = false}
+                    on:click={setFavorite}
+                    class="is-flex-shrink-0 is-clickable mr-3">
                     {#if $activeTask.isFavorite}
-                      <Avatar tile size='25px' style="max-width: 25px" class="rounded mx-2 is-clickable">
-                        <Icon class='has-text-warning' path={mdiStar} />
-                      </Avatar>
+                    <Avatar tile size='25px' style="max-width: 25px">
+                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={mdiStar} />
+                    </Avatar>
                     {:else}
-                      <Avatar tile size='25px' style="max-width: 25px" class="rounded mx-2 is-clickable">
-                        <Icon class='has-text-warning' path={mdiStarOutline} />
-                      </Avatar>
+                    <Avatar tile size='25px' style="max-width: 25px">
+                      <Icon size=25 class='has-text-{$activeTask.color === 'warning' ? '' : 'warning'}' path={mdiStarOutline} />
+                    </Avatar>
                     {/if}
                   </div>
     
@@ -250,7 +402,7 @@
                   </div>
                   
                   <!-- tablet menu icon -->
-                  <div class="{outerWidth > 425 ? 'undisp': ''} is-clickable">
+                  <div class="{outerWidth > 570 ? 'undisp': ''} is-clickable">
                     <Avatar tile size='25px' style="max-width: 25px" class="mr-2">
                       <Icon path={mdiMenu} />
                     </Avatar>
@@ -259,7 +411,7 @@
                   <!-- tablet Close icon -->
                   <div
                     on:click={() => taskViewModalActive.set(false)}
-                    class="{outerWidth > 426 ? 'undisp': ''} is-clickable"
+                    class="{outerWidth > 571 ? 'undisp': ''} is-clickable"
                   >
                     <Avatar tile size='25px' style="max-width: 25px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-red has-text-white fredoka-reg rounded is-clickable">
                       <Icon path={mdiClose} />
@@ -283,7 +435,27 @@
                 </div>
                 <Avatar size='17px' class='has-background-link mx-1 is-flex is-justify-content-center is-align-items-center'>
                   <div class="fredoka-reg has-text-weight-bold has-text-white txt-size-7 is-flex is-justify-content-center is-align-items-center">
-                    {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                    {#if !$activeTask.createdBy}
+                    O
+                    {/if}
+
+                    {#if $activeTask.createdBy === `${$userData.firstName} ${$userData.lastName}`}
+                      {#if !$userData.profile}
+                        {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                      {:else}
+                        <img src={$userData.profile} alt={`${$userData.lastName}`}>
+                      {/if}
+                    {/if}
+
+                    {#each $activeWorkspace.members as member}
+                      {#if member.name === $activeTask.createdBy}
+                        {#if !member.profile}
+                          {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
+                        {:else}
+                          <img src={member.profile} alt={`${member.name}`}>
+                        {/if}
+                      {/if}
+                    {/each}
                   </div>
                 </Avatar>
                 <div class="fredoka-reg is-size-7 opacity-60p">
@@ -293,7 +465,7 @@
             </div>
             
             <!-- tabs -->
-            <div class="mt-2 min-w-100p is-flex {outerWidth < 426 ? '': 'pl-3'}">
+            <div class="mt-2 min-w-100p is-flex {outerWidth < 571 ? '': 'pl-3'}">
               {#if outerWidth > 425}
               <div
                 on:click={() => {if($taskCurTab !== 'Chats') taskCurTab.set('Chats')}}
@@ -341,9 +513,9 @@
               <!-- Chats -->
               <div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-direction-column-reverse is-justify-content-flex-end pt-1">
                 <!-- Chat input, tools, and send button -->
-                <div class="is-flex is-align-items-center {outerWidth < 426 ? '': 'px-5'} mt-1">
+                <div class="is-flex is-align-items-center {outerWidth < 571 ? '': 'px-5'} mt-1">
                   <!-- chat input -->
-                  <input on:keydown={onKeyDownHandler} bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
+                  <input bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
   
                   <!-- tools -->
                   <div class="is-flex is-align-items-center is-clickable mx-2">
@@ -379,7 +551,7 @@
                         {:else}
                         <div class="is-flex is-align-items-center">
                           <Avatar size='30px' class='has-background-info mr-2 maxmins-w-30 maxmins-h-30'>
-                            <Icon class='p-1 white-text' path={mdiAccount} />
+                            <img src={chat.sender.profile} alt={chat.sender.name}>
                           </Avatar>
                         </div>
                         {/if}
@@ -523,14 +695,14 @@
                         </div>
 
                         <!-- trash -->
-                        <div class="{outerWidth < 426 ? '': 'undisp'} ml-2 is-invisible parent-hover-this-display-block">
+                        <div class="{outerWidth < 571 ? '': 'undisp'} ml-2 is-invisible parent-hover-this-display-block">
                           <Icon size='22px' path={mdiTrashCan} />
                         </div>
                         
                         <!-- trash 2 -->
                         <div
                           on:click={() => console.log('trash clicked')}
-                          class="pos-abs pos-r-5 z-100 {outerWidth < 426 ? '': 'undisp parent-hover-this-display-block'} is-clickable">
+                          class="pos-abs pos-r-5 z-100 {outerWidth < 571 ? '': 'undisp parent-hover-this-display-block'} is-clickable">
                           <Icon size='22px' path={mdiTrashCan} />
                         </div>
                       </div>
@@ -545,7 +717,7 @@
         </div>
     
         <!-- ##### LEFT SIDE ##### -->
-        <div class="{outerWidth < 426 ? 'undisp': ''} maxmins-w-35p border-w-l-2 border-l-color-yaz-grey border-type-l-solid">
+        <div class="{outerWidth < 571 ? 'undisp': ''} maxmins-w-35p border-w-l-2 border-l-color-yaz-grey border-type-l-solid">
           <!-- status, views & viewers, close button -->
   
           <div class="pl-3 pb-3 is-flex is-justify-content-space-between border-w-b-3 border-b-color-yaz-grey border-type-b-solid">
@@ -591,6 +763,7 @@
                 </div>
   
                 <!-- views and viewers -->
+                {#if $userData.verified}
                 <div
                   on:click={() => {
                     viewersModalActive = true
@@ -634,13 +807,14 @@
                     {/each}
                   </div>
                 </Dialog>
+                {/if}
               </div>
             </div>
   
             <!-- close button -->
             <div
               on:click={() => taskViewModalActive.set(false)}
-              class='is-clickable is-flex-shrink-0 {outerWidth < 426 ? 'undisp': ''}'
+              class='is-clickable is-flex-shrink-0 {outerWidth < 571 ? 'undisp': ''}'
             >
               <Avatar tile size='25px' style="max-width: 25px" class="bg-color-yaz-red has-transition hover-bg-danger has-text-white rounded">
                 <Icon path={mdiClose} />
@@ -656,6 +830,7 @@
             </div>
   
             <!-- dropdown -->
+            {#if $userData.verified}
             <div use:ClickOutside on:clickOutside={() => drop = false} class='is-relative min-h-fit-content'>
               <input
                 on:change={() => filterMembers()}
@@ -692,20 +867,21 @@
                 {/each}
               </div>
             </div>
+            {/if}
   
             <!-- list of assigned members -->
-            {#each workspaceMembersCopy as taskAssignee}
+            {#each $activeTask.members as taskAssignee}
             <!-- container -->
             <div class="is-flex is-align-items-center m-3">
               <!-- profile -->
               {#if !taskAssignee.profile}
-              <Avatar size='47px' class='has-background-info mr-3'>
+              <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
                 <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
                   {taskAssignee.name.toUpperCase().split(' ')[0].charAt(0)}{taskAssignee.name.toUpperCase().split(' ')[taskAssignee.name.toUpperCase().split(' ').length - 1].charAt(0)}
                 </div>
               </Avatar>
               {:else}
-              <Avatar size='47px' class='has-background-info mr-3'>
+              <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
                 <img src={taskAssignee.profile} alt="">
               </Avatar>
               {/if}

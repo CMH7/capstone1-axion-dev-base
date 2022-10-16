@@ -1,24 +1,35 @@
 <script>
- // @ts-nocheck 
- import { fade } from 'svelte/transition'
- import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
- import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
- import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte'
- import { goto } from "$app/navigation" 
- import { isLoggedIn, transitionActive, snack, userData, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, breadCrumbsItems, activeBoard, activeTask, modalChosenColor, isProcessing } from "$lib/stores/global-store"
-	import constants from '$lib/constants';
+  // @ts-nocheck 
+  import { fade } from 'svelte/transition'
+  import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
+  import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
+  import { goto } from "$app/navigation" 
+  import { isLoggedIn, transitionActive, snack, userData, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, breadCrumbsItems, activeBoard, activeTask, modalChosenColor, isProcessing } from "$lib/stores/global-store"
+  import constants from '$lib/config/constants';
+  import ReSendEmailVerifcation from '$lib/components/modals/my profile/re-send-email-verifcation.svelte';
+ 
+  let resendEmail = false
+  let status = true
+  let outerWidth = 0
+  let switchOn = true
+  let comingSoonModalOpen = false
+  const openComingSoon = () => {
+    if (!comingSoonModalOpen) {
+      comingSoonModalOpen = true
+    } else {
+      comingSoonModalOpen = false
+      comingSoonModalOpen = true
+    }
+  }
 
- let outerWidth = 0
- let switchOn = true
- let comingSoonModalOpen = false
- const openComingSoon = () => {
-   if (!comingSoonModalOpen) {
-     comingSoonModalOpen = true
-   } else {
-     comingSoonModalOpen = false
-     comingSoonModalOpen = true
-   }
- }
+  const resend = async e => {
+    const res = await fetch(`${constants.backURI}/reverify/${$userData.id}`)
+    const { resend } = await res.json()
+    status = true
+    status = resend
+    resendEmail = false
+    resendEmail = true
+  }
 </script>
 
 <svelte:head>
@@ -27,7 +38,7 @@
 
 <svelte:window bind:outerWidth />
 
-<ComingSoonModal active={comingSoonModalOpen} />
+<ReSendEmailVerifcation active={resendEmail} {status} />
 
 <div in:fade class="hero is-fullheight-with-navbar">
   <div class="hero-head p-5 columns is-multiline">
@@ -51,13 +62,12 @@
           <div class="column pl-10">
             <div class="is-5-tablet is-12-mobile pl-10">
               <div class=" d-flex flex-wrap is-justify-content-end pl-10">
-          <span class="fredokaone is-size-3" on:click={
-          () => {
+          <span class="fredoka-reg is-size-3" on:click={() => {
             transitionActive.set(true);
             if($isLoggedIn){
               snack.set(
                 {
-                  msg: "You will be automatically logged out. Do you want to continue?",
+                  msg: "You will be logged out. Do you want to continue?",
                   active: true,
                   yes: () => {
                     localStorage.removeItem('email')
@@ -331,12 +341,14 @@
                       <input readonly value={$userData.email} class="cursor-def input has-background-grey-lighter dm-sans txt-size-15 has-text-grey"/>
 
                       <!-- Not veified -->
+                      {#if !$userData.verified}
                       <button
-                        on:click={openComingSoon}
+                        on:click={resend}
                         class="button is-small bg-color-pastel-red pos-abs pos-t-5 pos-r-5 dm-sans is-size-7 has-text-white"
                       >
                         not verified
                       </button>
+                      {/if}
                     </div>
                   </div>
                 </div>

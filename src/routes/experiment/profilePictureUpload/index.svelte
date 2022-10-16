@@ -1,5 +1,5 @@
 <script>
-  import uploadPics from '$lib/uploadPics'
+  import uploadPics from '$lib/config/uploadPics'
   import { userData } from '$lib/stores/global-store'
 
   let files

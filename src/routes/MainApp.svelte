@@ -7,15 +7,14 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, modalChosenColor, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing } from "$lib/stores/global-store"
+  import { modalChosenColor, breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing, currentIndex } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
-  import CalendarInterface from "$lib/interfaces/Calendar-interface.svelte"
   import MyProfileInterface from "$lib/interfaces/My-profile-interface.svelte"
   import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import { goto } from '$app/navigation'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import LoadingScreen from '$lib/components/LoadingScreen.svelte'
   import Invitations from '$lib/components/modals/invitations/invitations.svelte'
   import Pusher from 'pusher-js'
@@ -27,44 +26,79 @@
   })
 
   onMount(async ()=>{
-    // window.onpopstate = function () {
-    //   if(($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'Calendar' || $currentInterface === 'My Profile') && $currentDashboardSubInterface === 'Subjects') {
-    //     console.log('on root')
-    //     location.href = '/'
-    //   }else if($currentDashboardSubInterface === 'Workspaces') {
-    //     console.log('on workspace')
-    //     currentDashboardSubInterface.set('Subjects')
-    //     activeSubject.set(constants.subject)
-    //     activeWorkspace.set(constants.workspace)
-    //     allBoards.set([])
-    //     breadCrumbsItems.set([{text: 'Subjects'}])
-    //   } else if($currentDashboardSubInterface === 'Boards') {
-    //     console.log('on boards')
-    //     currentDashboardSubInterface.set('Workspaces')
-    //     activeWorkspace.set(constants.workspace)
-    //     allBoards.set([])
-    //     let breadCrumbsItemsCopy = $breadCrumbsItems
-    //     breadCrumbsItemsCopy.pop()
-    //     breadCrumbsItemsCopy.pop()
-    //     breadCrumbsItems.set(breadCrumbsItemsCopy)
-    //   }
-    // }
+    history.pushState(null, document.title, location.href);
+    history.back()
+    history.forward()
+    window.onpopstate = function () {
+      if($currentInterface === 'Dashboard') {
+        if($breadCrumbsItems.length == 3) {
+          currentDashboardSubInterface.set("Workspaces")
+          activeWorkspace.set(constants.workspace)
+          allBoards.set([])
+          $breadCrumbsItems = [...$breadCrumbsItems.filter(item => {
+            if(item.text === $activeSubject.name) {
+              return item
+            }
+          })]
+          return
+        }
+  
+        if($breadCrumbsItems.length == 1 && $breadCrumbsItems[0].text !== 'Subjects') {          
+          currentDashboardSubInterface.set("Subjects")
+          activeSubject.set(constants.subject)
+          activeWorkspace.set(constants.workspace)
+          allBoards.set([])
+          breadCrumbsItems.set([{text: 'Subjects'}])
+          return
+        }
+
+        // if($breadCrumbsItems.length == 1 && $breadCrumbsItems[0].text === 'Subjects') {
+        //   snack.set({
+        //     msg: "You will be logged out. Do you want to continue?",
+        //     active: true,
+        //     yes: () => {
+        //       localStorage.removeItem('email')
+        //       userData.set(constants.user)
+        //       isLoggedIn.set(false)
+        //       currentInterface.set('Dashboard')
+        //       currentDashboardSubInterface.set('Subjects')
+        //       activeSubject.set(constants.subject)
+        //       activeWorkspace.set(constants.workspace)
+        //       activeBoard.set(constants.board)
+        //       breadCrumbsItems.set([{text: 'Subjects'}])
+        //       activeTask.set(constants.task)
+        //       modalChosenColor.set('primary')
+        //       isProcessing.set(false)
+        //       goto('/')
+        //     }
+        //   })
+        // }
+      }
+
+      if($currentInterface === 'Assigned to me' || $currentInterface === 'Favorites' || $currentInterface === 'My Profile') {
+        currentInterface.set('Dashboard')
+        currentIndex.set(0)
+        currentDashboardSubInterface.set("Subjects")
+        activeSubject.set(constants.subject)
+        activeWorkspace.set(constants.workspace)
+        allBoards.set([])
+        breadCrumbsItems.set([{text: 'Subjects'}])
+        return
+      }
+
+      history.go(1)
+    }
 
     if(!$isLoggedIn && !localStorage.getItem('email')) {
-      let notifsCopy = $notifs;
-      notifsCopy.push(
-        {
-          msg: "Please Sign in first.",
-          type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        }
-      )
-      notifs.set(notifsCopy)
-      goto('/Signin')
+      $notifs = [...$notifs, {
+        msg: "Please Sign in first.",
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      goto('/Signin', {replaceState: true})
     } else if($isLoggedIn && !localStorage.getItem('email')) {
       localStorage.setItem("email", $userData.email)
     } else if(!$isLoggedIn && localStorage.getItem('email')) {
-      console.log(`logged in: ${$isLoggedIn}`)
       const email = localStorage.getItem('email')
       fetch(`${constants.backURI}/validUser`, {
         method: 'POST',
@@ -128,6 +162,27 @@
           userData.set(userDataCopy)
         })
 
+        // ON NEW MEMBER => invitation accepted from owner
+        channel.bind('newMember', function(data) {
+          console.log('event: newMember received')
+          let userDataCopy = $userData
+          userDataCopy.subjects.every(subject => {
+            if(subject.id === data.subjectID) {
+              subject.workspaces.every(workspace => {
+                if(workspace.id === data.workspaceID) {
+                  workspace.members.push(data.member)
+                  return false
+                }
+                return true
+              })
+              return false
+            }
+            return true
+          })
+          userDataCopy.notifications.unshift(data.notification)
+          userData.set(userDataCopy)
+        })
+
         // ON INVITATION REJECTED
         channel.bind('invitationRejected', async function(data) {
           console.log('event: invitationRejected received')
@@ -137,6 +192,45 @@
               invitation.status = 'rejected'
               return false
             }
+            return true
+          })
+          userDataCopy.notifications.unshift(data.notification)
+          userData.set(userDataCopy)
+        })
+
+        // ON EMAIL VERIFIED
+        channel.bind('emailVerified', function(data) {
+          let userDataCopy = $userData
+          userDataCopy.verified = data.verified
+          userData.set(userDataCopy)
+
+          $notifs = [...$notifs, {
+            msg: 'Email verified!',
+            type: 'success',
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          }]
+        })
+
+        // ON MEMBER LEAVED WORKSPACE
+        channel.bind('memberLeaved', function(data) {
+          console.log('event: memberLeaved received');
+          let userDataCopy = $userData
+          userDataCopy.subjects.every(subject => {
+            subject.workspaces.every(workspacea => {
+              if(workspacea.id === data.workspace.id) {
+                workspacea.members = workspacea.members.filter(member => {
+                  if(member.email !== data.workspace.member.email) {
+                    return member
+                  }
+                })
+
+                if(workspacea.admins.includes(data.workspace.member.email)) {
+                  workspacea.admins = workspacea.admins.filter(admin => admin !== data.workspace.member.email)
+                }
+                return false
+              }
+              return true
+            })
             return true
           })
           userDataCopy.notifications.unshift(data.notification)
@@ -223,23 +317,15 @@
     </Button>
   </div>
 </Snackbar>
-<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 426 && $ismini ? "pl-16" : ""}`:""}">
+<div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 570 && $ismini ? "pl-16" : ""}`:""}">
   {#if $currentInterface === "Dashboard"}
     <DashboardInterface />
   {:else if $currentInterface === "Assigned to me"}
     <AssignedToMeInterface />
   {:else if $currentInterface === "Favorites"}
     <FavoritesInterface />
-  {:else if $currentInterface === "Calendar"}
-    <CalendarInterface />
   {:else}
     <MyProfileInterface />
   {/if}
 </div>
 {/if}
-
-<style>
-  div {
-    overflow: hidden;
-  }
-</style>

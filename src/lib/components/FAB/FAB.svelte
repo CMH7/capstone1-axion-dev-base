@@ -4,8 +4,9 @@
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
+	import { leaveWorkspaceActiveModal } from '$lib/stores/workspace';
 
   let width = 0
   let active = false
@@ -13,7 +14,7 @@
   const getAllUsers = async () => {
     memberModalLoading.set(true)
     memberModalActive.set(true)
-    const res = await fetch(`${constants.backURI}/`)
+    const res = await fetch(`${constants.backURI}/verifiedUsers`)
     const users = await res.json()
     if(res.ok) {
       const wsMembers = $activeWorkspace.members
@@ -26,7 +27,7 @@
     } else {
       let notifsCopy = $notifs
       notifsCopy.push({
-        msg: `Getting all users failed, ${res.statusText}`,
+        msg: `Getting all verified users failed, ${res.statusText}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       })
@@ -47,67 +48,71 @@
     </div>
     <List>
       {#if $currentDashboardSubInterface === "Subjects"}
+      <div
+        on:click={e => addSubjectModalActive.set(true)}
+      >
       <ListItem>
-        <div
-          on:click={e => addSubjectModalActive.set(true)}
-        >
           Create subject
-        </div>
-      </ListItem>
+        </ListItem>
+      </div>
       {:else if $currentDashboardSubInterface === "Workspaces"}
-      <ListItem>
-        <div
-          on:click={e => addWorkspaceModalActive.set(true)}
-        >
-          Create workspace
+        {#if $activeSubject.owned}
+        <div on:click={e => addWorkspaceModalActive.set(true)}>
+          <ListItem>
+            Create workspace
+          </ListItem>
         </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={e => {
-            modalChosenColor.set($activeSubject.color)
-            subjectSettingsModalActive.set(true)
-          }}
-        >
+        {/if}
+      <div
+        on:click={e => {
+          modalChosenColor.set($activeSubject.color)
+          subjectSettingsModalActive.set(true)
+        }}
+      >
+        <ListItem>
           Subject settings
-        </div>
-      </ListItem>
+        </ListItem>
+      </div>
       {:else}
-      <ListItem>
-        <div
-          on:click={e => addTaskModalActive.set(true)}
-        >
-          Create task
+        <div on:click={e => addTaskModalActive.set(true)}>
+          <ListItem>
+            Create task
+          </ListItem>
         </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={e => addBoardModalActive.set(true)}
-        >
-          Add board
+        {#if $userData.verified}
+          {#if $activeSubject.owned || $activeWorkspace.admins.includes($userData.email)}
+            <div on:click={e => addBoardModalActive.set(true)}>
+              <ListItem>
+                Add board
+              </ListItem>
+            </div>
+
+            <div on:click={e => manageAdminModalActive.set(true)}>
+              <ListItem>
+                Manage admins
+              </ListItem>
+            </div>
+
+            <div on:click={getAllUsers}>
+              <ListItem>
+                Manage members
+              </ListItem>
+            </div>
+          {/if}
+        {/if}
+        <div on:click={e => workspaceSettingsModalActive.set(true)}>
+          <ListItem>
+            Workspace settings
+          </ListItem>
         </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={e => manageAdminModalActive.set(true)}
-        >
-          Manage admins
-        </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={getAllUsers}
-        >
-          Manage members
-        </div>
-      </ListItem>
-      <ListItem>
-        <div
-          on:click={e => workspaceSettingsModalActive.set(true)}
-        >
-          Workspace settings
-        </div>
-      </ListItem>
+
+        {#if !$activeSubject.owned}
+          <div on:click={e => leaveWorkspaceActiveModal.set(true)}>
+            <ListItem class='has-text-danger-dark'>
+              Leave workspace
+            </ListItem>
+          </div>
+        {/if}
       {/if}
     </List>
   </Menu>

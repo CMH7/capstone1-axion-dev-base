@@ -3,17 +3,18 @@
   // @ts-ignore
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
-  import { browser } from '$app/env'
-  import { mdiGoogle, mdiFacebook } from '@mdi/js'
-  import { Icon, Divider, MaterialApp } from 'svelte-materialify'
   import HomeFooter from "$lib/components/Home-footer.svelte"
   import HomeHeader from "$lib/components/Home-header.svelte"
   import {fade} from 'svelte/transition'
   import bcrypt from 'bcryptjs'
   import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
-  import constants from '$lib/constants'
+  import constants from '$lib/config/constants'
   import ComingSoonModal from "$lib/components/modals/ComingSoonModal.svelte"
+	import { emailModalActive } from '$lib/stores/reset-password-store';
+	import GetEmail from '$lib/components/modals/password/get-email.svelte';
+	import Reset from '$lib/components/modals/password/reset.svelte'
+  import validators from '$lib/config/validators'
 
   const backURI = constants.backURI
 
@@ -28,14 +29,6 @@
   let loading = false
   let disabled = false
   let failed = false
-
-  const isEmailValid = (email) => {
-    console.log('email checking')
-    const emailRegexp = new RegExp(
-        /^[a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1}([a-zA-Z0-9][\~\!\$\%\^\&\*_\=\+\}\{\'\?\-\.\\\#\/\`\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
-      )
-    return emailRegexp.test(email)
-  }
 
   const isPassValid = (pass) => {
     console.log('password checking')
@@ -169,7 +162,7 @@
     }else{
       let notifsCopy = $notifs
       let emailValid = true
-      if(!isEmailValid(emailInput)) {
+      if(!validators.isEmailValid(emailInput)) {
         failed = true
         emailValid = false
         notifsCopy.push({
@@ -299,6 +292,8 @@
 <!-- Notification -->
 <NotificationContainer />
 <ComingSoonModal active={comingSoonModalOpen}/>
+<GetEmail/>
+<Reset/>
 
 <!-- header -->
 <HomeHeader/>
@@ -343,41 +338,13 @@
 
         {#if failed}
         <div class="column is-12 has-text-centered p-0">
-          <a href="#0" on:click={openComingSoon} class="is-size-7" >
-            <span class="has-text-black">Forgot your password?</span> Click here
-          </a>
+          <div class="is-size-7" >
+            Forgot your password? <span on:click={() => emailModalActive.set(true)} class="has-text-link is-clickable">Click here</span>
+          </div>
         </div>
         {/if}
 
-        <!-- divider -->
-        <div class="column p-0 is-12"/>
-          <div class="column p-0 is-5">
-            <Divider />
-          </div>
-        <div class="column p-0 is-12"/>
-        
-        <!-- 'with' and icons -->
-        <div class="column is-5-desktop is-12-touch">
-          <div class="mb-8">
-            <p class="m-0 has-text-grey has-text-weight-bold has-text-centered-touch has-text-centered-tablet">with</p>
-            <div class="is-flex is-justify-content-center">
-              <div class="mx-3">
-                <MaterialApp>
-                  <div class="is-clickable"on:click={openComingSoon}>
-                    <Icon class="has-text-danger-dark" size="38px" path={mdiGoogle} />
-                  </div>
-                </MaterialApp>
-              </div>
-              <div class="mx-3">
-                <MaterialApp>
-                  <div class="" on:click={openComingSoon}>
-                    <Icon class="has-text-info" size="38px" path={mdiFacebook} />
-                  </div>
-                </MaterialApp>
-              </div>
-            </div>
-          </div>
-
+        <div class="column is-12">
           <!-- 'sign in' button -->
           <div class="is-flex flex-column is-align-items-center">
             <div class="mb-5 mt-6">

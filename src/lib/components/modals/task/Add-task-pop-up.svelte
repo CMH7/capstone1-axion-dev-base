@@ -5,7 +5,7 @@
 	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
     import { activeSubject, activeWorkspace, notifs, userData, addTaskModalActive, allBoards } from '$lib/stores/global-store'
-    import constants from '$lib/constants'
+    import constants from '$lib/config/constants'
     import bcrypt from 'bcryptjs'
     import { mdiClose } from '@mdi/js'
 
@@ -30,7 +30,11 @@
         {name: "High", value: 3}
     ]
     
-    let taskMembers = []
+    let taskMembers = $userData.verified ? [] : [{
+        email: $userData.email,
+        name: `${$userData.firstName} ${$userData.lastName}`,
+        profile: $userData.profile
+    }]
     let createdBy = `${$userData.firstName} ${$userData.lastName}`
     let description = ''
     let dueDateTime = ''
@@ -219,6 +223,7 @@
             </div>
 
             <!-- members -->
+            {#if $userData.verified}
             <Select
                 {disabled}
                 multiple
@@ -229,6 +234,7 @@
             >
                 Assignee/s
             </Select>
+            {/if}
 
             <!-- description -->
             <Textarea
