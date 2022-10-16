@@ -6,4 +6,5 @@ Release candidate 5: created on July 27, 2022 released on August 16, 2022
 Release candidate 6: created on August 16, 2022 released on September 02, 2022
 Release candidate 7: created on September 02, 2022 released on September 19, 2022
 Release candidate 8: created on September 19, 2022 released on October 02, 2022
-Release candidate 9: created on October 02, 2022 released on 
+Release candidate 9: created on October 02, 2022 released on October 16, 2022
+Release candidate 10: created on October 16, 2022 released on
