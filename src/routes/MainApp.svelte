@@ -218,14 +218,10 @@
           userDataCopy.subjects.every(subject => {
             subject.workspaces.every(workspacea => {
               if(workspacea.id === data.workspace.id) {
-                workspacea.members = workspacea.members.filter(member => {
-                  if(member.email !== data.workspace.member.email) {
-                    return member
-                  }
-                })
+                workspacea.members = workspacea.members.filter(member => member.id !== data.workspace.member.id)
 
-                if(workspacea.admins.includes(data.workspace.member.email)) {
-                  workspacea.admins = workspacea.admins.filter(admin => admin !== data.workspace.member.email)
+                if(workspacea.admins.filter(admin => admin.id === data.workspace.member.id).length != 0) {
+                  workspacea.admins = workspacea.admins.filter(admin => admin.id !== data.workspace.member.id)
                 }
                 return false
               }
@@ -233,6 +229,39 @@
             })
             return true
           })
+          userDataCopy.notifications.unshift(data.notification)
+          userData.set(userDataCopy)
+        })
+
+        // ON MEMBER REMOVED
+        channel.bind('memberRemoved', function(data) {
+          console.log('event: memberRemoved recevied')
+          let userDataCopy = $userData
+
+          if($userData.id === data.ids.member) {
+            userDataCopy.subjects.every(subject => {
+              if(subject.id === data.ids.subject) {
+                subject.workspaces = subject.workspaces.filter(workspace => workspace.id !== data.ids.workspace)
+                return false
+              }
+              return true
+            })
+          } else {
+            userDataCopy.subjects.every(subject => {
+              if(subject.id === data.ids.subject) {
+                subject.workspaces.every(workspace => {
+                  if(workspace.id === data.ids.workspace) {
+                    workspace.members = workspace.members.filter(member => member.id !== data.ids.member)
+                    workspace.admins = workspace.admins.filter(admin => admin.id !== data.ids.member)
+                    return false
+                  }
+                  return true
+                })
+                return false
+              }
+              return true
+            })
+          }
           userDataCopy.notifications.unshift(data.notification)
           userData.set(userDataCopy)
         })
