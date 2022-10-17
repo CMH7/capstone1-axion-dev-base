@@ -15,7 +15,8 @@
     data: {
       email: '',
       name: '',
-      profile: ''
+      profile: '',
+      id: ''
     }
   }
 
@@ -104,6 +105,11 @@
   }
 
   const removeMember = () => {
+    $notifs = [...$notifs, {
+      msg: `Removing ${user.data.name}. Please wait...`,
+      type: 'wait',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+    }]
     isProcessing.set(true)
     fetch(`${constants.backURI}/MainApp/subject/workspace/member/delete`, {
         method: 'DELETE',
@@ -122,13 +128,13 @@
         })
       }
     ).then(async res => {
-      const { members } = await res.json()
+      const { memberID } = await res.json()
       let userDataCopy = $userData
       userDataCopy.subjects.every(subject => {
         if(subject.id === $activeSubject.id) {
           subject.workspaces.every(workspace => {
             if(workspace.id === $activeWorkspace.id) {
-              workspace.members = members
+              workspace.members = workspace.members.filter(member => member.id !== memberID)
               return false
             }
             return true
@@ -138,26 +144,22 @@
         return true
       })
 
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `${user.data.name} is removed in the workspace`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
       user.isAdded = 2
       active = false
       isProcessing.set(false)
     })
     .catch(err => {
       isProcessing.set(false)
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in adding member, ${err}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
       active = false
     })
   }
