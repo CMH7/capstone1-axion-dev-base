@@ -8,11 +8,13 @@
   import { leaveWorkspaceActiveModal } from '$lib/stores/workspace'
 
   const leaveWorkspace = async e => {
-    console.log(`${$activeWorkspace.admins[0]}`);
-    isProcessing.set(true)
-    const res = await fetch(`${constants.backURI}/id?email=${$activeWorkspace.admins[0]}`)
-    const { id } = await res.json()
+    $notifs = [...$notifs, {
+      msg: 'Leaving workspace. Please wait...',
+      type: 'wait',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+    }]
 
+    isProcessing.set(true)
     fetch(`${constants.backURI}/MainApp/subject/workspace/leave`, {
       method: 'PUT',
       headers: {
@@ -21,29 +23,45 @@
       body: JSON.stringify({
         ids: {
           userA: $userData.id,
-          userB: id,
+          userB: $activeWorkspace.admins[0].id,
           subject: $activeSubject.id,
           workspace: $activeWorkspace.id
         }
       })
     }).then(async res => {
-      const { error } = await res.json()
-      if(error) {
+      const { empty, subject, workspaceID } = await res.json()
+      let userDataCopy = $userData
+
+      if(empty) {
         $notifs = [...$notifs, {
-          msg: 'Received but error on leaving',
-          type: 'error',
+          msg: 'Revising subject as owned. Please wait',
+          type: 'wait',
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         }]
-        isProcessing.set(false)
-        return
+        userDataCopy.subjects.every(subjecta => {
+          if(subjecta.id === $activeSubject.id) {
+            subjecta = subject
+            activeSubject.set(subjecta)
+            currentDashboardSubInterface.set('workspaces')
+            breadCrumbsItems.set([{text: $activeSubject.name}])
+            return false
+          }
+          return true
+        })
+        $notifs = [...$notifs, {
+          msg: 'Subject is owned.',
+          type: 'success',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+      } else {
+        userDataCopy.subjects.every(subject => {
+          if(subject.id === $activeSubject.id) {
+            subject.workspaces = subject.workspaces.filter(workspace => workspace.id !== workspaceID)
+            return false
+          }
+          return true
+        })
       }
-
-      let userDataCopy = $userData
-      userDataCopy.subjects = userDataCopy.subjects.filter(subject => {
-        if(subject.id !== $activeSubject.id) {
-          return subject
-        }
-      })
 
       leaveWorkspaceActiveModal.set(false)
       currentInterface.set('Dashboard')
@@ -53,6 +71,11 @@
       activeWorkspace.set(constants.workspace)
       allBoards.set([])
       breadCrumbsItems.set([{text: 'Subjects'}])
+      $notifs = [...$notifs, {
+        msg: 'Workspace leaved successfully',
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
       isProcessing.set(false)
     }).catch(err => {
       console.error(err);
