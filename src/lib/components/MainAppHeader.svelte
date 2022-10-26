@@ -23,9 +23,9 @@
     <AppBar fixed class="maxmins-w-100p py-1 has-background-primary">
 
       <!-- Burger -->
-      <div class="is-hidden-mobile" slot="icon">
+      <div class="is-hidden-mobile" on:click={()=>{ismini.set(!$ismini)}} slot="icon">
         <Button disabled={!$sidebarActive} class="has-transition" depressed fab text>
-          <div on:click={()=>{ismini.set(!$ismini)}}>
+          <div>
             <Icon size="30px" class="has-text-white" path={mdiMenu} />
           </div>
         </Button>
@@ -93,7 +93,13 @@
 
       <!-- Account Button -->
       <div class="is-clickable is-hidden-touch hover-bg-grey-dark has-transition p-2 rounded-circle {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")}>
-        <Icon class="white-text" size='33px' path={mdiAccount}/>
+        {#if $userData.profile}
+          <Avatar size='30px' class='maxmins-w-30 maxmins-h-30 has-background-white-bis'>
+            <img src={$userData.profile} alt={`${$userData.firstName} ${$userData.lastName}`}>
+          </Avatar>
+        {:else}
+          <Icon class="white-text" size='30px' path={mdiAccount}/>
+        {/if}
       </div>
     </AppBar>
   </MaterialApp>
