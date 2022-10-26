@@ -193,7 +193,7 @@
         {/if}
 
         <!-- edit button -->
-        {#if !editing}
+        {#if !editing && $activeSubject.owned}
           {#if !$isProcessing}
             <div
               on:click={e => {
@@ -206,7 +206,7 @@
           {:else}
             <Pulse color='#fddd3f' size={20} />
           {/if}
-        {:else}
+        {:else if $activeSubject.owned}
         <div
           on:click={e => {
             if(!$isProcessing) changeName(subjectName)
@@ -219,6 +219,8 @@
           Done
           {/if}
         </div>
+        {:else}
+        <div></div>
         {/if}
       </div>
       
