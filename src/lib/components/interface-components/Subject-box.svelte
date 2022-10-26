@@ -122,15 +122,14 @@
   on:contextmenu|preventDefault={handleRightClick}
   on:click={() => {
     if(hovering) return
-    currentInterface.set('Dashboard')
-    currentDashboardSubInterface.set('Workspaces')
-    currentIndex.set(0)
     activeSubject.set(subject)
     selectedSubjectForSubjectSettings.set(subject)
     oldFavoriteStatus.set(subject.isFavorite)
     modalChosenColor.set(subject.color)
-    currentDashboardSubInterface.set("Workspaces")
-    breadCrumbsItems.set([{text: $activeSubject.name}])
+    currentInterface.set('Dashboard')
+    currentDashboardSubInterface.set('Workspaces')
+    currentIndex.set(0)
+    $breadCrumbsItems = [{text: $activeSubject.name, href: '1'}]
   }}
   on:mouseenter={() => mouseEnter = true}
   on:mouseleave={() => mouseEnter = false}
