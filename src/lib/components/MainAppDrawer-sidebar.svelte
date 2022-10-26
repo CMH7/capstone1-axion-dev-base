@@ -1,8 +1,8 @@
 <script>
   // @ts-nocheck
-  import { NavigationDrawer, List, ListItem, Icon, MaterialApp, ListItemGroup, Divider } from 'svelte-materialify';
-  import { mdiViewDashboard, mdiAccountCheck, mdiStar, mdiCalendar, mdiAccount } from '@mdi/js';
-  import { activeBoard, activeSubject, activeWorkspace, breadCrumbsItems, currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive } from '$lib/stores/global-store';
+  import { NavigationDrawer, List, ListItem, Icon, MaterialApp, ListItemGroup, Divider, Avatar } from 'svelte-materialify';
+  import { mdiViewDashboard, mdiAccountCheck, mdiStar, mdiCalendar, mdiAccount, mdiLogout } from '@mdi/js';
+  import { userData, snack, isLoggedIn, activeBoard, activeSubject, activeWorkspace, breadCrumbsItems, currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive, allBoards, active, activeTask } from '$lib/stores/global-store';
 	import constants from '$lib/config/constants';
 
   const navs = [
@@ -21,42 +21,51 @@
 <div>
   <MaterialApp>
     <NavigationDrawer active={$sidebarActive} class="pt-16" fixed borderless miniWidth={width < 571 && $ismini? "0px": "68px"} width="220px" mini={$ismini}>
-      <List nav>
+      <List outlined class='maxmins-h-100p'>
         <ListItemGroup class="has-text-{navs[$currentIndex].color} {navs[$currentIndex].color}">
 
           {#each navs as navItem}
           {#if navItem.name === "My Profile"}
-            <Divider class="is-hidden-desktop" />
+            <Divider class="is-hidden-desktop p-0 m-0 my-1" />
           {/if}
           <ListItem
-            active={$currentInterface === navItem.name?true:false}
+            active={$currentInterface === navItem.name}
             class="{navItem.name === "My Profile"?"is-hidden-desktop":""} is-clickable"
-            disabled={$currentInterface === navItem.name?true:false}
+            disabled={$currentInterface === navItem.name}
             on:click={
               () => {
-                if(navItem.name !== 'Dashboard') {
-                  $activeSubject = constants.subject
-                  $activeWorkspace = constants.workspace
-                  $activeBoard = ''
-                  $breadCrumbsItems = [{text: 'Subjects'}]
+                if(navItem.name === 'Dashboard') {
+                  if(dashCount != 0) {
+                    currentDashboardSubInterface.set('Subjects')
+                    $breadCrumbsItems = [{text: 'Subjects'}]
+                    dashCount = 0
+                  }
+                  dashCount++
+                }else{
+                  activeTask.set(constants.task)
                 }
+
                 currentInterface.set(navItem.name);
                 currentIndex.set(navItem.index);
-                if($currentInterface === "Dashboard") {
-                  if(dashCount != 0) {
-                    currentDashboardSubInterface.set("Subjects");
-                    breadCrumbsItems.set([{text: 'Subjects'}])
-                    dashCount = 0;
-                  }
-                  dashCount++;
-                }
               }
             }
           >
             <span slot="prepend">
-              <Icon size="35px" path={navItem.icon} />
+              {#if navItem.name === 'My Profile' && $userData.profile}
+                <Avatar size='35px' class='maxmins-w-35 maxmins-h-35'>
+                  <img src={$userData.profile} alt={`${$userData.firstName} ${$userData.lastName}`}>
+                </Avatar>
+                <div class="txt-size-9 pb-4 {$ismini ? '' : 'undisp'}">
+                  {navItem.name === 'Assigned to me' ? 'Assigned' : navItem.name}
+                </div>
+              {:else}
+                <Icon size="35px" class='{$ismini ? 'mb-0' : 'mr-3'}' path={navItem.icon} />
+                <div class="txt-size-9 pb-4 {$ismini ? '' : 'undisp'}">
+                  {navItem.name === 'Assigned to me' ? 'Assigned' : navItem.name}
+                </div>
+              {/if}
             </span>
-            <span class="fredoka-reg font-weight-black">{navItem.name}</span>
+            <span class="fredoka-reg font-weight-semibold">{navItem.name}</span>
           </ListItem>
           {/each}
 
