@@ -39,11 +39,7 @@
           currentDashboardSubInterface.set("Workspaces")
           activeWorkspace.set(constants.workspace)
           allBoards.set([])
-          $breadCrumbsItems = [...$breadCrumbsItems.filter(item => {
-            if(item.text === $activeSubject.name) {
-              return item
-            }
-          })]
+          $breadCrumbsItems = [{text: $activeSubject.name}]
           return
         }
 
@@ -61,27 +57,26 @@
     </div>
     {/if}
 
-    <Breadcrumbs  large bind:items={$breadCrumbsItems} class="p-0" let:item>
-      <div slot="divider">></div>
+    <Breadcrumbs bind:items={$breadCrumbsItems} class="p-0" let:item>
+      <div slot="divider">/</div>
       <div on:click={() => {
         if(item.text === $activeSubject.name) {
           currentDashboardSubInterface.set("Subjects")
           activeSubject.set(subjectDef)
           activeWorkspace.set(workspaceDef)
           allBoards.set([])
-          breadCrumbsItems.set([{text: 'Subjects'}])
+          $breadCrumbsItems = [{text: 'Subjects'}]
+          return
         }
+
         if(item.text === $activeWorkspace.name) {
           currentDashboardSubInterface.set("Workspaces")
           activeWorkspace.set(workspaceDef)
           allBoards.set([])
-          let $breadCrumbsItems = $breadCrumbsItems
-          $breadCrumbsItems.pop()
-          $breadCrumbsItems.pop()
-          breadCrumbsItems.set($breadCrumbsItems)
+          $breadCrumbsItems = [{text: $activeSubject.name}]
         }
       }}>
-        <div class="{item.text === "Boards" ? "": "hover-txt-color-blue hover-txt-style-underline"} is-size-{width < 426 ? "7": "5"} is-clickable">
+        <div class="{item.text === "boards" || item.text === 'Subjects' ? "": "has-text-link is-underlined is-clickable"} s-breadcrumb-item is-size-{width < 426 ? "7": "5"}">
           {item.text}
         </div>
       </div>
