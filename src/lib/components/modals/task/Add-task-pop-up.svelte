@@ -1,6 +1,5 @@
 <script>
     //@ts-nocheck
-    // @ts-ignore
     import { onDestroy } from 'svelte'
 	import { Dialog, MaterialApp, Textarea, Select, Icon } from 'svelte-materialify'
     import SveltyPicker from 'svelty-picker'
@@ -17,11 +16,14 @@
     let loading = false
     let disabled = false
 
-    let workspaceMembersLocal = $activeWorkspace.members.map(member => {
-        return {
-            name: `${member.name} ${member.name === `${$userData.firstName} ${$userData.lastName}` ? '(owner)': ''}`,
-            value: member
-        }
+    let workspaceMembersLocal = []
+    activeWorkspace.subscribe(workspace => {
+        workspace.members.reverse().forEach(member => {
+            workspaceMembersLocal = [...workspaceMembersLocal, {
+                name: `${member.name} ${member.name === $activeSubject.createdBy ? '(owner)': ''}`,
+                value: member
+            }]
+        })
     })
 
     const levels = [
@@ -39,14 +41,7 @@
     let description = ''
     let dueDateTime = ''
     let taskName = ''
-    let workspaceID = ''
-    activeWorkspace.subscribe(value => workspaceID = value.id)
     let level = 1
-    const taskID = bcrypt.hashSync(`${workspaceID}${taskName}${new Date()}`, Math.ceil(Math.random() * 1))
-    let userID = ''
-    userData.subscribe(value => userID = value.id)
-    let subjectID = ''
-    activeSubject.subscribe(value => subjectID = value.id)
 
     const fieldClear = () => {
 
@@ -68,49 +63,40 @@
         msg += 'cannot be empty'
 
         if(!taskName || !dueDateTime) {
-            let notifsCopy = $notifs
-            notifsCopy.push({
+            $notifs = [...$notifs, {
                 msg: msg,
                 type: 'error',
                 id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-            })
-            notifs.set(notifsCopy)
+            }]
 
             loading = false
             disabled = false
             return false
         }
 
-        // 2022-07-07 11:59
         let [ dateValue, timeValue ] = dueDateTime.split(' ')
-        // [2022-07-07, 11:59]
-
         let [ year, month, day ] = dateValue.split('-')
-        // [2022, 07, 07]
-
         let [ hour, minute ] = timeValue.split(':')
-        // [11, 59]
         
-        //@ts-ignore
         const finalDueDateTime = new Date(`${year}-${month}-${day}T${hour}:${minute}:00Z`).toISOString()
 
-        fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/create/task`, {
+        fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/task/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 ids: {
-                    user: userID,
-                    subject: subjectID,
-                    workspace: workspaceID
+                    user: $userData.id,
+                    subject: $activeSubject.id,
+                    workspace: $activeWorkspace.id
                 },
                 task: {
                     member: taskMembers,
                     createdBy: createdBy,
                     description: description,
                     dueDateTime: finalDueDateTime,
-                    id: taskID,
+                    id: bcrypt.hashSync(`${$activeWorkspace.id}${taskName}${new Date().getTime()}`, Math.ceil(Math.random() * 13)),
                     isSubtask: false,
                     level: level,
                     name: taskName
@@ -127,7 +113,9 @@
                             workspace.boards.every(board => {
                                 if(board.name === 'Todo') {
                                     board.tasks.push(task)
+                                    activeWorkspace.set(workspace)
                                     allBoards.set(workspace.boards)
+                                    activeSubject.set(subject)
                                     return false
                                 }
                                 return true
@@ -141,25 +129,21 @@
                 return true
             })
             userData.set(userDataCopy)
-            let notifsCopy = $notifs
-            notifsCopy.push({
+            $notifs = [...$notifs, {
                 msg: "Task created!",
                 type: "success",
                 id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-            })
-            notifs.set(notifsCopy)
+            }]
             loading = false
             disabled = false
             addTaskModalActive.set(false)
          })
          .catch(err => {
-             let notifsCopy = $notifs
-             notifsCopy.push({
+             $notifs = [...$notifs, {
                  msg: `Create task error, ${err}`,
                  type: 'error',
                  id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-             })
-             notifs.set(notifsCopy)
+             }]
              loading = false
              disabled = false
         })
