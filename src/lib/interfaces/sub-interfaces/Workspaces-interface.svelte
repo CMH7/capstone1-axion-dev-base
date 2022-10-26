@@ -16,7 +16,7 @@
   })
 
   function onKeyDown(e) {
-    if(e.ctrlKey && e.altKey && e.keyCode == 87) {
+    if(e.ctrlKey && e.altKey && e.keyCode == 87 && $activeSubject.owned) {
       if(!$addWorkspaceModalActive) addWorkspaceModalActive.set(true)
     }
   }
