@@ -22,6 +22,32 @@
     }
   }
 
+  let workspaceCount = 0
+  let boardsCount = 0
+  let taskCounts = 0
+  $userData.subjects.forEach(subject => {
+    workspaceCount += subject.workspaces.length
+    if(workspaceCount != 0) {
+      subject.workspaces.forEach(workspace => {
+        boardsCount += workspace.boards.length
+      })
+      if(boardsCount != 0) {
+        subject.workspaces.forEach(workspace => {
+          workspace.boards.forEach(board => {
+            taskCounts += board.tasks.length
+            board.tasks.forEach(task => {
+              taskCounts += task.subtasks.length
+            })
+          })
+        })
+      }else{
+        taskCounts = 0
+      }
+    }else{
+      boardsCount = 0
+    }
+  })
+
   const resend = async e => {
     const res = await fetch(`${constants.backURI}/reverify/${$userData.id}`)
     const { resend } = await res.json()
@@ -48,65 +74,9 @@
       <div class="columns is-multiline is-mobile">
 
         <!-- Section title -->
-        
-          <div class="column is-hidden-mobile">
-            <div class="is-6-tablet is-12-mobile">
-              <div class=" d-flex flex-wrap">
-                 <div class="column quicksands has-text-weight-bold is-size-4 has-text-black">
-                  Basic Information
-                  </div>
-               </div>
-            </div>
-          </div>
-  
-          <div class="column pl-10">
-            <div class="is-5-tablet is-12-mobile pl-10">
-              <div class=" d-flex flex-wrap is-justify-content-end pl-10">
-          <span class="fredoka-reg is-size-3" on:click={() => {
-            transitionActive.set(true);
-            if($isLoggedIn){
-              snack.set(
-                {
-                  msg: "You will be logged out. Do you want to continue?",
-                  active: true,
-                  yes: () => {
-                    localStorage.removeItem('email')
-                    userData.set(constants.user)
-                    isLoggedIn.set(false)
-                    currentInterface.set('Dashboard')
-                    currentDashboardSubInterface.set('Subjects')
-                    activeSubject.set(constants.subject)
-                    activeWorkspace.set(constants.workspace)
-                    activeBoard.set(constants.board)
-                    breadCrumbsItems.set([{text: 'Subjects'}])
-                    activeTask.set(constants.task)
-                    modalChosenColor.set('primary')
-                    isProcessing.set(false)
-                    goto('/')
-                  }
-                }
-              );
-            }
-          }
-        }
-        >
-            <button class="button red has-text-white dm-sans has-text-weight-bold is-size-5-desktop is-size-6-mobile is-size-5-tablet">
-              Sign out
-            </button>
-        </span>              
-      </div>
-    </div>
-  </div>
- 
-          <div class="column is-hidden-desktop is-hidden-tablet">
-            <div class="is-6-tablet is-12-mobile">
-              <div class=" d-flex flex-wrap">
-                 <div class="column quicksands has-text-weight-bold is-size-4 has-text-black">
-                  Basic Information
-                  </div>
-               </div>
-            </div>
-          </div>
+        <div class="column is-12 fredoka-reg is-size-4-tablet is-size-6-mobile pb-0 has-text-black">
+          Basic Information
+        </div>
 
         <!-- Card -->
         <div class="column is-12 pl-{outerWidth < 426 ? '': '16'} pr-{outerWidth < 426 ? '': '16'}">
@@ -159,7 +129,7 @@
 
                   <!-- Edit button -->
                   <div class="pos-abs pos-t-0 pos-r-0">
-                    <Button on:click={openComingSoon} text size='small' class='dm-sans'>
+                    <Button on:click={openComingSoon} depressed size='small' class='inter-reg has-background-grey-lighter'>
                       Edit
                     </Button>
                   </div>
@@ -182,7 +152,7 @@
     <div class="column is-12 mb-6">
       <div class="columns is-multiline">
         <!-- Section title -->
-        <div class="column is-12 quicksands has-text-weight-bold is-size-4 has-text-black">
+        <div class="column is-12 fredoka-reg is-size-4-tablet is-size-6-mobile pb-0 has-text-black">
           Statistics Information
         </div>
 
@@ -200,7 +170,7 @@
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
                       <Avatar size='120px' class='bg-color-pastel-red {!switchOn ? 'opacity-20p': ''}'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? '8' : '?'}
+                          {switchOn ? $userData.subjects.length : '?'}
                         </div>
                       </Avatar>
                     </div>
@@ -225,7 +195,7 @@
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
                       <Avatar size='120px' class='bg-color-pastel-violet {!switchOn ? 'opacity-20p': ''}'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? '15' : '?'}
+                          {switchOn ? workspaceCount : '?'}
                         </div>
                       </Avatar>
                     </div>
@@ -250,7 +220,7 @@
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
                       <Avatar size='120px' class='bg-color-pastel-green {!switchOn ? 'opacity-20p': ''}'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? '6' : '?'}
+                          {switchOn ? boardsCount : '?'}
                         </div>
                       </Avatar>
                     </div>
@@ -275,7 +245,7 @@
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
                       <Avatar size='120px' class='bg-color-pastel-grey {!switchOn ? 'opacity-20p': ''}'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? '123' : '?'}
+                          {switchOn ? taskCounts : '?'}
                         </div>
                       </Avatar>
                     </div>
@@ -320,7 +290,7 @@
     <div class="column is-12 mb-6">
       <div class="columns is-multiline">
         <!-- Section title -->
-        <div class="column is-12 quicksands has-text-weight-bold is-size-4 has-text-black">
+        <div class="column is-12 fredoka-reg is-size-4-tablet is-size-6-mobile pb-0 has-text-black">
           Account Settings
         </div>
 
@@ -431,6 +401,36 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="column is-12">
+      <div on:click={e => {
+        console.log('snack clicked');
+        
+        snack.set({
+          msg: "You will be logged out. Do you want to continue?",
+          active: true,
+          yes: () => {
+            localStorage.removeItem('email')
+            userData.set(constants.user)
+            isLoggedIn.set(false)
+            currentInterface.set('Dashboard')
+            currentDashboardSubInterface.set('Subjects')
+            activeSubject.set(constants.subject)
+            activeWorkspace.set(constants.workspace)
+            activeBoard.set(constants.board)
+            breadCrumbsItems.set([{text: 'Subjects'}])
+            activeTask.set(constants.task)
+            modalChosenColor.set('primary')
+            isProcessing.set(false)
+            goto('/Signin')
+          }
+        })
+      }}>
+        <Button depressed class='has-background-danger has-text-white is-clickable'>
+          Logout
+        </Button>
       </div>
     </div>
   </div>
