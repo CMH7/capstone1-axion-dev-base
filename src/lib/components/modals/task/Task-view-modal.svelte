@@ -1,12 +1,14 @@
 <script>
   // @ts-nocheck
-  import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard, currentInterface } from '$lib/stores/global-store'
-  import { mdiAccount, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList } from "@mdi/js"
+  import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button, TextField} from "svelte-materialify"
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard, currentInterface, isProcessing } from '$lib/stores/global-store'
+  import { mdiPencil, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList, mdiCheck } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   import constants from "$lib/config/constants"
   import bcrypt from "bcryptjs"
 	import { favorites } from "$lib/stores/favorites";
+	import { taskName, taskRenameActiveModal } from "$lib/stores/taskStore";
+  import { Pulse } from 'svelte-loading-spinners'
 
   const backURI = constants.backURI
 
@@ -17,127 +19,44 @@
   let chatInput = ''
   let assigneeInputValue = ''
   let viewersModalActive = false
-  
-  
-  let taskViewers = []
-  let taskChats = []
   let descriptionValue = ''
+  let activeTaskMembers = []
+  let searchingMember = false
+  let removingMember = false
+  let chatInputDisable = false
+  let taskNameLocal = $activeTask.name
+  let taskNameEditing = false
+  let chatContainer
+  let selectedWorkspaceMembers = []
   $: oldDescriptionValue = descriptionValue
   
   activeTask.subscribe(task => {
-    taskViewers = task.viewers
-    taskChats = task.conversations
     descriptionValue = task.description
     chats.set(task.conversations)
+    activeTaskMembers = task.members
   })
   
-  let localWorkspaceMembers = $activeWorkspace.members
-  let workspaceMembersCopy = localWorkspaceMembers
+  let workspaceMembersCopy = $activeWorkspace.members
   function filterMembers() {
-    workspaceMembersCopy = localWorkspaceMembers.filter(workspaceMember => {
-      if(workspaceMember.name.toLowerCase().split(' ').join('').match(assigneeInputValue.toLowerCase()) || workspaceMember.email.toLowerCase().match(assigneeInputValue.toLowerCase())) {
-        return workspaceMember
+    if(assigneeInputValue === '') {
+      workspaceMembersCopy = $activeWorkspace.members
+    }
+    workspaceMembersCopy = $activeWorkspace.members.filter(member => {
+      if(member.name.toLowerCase().split(' ').join('').match(assigneeInputValue.split(' ').join('').toLowerCase()) || member.email.toLowerCase().match(assigneeInputValue.split(' ').join('').toLowerCase())) {
+        return member
       }
     })
   }
 
-  function insertChat() {
-    if(!chatInput) {
-      $notifs = [...$notifs, {
-        msg: 'Message cannot be empty jkjk',
-        type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      }]
-      return false
-    }
-    
-    let activeTaskCopy = $activeTask
-    activeTaskCopy.conversations.push({
-      sender: {
-        email: $userData.email,
-        name: `${$userData.firstName} ${$userData.lastName}`,
-        profile: $userData.profile
-      },
-      message: chatInput,
-      sendAt: new Date().toISOString(),
-      id: bcrypt.hashSync(`${$userData.email}${new Date()}${chatInput.substring(0, chatInput.length > 13 ? 13 : chatInput.length)}`)
-    })
-    activeTask.set(activeTaskCopy)
-    chatInput = ''
-  }
+  const removeMember = (member) => {
+    $notifs = [...$notifs, {
+      msg: `Removing ${member.name} as assignee to task \'${$activeTask.name}\'`,
+      type: 'wait',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+    }]
+    isProcessing.set(true)
 
-  function onKeyDownHandler(e) {
-    if(e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Chats') {
-      if(!chatInput) {
-        $notifs = [...$notifs, {
-          msg: 'Message cannot be empty',
-          type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        }]
-      }else{
-        insertChat()
-      }
-    }
-    
-    if(e.ctrlKey && e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Description') {
-      descriptionSave(descriptionValue != oldDescriptionValue)
-    }else if(e.keyCode == 27 && $taskCurTab === 'Description' && editing) {
-      descriptionSave(false)
-    }
-  }
-
-  function descriptionSave(save) {
-    if(save) {
-      oldDescriptionValue = descriptionValue
-      editing = false
-    }else {
-      descriptionValue = oldDescriptionValue
-      editing = false
-    }
-  }
-
-  function descKeydownHandler(e) {
-    if($taskViewModalActive && $taskCurTab === 'Description') {
-      if(e.key === 'Escape') {
-        descriptionSave(false)
-      }else if(e.ctrlKey && e.keyCode == 13) {
-        descriptionSave(true)
-      }
-    }
-  }
-
-  const updateStatus = async boardName => {
-    let activeTaskCopy = $activeTask
-    activeTaskCopy.status = boardName
-    activeTask.set(activeTaskCopy)
-
-    // remove task from previous board
-    let allBoardsCopy = $allBoards
-    allBoardsCopy.every(board => {
-      if(board.id === $activeBoard) {
-        board.tasks.every(task => {
-          if(task.id === $activeTask.id) {
-            board.tasks = board.tasks.filter(task2 => task2.id !== $activeTask.id)
-            return false
-          }
-          return true
-        })
-        return false
-      }
-      return true
-    })
-
-    // add task to next board
-    allBoardsCopy.every(board => {
-      if(board.name === boardName) {
-        board.tasks.push($activeTask)
-        return false
-      }
-      return true
-    })
-    allBoards.set(allBoardsCopy)
-
-    fetch(`${backURI}/MainApp/edit/subject/workspace/board/task/status`, {
+    fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -147,88 +66,387 @@
           user: $userData.id,
           subject: $activeSubject.id,
           workspace: $activeWorkspace.id,
-          board: $activeBoard
+          board: $activeBoard,
+          task: $activeTask.id
         },
         task: {
-          members: $activeTask.members,
-          subtasks: $activeTask.subtasks,
-          conversations: $activeTask.conversations,
-          viewers: $activeTask.viewers,
-          createdBy: $activeTask.createdBy,
-          createdOn: $activeTask.createdOn,
-          description: $activeTask.description,
-          dueDateTime: $activeTask.dueDateTime,
-          id: $activeTask.id,
-          isFavorite: $activeTask.isFavorite,
-          isSubtask: $activeTask.isSubtask,
-          level: $activeTask.level,
           name: $activeTask.name,
-          status: boardName
-        }
+          status: $activeTask.status,
+          level: $activeTask.level,
+          description: $activeTask.description,
+          members: [member]
+        },
+        mode: 'memberRemove'
       })
     }).then(async res => {
-      let { task } = await res.json()
-      activeTask.set(task)
-
-      let activeWorkspaceCopy = $activeWorkspace
-      activeWorkspaceCopy.boards = $allBoards
-      activeWorkspace.set(activeWorkspaceCopy)
-
-      let activeSubjectCopy = $activeSubject
-      activeSubjectCopy.workspaces.every(workspace => {
-        if(workspace.id === $activeWorkspace.id) {
-          workspace = $activeWorkspace
-          return false
-        }
-        return true
-      })
-      activeSubject.set(activeSubjectCopy)
+      const { task } = await res.json()
 
       let userDataCopy = $userData
       userDataCopy.subjects.every(subject => {
         if(subject.id === $activeSubject.id) {
-          subject = $activeSubject
+          subject.workspaces.every(workspace => {
+            if(workspace.id === $activeWorkspace.id) {
+              workspace.boards.every(board => {
+                if(board.id === $activeBoard) {
+                  board.tasks.every(taska => {
+                    if(taska.id === $activeTask.id) {
+                      taska.members = taska.members.filter(member => member.id !== task.members[0].id)
+                      activeTask.set(taska)
+                      return false
+                    }
+                   return true
+                  })
+                  return false
+                }
+                return true
+              })
+              activeWorkspace.set(workspace)
+              return false
+            }
+            return true
+          })
+          activeSubject.set(subject)
           return false
         }
         return true
       })
+      userData.set(userDataCopy)
 
-      if($currentInterface !== 'Dashboard') {
-        $favorites = []
-        $userData.subjects.map(subject => {
-          subject.workspaces.map(workspace => {
-            workspace.boards.map(board => {
-              $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
-                return {
-                  boardID: board.id,
-                  task: data
+      $notifs = [...$notifs, {
+        msg: `${member.name} is removed as assignee to task \'${$activeTask.name}\'`,
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+
+    }).catch(err => {
+      $notifs = [...$notifs, {
+        msg: `Error in removing assignment of member, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+    }).finally(() => {
+      isProcessing.set(false)
+    })
+  }
+
+  function insertChat() {
+    chatInputDisable = true
+    if(!chatInput) {
+      $notifs = [...$notifs, {
+        msg: 'Message cannot be empty',
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      chatInputDisable = false
+      return false
+    }
+
+    const today = new Date()
+    const sendAt = new Date(`${today.getFullYear()}-${today.getMonth() + 1 <= 9 ? `0${today.getMonth() + 1}`: today.getMonth() + 1}-${today.getDate() <= 9 ? `0${today.getDate()}`: today.getDate()}T${today.getHours() <= 9 ? `0${today.getHours()}` : today.getHours()}:${today.getMinutes() <= 9 ? `0${today.getMinutes()}` : today.getMinutes()}:00Z`).toISOString()
+
+    fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/board/task/chat/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id,
+          board: $activeBoard,
+          task: $activeTask.id
+        },
+        chat: {
+          sender: {
+            email: $userData.email,
+            name: `${$userData.firstName} ${$userData.lastName}`,
+            profile: $userData.profile,
+            id: $userData.id
+          },
+          message: chatInput,
+          sendAt,
+          id: bcrypt.hashSync(`${$userData.email}${new Date()}${chatInput.length <= 13 ? chatInput : chatInput.substring(0, 12)}`)
+        }
+      })
+    }).then(async res => {
+      const { chat } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject.workspaces.every(workspace => {
+            if(workspace.id === $activeWorkspace.id) {
+              workspace.boards.every(board => {
+                if(board.id === $activeBoard) {
+                  board.tasks.every(task => {
+                    if(task.id === $activeTask.id) {
+                      task.conversations.push(chat)
+                      activeTask.set(task)
+                      return false
+                    }
+                    return true
+                  })
+                  return false
                 }
-              })]
-            })
+                return true
+              })
+              return false
+            }
+            return true
           })
-        })
+          return false
+        }
+        return true
+      })
+      chatInputDisable = false
+    }).catch(err => {
+      $notifs = [...$notifs, {
+        msg: `Error in sending a chat, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      chatInputDisable = false
+    }).finally(() => {
+      chatInput = ''
+      chatContainer.scrollTop = chatContainer.scrollHeight
+    })
+  }
+
+  function onKeyDownHandler(e) {
+    if(!$isProcessing) {
+      if(e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Chats' && !taskNameEditing && !searchingMember) {
+        console.log(taskNameEditing);
+        if(!chatInput) {
+          $notifs = [...$notifs, {
+            msg: 'Message cannot be empty',
+            type: 'error',
+            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          }]
+        }else{
+          insertChat()
+        }
       }
+      
+      if(e.ctrlKey && e.keyCode == 13 && $taskViewModalActive && $taskCurTab === 'Description' && !taskNameEditing && !searchingMember) {
+        descriptionSave(descriptionValue != oldDescriptionValue)
+      }else if(e.keyCode == 27  && $taskViewModalActive && $taskCurTab === 'Description' && editing && !taskNameEditing && !searchingMember) {
+        descriptionSave(false)
+      }
+  
+      if(e.keyCode == 13 && $taskViewModalActive && taskNameEditing && !searchingMember) {
+        taskRename()
+        taskNameEditing = false
+      }
+    }
+  }
+
+  function descriptionSave(save) {
+    if(save) {
+      $notifs = [...$notifs, {
+        msg: 'Saving description. Please wait...',
+        type: 'wait',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      isProcessing.set(true)
+
+      fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ids: {
+            user: $userData.id,
+            subject: $activeSubject.id,
+            workspace: $activeWorkspace.id,
+            board: $activeBoard,
+            task: $activeTask.id
+          },
+          task: {
+            name: $activeTask.name,
+            description: descriptionValue,
+            members: [],
+            status: $activeTask.status,
+            level: $activeTask.level
+          },
+          mode: 'description'
+        })
+      }).then(async res => {
+        const { task } = await res.json()
+        let userDataCopy = $userData
+        userDataCopy.subjects.every(subject => {
+          if(subject.id === $activeSubject.id) {
+            subject.workspaces.every(workspace => {
+              if(workspace.id === $activeWorkspace.id) {
+                workspace.boards.every(board => {
+                  if(board.id === $activeBoard) {
+                    board.tasks.every(taska => {
+                      if(taska.id === $activeTask.id) {
+                        taska.description = task.description
+                        activeTask.set(taska)
+                      }
+                      return true
+                    })
+                    return false
+                  }
+                  return true
+                })
+                return false
+              }
+              return true
+            })
+            return false
+          }
+          return true
+        })
+        $notifs = [...$notifs, {
+          msg: 'Task description updated',
+          type: 'success',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+        oldDescriptionValue = descriptionValue
+      }).catch(err => {
+        $notifs = [...$notifs, {
+          msg: `Error in updating task description to ${$taskName}, ${err}`,
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+      }).finally(() => {
+        editing = false
+        isProcessing.set(false)
+      })
+    }else {
+      descriptionValue = oldDescriptionValue
+      editing = false
+    }
+  }
+
+  function descKeydownHandler(e) {
+    if($taskViewModalActive && $taskCurTab === 'Description' && !taskNameEditing && !$isProcessing) {
+      if(e.key === 'Escape') {
+        descriptionSave(false)
+      }else if(e.ctrlKey && e.keyCode == 13 && !taskNameEditing && $taskViewModalActive && $taskCurTab === 'Description' && !$isProcessing) {
+        descriptionSave(true)
+      }
+    }
+  }
+
+  const updateStatus = async boardName => {
+    if($isProcessing) {
+      boardName = $activeTask.status
+      $notifs = [...$notifs, {
+        msg: `Updating task status, please wait...`,
+        type: 'wait',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      return
+    }
+    if(boardName === $activeTask.status) return
+    $notifs = [...$notifs, {
+      msg: `Updating task status`,
+      type: 'wait',
+      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+    }]
+    isProcessing.set(true)
+
+    fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id,
+          board: $activeBoard,
+          task: $activeTask.id
+        },
+        task: {
+          name: $activeTask.name,
+          level: $activeTask.level,
+          members: [],
+          description: $activeTask.description,
+          status: boardName
+        },
+        mode: 'status'
+      })
+    }).then(async res => {
+      const { task } = await res.json()
+
+      let activeTaskCopy = $activeTask
+      activeTaskCopy.status = task.status
+      activeTask.set(activeTaskCopy)
+
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject.workspaces.every(workspace => {
+            if(workspace.id === $activeWorkspace.id) {
+              workspace.boards.every(board => {
+                if(board.id === $activeBoard) {
+                  // Remove the task in the old board
+                  board.tasks = board.tasks.filter(task => task.id !== $activeTask.id)
+
+                  // Add the task in the new board based on the boardName or task.status
+                  workspace.boards.every(boarda => {
+                    if(boarda.name === task.status) {
+                      boarda.tasks.push($activeTask)
+                      return false
+                    }
+                    return true
+                  })
+                  return false
+                }
+                return true
+              })
+              activeWorkspace.set(workspace)
+              $allBoards = workspace.boards
+              return false
+            }
+            return true
+          })
+          activeSubject.set(subject)
+          return false
+        }
+        return true
+      })
+      userData.set(userDataCopy)
+
+      // if($currentInterface !== 'Dashboard') {
+      //   $favorites = []
+      //   $userData.subjects.map(subject => {
+      //     subject.workspaces.map(workspace => {
+      //       workspace.boards.map(board => {
+      //         $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
+      //           return {
+      //             boardID: board.id,
+      //             task: data
+      //           }
+      //         })]
+      //       })
+      //     })
+      //   })
+      // }
 
       $notifs = [...$notifs, {
         msg: `${task.name} is moved to ${boardName}`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
+      isProcessing.set(false)
     }).catch(err => {
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in updating the task status, ${err}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
+      isProcessing.set(false)
     })
   }
 
   $: month = parseInt($activeTask.dueDateTime.split('T')[0].split('-')[1])
   $: hour = parseInt($activeTask.dueDateTime.split('T')[1].split('-')[0])
-
-  let hovering = false
 
   const setFavorite = e => {
     if($currentInterface === 'Favorites') {
@@ -349,6 +567,109 @@
       console.error(err)
     })
   }
+
+  const taskRename = () => {
+    if(taskNameLocal === '' || taskNameLocal === $activeTask.name) {
+      $notifs = [...$notifs, {
+        msg: `Task name cannot be empty or same old name`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      return
+    }
+
+    taskName.set(taskNameLocal)
+    taskRenameActiveModal.set(true)
+    taskViewModalActive.set(false)
+  }
+
+  const assigneeUpdated = () => {
+    if(selectedWorkspaceMembers.length == 0) {
+      drop = false
+    } else {
+      let names = ''
+      selectedWorkspaceMembers.forEach(member => {
+        names += `${member.name} `
+      })
+      $notifs = [...$notifs, {
+        msg: `Assigning ${names} to task \'${$activeTask.name}\'`,
+        type: 'wait',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+
+      fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ids: {
+            user: $userData.id,
+            subject: $activeSubject.id,
+            workspace: $activeWorkspace.id,
+            board: $activeBoard,
+            task: $activeTask.id
+          },
+          task: {
+            name: $activeTask.name,
+            status: $activeTask.status,
+            level: $activeTask.level,
+            description: $activeTask.description,
+            members: selectedWorkspaceMembers
+          },
+          mode: 'members'
+        })
+      }).then(async res => {
+        const { task } = await res.json()
+
+        let userDataCopy = $userData
+        userDataCopy.subjects.every(subject => {
+          if(subject.id === $activeSubject.id) {
+            subject.workspaces.every(workspace => {
+              if(workspace.id === $activeWorkspace.id) {
+                workspace.boards.every(board => {
+                  if(board.id === $activeBoard) {
+                    board.tasks.every(taska => {
+                      if(taska.id === $activeTask.id) {
+                        taska.members = [...taska.members, ...task.members]
+                        activeTask.set(taska)
+                        return false
+                      }
+                      return true
+                    })
+                    return false
+                  }
+                  return true
+                })
+                activeWorkspace.set(workspace)
+                $allBoards = workspace.boards
+                return false
+              }
+              return true
+            })
+            activeSubject.set(subject)
+            return false
+          }
+          return true
+        })
+        $notifs = [...$notifs, {
+          msg: `${names}${selectedWorkspaceMembers.length > 1 ? 'are' : 'is'} now assigned to task \'${$activeTask.name}\'`,
+          type: 'success',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+      }).catch(err => {
+        $notifs = [...$notifs, {
+          msg: `Error in updating task assignees, ${err}`,
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+      }).finally(() => {
+        selectedWorkspaceMembers = []
+        isProcessing.set(false)
+        drop = false
+      })
+    }
+  }
 </script>
 
 <svelte:window bind:outerWidth on:keydown={onKeyDownHandler}/>
@@ -367,19 +688,43 @@
         <div class="maxmins-w-{outerWidth < 571 ? '100': '65'}p">
           <div class="is-flex is-flex-wrap-wrap">
             <!-- task name, favorite, level -->
-            <div class="pl-3 min-w-100p">
+            <div class="{outerWidth < 571 ? 'min-w-100p': 'pl-3'} ">
               <div class="is-flex {outerWidth < 571 ? 'is-justify-content-space-between': 'is-align-items-center'}">
-                <!-- task name -->
-                <div class="fredoka-reg txt-size-32 is-size-4-mobile txt-color-yaz-grey-dark max-w-50p overflow-x-auto txt-overflow-nowrap-only">
-                  {$activeTask.name}
+                <div class="is-flex is-align-items-center max-w-50p">
+                  {#if !taskNameEditing}
+                    <!-- task name -->
+                    <div class="fredoka-reg txt-size-32 is-size-4-mobile txt-color-yaz-grey-dark {outerWidth < 571 ? 'max-w-80p' : ''} overflow-x-auto txt-overflow-nowrap-only">
+                      {$activeTask.name}
+                    </div>
+                  {:else}
+                    <TextField bind:value={taskNameLocal} dense color='#a0a0a0' outlined>{$activeTask.name}</TextField>
+                  {/if}
+
+                  <div 
+                    on:click={e => {
+                      if(taskNameEditing) {
+                        taskRename()
+                        taskNameEditing = false
+                        return
+                      }
+                      if(!taskNameEditing) {
+                        taskNameEditing = true
+                      }
+                    }}
+                    class="is-clickable ml-2"
+                  >
+                    {#if !taskNameEditing}
+                      <Icon size='15px' path={mdiPencil} />
+                    {:else}
+                      <Icon size='18px' path={mdiCheck} />
+                    {/if}
+                  </div>
                 </div>
   
                 <!-- Utilities / tools -->
-                <div class="{outerWidth > 571 ? 'ml-6': ''} is-flex">
+                <div class="{outerWidth > 571 ? 'ml-3': ''} is-flex">
                   <!-- favorite icon -->
                   <div
-                    on:mouseenter={e => hovering = true}
-                    on:mouseleave={e => hovering = false}
                     on:click={setFavorite}
                     class="is-flex-shrink-0 is-clickable mr-3">
                     {#if $activeTask.isFavorite}
@@ -508,14 +853,14 @@
             </div>
   
             <!-- tabs content -->
-            <div class="has-background-white min-w-100p min-h-380 rounded-lg elevation-1 {$taskCurTab === 'Description' ? '': 'px-3'}">
+            <div class="has-background-white min-w-100p min-h-380 rounded-b rounded-r elevation-1 {$taskCurTab === 'Description' ? '': 'px-3'}">
               {#if $taskCurTab === 'Chats'}
               <!-- Chats -->
               <div class="maxmins-w-100p maxmins-h-100p is-flex is-flex-direction-column-reverse is-justify-content-flex-end pt-1">
                 <!-- Chat input, tools, and send button -->
                 <div class="is-flex is-align-items-center {outerWidth < 571 ? '': 'px-5'} mt-1">
                   <!-- chat input -->
-                  <input bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
+                  <input disabled={chatInputDisable} bind:value={chatInput} type="text" class="input rounded-lg txt-size-{outerWidth < 376 ? '10': '15'} fredoka-reg" placeholder="Type a message...">
   
                   <!-- tools -->
                   <div class="is-flex is-align-items-center is-clickable mx-2">
@@ -532,7 +877,7 @@
                 </div>
   
                 <!-- Chats container -->
-                <div class="is-flex-grow-1 max-h-330 overflow-y-auto">
+                <div bind:this={chatContainer} class="is-flex-grow-1 max-h-330 overflow-y-auto">
                   <div class="is-flex is-flex-direction-column">
                     <!-- LOOP HERE -->
                     {#each $activeTask.conversations as chat, i}
@@ -582,7 +927,7 @@
     
                         <!-- time -->
                         <div class="{outerWidth < 376 ? 'pos-abs pos-r-5 txt-size-7': 'txt-size-10'} opacity-0 parent-hover-this-opacity-100 fredoka-reg is-italic has-text-grey is-flex-shrink-0">
-                          {chat.sendAt}
+                          {constants.getDate(chat.sendAt)}
                         </div>
                       </div>
                     </div>
@@ -595,7 +940,7 @@
                 class="maxmins-h-100p is-flex is-flex-direction-column pb-2 overflow-y-auto"
               >
                 {#if editing}
-                <textarea on:keydown={descKeydownHandler} bind:value={descriptionValue} class="textarea maxmins-h-325 txt-size-18 inter-reg txt-color-yaz-grey-dark textarea-resize-none border-none" placeholder="Description" rows="10" />
+                <textarea disabled={$isProcessing} on:keydown={descKeydownHandler} bind:value={descriptionValue} class="textarea maxmins-h-325 txt-size-18 inter-reg txt-color-yaz-grey-dark textarea-resize-none border-none" placeholder="Description" rows="10" />
                 {:else}
                 <div class="maxmins-h-325 txt-size-18 inter-reg txt-color-yaz-grey-dark pl-3 pr-2 pt-3 overflow-y-auto">
                   <span class="opacity-35p {descriptionValue ? 'undisp' : ''}">
@@ -747,17 +1092,20 @@
   
                     <!-- status -->
                     {#each $allBoards as board}
-                      <div
-                        on:click={() => {
-                          updateStatus(board.name)
-                          drop1 = false
-                        }}
-                        class="hover-bg-grey-lighter has-transition p-3 is-clickable"
-                      >
-                        <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark'>
-                          {board.name}
+                      {#if board.name !== $activeTask.status}
+                        <div
+                          on:click={() => {
+                            if($isProcessing) return
+                            updateStatus(board.name)
+                            drop1 = false
+                          }}
+                          class="hover-bg-grey-lighter has-transition p-3 is-clickable"
+                        >
+                          <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark'>
+                            {board.name}
+                          </div>
                         </div>
-                      </div>
+                      {/if}
                     {/each}
                   </div>
                 </div>
@@ -823,7 +1171,7 @@
           </div>
   
           <!-- Assignee/s -->
-          <div class="p-3">
+          <div class="py-3 pl-3">
             <!-- Assignees title -->
             <div class="txt-size-14 fredoka-reg txt-color-yaz-grey-dark">
               Assignees
@@ -831,13 +1179,25 @@
   
             <!-- dropdown -->
             {#if $userData.verified}
-            <div use:ClickOutside on:clickOutside={() => drop = false} class='is-relative min-h-fit-content'>
+            <div
+              use:ClickOutside
+              on:clickOutside={() => {
+                if(drop) {
+                  assigneeUpdated()
+                }
+              }}
+              class='is-relative min-h-fit-content'
+            >
               <input
-                on:change={() => filterMembers()}
+                on:change={() => {
+                  searchingMember = true
+                  filterMembers()
+                }}
                 on:click={() => {
                   if(drop) {
-                    drop = false
+                    assigneeUpdated()
                   } else {
+                    searchingMember = true
                     drop = true
                   }
                 }}
@@ -848,53 +1208,74 @@
               <!-- dropdown content -->
               <div class="pos-abs pos-t-40 has-background-white min-w-100p has-transition elevation-1 rounded-b {drop ? 'rot-x-0': 'rot-x-90'} z-90" style="transform-origin: top center">
                 <!-- Loop here -->
-                {#each workspaceMembersCopy as workspaceMember}
-                <div class="hover-bg-grey-lighter has-transition p-3">
-                  <Checkbox>
-                    <div>
-                      <!-- Name -->
-                      <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
-                        {workspaceMember.name}
-                      </div>
-        
-                      <!-- email -->
-                      <div class="inter-reg txt-size-9 txt-color-yaz-grey-dark is-clickable">
-                        {workspaceMember.email}
-                      </div>
+                {#each workspaceMembersCopy as workspaceMember, i}
+                  {#if $activeTask.members.filter(member => member.id === workspaceMember.id).length == 0}
+                    <div class="hover-bg-grey-lighter has-transition p-3">
+                      <Checkbox bind:group={selectedWorkspaceMembers} value={workspaceMember}>
+                        <div>
+                          <!-- Name -->
+                          <div class='inter-reg txt-size-12 txt-color-yaz-grey-dark is-clickable'>
+                            {workspaceMember.name}
+                          </div>
+            
+                          <!-- email -->
+                          <div class="inter-reg txt-size-9 txt-color-yaz-grey-dark is-clickable">
+                            {workspaceMember.email}
+                          </div>
+                        </div>
+                      </Checkbox>
                     </div>
-                  </Checkbox>
-                </div>
+                  {/if}
                 {/each}
               </div>
             </div>
             {/if}
   
             <!-- list of assigned members -->
-            {#each $activeTask.members as taskAssignee}
+            {#each activeTaskMembers as taskAssignee}
             <!-- container -->
-            <div class="is-flex is-align-items-center m-3">
-              <!-- profile -->
-              {#if !taskAssignee.profile}
-              <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
-                <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
-                  {taskAssignee.name.toUpperCase().split(' ')[0].charAt(0)}{taskAssignee.name.toUpperCase().split(' ')[taskAssignee.name.toUpperCase().split(' ').length - 1].charAt(0)}
+            <div class="is-flex is-align-items-center is-justify-content-space-between mt-3 rounded hover-bg-grey-lighter has-transition p-1">
+              <div class="is-flex is-align-items-center">
+                <!-- profile -->
+                {#if !taskAssignee.profile}
+                <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
+                  <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
+                    {taskAssignee.name.toUpperCase().split(' ')[0].charAt(0)}{taskAssignee.name.toUpperCase().split(' ')[taskAssignee.name.toUpperCase().split(' ').length - 1].charAt(0)}
+                  </div>
+                </Avatar>
+                {:else}
+                <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
+                  <img src={taskAssignee.profile} alt="">
+                </Avatar>
+                {/if}
+    
+                <!-- name and email -->
+                <div>
+                  <div class="inter-reg txt-size-12 tx-color-yaz-grey-dark">
+                    {taskAssignee.name}
+                  </div>
+    
+                  <div class="inter-reg txt-size-9 tx-color-yaz-grey-dark">
+                    {taskAssignee.email}
+                  </div>
                 </div>
-              </Avatar>
-              {:else}
-              <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
-                <img src={taskAssignee.profile} alt="">
-              </Avatar>
-              {/if}
-  
-              <!-- name and email -->
-              <div>
-                <div class="inter-reg txt-size-12 tx-color-yaz-grey-dark">
-                  {taskAssignee.name}
-                </div>
-  
-                <div class="inter-reg txt-size-9 tx-color-yaz-grey-dark">
-                  {taskAssignee.email}
-                </div>
+              </div>
+
+              <!-- remove assignment -->
+              <div
+                on:click={e => {
+                  if($isProcessing) return
+                  removeMember(taskAssignee)
+                }}
+                class="is-clickable"
+              >
+                {#if !$isProcessing && !removingMember}
+                  <Icon size='18px' class="red-text" path={mdiClose} />
+                {:else if !removingMember}
+                  <Icon size='18px' class="red-text" path={mdiClose} />
+                {:else}
+                  <Pulse size={20} color='#191a48' />
+                {/if}
               </div>
             </div>
             {/each}

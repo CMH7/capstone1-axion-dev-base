@@ -1,7 +1,10 @@
 <script>
   //@ts-nocheck
-  import { taskViewModalActive, activeTask, activeBoard, userData, activeWorkspace, activeSubject, currentInterface, currentDashboardSubInterface, breadCrumbsItems, currentIndex, allBoards } from '$lib/stores/global-store'
+	import constants from '$lib/config/constants';
+  import { notifs, taskViewModalActive, activeTask, activeBoard, userData, activeWorkspace, activeSubject, currentInterface, currentDashboardSubInterface, breadCrumbsItems, currentIndex, allBoards } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
+  import bcrypt from 'bcryptjs';
+	import { onMount } from 'svelte';
 
   // Required params
   export let task = {
@@ -20,6 +23,31 @@
     name: "",
     status: ""
   }
+  let backgroundColor = 'has-background-success-light'
+  let textColor = 'has-text-success-dark'
+
+  onMount(() => {
+    if(task.status === 'Done') {
+      backgroundColor = 'has-background-success'
+    }else {
+      let date1 = new Date(task.dueDateTime)
+      let date2 = new Date()
+      let difTime = date1.getTime() - date2.getTime()
+      let difDays = difTime / (1000 * 3600 * 24)
+      if(difDays < 1 && difDays >= 0) {
+        backgroundColor = 'has-background-info-light'
+        textColor = 'has-text-info'
+      }
+      if(difDays < 0 && difDays >= -1) {
+        backgroundColor = 'has-background-warning'
+        textColor = 'has-text-warning-dark'
+      }
+      if(difDays < -1 ) {
+        backgroundColor = 'has-background-danger'
+        textColor = 'has-text-danger-light'
+      }
+    }
+  })
 
   export let boardID = ''
 
@@ -106,6 +134,9 @@
     case 24:
       finalHour = 0
       break
+    case 0:
+      finalHour = 0
+      break
     default:
       finalHour = finalHour
   }
@@ -159,6 +190,77 @@
     }, 200)
   }
 
+  const addSeen = () => {
+    if(task.viewers.includes(`${$userData.firstName} ${$userData.lastName}`)) return
+    if( !task.viewers.includes(`${$userData.firstName} ${$userData.lastName}`)) {
+      fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/board/task/viewer/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ids: {
+            userA: $userData.id,
+            subject: $activeSubject.id,
+            workspace: $activeWorkspace.id,
+            board: boardID,
+            task: task.id
+          }
+        })
+      }).then(async res => {
+        const { viewer } = await res.json()
+
+        let userDataCopy = $userData
+        userDataCopy.subjects.every(subject => {
+          if(subject.id === $activeSubject.id) {
+            subject.workspaces.every(workspace => {
+              if(workspace.id === $activeWorkspace.id) {
+                workspace.boards.every(board => {
+                  if(board.id === boardID) {
+                    board.tasks.every(taska => {
+                      if(taska.id === task.id) {
+                        taska.viewers.push(viewer)
+
+                        if(task.id === $activeTask.id) {
+                          activeTask.set(taska)
+                        }
+                        return false
+                      }
+                      return true
+                    })
+                    return false
+                  }
+                  return true
+                })
+                activeWorkspace.set(workspace)
+                return false
+              }
+              return true
+            })
+            activeSubject.set(subject)
+            return false
+          }
+          return true
+        })
+        userData.set(userDataCopy)
+      }).catch(err => {
+        $notifs = [...$notifs, {
+          msg: `Error in adding a viewer, ${err}`,
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+      })
+    }
+
+  }
+
+  const taskClicked = () => {
+    addSeen()
+    if($currentInterface !== 'Dashboard') setActives()
+    activeTask.set(task)
+    activeBoard.set(boardID)
+    if($currentInterface !== 'Assigned to me') taskViewModalActive.set(true)
+  }
 </script>
 
 <svelte:window bind:outerWidth />
@@ -183,20 +285,15 @@
     startTimer()
   }}
   on:contextmenu|preventDefault={handleRightClick}
-  on:click={() => {
-    if($currentInterface !== 'Dashboard') setActives()
-    activeTask.set(task)
-    activeBoard.set(boardID)
-    if($currentInterface !== 'Assigned to me') taskViewModalActive.set(true)
-  }}
-  class="mb-1 has-transition hover-bg-grey-lighter-grey-dark is-clickable maxmins-w-230 maxmins-h-60 overflow-x-hidden rounded parent">
+  on:click={taskClicked}
+  class="{backgroundColor} mb-1 has-transition is-clickable maxmins-w-230 maxmins-h-60 overflow-x-hidden rounded parent">
   <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between'>
   
     <!-- UPPER PART OF THE CARD -->
   
     <!-- Task Name and Task Labels: level and how many subtasks it has -->
     <div class="is-flex is-justify-content-space-between maxmins-w-100p">
-      <div class="parent-hover-txt-color-white has-transition has-text-weight-semibold is-unselectable txt-size-12 max-w-60p txt-overflow-ellipsis overflow-x-hidden">
+      <div class="{textColor} has-transition has-text-weight-semibold is-unselectable txt-size-12 max-w-60p txt-overflow-ellipsis overflow-x-hidden">
         {task.name}
       </div>
   
@@ -218,7 +315,7 @@
   
     <!-- Due date -->
     <div class="is-flex is-justify-content-space-between is-align-items-end">
-      <div class="parent-hover-txt-color-white is-unselectable txt-size-10 has-transition">
+      <div class="{textColor} is-unselectable txt-size-10 has-transition">
         {`${dueDate} ${date} ${finalHour}:${minute} ${parseInt(hour) > 11 ? 'PM': 'AM'}`}
       </div>
   

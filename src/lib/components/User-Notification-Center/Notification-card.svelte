@@ -1,9 +1,11 @@
 <script>
   //@ts-nocheck
-  import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive } from '$lib/stores/global-store'
+  import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, invModalActive, notifCenterOpen, isProcessing } from '$lib/stores/global-store'
   import constants from '$lib/config/constants'
   import { Avatar, Icon } from 'svelte-materialify'
-  import { mdiAccountOutline, mdiClose } from '@mdi/js'
+  import { mdiAccountCircleOutline, mdiAccountOutline, mdiClose } from '@mdi/js'
+	import { onMount } from 'svelte';
+	import { userNProfile } from '$lib/stores/user-notification-store';
 
   export let notification = {
     id: '',
@@ -23,37 +25,66 @@
     }
   }
 
-  const setReadNotif = () => {
-    let userDataCopy = $userData
-    userDataCopy.notifications.every(notification => {
-      if(notification.id === notifID) {
-        notification.isRead = true
-        return false
-      }
-      return true
-    })
-    userData.set(userDataCopy)
+  let profileb = ''
 
-   fetch(`${constants.backURI}/User/notification?user=${$userData.id}&notification=${notification.id}`, {
+  onMount(() => {
+    if($userNProfile.filter(obj => obj.id === notification.for.userID).length == 0) {
+      fetch(`${constants.backURI}/profile?id=${notification.for.userID}`).then(async res => {
+        const { profile } = await res.json()
+        $userNProfile = [...$userNProfile, {id: notification.for.userID, profile: profile}]
+        profileb = profile
+      }).catch(err => {
+        $notifs = [...$notifs, {
+          msg: `error in getting user images for notification, ${err}`,
+          type: 'error',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+      })
+    }else{
+      $userNProfile.every(obj => {
+        if(obj.id === notification.for.userID) {
+          profileb = obj.profile
+          return false
+        }
+        return true
+      })
+    }
+  })
+
+  const setReadNotif = () => {
+    if($isProcessing || delHover) return
+    isProcessing.set(true)
+    fetch(`${constants.backURI}/User/notification?user=${$userData.id}&notification=${notification.id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
     }).then(async res => {
-      const { notifications } = await res.json()
+      const { id } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.notifications.every(notification => {
+        if(notification.id === id) {
+          notification.isRead = true
+          return false
+        }
+        return true
+      })
+      userData.set(userDataCopy)
     }).catch(err => {
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Error in seting isRead of the notificaton, ${err}`,
         type: 'error',
-        id: $notifs.length + 1
-      })
-      notifs.set(notifsCopy)
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
       console.error(err)
+    }).finally(() => {
+      isProcessing.set(false)
     })
   }
 
   const deleteNotif = () => {
+    if($isProcessing || !delHover) return
+    isProcessing.set(true)
     fetch(`${constants.backURI}/User/delete/notification`, {
       method: 'DELETE',
       headers: {
@@ -66,18 +97,9 @@
         }
       })
     }).then(async res => {
-      const { error, notification } = await res.json()
-      if(error) {
-        $notifs = [...$notifs, {
-          msg: `Error in deleting the notificaton A, ${err}`,
-          type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        }]
-        return
-      }
-
+      const { id } = await res.json()
       let userDataCopy = $userData
-      userDataCopy.notifications = userDataCopy.notifications.filter(notificationa => notificationa.id != notification.id)
+      userDataCopy.notifications = userDataCopy.notifications.filter(notificationa => notificationa.id != id)
       userData.set(userDataCopy)
     }).catch(err => {
       $notifs = [...$notifs, {
@@ -86,88 +108,100 @@
         id: $notifs.length + 1
       }]
       console.error(err)
+    }).finally(() => {
+      isProcessing.set(false)
     })
   }
 
   const transpo = () => {
+    if(delHover) return
+    if(notification.anInvitation) {
+      if(!notification.isRead) setReadNotif()
+      invModalActive.set(true)
+      notifCenterOpen.set(false)
+      return
+    }
     if(notification.fromTask || notification.aMention) {
-      currentInterface.set(notification.fromInterface.interf)
-      currentDashboardSubInterface.set(notification.fromInterface.subInterface)
-      $userData.subjects.map(subject => {
-        subject.workspaces.map(workspace => {
-          workspace.boards.map(board => {
+      if(!notification.isRead) setReadNotif()
+      currentInterface.set('Dashboard')
+      currentDashboardSubInterface.set('Boards')
+      $userData.subjects.every(subject => {
+        subject.workspaces.every(workspace => {
+          workspace.boards.every(board => {
             board.tasks.every(task => {
               if(task.id === notification.fromTask) {
                 activeSubject.set(subject)
                 activeWorkspace.set(workspace)
-                allBoards.set($activeWorkspace.boards)
+                allBoards.set(workspace.boards)
                 activeTask.set(task)
-                breadCrumbsItems.set([])
-                breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeSubject.name}])
-                breadCrumbsItems.set([...$breadCrumbsItems, {text: $activeWorkspace.name}])
-                breadCrumbsItems.set([...$breadCrumbsItems, {text: 'Boards'}])
+                $breadCrumbsItems = [{text: $activeSubject.name, href: '1'}, {text: $activeWorkspace.name, href: '2'}, {text: 'boards', href: '3'}]
                 return false
               }
               return true
             })
+            return true
           })
+          return true
         })
+        return true
       })
       taskViewModalActive.set(true)
+      notifCenterOpen.set(false)
+      return
     }
-
-    if(!notification.isRead) setReadNotif()
   }
 
   let outerWidth = 0
+  let notifHovering = false
+  let delHover = false
 </script>
 
 <svelte:window bind:outerWidth />
 
 <div
   on:click={transpo}
-  class="{notification.isRead ? 'opacity-50p': ''} column parent is-12 rounded min-h-50 mb-2 is-clickable hover-bg-grey-lighter-grey-light has-transition is-relative">
+  on:mouseenter={e => notifHovering = true}
+  on:mouseleave={e => notifHovering = false}
+  class="{notification.isRead ? 'opacity-50p': ''} column parent is-12 rounded maxmins-h-60 mb-2 is-clickable hover-bg-grey-lighter-grey-light has-transition">
 
-  <div class="is-flex is-align-items-center min-h-100p p-1">
-    <!-- Image -->
-    <div class="is-flex is-align-items-center is-justify-content-center">
-      {#if notification.for.self}
-      <Avatar size='40px'>
-        {#if $userData.profile}
-          <img src={$userData.profile} alt="">
+  <div class="is-flex is-align-items-center is-justify-content-space-between maxmins-h-100p p-1">
+    <div class="is-flex is-align-items-center">
+      <!-- Image -->
+      <div class="is-flex is-align-items-center is-justify-content-center">
+        <Avatar size='40px'>
+          {#if profileb !== ''}
+            <img src={profileb} alt="">
+          {:else}
+            <Icon class="white blue-text" path={mdiAccountCircleOutline} />
+          {/if}
+        </Avatar>
+      </div>
+  
+      <!-- notification message -->
+      <div class="ml-2 p-1 txt-size-11">
+        {notification.message}
+      </div>
+    </div>
+
+    <!-- notification action and note -->
+    <div
+      on:mouseenter={e => delHover = true}
+      on:mouseleave={e => delHover = false}
+      on:click={e => deleteNotif()}
+    >
+      {#if !notification.isRead}
+        {#if !notifHovering}
+          <div class="parent-hover-this-display-none maxmins-w-10 maxmins-h-10 rounded-circle has-background-success" />
         {:else}
-          <Icon class="white blue-text" path={mdiAccountOutline} />
+          <div class="undisp is-flex is-align-items-center">
+            <Icon class='red-text' size='13px' path={mdiClose} />
+          </div>
         {/if}
-      </Avatar>
       {:else}
-      <Avatar size='40px'>
-          <Icon class="white red-text" path={mdiAccountOutline} />
-      </Avatar>
+      <div class="is-flex is-align-items-center">
+        <Icon class='red-text' size='15px' path={mdiClose} />
+      </div>
       {/if}
     </div>
-    <div class="ml-2 p-1 is-size-7">
-      {notification.message}
-    </div>
   </div>
-
-  <!-- Read unread remove notif -->
-  {#if !notification.isRead}
-  <!-- green circle -->
-  <div class="parent-hover-this-display-none pos-abs maxmins-w-10 maxmins-h-10 rounded-circle has-background-success pos-t-40p pos-r-10" />
-
-  <!-- delete button -->
-  <div
-    on:click={e => deleteNotif(notification.id)}
-    class="{outerWidth < 769 ? '': 'opacity-0 has-transition parent-hover-this-opacity-100'} pos-abs pos-t-35p pos-r-10 rounded-circle hover-bg-grey-lighter-grey-light is-flex is-align-items-center"
-  >
-    <Icon class='hover-txt-color-primary p-0' size='13px' path={mdiClose} />
-  </div>
-  {:else}
-  <div
-    on:click={e => deleteNotif(notification.id)}
-    class="{outerWidth < 769 ? '': 'opacity-0 has-transition parent-hover-this-opacity-100'} {notification.isRead ? 'opacity-100': ''} pos-abs pos-t-35p pos-r-10 rounded-circle hover-bg-grey-lighter-grey-light is-flex is-align-items-center"
-  >
-    <Icon class='hover-txt-color-primary p-0' size='13px' path={mdiClose} />
-  </div>
-  {/if}
 </div>

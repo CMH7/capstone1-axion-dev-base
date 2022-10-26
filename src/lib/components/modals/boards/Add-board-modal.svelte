@@ -2,10 +2,11 @@
     // @ts-nocheck
     import { onDestroy } from 'svelte'
     import { Dialog, Button } from 'svelte-materialify'
-    import { notifs, addBoardModalActive, modalChosenColor, activeSubject, activeWorkspace, currentInterface, allBoards } from '$lib/stores/global-store'
+    import { notifs, addBoardModalActive, modalChosenColor, activeSubject, activeWorkspace, currentInterface, allBoards, isProcessing } from '$lib/stores/global-store'
     import constants from '$lib/config/constants'
     import bcrypt from 'bcryptjs'
     import { userData } from '$lib/stores/global-store'
+    import { Pulse } from 'svelte-loading-spinners'
 
     const backURI = constants.backURI
 
@@ -17,61 +18,59 @@
     // inputs
     let boardName = "";
 
-    const createBoard = async () => {
-        isCreating = true
+    const boardNameChecker = () => {
         if(boardName === "") {
-            let notifsCopy = []
-            notifsCopy = $notifs
-            notifsCopy.push(
-                {
-                    msg: "Board name cannot be empty",
-                    type: "error",
-                    id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-                }
-            )
-            notifs.set(notifsCopy)
+            $notifs = [...$notifs, {
+                msg: "Board name cannot be empty",
+                type: "error",
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            }]
             isCreating = false
             return false
         }
-        
-        const boardID = bcrypt.hashSync(`${$activeWorkspace.id}${boardName}${new Date()}`, Math.ceil(Math.random() * 1))
-        let board = {
-            tasks: [],
-            color: $modalChosenColor,
-            createdBy: `${$userData.firstName} ${$userData.lastName}`,
-            createdOn: new Date().toISOString(),
-            id: boardID,
-            name: boardName
+
+        let boardNameCopy = boardName.toLowerCase().split(" ").join('')
+        if(boardNameCopy.match('todo') || boardNameCopy.match('inprogress') || boardNameCopy.match('done')) {
+            $notifs = [...$notifs, {
+                msg: "Board/s cannot be named after reserved words or names (Todo, In progress, Done)",
+                type: "error",
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            }]
+            isCreating = false
+            return false
         }
 
-        let userDataCopy = $userData
-        userDataCopy.subjects.every(subject => {
-            if(subject.id === $activeSubject.id) {
-                subject.workspaces.every(workspace => {
-                    if(workspace.id === $activeWorkspace.id) {
-                        workspace.boards.push(board)
-                        allBoards.set(workspace.boards)
-                        return false
-                    }
-                    return true
-                })
+        let allBoardsName = []
+        $allBoards.forEach(board => {
+            allBoardsName = [...allBoardsName, board.name.split(" ").join('').toLowerCase()]
+        })
+
+        let found = false
+        allBoardsName.every(boardName => {
+            if(boardName === boardNameCopy) {
+                found = true
                 return false
             }
             return true
         })
-        userData.set(userDataCopy)
-        
-        let notifsCopy = $notifs
-        notifsCopy.push({
-            msg: 'Board created',
-            type: 'success',
-            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        })
-        notifs.set(notifsCopy)
-        
-        isCreating = false
-        addBoardModalActive.set(false)
 
+        if(found) {
+            $notifs = [...$notifs, {
+                msg: "Board name is already in-used in this workspace",
+                type: "error",
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            }]
+            isCreating = false
+            return false
+        }
+
+        return true
+    }
+
+    const createBoard = async () => {
+        if(!boardNameChecker()) return
+        isProcessing.set(true)
+        const boardID = bcrypt.hashSync(`${$activeWorkspace.id}${boardName}${new Date()}`, Math.ceil(Math.random() * 1))
         fetch(`${backURI}/MainApp/dashboard/subject/workspace/create/board`, {
             method: 'POST',
             headers: {
@@ -86,7 +85,6 @@
                 board: {
                     id: boardID,
                     color: $modalChosenColor,
-                    owned: $activeSubject.owned,
                     createdBy: `${$userData.firstName} ${$userData.lastName}`,
                     name: boardName
                 }
@@ -94,21 +92,18 @@
         })
         .then(async res => {
             const { board } = await res.json()
-            boardName = ''
-        }).catch(err => {
-            let notifsCopy = $notifs
-            notifsCopy.push({
-                msg: `Error in creating board, ${err}`,
-                type: 'error',
-                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-            })
-            notifs.set(notifsCopy)
             let userDataCopy = $userData
             userDataCopy.subjects.every(subject => {
                 if(subject.id === $activeSubject.id) {
                     subject.workspaces.every(workspace => {
                         if(workspace.id === $activeWorkspace.id) {
-                            workspace.boards = workspace.boards.filter(board => board.id !== boardID)
+                            workspace.boards.every((boarda, i) => {
+                                if(boarda.name.toLowerCase() === 'done') {
+                                    workspace.boards.splice(i, 0, board)
+                                    return false
+                                }
+                                return true
+                            })
                             allBoards.set(workspace.boards)
                             return false
                         }
@@ -118,31 +113,39 @@
                 }
                 return true
             })
+            userData.set(userDataCopy)
+            
+            $notifs = [...$notifs, {
+                msg: 'Board created',
+                type: 'success',
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            }]
+            
+            isProcessing.set(false)
+            addBoardModalActive.set(false)
+            boardName = ''
+        }).catch(err => {
+            $notifs = [...$notifs, {
+                msg: `Error in creating board, ${err}`,
+                type: 'error',
+                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            }]
+            isProcessing.set(false)
         })
     }
 
     function onKeyDown(e) {
         if(e.keyCode == 13 && $addBoardModalActive) {
-            if(!(boardName === "")) {
-                createBoard();
-            }else{
-                let notifsCopy = $notifs;
-                notifsCopy.push(
-                    {
-                        msg: "Board name cannot be empty",
-                        type: 'error',
-                        id: notifsCopy.length + 1
-                    }
-                );
-                notifs.set(notifsCopy);
-            }
+            createBoard()
         }
     }
 
     onDestroy(() => {
         addBoardModalActive.set(false)
         modalChosenColor.set('primary')
+        boardName = ''
     })
+
     let width = 0
 </script>
 
@@ -173,14 +176,18 @@
 
           <!-- create button -->
           <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-            <Button
-              depressed
-              on:click={createBoard}
-              class="has-transition has-background-grey-lighter quicksands has-text-weight-bold hover-txt-color-white"
-              style="letter-spacing: 1px;"
-            >
-              Create
-            </Button>
+            {#if !$isProcessing}
+                <Button
+                    depressed
+                    on:click={createBoard}
+                    class="has-transition has-background-grey-lighter quicksands has-text-weight-bold hover-txt-color-white"
+                    style="letter-spacing: 1px;"
+                >
+                Create
+                </Button>
+            {:else}
+                <Pulse size={20} color='#e98c00' />
+            {/if}
           </div>
       </div>
 </Dialog>

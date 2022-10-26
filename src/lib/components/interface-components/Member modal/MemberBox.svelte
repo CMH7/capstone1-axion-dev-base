@@ -164,7 +164,7 @@
     })
   }
 
-  const view = () => {
+  const view = async () => {
     isProcessing.set(true)
     viewUser = true
     if(browser && sessionStorage.getItem(`${user.data.email}`)) {
@@ -177,38 +177,22 @@
       school = userV.school
       course = userV.course
       email = userV.email
-      $isProcessing = false
+      isProcessing.set(false)
     } else {
-      fetch(`${constants.backURI}/validUser`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: user.data.email
-        })
-      }).then(async res => {
-        const userV = await res.json()
-        sessionStorage.setItem(`${user.data.email}`, JSON.stringify(userV))
-        profile = userV.profile
-        firstName = userV.firstName
-        lastName = userV.lastName
-        age = userV.age
-        bio = userV.bio
-        school = userV.school
-        course = userV.course
-        email = userV.email
-        isProcessing.set(false)
-      }).catch(err => {
-        let notifsCopy = $notifs
-        notifsCopy.push({
-          msg: `Viewing user error, ${err}`,
-          type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        })
-        isProcessing.set(false)
-        viewUser = false
-      })
+      const res = await fetch(`${constants.backURI}/viewUser?email=${user.data.email}`)
+      let data = await res.json()
+      let userV = data.user
+      console.log(userV);
+      sessionStorage.setItem(`${userV.email}`, JSON.stringify(userV))
+      profile = userV.profile
+      firstName = userV.firstName
+      lastName = userV.lastName
+      age = userV.age
+      bio = userV.bio
+      school = userV.school
+      course = userV.course
+      email = userV.email
+      isProcessing.set(false)
     }
   }
 
@@ -422,10 +406,11 @@
       </div>
     </div>
 
-    <!-- invite or remove -->
+    <!-- invite or remove or invited -->
     <div
       class="{outerWidth < 483 && outerWidth > 375 ? 'txt-size-12' : outerWidth < 376 ? 'txt-size-10' : 'text-body-2'} is-clickable has-transition hover-txt-style-underline"
       on:click={() => {
+        if(user.data.email === $userData.email) return
         if(active) active = false
         active= true
       }}
@@ -434,7 +419,7 @@
       <div class="is-italic">
         Remove
       </div>
-      {:else if user.data.email !== $userData.email}
+      {:else if user.data.email !== $userData.email }
       <div>
         Invite
       </div>

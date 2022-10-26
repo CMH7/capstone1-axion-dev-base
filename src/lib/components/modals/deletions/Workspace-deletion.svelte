@@ -1,10 +1,62 @@
 <script>
   //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
-  import { workspaceDeletionModalActive, selectedWorkspace, workspaceSettingsModalActive, userData, notifs, activeSubject, activeWorkspace, isProcessing } from '$lib/stores/global-store'
+  import { workspaceDeletionModalActive, selectedWorkspace, workspaceSettingsModalActive, userData, notifs, activeSubject, activeWorkspace, isProcessing, currentDashboardSubInterface, breadCrumbsItems } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
   import constants from '$lib/config/constants'
   import { Pulse } from 'svelte-loading-spinners'
+
+  const deleteWorkspace = e => {
+    if($isProcessing) return
+    isProcessing.set(true)
+
+    // do http requests here
+    fetch(`${constants.backURI}/MainApp/subject/workspace/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          userA: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id
+        },
+        verified: $userData.verified,
+      })
+    }).then(async res => {
+      const { id } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject.workspaces = subject.workspaces.filter(workspace => workspace.id !== id)
+          activeSubject.set(subject)
+          return false
+        }
+        return true
+      })
+      userData.set(userDataCopy)
+      isProcessing.set(false)
+      $notifs = [...$notifs, {
+          msg: `${$selectedWorkspace.name} workspace is deleted`,
+          type: 'success',
+          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        }]
+        selectedWorkspace.set(constants.workspace)
+        if($currentDashboardSubInterface === 'Boards') {
+          $breadCrumbsItems = [{text: $activeSubject.name}]
+          currentDashboardSubInterface.set('Workspaces')
+        }
+        workspaceDeletionModalActive.set(false)
+    }).catch(err => {
+      isProcessing.set(false)
+      $notifs = [...$notifs, {
+        msg: `Error in deleting board, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+    })
+  }
 </script>
 
 <div>
@@ -23,58 +75,7 @@
         >
           <Button depressed size='small'>Cancel</Button>
         </div>
-        <div
-          on:click={e => {
-            if($isProcessing) return false
-            isProcessing.set(true)
-
-            // do http requests here
-            fetch(`${constants.backURI}/MainApp/subject/workspace/delete`, {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                ids: {
-                  user: $userData.id,
-                  subject: $activeSubject.id,
-                  workspace: $activeWorkspace.id
-                }
-              })
-            }).then(async res => {
-              const { id } = await res.json()
-              let userDataCopy = $userData
-              userDataCopy.subjects.every(subject => {
-                if(subject.id === $activeSubject.id) {
-                  subject.workspaces = subject.workspaces.filter(workspace => workspace.id !== id)
-                  activeSubject.set(subject)
-                  return false
-                }
-                return true
-              })
-              userData.set(userDataCopy)
-              isProcessing.set(false)
-              workspaceDeletionModalActive.set(false)
-              let notifsCopy = $notifs
-               notifsCopy.push({
-                 msg: `${$selectedWorkspace.name} workspace is deleted`,
-                 type: 'success',
-                 id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-               })
-               notifs.set(notifsCopy)
-               selectedWorkspace.set(constants.workspace)
-            }).catch(err => {
-              isProcessing.set(false)
-              let notifsCopy = $notifs
-              notifsCopy.push({
-                msg: `Error in deleting board, ${err}`,
-                type: 'error',
-                id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-              })
-              notifs.set(notifsCopy)
-            })
-          }}
-        >
+        <div on:click={deleteWorkspace}>
           {#if !$isProcessing}
           <Button depressed size='small'>Confirm</Button>
           {:else}

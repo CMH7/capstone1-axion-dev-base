@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { Dialog, Icon, Divider } from 'svelte-materialify'
   import { manageAdminModalActive, activeWorkspace } from '$lib/stores/global-store'
   import { mdiClose } from '@mdi/js'
@@ -19,7 +20,7 @@
   </div>
   <Divider class='my-0 mt-1 opacity-35p' />
   <div class="maxmins-w-100p max-h-300 is-flex is-flex-direction-column mt-2 rounded overflow-y-auto">
-    {#each $activeWorkspace.members as member}
+    {#each $activeWorkspace.members.reverse() as member}
       <ManageAdminCards {member} />
     {/each}
   </div>

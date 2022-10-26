@@ -227,7 +227,11 @@
 // == MINS ==
 // WIDTHS
 .min-w {
-  &-fit-content {min-width: fit-content;}
+  &-fit-content {
+    min-width: -moz-fit-content;
+    min-width: fit-content;
+  }
+
   // pixels
   &-10 {min-width: 10px;}
   &-20 {min-width: 20px;}
@@ -290,7 +294,10 @@
 
 // HEIGHTS
 .min-h {
-  &-fit-content {min-height: fit-content;}
+  &-fit-content {
+    min-height: -moz-fit-content;
+    min-height: fit-content;
+  }
 
   // pixels
   &-0 {min-height: 0px;}
@@ -360,7 +367,10 @@
 // == MAXS ==
 // WIDTHS
 .max-w {
-  &-fit-content {max-width: fit-content;}
+  &-fit-content {
+    max-width: -moz-fit-content;  
+    max-width: fit-content;
+  }
 
   // pixels
   &-10 {max-width: 10px;}
@@ -424,7 +434,10 @@
 
 // HEIGHTS
 .max-h {
-  &-fit-content {max-height: fit-content;}
+  &-fit-content {
+    max-height: -moz-fit-content;
+    max-height: fit-content;
+  }
 
   // pixels
   &-0 {max-height: 0px;}

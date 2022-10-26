@@ -14,11 +14,11 @@
   const getAllUsers = async () => {
     memberModalLoading.set(true)
     memberModalActive.set(true)
-    const res = await fetch(`${constants.backURI}/verifiedUsers`)
+    const res = await fetch(`${constants.backURI}/verifiedUsers?count=10`)
     const users = await res.json()
     if(res.ok) {
       const wsMembers = $activeWorkspace.members
-      let data = users.filter(user => user.id != $userData.id)
+      let data = users
       wsMembers.forEach(member => {
         data = data.filter(user => user.email != member.email)
       })
@@ -80,7 +80,7 @@
           </ListItem>
         </div>
         {#if $userData.verified}
-          {#if $activeSubject.owned || $activeWorkspace.admins.includes($userData.email)}
+          {#if $activeSubject.owned || $activeWorkspace.admins.filter(admin => admin.id === $userData.id).length != 0}
             <div on:click={e => addBoardModalActive.set(true)}>
               <ListItem>
                 Add board
