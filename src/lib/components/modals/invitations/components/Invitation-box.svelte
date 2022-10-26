@@ -37,7 +37,7 @@
         }
       })
     }).then(async res => {
-      const { subject, invitationID } = await res.json()
+      const { subject, workspace, invitationID } = await res.json()
       let userDataCopy = $userData
 
       // check if subject is existing if not create it else check if workspace is existing if not add it else update it.
@@ -53,13 +53,27 @@
       if(sExisting) {
         userDataCopy.subjects.every(subjecta => {
           if(subjecta.id === subject.id) {
-            subjecta = subject
+            subjecta.workspaces.push(workspace)
             return false
           }
           return true
         })
       } else {
-        userDataCopy.subjects.push(subject)
+        userDataCopy.subjects.push({
+          name: subject.name,
+          id: subject.id,
+          color: subject.color,
+          isFavorite: subject.isFavorite,
+          owned: subject.owned,
+          workspaces: []
+        })
+        userDataCopy.subjects.every(subjecta => {
+          if(subjecta.id === subject.id) {
+            subjecta.workspaces.push(workspace)
+            return false
+          }
+          return true
+        })
       }
       userDataCopy.invitations = userDataCopy.invitations.filter(invitationa => invitationa.id !== invitationID)
       userData.set(userDataCopy)
@@ -75,7 +89,7 @@
       isProcessing.set(false)
       
       $notifs = [...$notifs, {
-        msg: `Error in invitation accepting, ${err}`,
+        msg: `Error in accepting invitation, ${err}`,
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
