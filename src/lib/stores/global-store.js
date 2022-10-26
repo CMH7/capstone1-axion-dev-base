@@ -1,20 +1,24 @@
-import { writable } from "svelte/store"
+import { writable, readable } from "svelte/store"
 import constants from "$lib/config/constants"
+import Pusher from 'pusher-js'
 
-// User data and information
+/** The websocket pusher js */
+export let pusher = readable(new Pusher(constants.pusher3, { cluster: 'ap1' }));
+
+/** User data and information */
 export let userData = writable(constants.user)
 
 // This will determine the button pressed in navbar landing pages
-export const active = writable("");
+export let active = writable("");
 
 // This will determine the minification of the sidebar
-export const ismini = writable(true);
+export let ismini = writable(true);
 
 // This will determine the activeness of the sidebar
-export const sidebarActive = writable(true);
+export let sidebarActive = writable(true);
 
 // The current active interface
-export const currentInterface = writable("Dashboard");
+export let currentInterface = writable("Dashboard");
 
 // This will be used for simple color designation in sidebar
 export let currentIndex = writable(0);
@@ -63,7 +67,7 @@ export let allUsers = writable([])
 export let allBoards = writable([])
 
 // breadcrumbds items
-export let breadCrumbsItems = writable([{text: 'Subjects'}])
+export let breadCrumbsItems = writable([{text: 'Subjects', href: '0'}])
 
 // notification center open boolean
 export let notifCenterOpen = writable(false)
