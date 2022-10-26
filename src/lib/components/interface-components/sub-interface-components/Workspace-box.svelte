@@ -154,6 +154,10 @@
   on:contextmenu|preventDefault={handleRightClick}
   on:click={e => {
     if(hovering) return
+    activeWorkspace.set(workspace)
+    allBoards.set(workspace.boards)
+    selectedWorkspace.set(workspace)
+    oldFavoriteStatus.set(workspace.isFavorite)
     currentInterface.set('Dashboard')
     currentDashboardSubInterface.set('Boards')
     currentIndex.set(0)
@@ -167,15 +171,8 @@
       })
       return true
     })
-    activeWorkspace.set(workspace)
-    allBoards.set(workspace.boards)
-    selectedWorkspace.set(workspace)
-    oldFavoriteStatus.set(workspace.isFavorite)
     modalChosenColor.set(workspace.color)
-    currentDashboardSubInterface.set("Boards")
-    $breadCrumbsItems.length == 1 ? $breadCrumbsItems = [{text: $activeSubject.name}] : null
-    $breadCrumbsItems = [...$breadCrumbsItems, {text: $activeWorkspace.name}]
-    $breadCrumbsItems = [...$breadCrumbsItems, {text: 'Boards'}]
+    $breadCrumbsItems = [...$breadCrumbsItems, {text: $activeWorkspace.name, href: '2'}, {text: 'boards', href: '3'}]
   }}
   on:mouseenter={e => mouseEnter = true }
   on:mouseleave={e => mouseEnter = false }
