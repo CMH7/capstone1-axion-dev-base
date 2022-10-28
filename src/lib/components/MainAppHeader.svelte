@@ -52,12 +52,6 @@
       <!-- Expansion-er -->
       <div class="is-flex-grow-1"/>
 
-      <div class="is-clickable" on:click={ () => {
-        goto('/experiment/profilePictureUpload' , {replaceState: true})
-      }}>
-        <Icon path={mdiBolt} />
-      </div>
-
       <!-- invitations inbox -->
       {#if $userData.verified}
       <div
