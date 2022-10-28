@@ -7,12 +7,19 @@
   import { isLoggedIn, transitionActive, snack, userData, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, breadCrumbsItems, activeBoard, activeTask, modalChosenColor, isProcessing } from "$lib/stores/global-store"
   import constants from '$lib/config/constants';
   import ReSendEmailVerifcation from '$lib/components/modals/my profile/re-send-email-verifcation.svelte';
+	import EditBasic from '$lib/components/modals/my profile/edits/edit-basic.svelte';
+	import { editBasic } from '$lib/stores/myProfile';
+	import UploadPic from '$lib/components/modals/my profile/edits/uploadPic.svelte';
  
   let resendEmail = false
   let status = true
   let outerWidth = 0
   let switchOn = true
   let comingSoonModalOpen = false
+  let workspaceCount = 0
+  let boardsCount = 0
+  let taskCounts = 0
+
   const openComingSoon = () => {
     if (!comingSoonModalOpen) {
       comingSoonModalOpen = true
@@ -22,9 +29,7 @@
     }
   }
 
-  let workspaceCount = 0
-  let boardsCount = 0
-  let taskCounts = 0
+  
   $userData.subjects.forEach(subject => {
     workspaceCount += subject.workspaces.length
     if(workspaceCount != 0) {
@@ -65,6 +70,8 @@
 <svelte:window bind:outerWidth />
 
 <ReSendEmailVerifcation active={resendEmail} {status} />
+<EditBasic />
+<UploadPic />
 
 <div in:fade class="hero is-fullheight-with-navbar">
   <div class="hero-head p-5 columns is-multiline">
@@ -128,8 +135,10 @@
                   </div>
 
                   <!-- Edit button -->
-                  <div class="pos-abs pos-t-0 pos-r-0">
-                    <Button on:click={openComingSoon} depressed size='small' class='inter-reg has-background-grey-lighter'>
+                  <div 
+                    on:click={e => editBasic.set(true)}
+                    class="pos-abs pos-t-0 pos-r-0">
+                    <Button depressed size='small' class='inter-reg has-background-grey-lighter'>
                       Edit
                     </Button>
                   </div>
