@@ -7,7 +7,7 @@
   import HomeHeader from "$lib/components/Home-header.svelte"
   import {fade} from 'svelte/transition'
   import bcrypt from 'bcryptjs'
-  import {userData, useHint, notifs, isLoggedIn} from '$lib/stores/global-store'
+  import {userData, useHint, notifs, isLoggedIn, currentInterface, currentIndex, currentDashboardSubInterface, activeSubject, activeBoard, activeWorkspace, activeTask, selectedBoard, selectedSubjectForSubjectSettings, selectedWorkspace, allBoards, breadCrumbsItems} from '$lib/stores/global-store'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import constants from '$lib/config/constants'
   import ComingSoonModal from "$lib/components/modals/ComingSoonModal.svelte"
@@ -207,29 +207,41 @@
             notifs.set([])
             userData.set(user)
             useHint.set($userData.useHint)
-            let notifsCopy = $notifs
-            notifsCopy.push({
+            $notifs = [...$notifs, {
               msg: "Log in Successful",
               type: "success",
               id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-            })
-            notifs.set(notifsCopy)
+            }]
             isLoggedIn.set(true)
             console.log(`logged in: ${$isLoggedIn}`)
             localStorage.setItem('email', user.email)
+            sessionStorage.setItem('currentInterface', `${$currentInterface}`)
+            sessionStorage.setItem('currentSubInterface', JSON.stringify($currentDashboardSubInterface))
+            sessionStorage.setItem('currentIndex', `${$currentIndex}`)
+            sessionStorage.setItem('activeSubject', JSON.stringify($activeSubject))
+            sessionStorage.setItem('selectedSubject', JSON.stringify($selectedSubjectForSubjectSettings))
+            sessionStorage.setItem('activeWorkspace', JSON.stringify($activeWorkspace))
+            sessionStorage.setItem('allBoards', JSON.stringify($allBoards))
+            sessionStorage.setItem('selectedWorkspace', JSON.stringify($selectedWorkspace))
+            sessionStorage.setItem('activeTask', JSON.stringify($activeTask))
+            sessionStorage.setItem('activeBoard', `${$activeBoard}`)
+            sessionStorage.setItem('breadCrumbsItems', JSON.stringify($breadCrumbsItems))
+            sessionStorage.setItem('selectedBoard', JSON.stringify($selectedBoard))
+            sessionStorage.setItem('taskViewModalActive', 'false')
+            sessionStorage.setItem('subjectSettings', 'false')
+            sessionStorage.setItem('workspaceSettings', 'false')
+            sessionStorage.setItem('boardSettings', 'false')
             goto('/MainApp', {replaceState: true})
             emailInput = ""
             passwordInput = ""
           })
           .catch(err => {
             failed = true
-            let notifsCopy = $notifs
-            notifsCopy.push({
+            $notifs = [...$notifs, {
               msg: `Error logging in. ${err}`,
               type: 'error',
               id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-            })
-            notifs.set(notifsCopy)
+            }]
 
             emailInput = ""
             passwordInput = ""
@@ -238,25 +250,21 @@
           })
         }else{
           failed = true
-          let notifsCopy = $notifs
-          notifsCopy.push({
+          $notifs = [...$notifs, {
             msg: "Wrong email or password. Please try again.",
             type: 'error',
             id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-          })
-          notifs.set(notifsCopy)
+          }]
           loading = false
           disabled = false
         }
       }else{
         failed = true
-        let notifsCopy = $notifs
-        notifsCopy.push({
+        $notifs = [...$notifs, {
           msg: "No account found.",
           type: "error",
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        })
-        notifs.set(notifsCopy)
+        }]
         loading = false
         disabled = false
       }
