@@ -778,7 +778,7 @@
                 <div class="fredoka-reg is-size-7 opacity-60p">
                   Created by
                 </div>
-                <Avatar size='17px' class='has-background-link mx-1 is-flex is-justify-content-center is-align-items-center'>
+                <Avatar class='maxmins-w-20 maxmins-h-20 has-background-link mx-2 is-flex is-justify-content-center is-align-items-center'>
                   <div class="fredoka-reg has-text-weight-bold has-text-white txt-size-7 is-flex is-justify-content-center is-align-items-center">
                     {#if !$activeTask.createdBy}
                     O
@@ -797,7 +797,7 @@
                         {#if !member.profile}
                           {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
                         {:else}
-                          <img src={member.profile} alt={`${member.name}`}>
+                          <img style='object-fit: cover' class="maxmins-w-20 maxmins-h-20" src={member.profile} alt={`${member.name}`}>
                         {/if}
                       {/if}
                     {/each}
