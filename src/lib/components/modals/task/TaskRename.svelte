@@ -1,7 +1,7 @@
 <script>
   //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
-  import { notifs, userData, activeSubject, activeWorkspace, activeBoard, isProcessing, activeTask, taskViewModalActive, allBoards } from '$lib/stores/global-store'
+  import { notifs, userData, activeSubject, activeWorkspace, activeBoard, isProcessing, activeTask, taskViewModalActive } from '$lib/stores/global-store'
   import { taskRenameActiveModal, taskName } from '$lib/stores/taskStore'
   import bcrypt from 'bcryptjs'
   import constants from '$lib/config/constants'
@@ -56,13 +56,10 @@
                 }
                 return true
               })
-              activeWorkspace.set(workspace)
-              $allBoards = workspace.boards
               return false
             }
             return true
           })
-          activeSubject.set(subject)
           return false
         }
         return true
