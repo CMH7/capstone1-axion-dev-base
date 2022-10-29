@@ -194,7 +194,7 @@
       const { password } = await res.json()
       if(password) {
         if(bcrypt.compareSync(passwordInput, password)){
-          await fetch(`${backURI}/validUser`, {
+          fetch(`${backURI}/validUser`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -215,6 +215,7 @@
             isLoggedIn.set(true)
             console.log(`logged in: ${$isLoggedIn}`)
             localStorage.setItem('email', user.email)
+            sessionStorage.setItem('email', `${user.email}`)
             sessionStorage.setItem('currentInterface', `${$currentInterface}`)
             sessionStorage.setItem('currentSubInterface', JSON.stringify($currentDashboardSubInterface))
             sessionStorage.setItem('currentIndex', `${$currentIndex}`)

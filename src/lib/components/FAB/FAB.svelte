@@ -6,7 +6,7 @@
   import { scale } from 'svelte/transition'
   import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
-	import { leaveWorkspaceActiveModal } from '$lib/stores/workspace';
+	import { leaveWorkspaceActiveModal, viewMembersModalActive, viewMembersLoading } from '$lib/stores/workspace';
 
   let width = 0
   let active = false
@@ -25,15 +25,69 @@
       allUsers.set(data)
       memberModalLoading.set(false)
     } else {
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: `Getting all verified users failed, ${res.statusText}`,
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
       memberModalLoading.set(false)
     }
+  }
+
+  const viewMembersNow = e => {
+    viewMembersLoading.set(true)
+    viewMembersModalActive.set(true)
+
+    let membersID = $activeWorkspace.members.map(member => {
+      return member.id
+    })
+
+    fetch(`${constants.backURI}/MainApp/subject/workspace/member/updates`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: {
+          user: $userData.id,
+          subject: $activeSubject.id,
+          workspace: $activeWorkspace.id,
+          members: membersID
+        }
+      })
+    }).then(async res => {
+      const { members } = await res.json()
+      let userDataCopy = $userData
+      userDataCopy.subjects.every(subject => {
+        if(subject.id === $activeSubject.id) {
+          subject.workspaces.every(workspace => {
+            if(workspace.id === $activeWorkspace.id) {
+              workspace.members = members
+              activeWorkspace.set(workspace)
+              return false
+            }
+            return true
+          })
+          activeSubject.set(subject)
+          return false
+        }
+        return true
+      })
+      userData.set(userDataCopy)
+      $notifs = [...$notifs, {
+        msg: 'Finished loading workspace members',
+        type: 'success',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      viewMembersLoading.set(false)
+    }).catch(err => {
+      $notifs = [...$notifs, {
+        msg: `Error loading workspace members, ${err}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      viewMembersLoading.set(false)
+    })
   }
 </script>
 
@@ -86,18 +140,30 @@
                 Add board
               </ListItem>
             </div>
+          {/if}
 
-            <div on:click={e => manageAdminModalActive.set(true)}>
-              <ListItem>
-                Manage admins
-              </ListItem>
-            </div>
+          <div on:click={viewMembersNow}>
+            <ListItem>
+              View members
+            </ListItem>
+          </div>
 
+          
+          {#if $activeSubject.owned || $activeWorkspace.admins.filter(admin => admin.id === $userData.id).length != 0}
             <div on:click={getAllUsers}>
               <ListItem>
                 Manage members
               </ListItem>
             </div>
+
+            {#if $activeWorkspace.members.filter(member => member.id !== $userData.id).length != 0}
+              <div on:click={e => manageAdminModalActive.set(true)}>
+                <ListItem>
+                  Manage admins
+                </ListItem>
+              </div>
+            {/if}
+            
           {/if}
         {/if}
         <div on:click={e => workspaceSettingsModalActive.set(true)}>

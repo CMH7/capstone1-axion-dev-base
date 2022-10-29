@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app"
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage"
-import { userData, notifs } from "$lib/stores/global-store"
+import { userData, notifs, isProcessing } from "$lib/stores/global-store"
+import { dpChange } from "$lib/stores/myProfile"
 import { get } from "svelte/store"
 import constants from "$lib/config/constants"
 
@@ -19,8 +20,8 @@ const storage = getStorage(app)
 
 export default {
   uploadPic: (userName, file, fileName, /** @type {import("@firebase/storage").UploadMetadata} */ meta) => {
+    isProcessing.set(true)
     const userRef = ref(storage, `${userName}/${fileName}`)
-
     const ups = uploadString(userRef, file, 'data_url', meta)
 
     ups.then(snapshot => {
@@ -52,9 +53,11 @@ export default {
             id: notifsCopy.length + 1
           })
           notifs.set(notifsCopy)
+          dpChange.set(true)
+          isProcessing.set(false)
           return false
         }
-
+        isProcessing.set(false)
         console.log('An error occured')
       })
     })

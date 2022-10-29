@@ -98,13 +98,13 @@
                   <div class="column p-0 is-2-tablet is-12-mobile">
                     <div class="min-h-100p is-flex is-justify-content-center is-align-items-center">
                       {#if $userData.profile}
-                      <Avatar size='130px'>
-                        <img src="{$userData.profile}" alt="">
-                      </Avatar>
+                      <div class="maxmins-w-150 maxmins-h-150 is-flex is-justify-content-center is-align-items-center rounded-circle border-color-yaz-grey-dark border-w-1 border-type-solid">
+                        <img style="object-fit: cover;" class="maxmins-w-150 maxmins-h-150 rounded-circle" src="{$userData.profile}" alt="">
+                      </div>
                       {:else}
-                      <Avatar size='130px'>
-                        <Icon class='white blue-text' path={mdiAccountCircleOutline} />
-                      </Avatar>
+                      <div class="maxmins-w-150 maxmins-h-150 is-flex is-justify-content-center is-align-items-center rounded-circle border-color-yaz-grey-dark border-w-1 border-type-solid">
+                        <Icon size='150px' class='white blue-text' path={mdiAccountCircleOutline} />
+                      </div>
                       {/if}
                     </div>
                   </div>
@@ -421,7 +421,6 @@
           msg: "You will be logged out. Do you want to continue?",
           active: true,
           yes: () => {
-            localStorage.removeItem('email')
             userData.set(constants.user)
             isLoggedIn.set(false)
             currentInterface.set('Dashboard')
