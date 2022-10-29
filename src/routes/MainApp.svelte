@@ -27,16 +27,16 @@
     history.back()
     history.forward()
 
-    if(!$isLoggedIn && !localStorage.getItem('email')) {
+    if(!$isLoggedIn && !sessionStorage.getItem('email')) {
       $notifs = [...$notifs, {
         msg: "Please Sign in first.",
         type: 'error',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
       goto('/Signin', {replaceState: true})
-    } else if($isLoggedIn && !localStorage.getItem('email')) {
+    } else if($isLoggedIn && !sessionStorage.getItem('email')) {
       localStorage.setItem("email", $userData.email)
-    } else if(!$isLoggedIn && localStorage.getItem('email')) {
+    } else if(!$isLoggedIn && sessionStorage.getItem('email')) {
       const email = localStorage.getItem('email')
       fetch(`${constants.backURI}/validUser`, {
         method: 'POST',
@@ -77,11 +77,6 @@
         goto('/Signin')
       })
     }
-  })
-
-  onDestroy(() => {
-    $pusher.disconnect()
-    console.log('pusher instance disconnected');
   })
 
   function popStateFn() {
@@ -134,6 +129,8 @@
     sessionStorage.setItem('subjectSettings', `${$subjectSettingsModalActive}`)
     sessionStorage.setItem('workspaceSettings', `${$workspaceSettingsModalActive}`)
     sessionStorage.setItem('boardSettings', `${$boardSettingsModalActive}`)
+    $pusher.disconnect()
+    console.log('pusher instance disconnected');
   }
 
   let width = 0
