@@ -433,6 +433,7 @@
             activeTask.set(constants.task)
             modalChosenColor.set('primary')
             isProcessing.set(false)
+            sessionStorage.clear()
             goto('/Signin')
           }
         })
