@@ -172,7 +172,7 @@
       return true
     })
     modalChosenColor.set(workspace.color)
-    $breadCrumbsItems = [...$breadCrumbsItems, {text: $activeWorkspace.name, href: '2'}, {text: 'boards', href: '3'}]
+    $breadCrumbsItems = [{text: $activeSubject.name, href: '1'}, {text: $activeWorkspace.name, href: '2'}, {text: 'boards', href: '3'}]
   }}
   on:mouseenter={e => mouseEnter = true }
   on:mouseleave={e => mouseEnter = false }
