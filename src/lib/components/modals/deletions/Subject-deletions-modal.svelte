@@ -1,7 +1,7 @@
 <script>
   //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
-  import { subjectDeletionModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, userData, notifs, currentInterface, currentDashboardSubInterface, breadCrumbsItems, isProcessing, activeSubject,  } from '$lib/stores/global-store'
+  import { subjectDeletionModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, userData, notifs, currentDashboardSubInterface, breadCrumbsItems, isProcessing, activeSubject  } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
   import constants from '$lib/config/constants'
   import { Pulse } from 'svelte-loading-spinners'
@@ -46,8 +46,8 @@
         
     }).catch(err => {
       $notifs = [...$notifs, {
-        msg: `Error in deleting subject, ${err}`,
-        type: 'error',
+        msg: `Error in deleting subject, ${err}.`,
+        type: 'stayError',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
       isProcessing.set(false)

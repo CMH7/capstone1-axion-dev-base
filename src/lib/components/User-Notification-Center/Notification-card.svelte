@@ -3,7 +3,7 @@
   import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, invModalActive, notifCenterOpen, isProcessing, isLoggedIn } from '$lib/stores/global-store'
   import constants from '$lib/config/constants'
   import { Avatar, Icon } from 'svelte-materialify'
-  import { mdiAccountCircleOutline, mdiAccountOutline, mdiClose } from '@mdi/js'
+  import { mdiAccountCircleOutline, mdiClose } from '@mdi/js'
 	import { onMount } from 'svelte';
 	import { userNProfile } from '$lib/stores/user-notification-store'
   import bcrypt from 'bcryptjs';

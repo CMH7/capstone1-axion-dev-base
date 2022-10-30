@@ -1,8 +1,8 @@
 <script>
   // @ts-nocheck
   import { NavigationDrawer, List, ListItem, Icon, MaterialApp, ListItemGroup, Divider, Avatar } from 'svelte-materialify';
-  import { mdiViewDashboard, mdiAccountCheck, mdiStar, mdiCalendar, mdiAccount, mdiLogout } from '@mdi/js';
-  import { userData, snack, isLoggedIn, activeBoard, activeSubject, activeWorkspace, breadCrumbsItems, currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive, allBoards, active, activeTask } from '$lib/stores/global-store';
+  import { mdiViewDashboard, mdiAccountCheck, mdiStar, mdiAccount } from '@mdi/js';
+  import { userData, breadCrumbsItems, currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive, activeTask } from '$lib/stores/global-store';
 	import constants from '$lib/config/constants';
 
   const navs = [
@@ -29,7 +29,7 @@
             <Divider class="is-hidden-desktop p-0 m-0 my-1" />
           {/if}
           <ListItem
-            active={$currentInterface === navItem.name}
+            active={$currentIndex == navItem.index}
             class="{navItem.name === "My Profile"?"is-hidden-desktop":""} is-clickable"
             disabled={$currentInterface === navItem.name}
             on:click={
