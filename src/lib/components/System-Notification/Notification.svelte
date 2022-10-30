@@ -12,15 +12,22 @@
     $notifs = $notifs.filter(notif => notif.id !== notif.id)
   }
   
-  setTimeout(() => {
-    $notifs = $notifs.filter(notif => notif.id !== notif.id)
-  }, 5000)
+  if(notif.type !== 'stayError') {
+    setTimeout(() => {
+      $notifs = $notifs.filter(notif => notif.id !== notif.id)
+    }, 5000)
+  }
 
 </script>
 
-<div out:fade class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{notif.type === "success"? "success": notif.type === 'error' ? 'danger': 'warning'} is-light">
-  <div
-    on:click={remove}
-    class="delete"></div>
-  {notif.msg}
+<div out:fade class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{notif.type === "success"? "success": notif.type === 'error' || notif.type === 'stayError' ? 'danger': 'warning'} is-light">
+  <div on:click={remove} class="delete" />
+  <div class="is-flex is-flex-direction-column">
+    {notif.msg} {#if notif.type === 'stayError'} {' Help the developers solve it by reporting it to the following link:'} {/if}
+    {#if notif.type === 'stayError'}
+    <span class="button is-success mt-3">
+      <a href="https://height.app/sWtP0Ak7Nr/?taskForm=Axion-Bug-and-Recommendation-form-vAjPyLmwfwBl" target="_blank" rel="noopener noreferrer">Axion developers support</a>
+    </span>
+    {/if}
+  </div>
 </div>
