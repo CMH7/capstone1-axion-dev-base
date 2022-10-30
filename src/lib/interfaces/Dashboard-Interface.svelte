@@ -1,7 +1,6 @@
 <script>
   // @ts-nocheck
   // @ts-ignore
-  import { onMount } from 'svelte'
 	import { Breadcrumbs, Icon } from 'svelte-materialify'
   import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"

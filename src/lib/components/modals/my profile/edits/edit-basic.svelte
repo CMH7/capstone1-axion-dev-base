@@ -2,7 +2,7 @@
   //@ts-nocheck
 	import { editBasic, uploadPicModalActive } from '$lib/stores/myProfile';
   import { isProcessing, userData, notifs } from '$lib/stores/global-store';
-  import { mdiClose, mdiImageEditOutline, mdiPencil, mdiRedoVariant } from '@mdi/js';
+  import { mdiClose, mdiImageEditOutline, mdiPencil } from '@mdi/js';
   import { Dialog, Button, Icon, TextField, MaterialApp, Textarea } from 'svelte-materialify'
 	import validators from '$lib/config/validators';
 	import constants from '$lib/config/constants';
@@ -89,8 +89,8 @@
       isProcessing.set(false)
     }).catch(err => {
       $notifs = [...$notifs, {
-        msg: 'Information saving failed',
-        type: 'error',
+        msg: 'Information saving failed.',
+        type: 'stayError',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
       isProcessing.set(false)

@@ -1,11 +1,12 @@
 <script>
   //@ts-nocheck
-  import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, invModalActive, notifCenterOpen, isProcessing } from '$lib/stores/global-store'
+  import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, invModalActive, notifCenterOpen, isProcessing, isLoggedIn } from '$lib/stores/global-store'
   import constants from '$lib/config/constants'
   import { Avatar, Icon } from 'svelte-materialify'
-  import { mdiAccountCircleOutline, mdiAccountOutline, mdiClose } from '@mdi/js'
+  import { mdiAccountCircleOutline, mdiClose } from '@mdi/js'
 	import { onMount } from 'svelte';
-	import { userNProfile } from '$lib/stores/user-notification-store';
+	import { userNProfile } from '$lib/stores/user-notification-store'
+  import bcrypt from 'bcryptjs';
 
   export let notification = {
     id: '',
@@ -28,7 +29,7 @@
   let profileb = ''
 
   onMount(() => {
-    if($userNProfile.filter(obj => obj.id === notification.for.userID).length == 0) {
+    if($userNProfile.filter(obj => obj.id === notification.for.userID).length == 0 && $isLoggedIn) {
       fetch(`${constants.backURI}/profile?id=${notification.for.userID}`).then(async res => {
         const { profile } = await res.json()
         $userNProfile = [...$userNProfile, {id: notification.for.userID, profile: profile}]

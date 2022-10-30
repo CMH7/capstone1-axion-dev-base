@@ -7,11 +7,10 @@
   import MainAppDrawerSidebar from "$lib/components/MainAppDrawer-sidebar.svelte"
   import Overlay from "$lib/components/Overlay.svelte"
   import DashboardInterface from "$lib/interfaces/Dashboard-Interface.svelte"
-  import { pusher, breadCrumbsItems, currentInterface, ismini, sidebarActive, snack, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing, currentIndex, taskViewModalActive, subjectSettingsModalActive, workspaceSettingsModalActive, boardSettingsModalActive } from "$lib/stores/global-store"
+  import { pusher, breadCrumbsItems, currentInterface, ismini, sidebarActive, notifs, isLoggedIn, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, userData, activeBoard, selectedSubjectForSubjectSettings, selectedWorkspace, selectedBoard, selectedInvitation, activeTask, isProcessing, currentIndex, taskViewModalActive, subjectSettingsModalActive, workspaceSettingsModalActive, boardSettingsModalActive } from "$lib/stores/global-store"
   import AssignedToMeInterface from "$lib/interfaces/Assigned-to-me-interface.svelte"
   import FavoritesInterface from "$lib/interfaces/Favorites-interface.svelte"
   import MyProfileInterface from "$lib/interfaces/My-profile-interface.svelte"
-  import { Button, Snackbar, ClickOutside } from 'svelte-materialify'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
   import { goto } from '$app/navigation'
   import constants from '$lib/config/constants'
@@ -21,6 +20,7 @@
 	import CancelInvitation from '$lib/components/modals/invitations/Cancel-invitation.svelte'
   import channels from '$lib/config/channels'
   import TaskRename from '$lib/components/modals/task/TaskRename.svelte'
+	import LogoutConfirmation from '$lib/components/modals/my profile/logout-confirmation.svelte';
 
   onMount(async ()=>{
     history.pushState(null, document.title, location.href);
@@ -152,34 +152,8 @@
 <CancelInvitation/>
 <Invitations />
 <TaskRename />
+<LogoutConfirmation />
 
-<!-- Snackbar -->
-<Snackbar class="flex-column" active={$snack.active} absolute bottom center>
-  <div
-    use:ClickOutside
-    on:clickOutside={
-      () => {
-        snack.update(
-          n => 
-            n = {
-              msg: n.msg,
-              active: false,
-              yes: n.yes
-            }
-        )
-      }
-    }
-  />
-  {$snack.msg}
-  <div class="is-flex mt-1">
-    <div on:click={$snack.yes}>
-      <Button text class="success-text">Yes</Button>
-    </div>
-    <div on:click={$snack.no}>
-      <Button text class="red-text">No</Button>
-    </div>
-  </div>
-</Snackbar>
 <div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 570 && $ismini ? "pl-16" : ""}`:""}">
   {#if $currentInterface === "Dashboard"}
     <DashboardInterface />

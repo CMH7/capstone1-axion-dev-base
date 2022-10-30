@@ -87,13 +87,11 @@
       }]
     }).catch(err => {
       isProcessing.set(false)
-      
       $notifs = [...$notifs, {
-        msg: `Error in accepting invitation, ${err}`,
-        type: 'success',
+        msg: `Error in accepting invitation, ${err}.`,
+        type: 'stayError',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
-      console.error(err)
     })
   }
 
@@ -127,11 +125,10 @@
       isProcessing.set(false)
     }).catch(err => {
       $notifs = [...$notifs, {
-        msg: `Error in rejecting invitation, ${err}`,
-        type: 'error',
+        msg: `Error in rejecting invitation, ${err}.`,
+        type: 'stayError',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
-      console.error(err)
       isProcessing.set(false)
     })
   }
@@ -171,11 +168,10 @@
     }).catch(err => {
       isProcessing.set(false)
       $notifs = [...$notifs, {
-        msg: 'Error in Invitation removed',
-        type: 'error',
+        msg: `Error in Invitation removed, ${err}.`,
+        type: 'stayError',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
-      console.error(err)
     })
   }
 

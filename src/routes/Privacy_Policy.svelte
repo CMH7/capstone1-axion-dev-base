@@ -4,7 +4,7 @@
       import HomeFooter from "$lib/components/Home-footer.svelte";
       import HomeHeader from "$lib/components/Home-header.svelte";
       import { mdiCircleSmall } from '@mdi/js';
-      import {  Icon, ExpansionPanels, MaterialApp } from "svelte-materialify";
+      import { Icon } from "svelte-materialify";
       import { fade } from 'svelte/transition';
     
       let value = 0;
