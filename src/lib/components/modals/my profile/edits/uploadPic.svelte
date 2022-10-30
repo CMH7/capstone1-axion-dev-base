@@ -1,9 +1,9 @@
 <script>
   //@ts-nocheck
-  import { Dialog, Button, Icon } from 'svelte-materialify'
+  import { Dialog, Icon } from 'svelte-materialify'
   import { dpChange, editBasic, uploadPicModalActive } from '$lib/stores/myProfile'
   import { isProcessing, userData } from '$lib/stores/global-store';
-	import { mdiClose } from '@mdi/js';
+	import { mdiClose, mdiUpload } from '@mdi/js';
   import uploadPics from '$lib/config/uploadPics'
   import { Pulse } from 'svelte-loading-spinners'
 
@@ -58,10 +58,24 @@
         <span class="tag is-warning has-text-weight-semibold mb-6">Note</span> Uploading the picture will automatically change your profile picture.
       </div>
       {#if !$isProcessing}
-        <input type="file" bind:files on:change={handleUpload}>
+        <label for="inputpro" class="is-clickable px-3 py-2 rounded has-background-grey-lighter custom-file-upload">
+          <div class="is-flex">
+            <Icon path={mdiUpload} />
+            <div class="ml-3">
+              Upload new profile picture
+            </div>
+          </div>
+        </label>
+        <input type="file" id='inputpro' hidden bind:files on:change={handleUpload}>
       {:else}
         <Pulse size={20} color='#191a48' />
       {/if}
     {/if}
   </div>
 </Dialog>
+
+<style>
+  .custom-file-upload {
+    display: inline-block;
+  }
+</style>
