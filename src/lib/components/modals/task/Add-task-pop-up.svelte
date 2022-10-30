@@ -140,8 +140,8 @@
          })
          .catch(err => {
              $notifs = [...$notifs, {
-                 msg: `Create task error, ${err}`,
-                 type: 'error',
+                 msg: `Create task error, ${err}.`,
+                 type: 'stayError',
                  id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
              }]
              loading = false
