@@ -31,23 +31,18 @@
       selectedInvitation.set(constants.invitation)
       cancelInvModalActive.set(false)
       
-      let notifsCopy = $notifs
-      notifsCopy.push({
+      $notifs = [...$notifs, {
         msg: 'Invitation canceled',
         type: 'success',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     }).catch(err => {
-      console.log(err)
       isProcessing.set(false)
-      let notifsCopy = $notifs
-      notifsCopy.push({
-        msg: `Error in invitation canceling, ${err}`,
-        type: 'error',
+      $notifs = [...$notifs, {
+        msg: `Error in invitation canceling, ${err}.`,
+        type: 'stayError',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      })
-      notifs.set(notifsCopy)
+      }]
     })
   }
 </script>

@@ -42,7 +42,6 @@
               })
             }).then(async res => {
               const { id } = await res.json()
-              isProcessing.set(false)
               let userDataCopy = $userData
               userDataCopy.subjects.every(subject => {
                 if(subject.id === $activeSubject.id) {
@@ -69,14 +68,14 @@
                })
                notifs.set(notifsCopy)
                selectedBoard.set(constants.board)
+               isProcessing.set(false)
             }).catch(err => {
-             let notifsCopy = $notifs
-              notifsCopy.push({
-                msg: `Error in deleting board, ${err}`,
-                type: 'error',
+             $notifs = [...$notifs, {
+                msg: `Error in deleting board, ${err}.`,
+                type: 'stayError',
                 id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-              })
-              notifs.set(notifsCopy)
+              }]
+              isProcessing.set(false)
             })
           }}
         >
