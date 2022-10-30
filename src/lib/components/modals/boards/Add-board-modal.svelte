@@ -2,7 +2,7 @@
     // @ts-nocheck
     import { onDestroy } from 'svelte'
     import { Dialog, Button } from 'svelte-materialify'
-    import { notifs, addBoardModalActive, modalChosenColor, activeSubject, activeWorkspace, currentInterface, allBoards, isProcessing } from '$lib/stores/global-store'
+    import { notifs, addBoardModalActive, modalChosenColor, activeSubject, activeWorkspace, allBoards, isProcessing } from '$lib/stores/global-store'
     import constants from '$lib/config/constants'
     import bcrypt from 'bcryptjs'
     import { userData } from '$lib/stores/global-store'

@@ -1,1 +1,0 @@
-<a href="/experiment/profilePictureUpload">Profile picture experiment</a>

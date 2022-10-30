@@ -1,5 +1,5 @@
 <script>
-  import { activeWorkspace, taskBoardFilter, currentDashboardSubInterface, userData, activeSubject } from '$lib/stores/global-store'
+  import { activeWorkspace, taskBoardFilter, currentDashboardSubInterface } from '$lib/stores/global-store'
   import TaskViewModal from '$lib/components/modals/task/Task-view-modal.svelte'
   import MemberModal from '$lib/components/interface-components/Member-Modal.svelte'
   import Boards from '$lib/components/interface-components/sub-interface-components/Boards.svelte'

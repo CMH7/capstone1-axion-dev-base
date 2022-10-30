@@ -1,20 +1,17 @@
 <script>
   //@ts-nocheck
-  import { Dialog, Button, Icon } from 'svelte-materialify'
-  import { editBasic, uploadPicModalActive } from '$lib/stores/myProfile'
-  import { userData } from '$lib/stores/global-store';
-	import { mdiClose } from '@mdi/js';
+  import { Dialog, Icon } from 'svelte-materialify'
+  import { dpChange, editBasic, uploadPicModalActive } from '$lib/stores/myProfile'
+  import { isProcessing, userData } from '$lib/stores/global-store';
+	import { mdiClose, mdiUpload } from '@mdi/js';
   import uploadPics from '$lib/config/uploadPics'
+  import { Pulse } from 'svelte-loading-spinners'
 
   let files
-  let profilePic = ""
-
-  userData.subscribe(user => profilePic = user.profile)
-
   const close = e => {
     uploadPicModalActive.set(false)
     editBasic.set(true)
-    profilePic = ""
+    dpChange.set(false)
   }
 
   const handleUpload = async () => {
@@ -36,7 +33,7 @@
   <div class="is-flex is-justify-content-space-between is-align-items-center maxmins-w-100p">
     <!-- title -->
     <div class="inter-reg txt-size-20 has-text-weight-bold">
-      upload new profile
+      Upload new profile
     </div>
 
     <!-- close button -->
@@ -50,7 +47,7 @@
 
   <!-- container -->
   <div class="mt-3 maxmins-w-100p">
-    {#if profilePic !== ''}
+    {#if $dpChange}
       <!-- note -->
       <div class="txt-size-12 is-italic">
         <span class="tag is-success has-text-weight-semibold mb-6">Success</span> Profile updated.
@@ -60,7 +57,25 @@
       <div class="txt-size-12 is-italic">
         <span class="tag is-warning has-text-weight-semibold mb-6">Note</span> Uploading the picture will automatically change your profile picture.
       </div>
-      <input type="file" bind:files on:change={handleUpload}>
+      {#if !$isProcessing}
+        <label for="inputpro" class="is-clickable px-3 py-2 rounded has-background-grey-lighter custom-file-upload">
+          <div class="is-flex">
+            <Icon path={mdiUpload} />
+            <div class="ml-3">
+              Upload new profile picture
+            </div>
+          </div>
+        </label>
+        <input type="file" id='inputpro' hidden bind:files on:change={handleUpload}>
+      {:else}
+        <Pulse size={20} color='#191a48' />
+      {/if}
     {/if}
   </div>
 </Dialog>
+
+<style>
+  .custom-file-upload {
+    display: inline-block;
+  }
+</style>

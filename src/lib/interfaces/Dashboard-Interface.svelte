@@ -1,7 +1,6 @@
 <script>
   // @ts-nocheck
   // @ts-ignore
-  import { onMount } from 'svelte'
 	import { Breadcrumbs, Icon } from 'svelte-materialify'
   import { currentDashboardSubInterface, allBoards, breadCrumbsItems, activeSubject, activeWorkspace } from "$lib/stores/global-store"
   import SubjectsInterfaces from "$lib/interfaces/sub-interfaces/Subjects-interfaces.svelte"
@@ -16,6 +15,7 @@
 	import WorkspaceSettings from '$lib/components/modals/workspace/Workspace-settings.svelte'
 	import { mdiChevronLeft } from '@mdi/js';
 	import LeaveWorkspace from '$lib/components/modals/workspace/Leave-workspace.svelte';
+  import ViewMembers from '$lib/components/modals/workspace/viewMembers.svelte'
 
   let width = 0
 
@@ -91,6 +91,7 @@
     <AddBoardModal/>
     <AddTaskPopUp/>
     <LeaveWorkspace/>
+    <ViewMembers />
     {#if $currentDashboardSubInterface === "Subjects"}
       <SubjectsInterfaces />
     {:else if $currentDashboardSubInterface === "Workspaces"}

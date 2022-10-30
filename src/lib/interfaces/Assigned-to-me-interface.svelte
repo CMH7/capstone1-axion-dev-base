@@ -5,7 +5,7 @@
   import { userData } from '$lib/stores/global-store'
 	import TaskCard from '$lib/components/interface-components/sub-interface-components/task/Task-card.svelte';
 	import { ExpansionPanel, ExpansionPanels } from 'svelte-materialify';
-	import { mdiArrowUpDropCircle, mdiChevronUp } from '@mdi/js';
+	import { mdiChevronUp } from '@mdi/js';
   import { Icon } from 'svelte-materialify'
 
   let outerWidth

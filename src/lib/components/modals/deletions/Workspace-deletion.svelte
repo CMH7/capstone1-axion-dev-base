@@ -41,18 +41,18 @@
           msg: `${$selectedWorkspace.name} workspace is deleted`,
           type: 'success',
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-        }]
-        selectedWorkspace.set(constants.workspace)
-        if($currentDashboardSubInterface === 'Boards') {
-          $breadCrumbsItems = [{text: $activeSubject.name}]
-          currentDashboardSubInterface.set('Workspaces')
-        }
-        workspaceDeletionModalActive.set(false)
+      }]
+      selectedWorkspace.set(constants.workspace)
+      if($currentDashboardSubInterface === 'Boards') {
+        $breadCrumbsItems = [{text: $activeSubject.name}]
+        currentDashboardSubInterface.set('Workspaces')
+      }
+      workspaceDeletionModalActive.set(false)
     }).catch(err => {
       isProcessing.set(false)
       $notifs = [...$notifs, {
-        msg: `Error in deleting board, ${err}`,
-        type: 'error',
+        msg: `Error in deleting board, ${err}.`,
+        type: 'stayError',
         id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
       }]
     })

@@ -3,9 +3,8 @@
     
       import HomeFooter from "$lib/components/Home-footer.svelte";
       import HomeHeader from "$lib/components/Home-header.svelte";
-      import { mdiCircleSmall } from '@mdi/js';
-      import Button from "$lib/components/Button.svelte";
-      import {  Icon, ExpansionPanels, MaterialApp } from "svelte-materialify";
+      import { mdiCircleSmall } from '@mdi/js'
+      import { Icon } from "svelte-materialify";
       import { fade } from 'svelte/transition';
     
       let value = 0;

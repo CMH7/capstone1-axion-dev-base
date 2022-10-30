@@ -50,16 +50,6 @@ export let notifs = writable([]);
 // Logged in check
 export let isLoggedIn = writable(false);
 
-//Snackbar
-export let snack = writable(
-  {
-    msg: "",
-    active: false,
-    yes: () => { },
-    no: () => { }
-  }
-)
-
 // All users
 export let allUsers = writable([])
 

@@ -3,12 +3,11 @@
   import { fade } from 'svelte/transition'
   import { Avatar, Button, Switch, Icon } from 'svelte-materialify'
   import { mdiAccountCircleOutline, mdiInformationOutline } from '@mdi/js'
-  import { goto } from "$app/navigation" 
-  import { isLoggedIn, transitionActive, snack, userData, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, breadCrumbsItems, activeBoard, activeTask, modalChosenColor, isProcessing } from "$lib/stores/global-store"
+  import { userData } from "$lib/stores/global-store"
   import constants from '$lib/config/constants';
   import ReSendEmailVerifcation from '$lib/components/modals/my profile/re-send-email-verifcation.svelte';
 	import EditBasic from '$lib/components/modals/my profile/edits/edit-basic.svelte';
-	import { editBasic } from '$lib/stores/myProfile';
+	import { editBasic, logoutActiveModal } from '$lib/stores/myProfile';
 	import UploadPic from '$lib/components/modals/my profile/edits/uploadPic.svelte';
  
   let resendEmail = false
@@ -98,13 +97,13 @@
                   <div class="column p-0 is-2-tablet is-12-mobile">
                     <div class="min-h-100p is-flex is-justify-content-center is-align-items-center">
                       {#if $userData.profile}
-                      <Avatar size='130px'>
-                        <img src="{$userData.profile}" alt="">
-                      </Avatar>
+                      <div class="maxmins-w-150 maxmins-h-150 is-flex is-justify-content-center is-align-items-center rounded-circle border-color-yaz-grey-dark border-w-1 border-type-solid">
+                        <img style="object-fit: cover;" class="maxmins-w-150 maxmins-h-150 rounded-circle" src="{$userData.profile}" alt="">
+                      </div>
                       {:else}
-                      <Avatar size='130px'>
-                        <Icon class='white blue-text' path={mdiAccountCircleOutline} />
-                      </Avatar>
+                      <div class="maxmins-w-150 maxmins-h-150 is-flex is-justify-content-center is-align-items-center rounded-circle border-color-yaz-grey-dark border-w-1 border-type-solid">
+                        <Icon size='150px' class='white blue-text' path={mdiAccountCircleOutline} />
+                      </div>
                       {/if}
                     </div>
                   </div>
@@ -414,32 +413,12 @@
     </div>
 
     <div class="column is-12">
-      <div on:click={e => {
-        console.log('snack clicked');
-        
-        snack.set({
-          msg: "You will be logged out. Do you want to continue?",
-          active: true,
-          yes: () => {
-            localStorage.removeItem('email')
-            userData.set(constants.user)
-            isLoggedIn.set(false)
-            currentInterface.set('Dashboard')
-            currentDashboardSubInterface.set('Subjects')
-            activeSubject.set(constants.subject)
-            activeWorkspace.set(constants.workspace)
-            activeBoard.set(constants.board)
-            breadCrumbsItems.set([{text: 'Subjects'}])
-            activeTask.set(constants.task)
-            modalChosenColor.set('primary')
-            isProcessing.set(false)
-            goto('/Signin')
-          }
-        })
-      }}>
-        <Button depressed class='has-background-danger has-text-white is-clickable'>
-          Logout
-        </Button>
+      <div class="is-flex is-justify-content-flex-end pl-{outerWidth < 426 ? '': '16'} pr-{outerWidth < 426 ? '': '16'}">
+        <div on:click={e => logoutActiveModal.set(true)}>
+          <Button depressed class='has-background-danger has-text-white is-clickable'>
+            Logout
+          </Button>
+        </div>
       </div>
     </div>
   </div>
