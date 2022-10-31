@@ -20,7 +20,7 @@
           user: $userData.id,
           subject: $activeSubject.id,
           workspace: $activeWorkspace.id,
-          baord: $activeBoard,
+          board: $activeBoard,
           task: $activeTask.id
         }
       })
