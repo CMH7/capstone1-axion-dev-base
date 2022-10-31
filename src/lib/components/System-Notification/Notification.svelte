@@ -1,6 +1,6 @@
 <script>
   import { notifs } from '$lib/stores/global-store'
-  import { fade } from 'svelte/transition'
+	import { onDestroy, onMount } from 'svelte';
 
   export let notif = {
     msg: '',
@@ -8,19 +8,48 @@
     id: ''
   }
 
+  let timer
+  let timer2
+  let remainingTime = 0
+
   const remove = () => {
-    $notifs = $notifs.filter(notif => notif.id !== notif.id)
-  }
-  
-  if(notif.type !== 'stayError') {
-    setTimeout(() => {
-      $notifs = $notifs.filter(notif => notif.id !== notif.id)
-    }, 5000)
+    $notifs = $notifs.filter(notifa => notifa.id !== notif.id)
   }
 
+  const start = (mlsec) => {
+    remainingTime = mlsec
+    timer2 = setInterval(() => {
+      remainingTime--
+    }, 1)
+    timer = setTimeout(() => {
+      $notifs = $notifs.filter(notifa => notifa.id !== notif.id)
+    }, mlsec)
+  }
+
+  const pause = () => {
+    clearInterval(timer2)
+    clearInterval(timer)
+  }
+
+  onMount(() => {
+    if(notif.type !== 'startError') {
+      start(5000)
+    }
+  })
+
+  onDestroy(() => {
+    clearInterval(timer)
+  })
 </script>
 
-<div out:fade class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{notif.type === "success"? "success": notif.type === 'error' || notif.type === 'stayError' ? 'danger': 'warning'} is-light">
+<div 
+  on:mouseenter={pause}
+  on:touchstart={pause}
+  on:mouseleave={e => start(remainingTime)}
+  on:touchend={e => start(remainingTime)}
+  on:touchmove={remove}
+  on:drag={remove}
+  class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{notif.type === "success"? "success": notif.type === 'error' || notif.type === 'stayError' ? 'danger': 'warning'} is-light">
   <div on:click={remove} class="delete" />
   <div class="is-flex is-flex-direction-column">
     {notif.msg} {#if notif.type === 'stayError'} {' Help the developers solve it by reporting it to the following link:'} {/if}
