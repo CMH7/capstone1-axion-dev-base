@@ -9,6 +9,8 @@
 	import { favorites } from "$lib/stores/favorites";
 	import { taskDeleteModalActive, taskName, taskRenameActiveModal } from "$lib/stores/taskStore";
   import { Pulse } from 'svelte-loading-spinners'
+	import ViewDp from "../viewDP.svelte";
+	import { currentDP, viewDPModalActive } from "$lib/stores/myProfile";
 
   const backURI = constants.backURI
 
@@ -50,11 +52,6 @@
   }
 
   const removeMember = (member) => {
-    $notifs = [...$notifs, {
-      msg: `Removing ${member.name} as assignee to task \'${$activeTask.name}\'`,
-      type: 'wait',
-      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    }]
     isProcessing.set(true)
 
     fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
@@ -116,14 +113,14 @@
       $notifs = [...$notifs, {
         msg: `${member.name} is removed as assignee to task \'${$activeTask.name}\'`,
         type: 'success',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
 
     }).catch(err => {
       $notifs = [...$notifs, {
         msg: `Error in removing assignment of member, ${err}`,
         type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
     }).finally(() => {
       isProcessing.set(false)
@@ -136,7 +133,7 @@
       $notifs = [...$notifs, {
         msg: 'Message cannot be empty',
         type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
       chatInputDisable = false
       return false
@@ -204,7 +201,7 @@
       $notifs = [...$notifs, {
         msg: `Error in sending a chat, ${err}`,
         type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
       chatInputDisable = false
     }).finally(() => {
@@ -221,7 +218,7 @@
           $notifs = [...$notifs, {
             msg: 'Message cannot be empty',
             type: 'error',
-            id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+            id: `${Math.random() * 99}${new Date().getTime()}`
           }]
         }else{
           insertChat()
@@ -243,11 +240,6 @@
 
   function descriptionSave(save) {
     if(save) {
-      $notifs = [...$notifs, {
-        msg: 'Saving description. Please wait...',
-        type: 'wait',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      }]
       isProcessing.set(true)
 
       fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
@@ -303,14 +295,14 @@
         $notifs = [...$notifs, {
           msg: 'Task description updated',
           type: 'success',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          id: `${Math.random() * 99}${new Date().getTime()}`
         }]
         oldDescriptionValue = descriptionValue
       }).catch(err => {
         $notifs = [...$notifs, {
           msg: `Error in updating task description to ${$taskName}, ${err}`,
           type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          id: `${Math.random() * 99}${new Date().getTime()}`
         }]
       }).finally(() => {
         editing = false
@@ -333,21 +325,6 @@
   }
 
   const updateStatus = async boardName => {
-    if($isProcessing) {
-      boardName = $activeTask.status
-      $notifs = [...$notifs, {
-        msg: `Updating task status, please wait...`,
-        type: 'wait',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      }]
-      return
-    }
-    if(boardName === $activeTask.status) return
-    $notifs = [...$notifs, {
-      msg: `Updating task status`,
-      type: 'wait',
-      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    }]
     isProcessing.set(true)
 
     fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
@@ -433,17 +410,15 @@
       $notifs = [...$notifs, {
         msg: `${task.name} is moved to ${boardName}`,
         type: 'success',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
-      isProcessing.set(false)
     }).catch(err => {
       $notifs = [...$notifs, {
         msg: `Error in updating the task status, ${err}`,
         type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
-      isProcessing.set(false)
-    })
+    }).finally(() => isProcessing.set(false))
   }
 
   $: month = parseInt($activeTask.dueDateTime.split('T')[0].split('-')[1])
@@ -458,6 +433,7 @@
               if(task.id === $activeTask.id) {
                 activeSubject.set(subject)
                 activeWorkspace.set(workspace)
+                return false
               }
               return true
             })
@@ -494,7 +470,7 @@
         $notifs = [...$notifs, {
           msg: 'Response received but error in updating task',
           type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          id: `${Math.random() * 99}${new Date().getTime()}`
         }]
         return 
       }
@@ -502,7 +478,7 @@
       $notifs = [...$notifs, {
         msg: `${$activeTask.name} is ${task.isFavorite ? 'marked as': 'removed from'} favorites`,
         type: 'success',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
 
       let userDataCopy = $userData
@@ -563,7 +539,7 @@
       $notifs = [...$notifs, {
         msg: `Error in marking as favorite task, ${err}`,
         type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
       console.error(err)
     })
@@ -574,7 +550,7 @@
       $notifs = [...$notifs, {
         msg: `Task name cannot be empty or same old name`,
         type: 'error',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+        id: `${Math.random() * 99}${new Date().getTime()}`
       }]
       return
     }
@@ -588,16 +564,7 @@
     if(selectedWorkspaceMembers.length == 0) {
       drop = false
     } else {
-      let names = ''
-      selectedWorkspaceMembers.forEach(member => {
-        names += `${member.name} `
-      })
-      $notifs = [...$notifs, {
-        msg: `Assigning ${names} to task \'${$activeTask.name}\'`,
-        type: 'wait',
-        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-      }]
-
+      isProcessing.set(true)
       fetch(`${backURI}/MainApp/dashboard/subject/workspace/board/task/edit`, {
         method: 'PUT',
         headers: {
@@ -656,13 +623,13 @@
         $notifs = [...$notifs, {
           msg: `${names}${selectedWorkspaceMembers.length > 1 ? 'are' : 'is'} now assigned to task \'${$activeTask.name}\'`,
           type: 'success',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          id: `${Math.random() * 99}${new Date().getTime()}`
         }]
       }).catch(err => {
         $notifs = [...$notifs, {
           msg: `Error in updating task assignees, ${err}`,
           type: 'error',
-          id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+          id: `${Math.random() * 99}${new Date().getTime()}`
         }]
       }).finally(() => {
         selectedWorkspaceMembers = []
@@ -794,20 +761,21 @@
                     O
                     {/if}
 
-                    {#if $activeTask.createdBy === `${$userData.firstName} ${$userData.lastName}`}
-                      {#if !$userData.profile}
-                        {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
-                      {:else}
-                        <img src={$userData.profile} alt={`${$userData.lastName}`}>
-                      {/if}
-                    {/if}
-
                     {#each $activeWorkspace.members as member}
                       {#if member.name === $activeTask.createdBy}
                         {#if !member.profile}
                           {$activeTask.createdBy.toUpperCase().split(' ')[0].charAt(0)}{$activeTask.createdBy.toUpperCase().split(' ')[$activeTask.createdBy.toUpperCase().split(' ').length - 1].charAt(0)}
                         {:else}
-                          <img style='object-fit: cover' class="maxmins-w-20 maxmins-h-20" src={member.profile} alt={`${member.name}`}>
+                          <img
+                            on:click={e => {
+                              currentDP.set(member.profile)
+                              viewDPModalActive.set(true)
+                            }}
+                            style='object-fit: cover'
+                            class="maxmins-w-20 maxmins-h-20 is-clickable"
+                            src={member.profile}
+                            alt={`${member.name}`}
+                          >
                         {/if}
                       {/if}
                     {/each}
@@ -1266,15 +1234,22 @@
               <div class="is-flex is-align-items-center">
                 <!-- profile -->
                 {#if !taskAssignee.profile}
-                <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
-                  <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
-                    {taskAssignee.name.toUpperCase().split(' ')[0].charAt(0)}{taskAssignee.name.toUpperCase().split(' ')[taskAssignee.name.toUpperCase().split(' ').length - 1].charAt(0)}
-                  </div>
-                </Avatar>
+                  <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
+                    <div class="has-text-white has-text-weight-semibold txt-size-15 fredoka-reg">
+                      {taskAssignee.name.toUpperCase().split(' ')[0].charAt(0)}{taskAssignee.name.toUpperCase().split(' ')[taskAssignee.name.toUpperCase().split(' ').length - 1].charAt(0)}
+                    </div>
+                  </Avatar>
                 {:else}
-                <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
-                  <img src={taskAssignee.profile} alt="">
-                </Avatar>
+                  <div on:click={e => {
+                      currentDP.set(taskAssignee.profile)
+                      viewDPModalActive.set(true)
+                    }}
+                    class='is-clickable'
+                  >
+                    <Avatar size='{outerWidth < 571 ? '30' : '50'}px' class='has-background-info mr-3 maxmins-w-{outerWidth < 571 ? '30' : '50'}'>
+                      <img src={taskAssignee.profile} alt="">
+                    </Avatar>
+                  </div>
                 {/if}
     
                 <!-- name and email -->
@@ -1336,3 +1311,5 @@
     </Dialog>
   </MaterialApp>
 </div>
+
+<ViewDp />
