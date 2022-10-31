@@ -8,6 +8,8 @@
   import constants from '$lib/config/constants'
   import Skeleton from 'svelte-skeleton/Skeleton.svelte'
   import bcrypt from 'bcryptjs'
+	import { currentDP, viewDPModalActive } from '$lib/stores/myProfile';
+	import ViewDp from '$lib/components/modals/viewDP.svelte';
 
   export let user = {
     isAdded: 0,
@@ -207,6 +209,8 @@
 
 <svelte:window bind:outerWidth />
 
+<ViewDp />
+
 <!-- View User Modal -->
 <Dialog
   persistent
@@ -234,7 +238,15 @@
           <Avatar
             size={100}
           >
-            <img src={profile} alt={firstName} />
+            <img
+              on:click={e => {
+                currentDP.set(profile)
+                viewDPModalActive.set(true)
+              }}
+              src={profile}
+              alt={firstName}
+              class='is-clickable'
+            />
           </Avatar>
         {/if}
       {/if}

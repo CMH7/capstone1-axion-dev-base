@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { notifs } from '$lib/stores/global-store'
 	import { onDestroy, onMount } from 'svelte';
 
@@ -17,6 +18,7 @@
   }
 
   const start = (mlsec) => {
+    if(notif.type === 'stayError') return
     remainingTime = mlsec
     timer2 = setInterval(() => {
       remainingTime--
@@ -32,13 +34,12 @@
   }
 
   onMount(() => {
-    if(notif.type !== 'startError') {
-      start(5000)
-    }
+    start(5000)
   })
 
   onDestroy(() => {
     clearInterval(timer)
+    clearInterval(timer2)
   })
 </script>
 
