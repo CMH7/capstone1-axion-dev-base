@@ -79,6 +79,11 @@ export default {
 			channelsFunctions.taskNew(data)
 		});
 
+		// ON TASK DELETED
+		channel.bind('taskDeleted', function (data) {
+			channelsFunctions.taskDeleted(data)
+		})
+
 		// ON TASK STATUS CHANGED
 		channel.bind('taskStatus', function (data) {
 			channelsFunctions.taskStatusChanged(data)

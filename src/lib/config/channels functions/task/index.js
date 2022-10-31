@@ -5,6 +5,7 @@ import taskNew from "./taskNew"
 import taskDescription from "./taskDescription"
 import taskStatus from "./taskStatus"
 import member from "./member"
+import taskDeleted from "./taskDeleted"
 
 
 export default {
@@ -15,5 +16,6 @@ export default {
   taskDescription: taskDescription.taskDescription,
   taskStatusChanged: taskStatus.taskStatusChanged,
   taskNewAssignee: member.newAssignee,
-  taskRemoveAssignment: member.removeAssignment
+  taskRemoveAssignment: member.removeAssignment,
+  taskDeleted: taskDeleted.taskDeleted
 }

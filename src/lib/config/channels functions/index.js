@@ -15,6 +15,7 @@ export default {
   taskStatusChanged: task.taskStatusChanged,
   taskNewAssignee: task.taskNewAssignee,
   taskRemoveAssignment: task.taskRemoveAssignment,
+  taskDeleted: task.taskDeleted,
   // #### WORKSPACE ####
   onDelete: workspace.onDelete,
   onAdminRemoved: workspace.adminRemoved,
