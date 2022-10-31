@@ -5,3 +5,6 @@ export let taskName = writable('')
 
 /** Sets the task rename modal active or not active */
 export let taskRenameActiveModal = writable(false)
+
+/** Sets the task delete modal active or not active */
+export let taskDeleteModalActive = writable(false)

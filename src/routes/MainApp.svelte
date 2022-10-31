@@ -21,6 +21,7 @@
   import channels from '$lib/config/channels'
   import TaskRename from '$lib/components/modals/task/TaskRename.svelte'
 	import LogoutConfirmation from '$lib/components/modals/my profile/logout-confirmation.svelte';
+	import TaskDeletion from '$lib/components/modals/deletions/task-deletion.svelte';
 
   onMount(async ()=>{
     history.pushState(null, document.title, location.href);
@@ -152,6 +153,7 @@
 <CancelInvitation/>
 <Invitations />
 <TaskRename />
+<TaskDeletion />
 <LogoutConfirmation />
 
 <div in:fade out:fade class="hero is-fullheight has-transition pt-16 {$sidebarActive?`${ width > 570 && $ismini ? "pl-16" : ""}`:""}">
