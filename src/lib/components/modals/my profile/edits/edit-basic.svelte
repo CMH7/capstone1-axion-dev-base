@@ -37,11 +37,6 @@
   ]
 
   const save = e => {
-    $notifs = [...$notifs, {
-      msg: 'Information saving',
-      type: 'wait',
-      id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
-    }]
     isProcessing.set(true)
     fetch(`${constants.backURI}/MainApp/myprofile/basic/edit`, {
       method: 'PUT',
