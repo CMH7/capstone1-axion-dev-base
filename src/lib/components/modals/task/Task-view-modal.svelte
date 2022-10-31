@@ -7,7 +7,7 @@
   import constants from "$lib/config/constants"
   import bcrypt from "bcryptjs"
 	import { favorites } from "$lib/stores/favorites";
-	import { taskName, taskRenameActiveModal } from "$lib/stores/taskStore";
+	import { taskDeleteModalActive, taskName, taskRenameActiveModal } from "$lib/stores/taskStore";
   import { Pulse } from 'svelte-loading-spinners'
 
   const backURI = constants.backURI
@@ -28,6 +28,7 @@
   let taskNameEditing = false
   let chatContainer
   let selectedWorkspaceMembers = []
+  let leftView = false
   $: oldDescriptionValue = descriptionValue
   
   activeTask.subscribe(task => {
@@ -413,21 +414,21 @@
       })
       userData.set(userDataCopy)
 
-      // if($currentInterface !== 'Dashboard') {
-      //   $favorites = []
-      //   $userData.subjects.map(subject => {
-      //     subject.workspaces.map(workspace => {
-      //       workspace.boards.map(board => {
-      //         $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
-      //           return {
-      //             boardID: board.id,
-      //             task: data
-      //           }
-      //         })]
-      //       })
-      //     })
-      //   })
-      // }
+      if($currentInterface === 'Favorites') {
+        $favorites = []
+        $userData.subjects.map(subject => {
+          subject.workspaces.map(workspace => {
+            workspace.boards.map(board => {
+              $favorites = [...$favorites, ...board.tasks.filter(task => task.isFavorite == true).map(data => {
+                return {
+                  boardID: board.id,
+                  task: data
+                }
+              })]
+            })
+          })
+        })
+      }
 
       $notifs = [...$notifs, {
         msg: `${task.name} is moved to ${boardName}`,
@@ -685,7 +686,12 @@
       <!-- Container -->
       <div class="is-flex maxmins-h-500">
         <!-- ##### RIGHT SIDE ##### -->
-        <div class="maxmins-w-{outerWidth < 571 ? '100': '65'}p">
+        <div class="{leftView ? 'undisp' : ''} maxmins-w-{outerWidth < 571 ? '100': '65'}p">
+          {#if $isProcessing}
+          <div class="maxmins-w-100p maxmins-h-100p is-flex is-justify-content-center is-align-items-center">
+            <Pulse size={20} color='#191a48' />
+          </div>
+          {:else}
           <div class="is-flex is-flex-wrap-wrap">
             <!-- task name, favorite, level -->
             <div class="{outerWidth < 571 ? 'min-w-100p': 'pl-3'} ">
@@ -747,7 +753,10 @@
                   </div>
                   
                   <!-- tablet menu icon -->
-                  <div class="{outerWidth > 570 ? 'undisp': ''} is-clickable">
+                  <div
+                    on:click={e => leftView = true}
+                    class="{outerWidth > 570 ? 'undisp': ''} is-clickable"
+                  >
                     <Avatar tile size='25px' style="max-width: 25px" class="mr-2">
                       <Icon path={mdiMenu} />
                     </Avatar>
@@ -762,6 +771,7 @@
                       <Icon path={mdiClose} />
                     </Avatar>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -1059,15 +1069,21 @@
               {/if}
             </div>
           </div>
+          {/if}
         </div>
     
         <!-- ##### LEFT SIDE ##### -->
-        <div class="{outerWidth < 571 ? 'undisp': ''} maxmins-w-35p border-w-l-2 border-l-color-yaz-grey border-type-l-solid">
+        <div class="{outerWidth < 571 && !leftView ? 'undisp': ''} {outerWidth >= 571 ? 'border-w-l-2 border-l-color-yaz-grey border-type-l-solid' : ''} maxmins-w-{outerWidth < 571 ? '100' : '35'}p">
           <!-- status, views & viewers, close button -->
   
           <div class="pl-3 pb-3 is-flex is-justify-content-space-between border-w-b-3 border-b-color-yaz-grey border-type-b-solid">
             <!-- Container -->
             <div class="is-flex">
+              {#if $isProcessing}
+              <div class="maxmins-w-100p maxmins-h-100p is-flex is-justify-content-center is-align-items-center">
+                <Pulse size={20} color='#191a48' />
+              </div>
+              {:else}
               <!-- status and views and viewers -->
               <div class="is-flex-shrink-0 is-flex is-align-items-center">
                 <!-- status -->
@@ -1157,21 +1173,33 @@
                 </Dialog>
                 {/if}
               </div>
+              {/if}
             </div>
   
             <!-- close button -->
             <div
-              on:click={() => taskViewModalActive.set(false)}
-              class='is-clickable is-flex-shrink-0 {outerWidth < 571 ? 'undisp': ''}'
+              on:click={() => {
+                if(leftView) {
+                    leftView = false
+                    return
+                  }
+                taskViewModalActive.set(false)
+              }}
+              class='is-clickable is-flex-shrink-0 {outerWidth < 571 && !leftView ? 'undisp': ''}'
             >
               <Avatar tile size='25px' style="max-width: 25px" class="bg-color-yaz-red has-transition hover-bg-danger has-text-white rounded">
                 <Icon path={mdiClose} />
               </Avatar>
             </div>
           </div>
-  
+
           <!-- Assignee/s -->
-          <div class="py-3 pl-3">
+          <div class="py-3 pl-3 is-flex is-flex-direction-column is-justify-content-space-between maxmins-h-90p overflow-y-auto">
+            {#if $isProcessing}
+            <div class="maxmins-w-100p maxmins-h-100p is-flex is-justify-content-center is-align-items-center">
+              <Pulse size={20} color='#191a48' />
+            </div>
+            {:else}
             <!-- Assignees title -->
             <div class="txt-size-14 fredoka-reg txt-color-yaz-grey-dark">
               Assignees
@@ -1279,7 +1307,30 @@
               </div>
             </div>
             {/each}
+
+            <div class="flex-grow-1" />
+
+            <!-- trash/ delete task -->
+            <div class="maxmins-w-100p is-flex is-justify-content-flex-end">
+              {#if !$isProcessing}
+                <div
+                  on:click={e => {
+                    taskViewModalActive.set(false)
+                    taskDeleteModalActive.set(true)
+                  }}
+                  class="maxmins-w-50p has-background-danger is-flex is-justify-content-center is-align-items-center py-2 rounded is-clickable">
+                  <Icon size='25px' class='white-text' path={mdiTrashCan} />
+                  <div class="fredoka-reg txt-size-14 ml-2 has-text-white">
+                    Delete task
+                  </div>
+                </div>
+              {:else}
+                <Pulse size={20} color='#191a48' />
+              {/if}
+            </div>
+            {/if}
           </div>
+
         </div>
       </div>
     </Dialog>

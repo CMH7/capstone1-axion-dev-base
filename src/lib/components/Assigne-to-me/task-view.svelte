@@ -164,7 +164,7 @@
     currentInterface.set('Dashboard')
     currentIndex.set(0)
     currentDashboardSubInterface.set('Boards')
-    breadCrumbsItems.set([{text: $activeSubject.name}, {text: $activeWorkspace.name}, {text: 'Boards'}])
+    breadCrumbsItems.set([{text: $activeSubject.name}, {text: $activeWorkspace.name}, {text: 'boards'}])
   }
 </script>
 

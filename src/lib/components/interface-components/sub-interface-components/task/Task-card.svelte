@@ -1,7 +1,7 @@
 <script>
   //@ts-nocheck
 	import constants from '$lib/config/constants';
-  import { notifs, taskViewModalActive, activeTask, activeBoard, userData, activeWorkspace, activeSubject, currentInterface, currentDashboardSubInterface, breadCrumbsItems, currentIndex, allBoards } from '$lib/stores/global-store'
+  import { notifs, taskViewModalActive, activeTask, activeBoard, userData, activeWorkspace, activeSubject, currentInterface, currentDashboardSubInterface, breadCrumbsItems, currentIndex, allBoards, isProcessing } from '$lib/stores/global-store'
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
   import bcrypt from 'bcryptjs';
 	import { onMount } from 'svelte';
@@ -193,6 +193,7 @@
   const addSeen = () => {
     if(task.viewers.includes(`${$userData.firstName} ${$userData.lastName}`)) return
     if( !task.viewers.includes(`${$userData.firstName} ${$userData.lastName}`)) {
+      isProcessing.set(true)
       fetch(`${constants.backURI}/MainApp/dashboard/subject/workspace/board/task/viewer/add`, {
         method: 'POST',
         headers: {
@@ -249,7 +250,7 @@
           type: 'error',
           id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
         }]
-      })
+      }).finally(() => isProcessing.set(false))
     }
 
   }
@@ -323,26 +324,29 @@
       <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
         {#if task.members.length > 3}
           <Tooltip class='px-1 py-1' bottom bind:active={show}>
-            <!-- 3 most members -->
-            {#each Array(4) as _, i}
-            {#if i == 4}
-            <!-- Icon of how many members are there other than 3 most members -->
-            <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
-              <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
-                +{task.members.length - 3}
-              </div>
-            </Avatar>
-            {/if}
-            <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
-              {#if task.members[i].profile === ''}
-              <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
-                {task.members[i].name.toUpperCase().split(' ')[0].charAt(0)}{task.members[i].name.toUpperCase().split(' ')[task.members[i].name.toUpperCase().split(' ').length - 1].charAt(0)}
-              </div>
-              {:else}
-              <img src="{task.members[i].profile}" alt="{task.members[i].name}"/>
-              {/if}
-            </Avatar>
-            {/each}
+            <div class="is-flex">
+              <!-- 3 most members -->
+              {#each Array(4) as _, i}
+                {#if i == 4}
+                  <!-- Icon of how many members are there other than 3 most members -->
+                  <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
+                    <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
+                      +{task.members.length - 3}
+                    </div>
+                  </Avatar>
+                {:else}
+                  <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
+                    {#if task.members[i].profile === ''}
+                    <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
+                      {task.members[i].name.toUpperCase().split(' ')[0].charAt(0)}{task.members[i].name.toUpperCase().split(' ')[task.members[i].name.toUpperCase().split(' ').length - 1].charAt(0)}
+                    </div>
+                    {:else}
+                    <img src="{task.members[i].profile}" alt="{task.members[i].name}"/>
+                    {/if}
+                  </Avatar>
+                {/if}
+              {/each}
+            </div>
             <span slot="tip">
               <p class="has-text-left mb-0">
                 Assigned Members:
@@ -357,17 +361,19 @@
           <!-- 3 or less members -->
           <div on:mouseenter={()=>show = true} on:mouseleave={()=>show = false}>
             <Tooltip class='px-1 py-1' bottom bind:active={show}>
-              {#each task.members as member, i}
-              <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
-                {#if member.profile === ''}
-                <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
-                  {member.name.toUpperCase().split(' ')[0].charAt(0)}{member.name.toUpperCase().split(' ')[member.name.toUpperCase().split(' ').length - 1].charAt(0)}
-                </div>
-                {:else}
-                <img src="{member.profile}" alt="{member.name}"/>
-                {/if}
-              </Avatar>
-              {/each}
+              <div class="is-flex">
+                {#each task.members as member, i}
+                  <Avatar size='17px' class='has-background-{i == 0 ? 'primary': i == 1 ? 'link' : 'info'} is-flex is-justify-content-center is-align-items-center'>
+                    {#if member.profile === ''}
+                      <div class="has-text-white has-text-weight-semibold txt-size-7 fredoka-reg is-flex is-justify-content-center is-align-items-center">
+                        {member.name.toUpperCase().split(' ')[0].charAt(0)}{member.name.toUpperCase().split(' ')[member.name.toUpperCase().split(' ').length - 1].charAt(0)}
+                      </div>
+                    {:else}
+                      <img src="{member.profile}" alt="{member.name}"/>
+                    {/if}
+                  </Avatar>
+                {/each}
+              </div>
               <span slot="tip">
                 <div class="has-text-left p-0">
                   Assigned Members:
