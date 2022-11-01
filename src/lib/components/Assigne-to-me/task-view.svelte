@@ -729,7 +729,7 @@
                   </Avatar>
                 </div>
                 
-                <!-- tablet Close icon -->
+                <!-- tablet Close icon
                 <div
                   on:click={() => taskViewModalActive.set(false)}
                   class="{outerWidth > 571 ? 'undisp': ''} is-clickable"
@@ -737,7 +737,7 @@
                   <Avatar tile size='25px' style="max-width: 25px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-red has-text-white fredoka-reg rounded is-clickable">
                     <Icon path={mdiClose} />
                   </Avatar>
-                </div>
+                </div> -->
   
               </div>
             </div>
