@@ -621,7 +621,7 @@
           return true
         })
         $notifs = [...$notifs, {
-          msg: `${names}${selectedWorkspaceMembers.length > 1 ? 'are' : 'is'} now assigned to task \'${$activeTask.name}\'`,
+          msg: `Added new assignee into task \'${$activeTask.name}\'`,
           type: 'success',
           id: `${Math.random() * 99}${new Date().getTime()}`
         }]
