@@ -73,6 +73,7 @@
               <div on:click={e => {
                 if(outerWidth < 571) {
                   phase = 2
+                  taskViewNow = true
                 }else{
                   taskViewNow = true
                 }
