@@ -35,7 +35,8 @@
     let taskMembers = $userData.verified ? [] : [{
         email: $userData.email,
         name: `${$userData.firstName} ${$userData.lastName}`,
-        profile: $userData.profile
+        profile: $userData.profile,
+        id: $userData.id
     }]
     let createdBy = `${$userData.firstName} ${$userData.lastName}`
     let description = ''
