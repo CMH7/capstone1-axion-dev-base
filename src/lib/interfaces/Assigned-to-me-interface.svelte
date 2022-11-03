@@ -99,6 +99,10 @@
       {/if}
       {#if taskViewNow}
         <TaskView />
+      {:else}
+        <div class="pl-3 pt-3">
+          Select a task to view
+        </div>
       {/if}
     </div>
   </div>
