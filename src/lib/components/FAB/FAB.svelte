@@ -14,7 +14,7 @@
   const getAllUsers = async () => {
     memberModalLoading.set(true)
     memberModalActive.set(true)
-    const res = await fetch(`${constants.backURI}/verifiedUsers?count=10`)
+    const res = await fetch(`${constants.backURI}/verifiedUsers?count=20`)
     const users = await res.json()
     if(res.ok) {
       const wsMembers = $activeWorkspace.members
