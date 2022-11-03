@@ -215,7 +215,7 @@
 <Dialog
   persistent
   bind:active={viewUser}
-  class='has-background-white-bis p-4 {outerWidth < 426 ?  'maxmins-w-90p' : outerWidth < 769 && outerWidth > 426 ? 'maxmins-w-50p': 'maxmins-w-40p'}'
+  class='has-background-white-bis p-4'
 >
   <!-- porfile and infos -->
   <div class="is-flex">
