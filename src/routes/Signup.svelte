@@ -12,6 +12,7 @@
   import { isProcessing } from '$lib/stores/global-store'
   import { Pulse } from 'svelte-loading-spinners'
 	import validators from "$lib/config/validators";
+	import logger from "$lib/config/logger";
 
   const backURI = constants.backURI
   let firstName = ""
@@ -26,6 +27,7 @@
   let repassword = ""
   let termsPrivacyCheck = false 
   let disabled = false
+  $: passRepassError = password !== repassword
 
   const isPassValid = (pass) => {
     if(!pass) return false
@@ -36,23 +38,22 @@
     if(!validators.containsSpecialChar(pass)) return false
     return true
   }
-  const isPassValid2 = (pass) => {
-    if(!pass) return false
-    if(pass.length < 8) return false
-    if(!validators.containsUpperCase(pass)) return false
-    if(!validators.containsLowerCase(pass)) return false
-    if(!validators.containsDigit(pass)) return false
-    if(!validators.containsSpecialChar(pass)) return false
-    if(pass !== password) return false
-    return true
-  }
 
   const createNewUser = async () => {
     isProcessing.set(true)
     disabled = true
-    if(!validators.isEmailValid(email)) return
-    if(!isPassValid(password)) return
-    if(!isPassValid2(repassword)) return
+    if(!validators.isEmailValid(email) || !isPassValid(password)) {
+      logger.log('Error')
+      isProcessing.set(false)
+      disabled = false
+      return
+    }
+    if(!isPassValid(repassword) || repassword !== password) {
+      logger.log('Error')
+      isProcessing.set(false)
+      disabled = false
+      return
+    }
 
     if(!termsPrivacyCheck) {
       $notifs = [...$notifs, {
@@ -384,6 +385,7 @@
           type='password'
           outlined
           {disabled}
+          error={passRepassError}
           bind:value={password}
           rules={[
             v => v !== '' || 'Password cannot be empty',
@@ -391,7 +393,8 @@
             v => validators.containsUpperCase(v) || 'Password must have atleast 1 (one) upper cased letter',
             v => validators.containsLowerCase(v) || 'Password must have atleast 1 (one) lower cased letter',
             v => validators.containsDigit(v) || 'Password must have atleast 1 (one) digit',
-            v => validators.containsSpecialChar(v) || 'Password must have atleast 1 (one) special characters: ~!$%^&*_=+}{\'?-'
+            v => validators.containsSpecialChar(v) || 'Password must have atleast 1 (one) special characters: ~!$%^&*_=+}{\'?-',
+            v => v === repassword || 'Password do not match with the password'
           ]}
           class='mt-3'
           color='grey darken-2'
@@ -404,6 +407,7 @@
           type='password'
           outlined
           {disabled}
+          error={passRepassError}
           bind:value={repassword}
           rules={[
             v => v !== '' || 'Password cannot be empty',
