@@ -31,7 +31,7 @@
   let chatContainer
   let selectedWorkspaceMembers = []
   let leftView = false
-  $: oldDescriptionValue = descriptionValue
+  $: oldDescriptionValue = $taskViewModalActive ? $activeTask.description : ''
   
   activeTask.subscribe(task => {
     descriptionValue = task.description
