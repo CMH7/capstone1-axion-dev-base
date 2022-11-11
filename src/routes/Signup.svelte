@@ -266,13 +266,13 @@
           bind:value={age}
           rules={[
             v => v != 0 || 'Age cannot be 0 (zero)',
-            v => v >= 12 || 'Age is below the allowed age users (min. 12 yrs. old)',
+            v => v >= 18 || 'Age is below the allowed age users (min. 18 yrs. old)',
             v => v <= 70 || 'Age is above the allowed age users (max. 70 yrs. old)',
           ]}
           color='grey darken-2'
           class='mt-3'
           max={70}
-          min={12}
+          min={18}
         >
           Age
         </TextField>
