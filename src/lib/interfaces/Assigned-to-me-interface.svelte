@@ -66,7 +66,7 @@
     <div class="{outerWidth < 571 ? '': 'border-w-r-3 border-r-color-yaz-grey border-type-r-solid'} pr-3 maxmins-w-{outerWidth < 571 ? '100p' : '300 mr-3'} {phase == 2 ? 'undisp' : ''} ">
       <ExpansionPanels popout flat>
       {#each subjects as subject, i}
-        <ExpansionPanel class="max-h-550 overflow-y-auto has-background-{subject.color}-dark has-text-{subject.color === 'warning' || subject.color === 'success' ? 'black' : 'white'} hover-bg-grey-dark mb-3">
+        <ExpansionPanel class="max-h-550 overflow-y-auto has-background-{subject.color} has-text-{subject.color === 'warning' || subject.color === 'success' ? 'black' : 'white'} hover-bg-grey-dark mb-3">
           <span slot="header">{subjectsName[i]}</span>
           <div class="maxmins-w-100p is-flex is-flex-direction-column is-align-items-center mt-6">
             {#each assignedTasks as data}
