@@ -29,7 +29,6 @@
     }
     const res = await fetch(`${backURI}/reset/password/check?email=${value}`)
     const { id, email } = await res.json()
-    console.log(`${id} ${email}`);
     if(id) {
       userID.set(id)
 
@@ -55,7 +54,13 @@
       return
     }
   }
+
+  const keyDown = e => {
+    if(e.keyCode == 13 && $emailModalActive) checkEmail()
+  }
 </script>
+
+<svelte:window on:keydown={keyDown} />
 
 <Dialog class='has-background-white px-2 py-1' persistent bind:active={$emailModalActive}>
   <!-- headers and close -->

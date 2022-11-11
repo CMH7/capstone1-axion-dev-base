@@ -5,7 +5,6 @@
   import { goto } from '$app/navigation'
   import HomeFooter from "$lib/components/Home-footer.svelte"
   import HomeHeader from "$lib/components/Home-header.svelte"
-  import {fade} from 'svelte/transition'
   import bcrypt from 'bcryptjs'
   import {userData, useHint, notifs, isLoggedIn, currentInterface, currentIndex, currentDashboardSubInterface, activeSubject, activeBoard, activeWorkspace, activeTask, selectedBoard, selectedSubjectForSubjectSettings, selectedWorkspace, allBoards, breadCrumbsItems} from '$lib/stores/global-store'
   import NotificationContainer from '$lib/components/System-Notification/Notification-container.svelte'
@@ -24,7 +23,7 @@
   let failed = false
   
   function onKeyDown(e) {
-    if(e.keyCode == 13) login()
+    if(e.keyCode == 13 && !$emailModalActive) login()
   }
 
   const isPassValid = (pass) => {
@@ -161,7 +160,7 @@
 <!-- header -->
 <HomeHeader/>
 <MaterialApp>
-  <div in:fade out:fade class="hero is-fullheight-with-navbar">
+  <div class="hero is-fullheight-with-navbar">
     <div class="hero-head is-flex is-flex-direction-column is-align-items-center">
       <!-- logo -->
       <img src="axionFinalLogo.png" alt="axion logo" class='maxmins-w-100 maxmins-h-100 mt-6'>

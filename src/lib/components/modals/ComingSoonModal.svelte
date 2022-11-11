@@ -1,4 +1,5 @@
 <script>
+    //@ts-nocheck
     import { Dialog, MaterialApp, Avatar } from 'svelte-materialify';
   
     export let active = false;
@@ -17,7 +18,7 @@
                 <div class="fredokaone has-text-white is-size-3 is-size-5-mobile">
                     COMING SOON!
                 </div>
-                <div class="dmsans has-text-white is-size-7">
+                <div class="fredoka-reg has-text-white is-size-7">
                     This feature is under development.
                 </div>
             </div>

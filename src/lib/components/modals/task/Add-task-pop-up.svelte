@@ -7,6 +7,7 @@
     import constants from '$lib/config/constants'
     import bcrypt from 'bcryptjs'
     import { mdiClose } from '@mdi/js'
+    import { Pulse } from 'svelte-loading-spinners'
 
     const backURI = constants.backURI
 
@@ -17,13 +18,19 @@
     let disabled = false
 
     let workspaceMembersLocal = []
-    activeWorkspace.subscribe(workspace => {
-        workspace.members.reverse().forEach(member => {
-            workspaceMembersLocal = [...workspaceMembersLocal, {
-                name: `${member.name} ${member.name === $activeSubject.createdBy ? '(owner)': ''}`,
-                value: member
-            }]
-        })
+    addTaskModalActive.subscribe(value => {
+        if(value) {
+            activeWorkspace.subscribe(workspace => {
+                workspace.members.reverse().forEach(member => {
+                    workspaceMembersLocal = [...workspaceMembersLocal, {
+                        name: `${member.name} ${member.name === $activeSubject.createdBy ? '(owner)': ''}`,
+                        value: member
+                    }]
+                })
+            })
+        }else{
+            workspaceMembersLocal = []
+        }
     })
 
     const levels = [
@@ -45,7 +52,7 @@
     let level = 1
 
     const fieldClear = () => {
-
+        workspaceMembersLocal = []
         taskName = ''
         dueDateTime = ''
         level = 1
@@ -162,16 +169,16 @@
 	<Dialog persistent class="maxmins-w-450-dt-to-mb-90p overflow-x-hidden pa-4 has-transition has-background-white" bind:active={$addTaskModalActive}>
 
         <div class="mb-2 min-w-100p is-flex is-justify-content-space-between">
-            <div class="pl-1 has-text-grey-dark has-text-weight-bold dm-sans">
+            <div class="inter-reg txt-size-20 has-text-weight-bold">
                 New Task
             </div>
 
             <!-- close icon -->
             <div
-                class="is-clickable"
+                class="is-clickable rounded bg-color-yaz-red maxmins-h-20 maxmins-w-20 is-flex is-justify-content-center is-align-items-center"
                 on:click={() => addTaskModalActive.set(false)}
             >
-                <Icon class="hover-txt-color-primary" path={mdiClose}/>
+                <Icon size='20px' class="white-text" path={mdiClose}/>
             </div>
         </div>
 
@@ -233,15 +240,19 @@
 
             <!-- create button -->
             <div class="is-flex is-justify-content-center mt-4" style="width: 100%">
-                <button
-                    {disabled}
-                    on:click={createTask}
-                    on:mouseenter={() => hovering = true }
-                    on:mouseleave={() => hovering = false }
-                    class="button has-transition {hovering ? "has-background-grey" : ""} {loading? "is-loading": ""}" style="letter-spacing: 1px;"
-                >
-                    <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
-                </button>
+                {#if !loading}
+                    <button
+                        {disabled}
+                        on:click={createTask}
+                        on:mouseenter={() => hovering = true }
+                        on:mouseleave={() => hovering = false }
+                        class="button has-transition {hovering ? "has-background-grey" : ""} {loading? "is-loading": ""}" style="letter-spacing: 1px;"
+                    >
+                        <span class="quicksands has-text-weight-bold {hovering ? "has-text-white" : ""}">Create</span>
+                    </button>
+                {:else}
+                    <Pulse size={14} color='#191a48' />
+                {/if}
             </div>
         </div>
 	</Dialog>

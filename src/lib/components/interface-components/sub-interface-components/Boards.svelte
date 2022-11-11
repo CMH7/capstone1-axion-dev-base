@@ -1,15 +1,14 @@
 <script>
   //@ts-nocheck
-  import { mdiMinus, mdiFilter } from "@mdi/js"
-  import { Icon, Divider, ClickOutside } from "svelte-materialify"
+  import { mdiFilter } from "@mdi/js"
+  import { Icon} from "svelte-materialify"
   import { fade } from 'svelte/transition'
   import { boardSettingsModalActive, modalChosenColor, selectedBoard, taskBoardFilter } from '$lib/stores/global-store'
   import constants from "$lib/config/constants"
+	import TaskFilterDropdown from "./taskFilterDropdown.svelte";
+	import { showFilter } from "$lib/stores/taskStore";
 
   export let board = constants.board
-
-  // variables
-  let showFilter = false
 </script>
 
 <div in:fade class="notification py-1 maxmins-w-250 max-h-550 px-2 rounded elevation-3 has-background-{board.color}-light">
@@ -39,7 +38,8 @@
       <!-- filter icon -->
       <div
         on:click={() => {
-          showFilter = true
+          showFilter.set(true)
+          selectedBoard.set(board)
         }}
         class="ml-1 maxmins-w-30 maxmins-h-30 is-flex is-justify-content-center is-align-items-center rounded-circle is-clickable hover-bg-transparent-grey-light has-transition"
       >
@@ -47,159 +47,7 @@
       </div>
 
       <!-- filter selection -->
-      <div
-        use:ClickOutside
-        on:clickOutside={() => {
-          showFilter = false
-        }}
-        class="pos-abs pos-t-100p has-transition pos-l-n100p min-h-fit-content maxmins-w-150 bg-color-pastel-white-card elevate-3 rounded py-1 px-1 z-100 rot-x-{showFilter ? '0': '90'}" style="transform-origin: top center;">
-        <div class="fredoka-reg txt-size-10 pl-1">
-          Filter
-        </div>
-        <Divider class='p-0 m-0 mb-2' />
-
-        <!-- By task name -->
-        <div>
-          <div class="inter-reg txt-size-12 pl-1">
-            By Task name
-          </div>
-
-          <!-- A to Z -->
-          <div
-            on:click={() => {
-              let taskBoardFilterCopy = $taskBoardFilter
-              taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === board.id) {
-                  filter.type = 'A1'
-                  return false
-                }
-                return true
-              })
-              taskBoardFilter.set(taskBoardFilterCopy)
-              showFilter = false
-            }}
-            class="is-flex is-align-items-center hover-bg-grey-lighter has-transition rounded is-clickable">
-            <!-- check icon -->
-            <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiMinus} />
-            </div>
-            <!-- type -->
-            <div class="fredoka-reg txt-size-15">
-              A to Z
-            </div>
-          </div>
-
-          <!-- Z to A -->
-          <div
-            on:click={() => {
-              let taskBoardFilterCopy = $taskBoardFilter
-              taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === board.id) {
-                  filter.type = 'A2'
-                  return false
-                }
-                return true
-              })
-              taskBoardFilter.set(taskBoardFilterCopy)
-              showFilter = false
-            }}
-            class="is-flex is-align-items-center hover-bg-grey-lighter has-transition rounded is-clickable">
-            <!-- check icon -->
-            <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiMinus} />
-            </div>
-            <!-- type -->
-            <div class="fredoka-reg txt-size-15">
-              Z to A
-            </div>
-          </div>
-        </div>
-        
-        <!-- By task level -->
-        <div class="mt-3">
-          <div class="inter-reg txt-size-12 pl-1">
-            By Task level/priority
-          </div>
-
-          <!-- Highest -->
-          <div
-            on:click={() => {
-              let taskBoardFilterCopy = $taskBoardFilter
-              taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === board.id) {
-                  filter.type = 'B1'
-                  return false
-                }
-                return true
-              })
-              taskBoardFilter.set(taskBoardFilterCopy)
-              showFilter = false
-            }}
-            class="is-flex is-align-items-center hover-bg-grey-lighter has-transition rounded is-clickable"
-          >
-            <!-- check icon -->
-            <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiMinus} />
-            </div>
-            <!-- type -->
-            <div class="fredoka-reg txt-size-15">
-              Highest
-            </div>
-          </div>
-
-          <!-- Medium -->
-          <div
-            on:click={() => {
-              let taskBoardFilterCopy = $taskBoardFilter
-              taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === board.id) {
-                  filter.type = 'B2'
-                  return false
-                }
-                return true
-              })
-              taskBoardFilter.set(taskBoardFilterCopy)
-              showFilter = false
-            }}
-            class="is-flex is-align-items-center hover-bg-grey-lighter has-transition rounded is-clickable"
-          >
-            <!-- check icon -->
-            <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiMinus} />
-            </div>
-            <!-- type -->
-            <div class="fredoka-reg txt-size-15">
-              Medium
-            </div>
-          </div>
-          
-          <!-- Lowest -->
-          <div
-            on:click={() => {
-              let taskBoardFilterCopy = $taskBoardFilter
-              taskBoardFilterCopy.every(filter => {
-                if(filter.boardID === board.id) {
-                  filter.type = 'B3'
-                  return false
-                }
-                return true
-              })
-              taskBoardFilter.set(taskBoardFilterCopy)
-              showFilter = false
-            }}
-            class="is-flex is-align-items-center hover-bg-grey-lighter has-transition rounded is-clickable"
-          >
-            <!-- check icon -->
-            <div class="is-flex is-justify-content-center is-align-items-center maxmins-w-20p">
-              <Icon size='13px' path={mdiMinus} />
-            </div>
-            <!-- type -->
-            <div class="fredoka-reg txt-size-15">
-              Lowest
-            </div>
-          </div>
-        </div>
-      </div>
+      <TaskFilterDropdown {board} />
 
     </div>
   </div>

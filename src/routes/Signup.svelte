@@ -8,7 +8,6 @@
   import NotificationContainer from "$lib/components/System-Notification/Notification-container.svelte"
   import { goto } from '$app/navigation'
   import constants from '$lib/config/constants'
-  import { fade } from 'svelte/transition'
   import { isProcessing } from '$lib/stores/global-store'
   import { Pulse } from 'svelte-loading-spinners'
 	import validators from "$lib/config/validators";
@@ -210,7 +209,7 @@
 
 <SignupHeader/>
 <MaterialApp>
-  <div in:fade class="hero is-fullheight-with-navbar">
+  <div class="hero is-fullheight-with-navbar">
     <div class="hero-head is-flex is-flex-direction-column is-align-items-center">
   
       <img src="axionFinalLogo.png" alt="axion logo" class='maxmins-w-100 maxmins-h-100 mt-6 has-transition rot-z-{deg}'>

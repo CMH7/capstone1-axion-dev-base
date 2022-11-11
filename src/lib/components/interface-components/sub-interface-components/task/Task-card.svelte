@@ -288,7 +288,7 @@
   on:contextmenu|preventDefault={handleRightClick}
   on:click={taskClicked}
   class="{backgroundColor} mb-1 has-transition is-clickable maxmins-w-230 maxmins-h-60 overflow-x-hidden rounded parent">
-  <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between'>
+  <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between border-w-1 border-color-grey-lighter border-type-solid'>
   
     <!-- UPPER PART OF THE CARD -->
   

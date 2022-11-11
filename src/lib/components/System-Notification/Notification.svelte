@@ -41,7 +41,11 @@
     clearInterval(timer)
     clearInterval(timer2)
   })
+
+  let outerWidth = 0
 </script>
+
+<svelte:window bind:outerWidth />
 
 <div 
   on:mouseenter={pause}
@@ -49,9 +53,10 @@
   on:mouseleave={e => start(remainingTime)}
   on:touchend={e => start(remainingTime)}
   on:touchmove={remove}
-  on:drag={remove}
   class="notification is-flex is-justify-content-space-between is-align-items-center mb-2 is-{notif.type === "success"? "success": notif.type === 'error' || notif.type === 'stayError' ? 'danger': 'warning'} is-light">
-  <div on:click={remove} class="delete" />
+  {#if outerWidth > 570}
+    <div on:click={remove} class="delete" />
+  {/if}
   <div class="is-flex is-flex-direction-column">
     {notif.msg} {#if notif.type === 'stayError'} {' Help the developers solve it by reporting it to the following link:'} {/if}
     
@@ -62,4 +67,9 @@
     </span>
     {/if}
   </div>
+  {#if outerWidth < 571}
+    <div class="txt-size-11 fredoka-reg pos-abs pos-b-5 pos-r-5">
+      Slide to remove
+    </div>
+  {/if}
 </div>

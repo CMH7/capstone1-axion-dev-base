@@ -3,7 +3,6 @@
   import { mdiGoogle, mdiFacebook } from '@mdi/js'
   import HomeHeader from "$lib/components/Home-header.svelte"
   import HomeFooter from "$lib/components/Home-footer.svelte"
-  import {fade} from 'svelte/transition'
   import ComingSoonModal from "$lib/components/modals/ComingSoonModal.svelte"
 
   let comingSoonModalOpen = false
@@ -199,7 +198,7 @@
     </div>
   </div>
 
-    <div in:fade class="d-flex justify-center">
+    <div class="d-flex justify-center">
         <Card flat outlined class="column my-6 is-multiline is-mobile is-6 has-background-light">
             <div class="hero-head">
             <p class="is-size-2-tablet is-size-3-mobile fredokaone has-text-black has-text-weight-bold has-text-centered my-6">Contact Us</p>               

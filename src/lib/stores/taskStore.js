@@ -8,3 +8,5 @@ export let taskRenameActiveModal = writable(false)
 
 /** Sets the task delete modal active or not active */
 export let taskDeleteModalActive = writable(false)
+
+export let showFilter = writable(false)

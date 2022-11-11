@@ -5,14 +5,13 @@
       import HomeHeader from "$lib/components/Home-header.svelte";
       import { mdiCircleSmall } from '@mdi/js';
       import { Icon } from "svelte-materialify";
-      import { fade } from 'svelte/transition';
     
       let value = 0;
     </script>
     
       <!-- header -->
       <HomeHeader/>
-      <div in:fade class="hero is-fullheight-with-navbar">
+      <div class="hero is-fullheight-with-navbar">
         <div class="hero-head p-0 has-background-light">
       <div class="columns m-5 mr-5 is-flex is-justify-content-center is-multiline is-align-items-center">
         <div class="column mt-0 is-align-items-center is-mobile">
