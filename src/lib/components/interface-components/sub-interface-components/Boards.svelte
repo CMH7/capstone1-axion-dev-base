@@ -32,7 +32,7 @@
 
       <!-- Task Count Text -->
       <div class="quicksands txt-size-13 is-unselectable">
-        {board.tasks.length} {board.tasks.length > 1 ? "Tasks" : "Task"}
+        {board.tasks.filter(taska => taska.isSubtask == false).length} {board.tasks.filter(taska => taska.isSubtask == false).length > 1 ? "Tasks" : "Task"}
       </div>
 
       <!-- filter icon -->
