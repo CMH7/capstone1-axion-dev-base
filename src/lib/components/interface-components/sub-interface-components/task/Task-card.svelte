@@ -5,6 +5,7 @@
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
   import bcrypt from 'bcryptjs';
 	import { onMount } from 'svelte';
+	import { parent } from '$lib/stores/taskStore';
 
   // Required params
   export let task = {
@@ -260,6 +261,7 @@
     if($currentInterface !== 'Dashboard') setActives()
     activeTask.set(task)
     activeBoard.set(boardID)
+    parent.set(task)
     if($currentInterface !== 'Assigned to me') taskViewModalActive.set(true)
   }
 </script>
