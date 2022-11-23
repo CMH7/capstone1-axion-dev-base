@@ -1,6 +1,6 @@
 <script>
   //@ts-nocheck
-  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive, manageAdminModalActive, workspaceSettingsModalActive } from '$lib/stores/global-store';
+  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive, manageAdminModalActive, workspaceSettingsModalActive, ismini, notifCenterOpen } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
@@ -99,7 +99,7 @@
 
 <svelte:window bind:outerWidth={width} />
 
-<div class="has-transition z-10 pos-fix { width < 426 ? "pos-b-20 pos-r-20" : "pos-b-40 pos-r-45"}">
+<div class="has-transition {$ismini || $notifCenterOpen ? '' : 'z-2'} pos-fix { width < 426 ? "pos-b-20 pos-r-20" : "pos-b-40 pos-r-45"}">
   <Menu right bind:active bottom closeOnClick transition={scale} inOpts="{{start: 0, duration: 100}}" class="elevation-1 has-background-white" >
     <div slot="activator">
       <Button fab depressed class='has-background-white'>
