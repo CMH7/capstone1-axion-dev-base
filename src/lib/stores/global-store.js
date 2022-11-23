@@ -54,7 +54,7 @@ export let isLoggedIn = writable(false);
 export let allUsers = writable([])
 
 // All boards of the current workspace
-export let allBoards = writable([])
+export let allBoards = writable([constants.board])
 
 // breadcrumbds items
 export let breadCrumbsItems = writable([{text: 'Subjects', href: '0'}])
