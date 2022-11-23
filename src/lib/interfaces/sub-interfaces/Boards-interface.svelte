@@ -183,7 +183,7 @@
 {:else}
   <div class="maxmins-w-100p">
     {#key boards}
-    <ExpansionPanels multiple popout flat>
+    <ExpansionPanels style='z-index: 0' multiple popout flat>
       {#each boards as board}
         {#each $taskBoardFilter as filter}
           {#if filter.boardID === board.id}
