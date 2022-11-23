@@ -170,7 +170,7 @@
           {#each $taskBoardFilter as filter}
             {#if filter.boardID === board.id}
               <Boards {board}>
-                {#each filterTasks(filter.type, board.tasks) as task}
+                {#each filterTasks(filter.type, board.tasks).filter(taska => taska.isSubtask == false) as task}
                   <TaskCard {task} boardID={`${board.id}`} />
                 {/each}
               </Boards>
@@ -197,7 +197,7 @@
                 </div>
 
                 <div class="txt-size-11 fredoka-reg">
-                  {board.tasks.length} Task
+                  {board.tasks.filter(taska => taska.isSubtask == false).length} Task
                 </div>
               </span>
 
@@ -392,7 +392,7 @@
                       There's no task in here
                     </div>
                   {:else}
-                    {#each filterTasks(filter.type, board.tasks) as task}
+                    {#each filterTasks(filter.type, board.tasks).filter(taska => taska.isSubtask == false) as task}
                       <TaskCard {task} boardID={`${board.id}`} />
                     {/each}
                   {/if}
