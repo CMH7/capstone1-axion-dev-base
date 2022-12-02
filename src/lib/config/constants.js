@@ -160,7 +160,7 @@ export default {
 	subtask,
 	invitation,
 	conversation,
-	backURI: "https://axion-backend.herokuapp.com",
+	backURI: "https://axion-backend-v1.herokuapp.com",
 	lowerCasedLetters: new String('abcdefghijklmnopqrstuvwxyz').split(''),
 	upperCasedLetters: new String('ABCDEFGHIJKLMNOPQRSTUVWXYZ').split(''),
 	digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
