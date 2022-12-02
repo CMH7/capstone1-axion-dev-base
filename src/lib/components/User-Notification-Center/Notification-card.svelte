@@ -3,10 +3,11 @@
   import { userData, notifs, currentInterface, currentDashboardSubInterface, activeSubject, activeWorkspace, allBoards, activeTask, breadCrumbsItems, taskViewModalActive, invModalActive, notifCenterOpen, isProcessing, isLoggedIn } from '$lib/stores/global-store'
   import constants from '$lib/config/constants'
   import { Avatar, Icon } from 'svelte-materialify'
-  import { mdiAccountCircleOutline, mdiClose } from '@mdi/js'
+  import { mdiAccountCircleOutline, mdiClose, mdiTrashCan } from '@mdi/js'
 	import { onMount } from 'svelte';
 	import { userNProfile } from '$lib/stores/user-notification-store'
   import bcrypt from 'bcryptjs';
+  import { Pulse } from 'svelte-loading-spinners'
 
   export let notification = {
     id: '',
@@ -84,8 +85,11 @@
   }
 
   const deleteNotif = () => {
-    if($isProcessing || !delHover) return
+    if(outerWidth > 570) {
+      if($isProcessing || !delHover) return
+    }
     isProcessing.set(true)
+    isDeleting = true
     fetch(`${constants.backURI}/User/delete/notification`, {
       method: 'DELETE',
       headers: {
@@ -111,11 +115,16 @@
       console.error(err)
     }).finally(() => {
       isProcessing.set(false)
+      draggedLeft = false
+      draggedRight = false
+      draggedRightCount = 0
+      isDeleting = false
+      if($userData.notifications.length === 0) notifCenterOpen.set(false)
     })
   }
 
   const transpo = () => {
-    if(delHover) return
+    if(delHover || isDeleting || $isProcessing) return
     if(notification.anInvitation) {
       if(!notification.isRead) setReadNotif()
       invModalActive.set(true)
@@ -155,54 +164,109 @@
   let outerWidth = 0
   let notifHovering = false
   let delHover = false
+  let draggedRight = false
+  let draggedLeft = false
+  let draggedRightCount = 0
+  let initPos = {x: 0, y: 0}
+  let isDeleting = false
 </script>
 
 <svelte:window bind:outerWidth />
 
-<div
-  on:click={transpo}
-  on:mouseenter={e => notifHovering = true}
-  on:mouseleave={e => notifHovering = false}
-  class="{notification.isRead ? 'opacity-50p': ''} column parent is-12 rounded maxmins-h-60 mb-2 is-clickable hover-bg-grey-lighter-grey-light has-transition">
-
-  <div class="is-flex is-align-items-center is-justify-content-space-between maxmins-h-100p p-1">
-    <div class="is-flex is-align-items-center">
-      <!-- Image -->
-      <div class="is-flex is-align-items-center is-justify-content-center">
-        <Avatar size='40px'>
-          {#if profileb !== ''}
-            <img src={profileb} alt="">
-          {:else}
-            <Icon class="white blue-text" path={mdiAccountCircleOutline} />
-          {/if}
-        </Avatar>
+<div class="is-flex flex-shrink-0 is-align-items-center overflow-x-hidden">
+  <div class="{outerWidth > 570 ? 'is-hidden' : ''} is-flex is-justify-content-center is-align-items-center is-relative pos-l-{draggedRight ? '15' : 'n40p'} has-transition">
+    {#if !$isProcessing}
+      <Icon size='30px' path={mdiTrashCan} />
+    {:else}
+      <Pulse size={14} color='#191a48' />
+    {/if}
+  </div>
+  
+  <div class="{outerWidth > 570 ? 'is-hidden' : ''} maxmins-w-30 fredoka-reg txt-size-10 is-flex is-justify-content-center is-align-items-center pos-abs pos-r-{draggedLeft ? '15' : 'n40'} has-transition">
+    Cancel
+    Delete
+  </div>
+  
+  <div
+    on:click={transpo}
+    on:mouseenter={e => notifHovering = true}
+    on:mouseleave={e => notifHovering = false}
+    on:touchstart={e => {
+      initPos.x = e.touches[0].clientX
+      initPos.y = e.touches[0].clientY
+    }}
+    on:touchmove={e => {
+      if(initPos.x - e.touches[0].clientX < 0 && outerWidth < 571 && !$isProcessing) {
+        draggedRight = true
+        draggedRightCount++
+        draggedLeft = false
+      }else if(initPos.x - e.touches[0].clientX > 0 && outerWidth < 571 && !$isProcessing && draggedRightCount > 0) {
+        draggedRightCount = 0
+        draggedRight = false
+        draggedLeft = true
+      }
+    }}
+    on:touchcancel={e => {
+        draggedRight = false
+        draggedLeft = false
+      }}
+    on:touchend={e => {
+        if(draggedLeft) {
+          draggedLeft = false
+          draggedRight = false
+          return
+        }
+        if(draggedRight) deleteNotif()
+      }}
+    class="{notification.isRead ? 'opacity-60p': ''} pos-l-{draggedRight ? '30' : draggedLeft ? 'n70': outerWidth < 571 ? 'n30' : '0'} is-relative maxmins-w-100p parent rounded maxmins-h-60 mb-2 {isDeleting? 'a': ''}is-clickable {!delHover ?  'hover-bg-grey-lighter-grey-light' : 'has-background-grey-lighter'} has-transition">
+  
+    <div class="is-flex is-align-items-center is-justify-content-space-between maxmins-h-100p p-1">
+      <div class="is-flex is-align-items-center">
+        <!-- Image -->
+        <div class="is-flex is-align-items-center is-justify-content-center">
+          <Avatar size='50px'>
+            {#if profileb !== ''}
+              <img src={profileb} alt="">
+            {:else}
+              <Icon class="white blue-text" path={mdiAccountCircleOutline} />
+            {/if}
+          </Avatar>
+        </div>
+    
+        <!-- notification message -->
+        <div class="ml-2 p-1 txt-size-12 fredoka-reg">
+          {notification.message}
+        </div>
       </div>
   
-      <!-- notification message -->
-      <div class="ml-2 p-1 txt-size-11">
-        {notification.message}
-      </div>
-    </div>
-
-    <!-- notification action and note -->
-    <div
-      on:mouseenter={e => delHover = true}
-      on:mouseleave={e => delHover = false}
-      on:click={e => deleteNotif()}
-    >
-      {#if !notification.isRead}
-        {#if !notifHovering}
-          <div class="parent-hover-this-display-none maxmins-w-10 maxmins-h-10 rounded-circle has-background-success" />
+      <!-- notification action and note -->
+      <div
+        on:mouseenter={e => delHover = true}
+        on:mouseleave={e => delHover = false}
+        on:click={e => deleteNotif()}
+      >
+        {#if !isDeleting}
+          {#if !notification.isRead}
+            {#if !notifHovering}
+              <div class="parent-hover-this-display-none maxmins-w-10 maxmins-h-10 rounded-circle has-background-success" />
+            {:else}
+              <div class="undisp rounded bg-color-yaz-red is-flex is-align-items-center">
+                <Icon class='white-text' size='15px' path={mdiClose} />
+              </div>
+            {/if}
+          {:else}
+            {#if !notifHovering}
+              <div/>
+            {:else}
+              <div class="undisp rounded bg-color-yaz-red is-flex is-align-items-center">
+                <Icon class='white-text' size='15px' path={mdiClose} />
+              </div>
+            {/if}
+          {/if}
         {:else}
-          <div class="undisp is-flex is-align-items-center">
-            <Icon class='red-text' size='13px' path={mdiClose} />
-          </div>
+          <Pulse size={10} color='#191a48' />
         {/if}
-      {:else}
-      <div class="is-flex is-align-items-center">
-        <Icon class='red-text' size='15px' path={mdiClose} />
       </div>
-      {/if}
     </div>
   </div>
 </div>

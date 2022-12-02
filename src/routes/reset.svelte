@@ -1,5 +1,5 @@
 <script>
-  //@ts-nocheck
+  // @ts-ignore
   import { goto } from '$app/navigation'
 	import { onMount } from "svelte"
   import { resetModalActive, userID } from '$lib/stores/reset-password-store'

@@ -5,6 +5,7 @@
   import { Tooltip, Card, Avatar, Divider } from 'svelte-materialify'
   import bcrypt from 'bcryptjs';
 	import { onMount } from 'svelte';
+	import { parent } from '$lib/stores/taskStore';
 
   // Required params
   export let task = {
@@ -260,6 +261,7 @@
     if($currentInterface !== 'Dashboard') setActives()
     activeTask.set(task)
     activeBoard.set(boardID)
+    parent.set(task)
     if($currentInterface !== 'Assigned to me') taskViewModalActive.set(true)
   }
 </script>
@@ -288,7 +290,7 @@
   on:contextmenu|preventDefault={handleRightClick}
   on:click={taskClicked}
   class="{backgroundColor} mb-1 has-transition is-clickable maxmins-w-230 maxmins-h-60 overflow-x-hidden rounded parent">
-  <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between'>
+  <Card flat class='p-1 maxmins-h-60 is-flex is-flex-direction-column is-justify-content-space-between border-w-1 border-color-grey-lighter border-type-solid'>
   
     <!-- UPPER PART OF THE CARD -->
   

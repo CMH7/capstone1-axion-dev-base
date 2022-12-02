@@ -362,6 +362,13 @@
   &-90p {min-height: 90%;}
   &-95p {min-height: 95%;}
   &-100p {min-height: 100%;}
+
+  // viewports
+  &-100vh {min-height: 100vh;}
+
+  // calculations (customs)
+  &-calc-100p-65px {min-height: calc(100% - 65px);}
+  &-calc-100vh-65px {min-height: calc(100vh - 65px);}
 }
 
 // == MAXS ==
@@ -501,6 +508,13 @@
   &-90p {max-height: 90%;}
   &-95p {max-height: 95%;}
   &-100p {max-height: 100%;}
+
+  // viewports
+  &-100vh {max-height: 100vh}
+
+  // calculations (customs)
+  &-calc-100p-65px {max-height: calc(100% - 65px)}
+  &-calc-100vh-65px {max-height: calc(100vh - 65px)}
 }
 
 // MAXS AND MINS = MAXMINS
@@ -627,6 +641,13 @@
   &-90p {@extend .max-h-90p; @extend .min-h-90p;}
   &-95p {@extend .max-h-95p; @extend .min-h-95p;}
   &-100p {@extend .max-h-100p; @extend .min-h-100p;}
+
+  // viewports
+  &-100vh {@extend .max-h-100vh; @extend .min-h-100vh;}
+
+  // calculations
+  &-calc-100p-65px {@extend .max-h-calc-100p-65px; @extend .min-h-calc-100p-65px;}
+  &-calc-100vh-65px {@extend .max-h-calc-100vh-65px; @extend .min-h-calc-100vh-65px;}
 }
 
 // Transitions width
@@ -696,6 +717,15 @@
       }
     }
     &-350 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 100%; min-width: 100%;}
+          }
+        }
+      }
+    }
+    &-400 {
       &-dt {
         &-to {
           &-mb {
@@ -795,6 +825,15 @@
         &-to {
           &-mb {
             &-100p {max-width: 350px; min-width: 350px;}
+          }
+        }
+      }
+    }
+    &-400 {
+      &-dt {
+        &-to {
+          &-mb {
+            &-100p {max-width: 400px; min-width: 400px;}
           }
         }
       }

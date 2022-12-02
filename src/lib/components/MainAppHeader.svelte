@@ -1,9 +1,12 @@
 <script>
   // @ts-nocheck
-  import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge, Avatar } from "svelte-materialify"
-  import {mdiMenu, mdiAccount, mdiBell, mdiAccountGroup } from '@mdi/js'
+  import { MaterialApp, AppBar, Button, Icon, ClickOutside, Badge, Avatar, List, ListItem } from "svelte-materialify"
+  import {mdiMenu, mdiAccount, mdiBell, mdiAccountGroup, mdiLogout, mdiTune, mdiLogoutVariant } from '@mdi/js'
   import { currentInterface, ismini, sidebarActive, notifCenterOpen, userData, invModalActive } from "$lib/stores/global-store"
   import NotificationCenter from "$lib/components/User-Notification-Center/NotificationCenter.svelte"
+	import { logoutActiveModal } from "$lib/stores/myProfile";
+
+  let showProfileMenu = false
 
   let notifCenterOpenCopy = false
   notifCenterOpen.subscribe(value => {
@@ -11,6 +14,7 @@
   })
 
   const clickOutside = () => notifCenterOpen.set(false)
+  const clickOutside2 = () => showProfileMenu = false
 
   let outerWidth = 0
 </script>
@@ -84,15 +88,46 @@
         <NotificationCenter />
       </div>
 
-      <!-- Account Button -->
-      <div class="is-clickable is-hidden-touch hover-bg-grey-dark has-transition p-2 rounded-circle {!$sidebarActive?"undisp":""}" on:click={()=>currentInterface.set("My Profile")}>
-        {#if $userData.profile}
-          <Avatar size='30px' class='maxmins-w-30 maxmins-h-30 has-background-white-bis'>
-            <img src={$userData.profile} alt={`${$userData.firstName} ${$userData.lastName}`}>
-          </Avatar>
-        {:else}
-          <Icon class="white-text" size='30px' path={mdiAccount}/>
-        {/if}
+      <div
+        use:ClickOutside
+        on:clickOutside={clickOutside2}
+      >
+        <!-- Account Button -->
+        <div
+          class="is-clickable is-hidden-touch hover-bg-grey-dark has-transition p-2 rounded-circle {!$sidebarActive?"undisp":""}" on:click={() => {
+            if(!showProfileMenu) showProfileMenu = true
+          }}>
+          {#if $userData.profile}
+            <Avatar size='30px' class='maxmins-w-30 maxmins-h-30 has-background-white-bis'>
+              <img src={$userData.profile} alt={`${$userData.firstName} ${$userData.lastName}`}>
+            </Avatar>
+          {:else}
+            <Icon class="white-text" size='30px' path={mdiAccount}/>
+          {/if}
+        </div>
+  
+        <div
+          style='transform-origin: top center' class="pos-abs pos-t-65 pos-r-5 has-background-white-bis elevation-3 rounded-b maxmins-w-200 z-100 has-transition rot-x-{showProfileMenu ? '0' : '90'}">
+          <List nav>
+            <ListItem on:click={() => currentInterface.set('My Profile')} disabled={$currentInterface === 'My Profile'} active={$currentInterface === 'My Profile'}>
+              <span slot="prepend">
+                <Icon path={mdiTune} />
+              </span>
+              <span>
+                My profile
+              </span>
+            </ListItem>
+  
+            <ListItem on:click={() => logoutActiveModal.set(true)}>
+              <span slot="prepend">
+                <Icon path={mdiLogoutVariant} />
+              </span>
+              <span>
+                Logout
+              </span>
+            </ListItem>
+          </List>
+        </div>
       </div>
     </AppBar>
   </MaterialApp>

@@ -7,9 +7,12 @@
   import constants from '$lib/config/constants';
   import ReSendEmailVerifcation from '$lib/components/modals/my profile/re-send-email-verifcation.svelte';
 	import EditBasic from '$lib/components/modals/my profile/edits/edit-basic.svelte';
-	import { currentDP, editBasic, logoutActiveModal, viewDPModalActive } from '$lib/stores/myProfile';
+	import { currentDP, editBasic, viewDPModalActive } from '$lib/stores/myProfile';
 	import UploadPic from '$lib/components/modals/my profile/edits/uploadPic.svelte';
 	import ViewDp from '$lib/components/modals/viewDP.svelte';
+	import ComingSoonModal from '$lib/components/modals/ComingSoonModal.svelte';
+	import Reset from '$lib/components/modals/password/reset.svelte';
+	import { resetModalActive } from '$lib/stores/reset-password-store';
  
   let resendEmail = false
   let status = true
@@ -73,6 +76,8 @@
 <EditBasic />
 <UploadPic />
 <ViewDp />
+<ComingSoonModal active={comingSoonModalOpen} />
+<Reset />
 
 <div in:fade class="hero is-fullheight-with-navbar">
   <div class="hero-head p-5 columns is-multiline">
@@ -174,8 +179,9 @@
         <!-- Card -->
         <div class="column is-12 pl-{outerWidth < 426 ? '': '16'} pr-{outerWidth < 426 ? '': '16'}">
           <!-- Card container -->
-          <div class="card {switchOn ? 'bg-color-pastel-grey-disabled': 'bg-color-pastel-white-card'} p-5 pt-14">
+          <div class="card bg-color-pastel-white-card p-5 pt-14">
             <!-- Statistics -->
+            {#if switchOn}
             <div class="columns is-multiline">
               <!-- Subjects -->
               <div class="column is-3 mb-3">
@@ -183,9 +189,9 @@
                   <!-- Circle -->
                   <div class="column is-12">
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
-                      <Avatar size='120px' class='bg-color-pastel-red {!switchOn ? 'opacity-20p': ''}'>
+                      <Avatar size='120px' class='bg-color-pastel-red'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? $userData.subjects.length : '?'}
+                          {$userData.subjects.length}
                         </div>
                       </Avatar>
                     </div>
@@ -194,7 +200,7 @@
                   <!-- Name -->
                   <div class="column p-0 is-12">
                     <div class='is-flex is-justify-content-center is-align-items-center'>
-                      <div class="dm-sans txt-size-20 {!switchOn ? 'has-text-grey-light': 'has-text-black'}">
+                      <div class="dm-sans txt-size-20 has-text-black">
                         Subjects
                       </div>
                     </div>
@@ -208,9 +214,9 @@
                   <!-- Circle -->
                   <div class="column is-12">
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
-                      <Avatar size='120px' class='bg-color-pastel-violet {!switchOn ? 'opacity-20p': ''}'>
+                      <Avatar size='120px' class='bg-color-pastel-violet'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? workspaceCount : '?'}
+                          {workspaceCount}
                         </div>
                       </Avatar>
                     </div>
@@ -219,7 +225,7 @@
                   <!-- Name -->
                   <div class="column p-0 is-12">
                     <div class='is-flex is-justify-content-center is-align-items-center'>
-                      <div class="dm-sans txt-size-20 {!switchOn ? 'has-text-grey-light': 'has-text-black'}">
+                      <div class="dm-sans txt-size-20 has-text-black">
                         Workspaces
                       </div>
                     </div>
@@ -233,9 +239,9 @@
                   <!-- Circle -->
                   <div class="column is-12">
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
-                      <Avatar size='120px' class='bg-color-pastel-green {!switchOn ? 'opacity-20p': ''}'>
+                      <Avatar size='120px' class='bg-color-pastel-green'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? boardsCount : '?'}
+                          {boardsCount}
                         </div>
                       </Avatar>
                     </div>
@@ -244,7 +250,7 @@
                   <!-- Name -->
                   <div class="column p-0 is-12">
                     <div class='is-flex is-justify-content-center is-align-items-center'>
-                      <div class="dm-sans txt-size-20 {!switchOn ? 'has-text-grey-light': 'has-text-black'}">
+                      <div class="dm-sans txt-size-20 has-text-black">
                         Boards
                       </div>
                     </div>
@@ -258,9 +264,9 @@
                   <!-- Circle -->
                   <div class="column is-12">
                     <div class="is-flex is-justify-content-center is-align-items-center"> 
-                      <Avatar size='120px' class='bg-color-pastel-grey {!switchOn ? 'opacity-20p': ''}'>
+                      <Avatar size='120px' class='bg-color-pastel-grey'>
                         <div class="has-text-weight-bold has-text-white is-size-1 fredokaone is-flex is-justify-content-center is-align-items-center min-w-100p min-h-100p">
-                          {switchOn ? taskCounts : '?'}
+                          {taskCounts}
                         </div>
                       </Avatar>
                     </div>
@@ -269,7 +275,7 @@
                   <!-- Name -->
                   <div class="column p-0 is-12">
                     <div class='is-flex is-justify-content-center is-align-items-center'>
-                      <div class="dm-sans txt-size-20 {!switchOn ? 'has-text-grey-light': 'has-text-black'}">
+                      <div class="dm-sans txt-size-20 has-text-black">
                         Tasks
                       </div>
                     </div>
@@ -277,6 +283,7 @@
                 </div>
               </div>
             </div>
+            {/if}
 
             <div class="column mt-6 is-12 p-0">
               <!-- turn on/off statistics -->
@@ -349,7 +356,7 @@
                   <div class="column is-6-desktop is-12-mobile">
                     <div class="pos-rel">
                       <input
-                        on:click={openComingSoon}
+                        on:click={e => resetModalActive.set(true)}
                         readonly
                         value='Click here to change password'
                         class="cursor-pointer input has-background-grey-lighter dm-sans txt-size-15 has-text-grey"
@@ -370,10 +377,11 @@
                         Reset
                       </div>
 
-                      <div class="column is-6-desktop is-12-mobile">
+                      <div
+                        on:click={openComingSoon}
+                        class="column is-6-desktop is-12-mobile">
                         <div class="pos-rel">
                           <input
-                            on:click={openComingSoon}
                             readonly
                             value='Click here to reset dashboard'
                             class="cursor-pointer input bg-color-pastel-red dm-sans has-text-weight-normal txt-size-15 has-text-white"
@@ -415,16 +423,6 @@
             </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="column is-12">
-      <div class="is-flex is-justify-content-flex-end pl-{outerWidth < 426 ? '': '16'} pr-{outerWidth < 426 ? '': '16'}">
-        <div on:click={e => logoutActiveModal.set(true)}>
-          <Button depressed class='has-background-danger has-text-white is-clickable'>
-            Logout
-          </Button>
         </div>
       </div>
     </div>

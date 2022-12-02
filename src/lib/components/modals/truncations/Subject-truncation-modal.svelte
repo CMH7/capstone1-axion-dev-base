@@ -1,9 +1,10 @@
 <script>
   //@ts-nocheck
   import { Dialog, Button } from 'svelte-materialify'
-  import { subjectTruncationModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, activeSubject, userData, currentInterface, notifs } from '$lib/stores/global-store'
+  import { subjectTruncationModalActive, selectedSubjectForSubjectSettings, subjectSettingsModalActive, activeSubject, userData, currentInterface, notifs, isProcessing } from '$lib/stores/global-store'
   import bcrypt from 'bcryptjs'
   import constants from '$lib/config/constants'
+  import { Pulse } from 'svelte-loading-spinners'
 </script>
 
 <div>
@@ -23,20 +24,7 @@
         </div>
         <div
           on:click={e => {
-            let activeSubjectCopy = $activeSubject
-            activeSubjectCopy.workspaces = []
-            activeSubject.set(activeSubjectCopy)
-            let userDataCopy = $userData
-            userDataCopy.subjects.every(subject => {
-              if(subject.id === $activeSubject.id) {
-                subject.workspaces = []
-                return false
-              }
-              return true
-            })            
-            userData.set(userDataCopy)
-            subjectTruncationModalActive.set(false)
-
+            isProcessing.set(true)
             // do http requests here
             fetch(`${constants.backURI}/MainApp/truncate/subject`, {
               method: 'PUT',
@@ -55,6 +43,7 @@
               userDataCopy.subjects.every(subjecta => {
                 if(subjecta.id === subject.id) {
                   subjecta = subject
+                  selectedSubjectForSubjectSettings.set(subjecta)
                   return false
                 }
                 return true
@@ -68,10 +57,18 @@
                 id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
               })
               notifs.set(notifsCopy)
+            }).finally(() => {
+              isProcessing.set(false)
+              subjectTruncationModalActive.set(false)
+              subjectSettingsModalActive.set(true)
             })
           }}
         >
-          <Button depressed size='small'>Confirm</Button>
+          {#if !$isProcessing}
+            <Button depressed size='small'>Confirm</Button>
+          {:else}
+            <Pulse size={20} color='#191a48' />
+          {/if}
         </div>
       </div>
     </div>

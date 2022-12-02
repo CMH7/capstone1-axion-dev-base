@@ -1,14 +1,18 @@
 <script>
   //@ts-nocheck
-  import { memberModalActive, memberModalLoading } from '$lib/stores/global-store'
+  import { memberModalActive, memberModalLoading, notifs } from '$lib/stores/global-store'
   import { mdiMagnify } from '@mdi/js'
   import { MaterialApp, Dialog, Button, TextField, Icon, Avatar } from "svelte-materialify"
   import MemberBox from './Member modal/MemberBox.svelte'
   import MemberBoxLoading from './Member modal/MemberBoxLoading.svelte'
   import { allUsers, activeWorkspace } from '$lib/stores/global-store'
+	import { onDestroy } from 'svelte';
+  import constants from '$lib/config/constants'
+  import { Pulse } from 'svelte-loading-spinners'
 
   let users = []
   let usersCopy = []
+  let count = 20
 
   // Do all this whenever the allUsers data are changed
   allUsers.subscribe(value => {
@@ -76,6 +80,33 @@
   }
 
   let outerWidth
+
+  const getMoreUsers = async e => {
+    memberModalLoading.set(true)
+    const res = await fetch(`${constants.backURI}/verifiedUsers?count=${count + 10}`)
+    const users = await res.json()
+    if(res.ok) {
+      const wsMembers = $activeWorkspace.members
+      let data = users
+      wsMembers.forEach(member => {
+        data = data.filter(user => user.email != member.email)
+      })
+      allUsers.set(data)
+      memberModalLoading.set(false)
+      count += 10
+    } else {
+      $notifs = [...$notifs, {
+        msg: `Getting all verified users failed, ${res.statusText}`,
+        type: 'error',
+        id: bcrypt.hashSync(`${new Date().getMilliseconds() * (Math.random() * 1)}`, 13)
+      }]
+      memberModalLoading.set(false)
+    }
+  }
+
+  onDestroy(() => {
+    count = 20
+  })
 </script>
 
 <svelte:window bind:outerWidth on:keydown={search} />
@@ -123,12 +154,23 @@
     {/if}
   </div>
 
-  <div
-    on:click={() => memberModalActive.set(false)}
-    class='maxmins-w-100p is-flex is-justify-content-end mt-6'
-  >
-    <Button depressed class="fredoka-reg" >
-      Done
-    </Button>
+  <div class='maxmins-w-100p is-flex is-justify-content-end mt-6'>
+    {#if !$memberModalLoading}
+    <div on:click={getMoreUsers}>
+      <Button size='{outerWidth < 571 ? 'small' : ''}' depressed class="fredoka-reg mr-3 has-background-info has-text-white">
+        Load more users
+      </Button>
+    </div>
+    <div on:click={() => {
+      memberModalActive.set(false)
+      count = 20
+    }}>
+      <Button size='{outerWidth < 571 ? 'small' : ''}' depressed class="fredoka-reg" >
+        Done
+      </Button>
+    </div>
+    {:else}
+      <Pulse size={20} color='#fddd3f' />
+    {/if}
   </div>
 </Dialog>

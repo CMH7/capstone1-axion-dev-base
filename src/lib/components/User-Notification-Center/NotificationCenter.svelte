@@ -2,7 +2,7 @@
   //@ts-nocheck
   import { Icon } from "svelte-materialify"
   import { notifCenterOpen, userData, notifs } from '$lib/stores/global-store'
-  import { mdiNotificationClearAll } from "@mdi/js"
+  import { mdiNotificationClearAll, mdiRead } from "@mdi/js"
   import constants from "$lib/config/constants"
   import NotificationCard from "./Notification-card.svelte"
   import bcrypt from 'bcryptjs'
@@ -45,39 +45,37 @@
 <svelte:window bind:outerWidth />
 
 <div
-  class="overflow-x-hidden has-transition z-100 pos-fix p-2 pos-t-65 pos-r-{outerWidth < 426 ? '0': '20'} maxmins-w-300-dt-to-mb-100p bg-color-pastel-white-card maxmins-h-600 {!$notifCenterOpen? 'rot-x-90': 'rot-x-0'} rounded elevation-4"
+  class="has-transition z-100 pos-abs p-2 pos-t-65 pos-r-{outerWidth < 571 ? '0': '5'} maxmins-h-calc-100vh-65px maxmins-w-400-dt-to-mb-100p bg-color-pastel-white-card {!$notifCenterOpen? 'rot-x-90': 'rot-x-0'} rounded-b elevation-4 is-flex is-flex-direction-column"
   style='transform-origin: top center'
 >
-  <div class="columns is-gapless is-multiline">
-    <!-- Notification Center header -->
-    <div class="column is-12 p-0">
-      <div class="is-flex is-justify-content-space-between is-align-items-center">
-        <!-- Notification title -->
-        <div class="dm-sans is-size-4 has-text-weight-bold">
-          Notifications
-        </div>
+  <!-- Notification title -->
+  <div class="fredoka-reg is-size-4 has-text-weight-bold">
+    Notifications
+  </div>
 
-        <!-- Clear all button -->
-        {#if $userData.notifications.length > 0}
-        <div
-          on:click={clearAllNotifs}
-          class="is-flex is-justify-content-center is-align-items-center is-clickable"
-        >
-          <Icon class="hover-txt-color-warning" size='20px' path={mdiNotificationClearAll} />
-        </div>
-        {/if}
+  <!-- Notication Center Content -->
+  <div class="is-flex is-flex-direction-column maxmins-w-100p flex-grow-1 overflow-y-auto rounded">
+    {#each $userData.notifications as notification}
+      <NotificationCard {notification} />
+    {/each}
+  </div>
+
+  <div class="bg-color-pastel-white-card pt-2 maxmins-w-100p is-flex is-align-items-center is-justify-content-space-evenly ">
+    <div class="is-clickable is-flex is-justify-content-center is-align-items-center maxmins-w-35p hover-bg-grey-lighter-grey-light has-transition py-1 px-3 rounded">
+      <Icon size='15px' path={mdiRead} />
+      <div class="fredoka-reg ml-3 txt-size-11">
+        Read all
       </div>
     </div>
-
-    <!-- Notication Center Content -->
-    <div class="column is-12 p-0">
-      <div class="columns is-gapless is-multiline">
-
-        {#each $userData.notifications as notification}
-          <!-- Notification Card -->
-          <NotificationCard {notification} />
-        {/each}
+    
+    <div
+      on:click={clearAllNotifs}
+      class="is-clickable is-flex is-justify-content-center is-align-items-center maxmins-w-35p hover-bg-grey-lighter-grey-light has-transition py-1 px-3 rounded">
+      <Icon size='15px' path={mdiNotificationClearAll} />
+      <div class="fredoka-reg ml-3 txt-size-11">
+        Clear all
       </div>
     </div>
   </div>
+
 </div>

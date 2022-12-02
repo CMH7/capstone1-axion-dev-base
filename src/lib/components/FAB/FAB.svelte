@@ -1,12 +1,13 @@
 <script>
   //@ts-nocheck
-  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive, manageAdminModalActive, workspaceSettingsModalActive } from '$lib/stores/global-store';
+  import { notifs, allUsers, userData, activeWorkspace, addSubjectModalActive, addTaskModalActive, addWorkspaceModalActive, currentDashboardSubInterface, memberModalActive, memberModalLoading, subjectSettingsModalActive, modalChosenColor, activeSubject, addBoardModalActive, manageAdminModalActive, workspaceSettingsModalActive, ismini, notifCenterOpen } from '$lib/stores/global-store';
   import { mdiPlus } from '@mdi/js';
   import { Button, Icon, Menu, List, ListItem } from 'svelte-materialify'
   import { scale } from 'svelte/transition'
   import constants from '$lib/config/constants'
   import bcrypt from 'bcryptjs'
 	import { leaveWorkspaceActiveModal, viewMembersModalActive, viewMembersLoading } from '$lib/stores/workspace';
+	import { addTaskMode } from '$lib/stores/taskStore';
 
   let width = 0
   let active = false
@@ -14,7 +15,7 @@
   const getAllUsers = async () => {
     memberModalLoading.set(true)
     memberModalActive.set(true)
-    const res = await fetch(`${constants.backURI}/verifiedUsers?count=10`)
+    const res = await fetch(`${constants.backURI}/verifiedUsers?count=20`)
     const users = await res.json()
     if(res.ok) {
       const wsMembers = $activeWorkspace.members
@@ -89,11 +90,16 @@
       viewMembersLoading.set(false)
     })
   }
+
+  const createTask = e => {
+    addTaskMode.set(1)
+    addTaskModalActive.set(true)
+  }
 </script>
 
 <svelte:window bind:outerWidth={width} />
 
-<div class="has-transition pos-fix { width < 426 ? "pos-b-20 pos-r-20" : "pos-b-40 pos-r-45"}">
+<div class="has-transition {$ismini || $notifCenterOpen ? '' : 'z-2'} pos-fix { width < 426 ? "pos-b-20 pos-r-20" : "pos-b-40 pos-r-45"}">
   <Menu right bind:active bottom closeOnClick transition={scale} inOpts="{{start: 0, duration: 100}}" class="elevation-1 has-background-white" >
     <div slot="activator">
       <Button fab depressed class='has-background-white'>
@@ -128,7 +134,7 @@
         </ListItem>
       </div>
       {:else}
-        <div on:click={e => addTaskModalActive.set(true)}>
+        <div on:click={createTask}>
           <ListItem>
             Create task
           </ListItem>

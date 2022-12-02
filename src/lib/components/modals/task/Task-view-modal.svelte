@@ -1,16 +1,18 @@
 <script>
   // @ts-nocheck
   import { MaterialApp, Ripple, Dialog, Icon, Avatar, ClickOutside, Checkbox, Button, TextField} from "svelte-materialify"
-  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard, currentInterface, isProcessing } from '$lib/stores/global-store'
+  import { taskViewModalActive, chats, notifs, taskCurTab, allBoards, activeTask, activeWorkspace, userData, activeSubject, activeBoard, currentInterface, isProcessing, addTaskModalActive } from '$lib/stores/global-store'
   import { mdiPencil, mdiChat, mdiClose, mdiDotsVertical, mdiEyeOutline, mdiFilter, mdiMenu, mdiPlus, mdiSend, mdiStar, mdiStarOutline, mdiText, mdiTrashCan, mdiViewList, mdiCheck } from "@mdi/js"
   import SvelteMarkdown from 'svelte-markdown'
   import constants from "$lib/config/constants"
   import bcrypt from "bcryptjs"
 	import { favorites } from "$lib/stores/favorites";
-	import { taskDeleteModalActive, taskName, taskRenameActiveModal } from "$lib/stores/taskStore";
+	import { addTaskMode, parent, taskDeleteModalActive, taskName, taskRenameActiveModal } from "$lib/stores/taskStore";
   import { Pulse } from 'svelte-loading-spinners'
 	import ViewDp from "../viewDP.svelte";
 	import { currentDP, viewDPModalActive } from "$lib/stores/myProfile";
+	import SubtaskCard from "./components/subtask-card.svelte";
+	import task from "$lib/config/channels functions/task";
 
   const backURI = constants.backURI
 
@@ -31,7 +33,11 @@
   let chatContainer
   let selectedWorkspaceMembers = []
   let leftView = false
-  $: oldDescriptionValue = descriptionValue
+  let workspaceMembersCopy = $activeWorkspace.members
+
+  $: oldDescriptionValue = $taskViewModalActive ? $activeTask.description : ''
+  $: month = parseInt($activeTask.dueDateTime.split('T')[0].split('-')[1])
+  $: hour = parseInt($activeTask.dueDateTime.split('T')[1].split('-')[0])
   
   activeTask.subscribe(task => {
     descriptionValue = task.description
@@ -39,7 +45,6 @@
     activeTaskMembers = task.members
   })
   
-  let workspaceMembersCopy = $activeWorkspace.members
   function filterMembers() {
     if(assigneeInputValue === '') {
       workspaceMembersCopy = $activeWorkspace.members
@@ -338,14 +343,16 @@
           subject: $activeSubject.id,
           workspace: $activeWorkspace.id,
           board: $activeBoard,
-          task: $activeTask.id
+          task: $activeTask.id,
+          parentTask: $parent.id
         },
         task: {
           name: $activeTask.name,
           level: $activeTask.level,
           members: [],
           description: $activeTask.description,
-          status: boardName
+          status: boardName,
+          isSubtask: $activeTask.isSubtask
         },
         mode: 'status'
       })
@@ -420,9 +427,6 @@
       }]
     }).finally(() => isProcessing.set(false))
   }
-
-  $: month = parseInt($activeTask.dueDateTime.split('T')[0].split('-')[1])
-  $: hour = parseInt($activeTask.dueDateTime.split('T')[1].split('-')[0])
 
   const setFavorite = e => {
     if($currentInterface === 'Favorites') {
@@ -621,7 +625,7 @@
           return true
         })
         $notifs = [...$notifs, {
-          msg: `${names}${selectedWorkspaceMembers.length > 1 ? 'are' : 'is'} now assigned to task \'${$activeTask.name}\'`,
+          msg: `Added new assignee into task \'${$activeTask.name}\'`,
           type: 'success',
           id: `${Math.random() * 99}${new Date().getTime()}`
         }]
@@ -637,6 +641,12 @@
         drop = false
       })
     }
+  }
+
+  const newSubtask = e => {
+    taskViewModalActive.set(false)
+    addTaskMode.set(2)
+    addTaskModalActive.set(true)
   }
 </script>
 
@@ -982,7 +992,11 @@
                       </Button>
 
                       <!-- add -->
-                      <Button icon={outerWidth < 321 ? true: false} text={outerWidth > 320 ? true: false} size='small'>
+                      <Button
+                        on:click={newSubtask}
+                        icon={outerWidth < 321 ? true: false} text={outerWidth > 320 ? true: false}
+                        size='small'
+                      >
                         <span class="{outerWidth < 321 ? 'undisp': ''} fredoka-reg txt-size-10 grey-text text-darken-1 mr-1">
                           Add
                         </span>
@@ -998,38 +1012,7 @@
                   <div class="is-flex is-flex-direction-column">
                     <!-- LOOP HERE -->
                     {#each $activeTask.subtasks as subtask}
-                    <!-- subtask card / brief details -->
-                    <div class="is-flex-grow-1 is-flex is-justify-content-space-between is-align-items-center parent is-relative hover-bg-grey-lighter has-transition border-b-color-yaz-grey-dark border-w-b-1 border-type-b-solid">
-                      <!-- subtask name -->
-                      <div class="inter-reg is-size-6 txt-color-yaz-grey-dark pl-1 is-clickable hover-txt-color-primary max-w-50p txt-overflow-ellipsis overflow-x-hidden">
-                        {subtask.name}
-                      </div>
-
-                      <!-- level, status and trash -->
-                      <div class="is-flex is-align-items-center p-1">
-                        <!-- level -->
-                        <Avatar tile size='22px' style="max-width: 22px" class="is-unselectable dmsans has-text-weight-bold bg-color-yaz-{subtask.level == 1 ? 'green': subtask.level == 2 ? 'yellow': 'red'} has-text-white fredoka-reg txt-size-9 rounded is-clickable mr-2">
-                          {subtask.level == 1 ? 'L': subtask.level == 2 ? 'M': 'H'}
-                        </Avatar>
-
-                        <!-- status -->
-                        <div class="tag is-success is-light fredoka-reg txt-size-9 has-text-weight-semibold ml-1">
-                          {subtask.status}
-                        </div>
-
-                        <!-- trash -->
-                        <div class="{outerWidth < 571 ? '': 'undisp'} ml-2 is-invisible parent-hover-this-display-block">
-                          <Icon size='22px' path={mdiTrashCan} />
-                        </div>
-                        
-                        <!-- trash 2 -->
-                        <div
-                          on:click={() => console.log('trash clicked')}
-                          class="pos-abs pos-r-5 z-100 {outerWidth < 571 ? '': 'undisp parent-hover-this-display-block'} is-clickable">
-                          <Icon size='22px' path={mdiTrashCan} />
-                        </div>
-                      </div>
-                    </div>
+                      <SubtaskCard {subtask} />
                     {/each}
                   </div>
                 </div>

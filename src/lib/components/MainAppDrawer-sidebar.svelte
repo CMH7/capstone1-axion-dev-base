@@ -1,15 +1,17 @@
 <script>
   // @ts-nocheck
   import { NavigationDrawer, List, ListItem, Icon, MaterialApp, ListItemGroup, Divider, Avatar } from 'svelte-materialify';
-  import { mdiViewDashboard, mdiAccountCheck, mdiStar, mdiAccount } from '@mdi/js';
+  import { mdiViewDashboard, mdiAccountCheck, mdiStar, mdiAccount, mdiLogoutVariant } from '@mdi/js';
   import { userData, breadCrumbsItems, currentDashboardSubInterface, currentIndex, currentInterface, ismini, sidebarActive, activeTask } from '$lib/stores/global-store';
 	import constants from '$lib/config/constants';
+	import { logoutActiveModal } from '$lib/stores/myProfile';
 
   const navs = [
     {index: 0, name: "Dashboard", icon: mdiViewDashboard, color: "info"},
     {index: 1, name: "Assigned to me", icon: mdiAccountCheck, color: "success"},
     {index: 2, name: "Favorites", icon: mdiStar, color: "yellow-text text-darken-2"},
-    {index: 3, name: "My Profile", icon: mdiAccount, color: "grey-dark"}
+    {index: 3, name: "My Profile", icon: mdiAccount, color: "grey-dark"},
+    {index: 4, name: "Logout", icon: mdiLogoutVariant, color: "danger"}
   ];
   
   let dashCount = 0
@@ -25,15 +27,18 @@
         <ListItemGroup class="has-text-{navs[$currentIndex].color} {navs[$currentIndex].color}">
 
           {#each navs as navItem}
-          {#if navItem.name === "My Profile"}
+          {#if navItem.name === "My Profile" || navItem.name === 'Logout'}
             <Divider class="is-hidden-desktop p-0 m-0 my-1" />
           {/if}
           <ListItem
             active={$currentIndex == navItem.index}
-            class="{navItem.name === "My Profile"?"is-hidden-desktop":""} is-clickable"
+            class="{navItem.name === "My Profile" || navItem.name === 'Logout' ?"is-hidden-desktop":""} is-clickable"
             disabled={$currentInterface === navItem.name}
             on:click={
               () => {
+                if(navItem.name === 'Logout') {
+                  logoutActiveModal.set(true)
+                }
                 if(navItem.name === 'Dashboard') {
                   if(dashCount != 0) {
                     currentDashboardSubInterface.set('Subjects')
@@ -45,7 +50,7 @@
                   activeTask.set(constants.task)
                 }
 
-                currentInterface.set(navItem.name);
+                if(navItem.name !== 'Logout') currentInterface.set(navItem.name);
                 currentIndex.set(navItem.index);
               }
             }

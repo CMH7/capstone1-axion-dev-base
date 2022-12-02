@@ -3,7 +3,7 @@
   import Notification from './Notification.svelte'
 </script>
 
-<div style="position: fixed; top: 2%; right: 1%; z-index: 50" class="{$notifs.length > 0? "": "undisp" } maxmins-w-400-dt-to-mb-90p max-h-100p">
+<div style="top: 2%" class="pos-fix pos-r-5 pos-t-5 {$notifs.length > 0? "": "undisp" } z-100 maxmins-w-400-dt-to-mb-90p max-h-100vh">
   {#each $notifs as notif}
     <Notification {notif} />
   {/each}
